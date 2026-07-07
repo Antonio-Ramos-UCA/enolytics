@@ -1,0 +1,27 @@
+# ENOLYTICS — dependencias del proyecto
+# Instalación:  python3 -m pip install -r requirements.txt
+
+# --- Datos y utilidades ---
+pandas>=2.0
+requests>=2.31
+beautifulsoup4>=4.12
+lxml>=4.9              # parser rápido para BeautifulSoup
+python-dateutil>=2.8
+
+# --- Scraping robusto (reseñas dinámicas) ---
+playwright>=1.40       # tras instalar: python3 -m playwright install chromium
+
+# --- NLP / minería de textos ---
+scikit-learn>=1.3      # LDA, TF-IDF, utilidades
+transformers>=4.35     # modelos BERT (análisis de sentimiento)
+torch>=2.0             # backend de transformers
+nltk>=3.8              # tokenización, stopwords en español
+
+# --- Analítica (IPA / IPCA / DIPA / DIPCA) ---
+numpy>=1.24
+scipy>=1.11
+
+# --- Visualización / dashboard ---
+streamlit>=1.30
+plotly>=5.18
+pydeck>=0.8            # mapas en streamlit (st.map / pydeck)

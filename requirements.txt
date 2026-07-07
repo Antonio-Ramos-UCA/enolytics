@@ -1,0 +1,6 @@
+# ENOLYTICS — dependencias del DASHBOARD (para desplegar en Streamlit Cloud).
+# Ligero a propósito: solo lo que el cuadro de mando necesita para ejecutarse.
+# Las dependencias de scraping y NLP están en requirements-dev.txt.
+streamlit>=1.30
+pandas>=2.0
+plotly>=5.18
