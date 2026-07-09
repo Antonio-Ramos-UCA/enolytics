@@ -161,25 +161,25 @@ streamlit, pandas, sklearn, plotly, matplotlib, requests, bs4.
 6. **En paralelo (no bloquea):** diseñar cuestionarios a partir de la Tabla 1 de la
    memoria; incorporar indicadores oficiales (INE, Dataestur, ACEVIN, Google Trends).
 
-### Despliegue permanente (EN CURSO — retomar aquí) (2026-07-07)
-- Objetivo: que el equipo vea el dashboard **con el Mac apagado** → publicar en
-  **Streamlit Community Cloud** (gratis), **privado/restringido al equipo**.
-- **Hecho:** `requirements.txt` ligero (streamlit, pandas, plotly) para el deploy; el
-  completo está en `requirements-dev.txt`. **Repo git inicializado** en la carpeta del
-  proyecto, rama `main`, primer commit hecho (~36 archivos, 6 MB; corpus xlsx excluido por
-  .gitignore). `credential.helper=osxkeychain` configurado.
-- **BLOQUEADO en la autenticación de GitHub:** la credencial guardada (usuario
-  `antoniorramosenolytics`, token `ghp_...`) está **CADUCADA (401 Bad credentials)**, y el
-  login web estaba **temporalmente bloqueado** ("varios intentos fallidos"). El usuario
-  tiene además otra cuenta posible: `Antonio-Ramos-UCA`.
-- **PRÓXIMO al retomar:** el usuario entra en GitHub (cuando se levante el bloqueo), crea un
-  **Personal Access Token classic** (scope `repo`, github.com/settings/tokens) y lo pasa →
-  con él: crear repo privado `enolytics` (API o web), `git remote add origin` + `git push -u
-  origin main`, luego conectar Streamlit Cloud (share.streamlit.io → New app → repo, rama
-  main, fichero `enolytics/dashboard/app.py`) y restringir vista a correos del equipo.
-- Alternativa si falla el PAT: **GitHub Desktop** (OAuth in-app) → Add Local Repository →
-  Publish (privado).
-- Mientras tanto el enlace temporal Cloudflare sigue sirviendo (con el Mac encendido).
+### Despliegue permanente ✅ PUBLICADO (2026-07-09)
+- **El dashboard está EN LÍNEA 24/7:** 👉 **https://enolytics.streamlit.app**
+  (Streamlit Community Cloud, gratis). El equipo lo ve con el Mac apagado.
+- **Repositorio GitHub:** `Antonio-Ramos-UCA/enolytics` → https://github.com/Antonio-Ramos-UCA/enolytics
+  **PÚBLICO** (se decidió hacerlo público para evitar la fricción del OAuth de repos privados
+  en Streamlit; no hay secretos: `.env`/corpus xlsx están en `.gitignore`, las reseñas son
+  públicas de Google). Cuenta usada: `Antonio-Ramos-UCA`.
+- **Requisitos:** `requirements.txt` ligero (streamlit, pandas, plotly) para el deploy; el
+  completo está en `requirements-dev.txt`. Fichero principal: `enolytics/dashboard/app.py`,
+  rama `main`.
+- **CÓMO ACTUALIZAR la app publicada:** basta con `git push` a `main` → Streamlit Cloud
+  **redespliega solo** en 1-2 min. (Push con token: ver nota abajo.)
+  - Push seguro sin guardar el token en `.git/config`:
+    `git push "https://x-access-token:TOKEN@github.com/Antonio-Ramos-UCA/enolytics.git" main:main`
+    (config `http.postBuffer 524288000` ya puesta para el repo de 6 MB).
+- **Token GitHub (PAT classic, scope `repo`):** lo crea el usuario en
+  github.com/settings/tokens. Es como una contraseña; se puede revocar ahí al terminar.
+- Pendiente opcional: restringir QUIÉN ve la app (por correo) desde el panel de Streamlit
+  (Settings → Sharing) si se quiere privacidad de visualización.
 
 ### Dashboard: 7 pestañas = 7 inteligencias (2026-07-07)
 - Vista Gestor reorganizada: cabecera de métricas + **7 pestañas, una por inteligencia**
