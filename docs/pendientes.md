@@ -14,6 +14,7 @@
 - [ ] **Censo de reseñas de otras rutas** (Rioja, Ribera) para benchmarking competitivo real.
 - [x] **Certificaciones de sostenibilidad** — FEV SWfCP cruzado (4: Barbadillo, González Byass, Lustau, Osborne) + **auditoría web de sostenibilidad** por 7 ejes (`enolytics/ingesta/sostenibilidad.py`): 10 bodegas comunican ecológico; Miguel Domecq 7/7. En `datos/procesado/sostenibilidad.csv`. Nota: el buscador público de **CAAE** solo expone su lista internacional (Perú/México), no el registro español; por la solera, los vinos de Jerez tradicionales no certifican "vino ecológico". Falta (opcional): indicadores de consumo (estimados) y transporte sostenible.
 - [ ] **Atributos de Google Maps** (accesibilidad, reserva online) vía servicio "Google Maps" de Outscraper (inteligencia tecnológica).
+- [ ] **Afluencia con Google Places** — estimar la afluencia/ocupación de cada bodega a partir de los *"popular times"* (horas punta, ocupación por franja/día y "live busyness") de Google Maps/Places. Proxy de visitantes sin sensores: perfiles de estacionalidad y horarios de mayor demanda por bodega y para el destino (inteligencia de clientes/negocios). Vías: Outscraper (campo popular_times) o librería `populartimes`. Ojo: no es un dato oficial de la API estándar de Places; validar cobertura y términos de uso.
 - [ ] **Consejo Regulador de Jerez** — memorias anuales (producción, ventas, exportación).
 
 ## Calidad del análisis (NLP)
