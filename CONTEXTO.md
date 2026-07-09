@@ -161,6 +161,25 @@ streamlit, pandas, sklearn, plotly, matplotlib, requests, bs4.
 6. **En paralelo (no bloquea):** diseñar cuestionarios a partir de la Tabla 1 de la
    memoria; incorporar indicadores oficiales (INE, Dataestur, ACEVIN, Google Trends).
 
+### Inteligencia de Sostenibilidad: auditoría web (2026-07-09)
+- Módulo `enolytics/ingesta/sostenibilidad.py`: `auditar_bodega(url)` / `auditar_todas()`.
+  Consolida catálogo + FEV (leído del CSV previo) + **auditoría web por 7 ejes**
+  (ecológico, clima, energía, agua, residuos, biodiversidad, general). Sigue home + hasta
+  2 subpáginas de sostenibilidad (enlaces con "sosteni/compromiso/medioambiente/ecolog...").
+- `datos/procesado/sostenibilidad.csv` reescrito con columnas nuevas: `eje_*`,
+  `menciona_ecologico`, `web_ok`, `indice_sostenibilidad` (0-7), además de FEV.
+- **Resultado:** 42 bodegas · FEV 4 · **10 comunican ecológico** · destacada **Miguel Domecq
+  (Entrechuelos) 7/7**. ~12 con web:0 (bloquean bot o sin web accesible → falsos negativos,
+  ej. González Byass, Tradición). Es un proxy de *comunicación*, no certificación.
+- **CAAE descartado como fuente automática:** su buscador (certificados.caae.es, Angular →
+  API AWS `wz7mdd1v1k.execute-api.eu-west-3.amazonaws.com/caae/caae-listado-operadores`,
+  auth Basic pública en el bundle + cabeceras Origin/Referer) solo devuelve 792 operadores
+  **internacionales** (Perú 567, España 115...), no el registro andaluz. Por criaderas/solera,
+  los vinos de Jerez tradicionales no pueden certificar "vino ecológico".
+- Dashboard (📈 pestaña 🌱 Sostenibilidad): métricas FEV + ecológico + índice medio;
+  barras de adopción por eje; ranking top-10; distintivos en ficha de bodega (FEV + ecológico).
+  Loader `cargar_sostenibilidad` sin cambios (lee el CSV). Verificado con AppTest (sin excepciones).
+
 ### Inteligencia de Mercado: Google Trends (2026-07-09)
 - Módulo `enolytics/ingesta/google_trends.py` (pytrends, en requirements-dev). Descarga:
   `interes_temporal.csv` (interés semanal 5 años, remuestreado a mes en el dashboard) e

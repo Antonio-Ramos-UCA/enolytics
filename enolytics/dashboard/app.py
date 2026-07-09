@@ -488,21 +488,54 @@ if rol == "Gestor de destino":
         if sostenibilidad.empty:
             st.info("Sin datos de sostenibilidad todavía.")
         else:
-            st.caption("Bodegas del Marco con certificación ambiental oficial. Fuente: "
-                       "sello **Sustainable Wineries for Climate Protection** (FEV).")
+            st.caption("Compromiso ambiental de las bodegas. Fuentes: certificación climática "
+                       "**FEV** (Sustainable Wineries for Climate Protection) y auditoría de las "
+                       "webs (señales de sostenibilidad comunicada por ejes temáticos).")
             cert = sostenibilidad[sostenibilidad["certificado_swfcp"] == True]  # noqa: E712
             n_bod = len(sostenibilidad)
-            s1, s2 = st.columns(2)
-            s1.metric("Bodegas certificadas (SWfCP)", len(cert))
-            s2.metric("% del Marco certificado", f"{len(cert) / n_bod * 100:.0f}%")
 
-            st.markdown("**Bodegas certificadas:**")
+            tiene_indice = "indice_sostenibilidad" in sostenibilidad.columns
+            tiene_eco = "menciona_ecologico" in sostenibilidad.columns
+
+            s1, s2, s3 = st.columns(3)
+            s1.metric("Certificadas FEV (clima)", len(cert),
+                      f"{len(cert) / n_bod * 100:.0f}% del Marco")
+            if tiene_eco:
+                n_eco = int(sostenibilidad["menciona_ecologico"].sum())
+                s2.metric("Comunican producción ecológica", n_eco,
+                          f"{n_eco / n_bod * 100:.0f}% de las webs")
+            if tiene_indice:
+                s3.metric("Índice medio de sostenibilidad",
+                          f"{sostenibilidad['indice_sostenibilidad'].mean():.1f}/7",
+                          help="Nº medio de ejes de sostenibilidad con presencia en la web.")
+
+            st.markdown("**🌱 Bodegas con certificación climática FEV:**")
             for _, r in cert.iterrows():
-                st.markdown(f"- 🌱 **{r['bodega']}** · {r['localidad']}")
+                st.markdown(f"- **{r['bodega']}** · {r['localidad']}")
 
-            st.caption("⚠️ Cobertura parcial: solo el sello SWfCP. Pendiente cruzar con el "
-                       "registro ecológico de CAAE y añadir indicadores de consumo (estimados) "
-                       "y transporte sostenible.")
+            # Adopción por eje temático (qué % de bodegas comunica cada aspecto)
+            ejes_cols = [c for c in sostenibilidad.columns if c.startswith("eje_")]
+            if ejes_cols:
+                st.markdown("**Sostenibilidad comunicada por eje (% de bodegas)**")
+                adop = (sostenibilidad[ejes_cols].sum() / n_bod * 100).round(0)
+                adop.index = [c.replace("eje_", "").capitalize() for c in adop.index]
+                st.bar_chart(adop.sort_values(ascending=False))
+
+            # Ranking por índice de sostenibilidad comunicada
+            if tiene_indice:
+                st.markdown("**Bodegas líderes en sostenibilidad comunicada**")
+                top = (sostenibilidad[sostenibilidad["indice_sostenibilidad"] > 0]
+                       .sort_values("indice_sostenibilidad", ascending=False)
+                       .head(10)[["bodega", "localidad", "indice_sostenibilidad"]]
+                       .rename(columns={"bodega": "Bodega", "localidad": "Localidad",
+                                        "indice_sostenibilidad": "Índice /7"}))
+                st.dataframe(top, hide_index=True, use_container_width=True)
+
+            st.caption("⚠️ La auditoría web es un *proxy de comunicación*, no una certificación. "
+                       "Algunas bodegas (p. ej. González Byass, Tradición) bloquean el robot y "
+                       "salen sin señal (falso negativo). Nota del Marco: por el sistema de "
+                       "criaderas y solera, los vinos tradicionales no pueden certificarse como "
+                       "«vino ecológico»; la señal ecológica se refiere a viñedo/vinos tranquilos.")
 
 # --------------------------------------------------------------------------- #
 # Vista BODEGA: ficha individual en detalle
@@ -522,8 +555,12 @@ else:
             st.caption(f"📍 {b.get('localidad', '')} · {b.get('direccion', '')}")
             if not sostenibilidad.empty:
                 fila_sos = sostenibilidad[sostenibilidad["bodega"] == nombre]
-                if not fila_sos.empty and bool(fila_sos.iloc[0]["certificado_swfcp"]):
-                    st.success("🌱 Certificada Sustainable Wineries for Climate Protection (FEV)")
+                if not fila_sos.empty:
+                    fs = fila_sos.iloc[0]
+                    if bool(fs.get("certificado_swfcp")):
+                        st.success("🌱 Certificada Sustainable Wineries for Climate Protection (FEV)")
+                    if "menciona_ecologico" in fila_sos.columns and bool(fs.get("menciona_ecologico")):
+                        st.info("🍃 Comunica producción/viñedo ecológico en su web")
             if isinstance(b.get("descripcion"), str) and b["descripcion"]:
                 st.write(b["descripcion"])
             servicios = [s for s in str(b.get("servicios", "")).split(" | ") if s]

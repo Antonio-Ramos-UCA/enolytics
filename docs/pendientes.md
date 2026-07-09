@@ -12,7 +12,7 @@
 - [ ] **TripAdvisor** — segunda fuente de reseñas (más visitante internacional), vía Outscraper.
 - [ ] Otras plataformas de reseñas: **Civitatis, GetYourGuide** (precios de experiencias, canales de reserva), **Vivino**.
 - [ ] **Censo de reseñas de otras rutas** (Rioja, Ribera) para benchmarking competitivo real.
-- [~] **Certificaciones de sostenibilidad** — FEV SWfCP cruzado (4 bodegas certificadas: Barbadillo, González Byass, Lustau, Osborne) en `datos/procesado/sostenibilidad.csv`. Falta: **CAAE ecológico**, indicadores de consumo (estimados) y transporte sostenible.
+- [x] **Certificaciones de sostenibilidad** — FEV SWfCP cruzado (4: Barbadillo, González Byass, Lustau, Osborne) + **auditoría web de sostenibilidad** por 7 ejes (`enolytics/ingesta/sostenibilidad.py`): 10 bodegas comunican ecológico; Miguel Domecq 7/7. En `datos/procesado/sostenibilidad.csv`. Nota: el buscador público de **CAAE** solo expone su lista internacional (Perú/México), no el registro español; por la solera, los vinos de Jerez tradicionales no certifican "vino ecológico". Falta (opcional): indicadores de consumo (estimados) y transporte sostenible.
 - [ ] **Atributos de Google Maps** (accesibilidad, reserva online) vía servicio "Google Maps" de Outscraper (inteligencia tecnológica).
 - [ ] **Consejo Regulador de Jerez** — memorias anuales (producción, ventas, exportación).
 
@@ -35,7 +35,7 @@
 - [x] **Mercado** — gasto/percepción Dataestur + **Google Trends** (interés de búsqueda comparativo vs rutas competidoras + origen por CCAA). Falta (opcional): procedencia internacional (FRONTUR).
 - [~] **Negocios** — catálogo de bodegas. Falta: museos/enotecas/eventos + empleo.
 - [x] **Tecnológica** — auditoría automática de webs (`datos/procesado/auditoria_web.csv`): HTTPS, móvil, inglés, reserva online, inmersiva → índice madurez /5. 29/42 auditadas (13 bloquean bot/sin web). Falta: accesibilidad física de Google Maps; afinar sobre subpáginas.
-- [ ] **Sostenibilidad** — certificaciones (FEV/CAAE) + transporte + consumos (estimados).
+- [x] **Sostenibilidad** — certificación climática FEV (4 bodegas) + índice de sostenibilidad comunicada por auditoría web (7 ejes: ecológico, clima, energía, agua, residuos, biodiversidad, general). Falta (opcional): transporte + consumos estimados.
 
 ## Dashboard y producto
 - [x] **Reorganizar en pestañas** por inteligencia (Gestor: Visión general · Clientes y experiencia · Económica y mercado. Bodega: Ficha · Reseñas y análisis). Añadir más pestañas al sumar inteligencias.
