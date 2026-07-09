@@ -167,6 +167,21 @@ def cargar_auditoria() -> pd.DataFrame:
 
 
 @st.cache_data
+def cargar_trends_temporal() -> pd.DataFrame:
+    ruta = config.DATOS_PROCESADO / "google_trends" / "interes_temporal.csv"
+    if not ruta.exists():
+        return pd.DataFrame()
+    df = pd.read_csv(ruta, parse_dates=["fecha"])
+    return df
+
+
+@st.cache_data
+def cargar_trends_regiones() -> pd.DataFrame:
+    ruta = config.DATOS_PROCESADO / "google_trends" / "interes_regiones.csv"
+    return pd.read_csv(ruta) if ruta.exists() else pd.DataFrame()
+
+
+@st.cache_data
 def cargar_gasto_cadiz() -> pd.DataFrame:
     ruta = config.DATOS_PROCESADO / "dataestur" / "GASTO_TPV_DESTINO_PROV_MES_HISTORICO_DL.csv"
     if not ruta.exists():
@@ -229,6 +244,8 @@ sostenibilidad = cargar_sostenibilidad()
 auditoria = cargar_auditoria()
 gasto_cadiz = cargar_gasto_cadiz()
 satisf_cadiz = cargar_satisfaccion_cadiz()
+trends_temporal = cargar_trends_temporal()
+trends_regiones = cargar_trends_regiones()
 
 st.title("🍷 ENOLYTICS — Inteligencia enoturística del Marco de Jerez")
 
@@ -296,10 +313,50 @@ if rol == "Gestor de destino":
 
     # ----- 2. Inteligencia de Mercado -----
     with tab_mer:
-        st.caption("Demanda y percepción del destino. Fuente: Dataestur. "
-                   "Pendiente: Google Trends y comparación con otras rutas del vino.")
-        if gasto_anio.empty and satisf_cadiz.empty:
+        st.caption("Demanda y percepción del destino. Fuentes: Google Trends (interés de "
+                   "búsqueda) y Dataestur (gasto y percepción). Comparación con las rutas "
+                   "del vino competidoras.")
+        if gasto_anio.empty and satisf_cadiz.empty and trends_temporal.empty:
             st.info("Sin datos de mercado todavía.")
+
+        # --- Interés de búsqueda (Google Trends) ---
+        if not trends_temporal.empty:
+            termcols = [c for c in trends_temporal.columns if c != "fecha"]
+            foco = next((c for c in termcols if "Jerez" in c), termcols[0])
+            # Google devuelve datos semanales en 5 años: remuestreamos a meses.
+            mensual = (trends_temporal.set_index("fecha")[termcols]
+                       .resample("MS").mean())
+            medias = mensual.mean().sort_values(ascending=False)
+            rank = list(medias.index).index(foco) + 1
+
+            # Tendencia del foco: media de los primeros vs. los últimos 24 meses (2 años)
+            serie_foco = mensual[foco].dropna()
+            n = min(24, len(serie_foco) // 2)
+            ini, fin = serie_foco.head(n).mean(), serie_foco.tail(n).mean()
+            var = (fin - ini) / ini * 100 if ini else 0.0
+
+            st.markdown("**Interés de búsqueda en Google (últimos 5 años, escala 0-100 comparativa)**")
+            c1, c2, c3 = st.columns(3)
+            etq_foco = foco.replace("bodegas ", "").strip()
+            c1.metric(f"Posición de {etq_foco}", f"{rank}º de {len(termcols)}",
+                      help="Ranking por interés medio de búsqueda frente a las rutas competidoras.")
+            c2.metric(f"Interés medio de {etq_foco}", f"{medias[foco]:.0f}",
+                      f"líder: {medias.index[0].replace('bodegas ', '')} ({medias.iloc[0]:.0f})")
+            c3.metric("Tendencia de la demanda", f"{var:+.0f}%",
+                      help="Variación del interés entre los primeros y los últimos 2 años.")
+
+            # Evolución suavizada (media móvil de 6 meses) para ver la tendencia sin ruido
+            suave = mensual.rolling(6, min_periods=2).mean()
+            suave.columns = [c.replace("bodegas ", "") for c in suave.columns]
+            st.caption("Evolución del interés (media móvil de 6 meses)")
+            st.line_chart(suave)
+
+            if not trends_regiones.empty:
+                top = trends_regiones.head(8).set_index("comunidad")["interes"]
+                st.caption(f"Origen de la demanda: comunidades que más buscan «{foco}» (0-100)")
+                st.bar_chart(top)
+            st.divider()
+
         if not gasto_anio.empty:
             st.markdown(f"**Gasto por procedencia del turista ({anio_ref})**")
             comp = (gasto_anio[gasto_anio["TIPO_ORIGEN"].isin(["Internacional", "Interregional", "Regional"])]
@@ -307,13 +364,13 @@ if rol == "Gestor de destino":
             st.bar_chart(comp)
         if not satisf_cadiz.empty:
             idx_cols = [c for c in satisf_cadiz.columns if c.startswith("IN")]
-            medias = satisf_cadiz[idx_cols].apply(pd.to_numeric, errors="coerce").mean()
+            medias_p = satisf_cadiz[idx_cols].apply(pd.to_numeric, errors="coerce").mean()
             st.markdown("**Índices de percepción del visitante en Cádiz (media, sobre 100)**")
             s1, s2, s3, s4 = st.columns(4)
-            s1.metric("Percepción global", f"{medias.get('INIDICE_PERCEPCION_TURISTICA_GLOBAL', float('nan')):.0f}")
-            s2.metric("Satisf. productos", f"{medias.get('INDICE_SATISFACCION_PRODUCTOS_TURISTICOS', float('nan')):.0f}")
-            s3.metric("Seguridad", f"{medias.get('INDICE_PERCEPCION_SEGURIDAD', float('nan')):.0f}")
-            s4.metric("Clima", f"{medias.get('INDICE_PERCEPCION_CLIMATICA', float('nan')):.0f}")
+            s1.metric("Percepción global", f"{medias_p.get('INIDICE_PERCEPCION_TURISTICA_GLOBAL', float('nan')):.0f}")
+            s2.metric("Satisf. productos", f"{medias_p.get('INDICE_SATISFACCION_PRODUCTOS_TURISTICOS', float('nan')):.0f}")
+            s3.metric("Seguridad", f"{medias_p.get('INDICE_PERCEPCION_SEGURIDAD', float('nan')):.0f}")
+            s4.metric("Clima", f"{medias_p.get('INDICE_PERCEPCION_CLIMATICA', float('nan')):.0f}")
 
     # ----- 3. Inteligencia de Competidores -----
     with tab_comp:

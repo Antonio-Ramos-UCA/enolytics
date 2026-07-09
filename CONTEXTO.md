@@ -161,6 +161,21 @@ streamlit, pandas, sklearn, plotly, matplotlib, requests, bs4.
 6. **En paralelo (no bloquea):** diseñar cuestionarios a partir de la Tabla 1 de la
    memoria; incorporar indicadores oficiales (INE, Dataestur, ACEVIN, Google Trends).
 
+### Inteligencia de Mercado: Google Trends (2026-07-09)
+- Módulo `enolytics/ingesta/google_trends.py` (pytrends, en requirements-dev). Descarga:
+  `interes_temporal.csv` (interés semanal 5 años, remuestreado a mes en el dashboard) e
+  `interes_regiones.csv` (interés por CCAA del término foco). En `datos/procesado/google_trends/`.
+- Términos comparativos en `config.TERMINOS_TRENDS`: **"bodegas Jerez"** vs Rioja / Ribera del
+  Duero / Rías Baixas (proxy de intención de visita; "enoturismo X" salía casi a 0 por bajo volumen).
+- **Hallazgo:** Jerez **2º de 4** en interés de búsqueda (media 37; líder Rioja 56; Ribera 16;
+  Rías Baixas ~0). Tendencia **−15%** (primeros 2 años vs últimos 2). Demanda concentrada en
+  Andalucía (100), Ceuta, Extremadura, La Rioja.
+- Dashboard (pestaña 📈 Mercado): 3 métricas (posición, interés medio, tendencia) + evolución
+  suavizada (media móvil 6 meses) + barras de origen por CCAA. Loaders `cargar_trends_temporal/regiones`.
+- Notas técnicas: pytrends con urllib3>=2 falla si se le pasan `retries` (arg `method_whitelist`
+  eliminado) → cliente sin reintentos internos; Google limita con 429, se resuelve con backoff
+  propio (20s, 40s...). Verificado con `streamlit.testing` (AppTest): app sin excepciones, 7 pestañas.
+
 ### Despliegue permanente ✅ PUBLICADO (2026-07-09)
 - **El dashboard está EN LÍNEA 24/7:** 👉 **https://enolytics-feder-uca.streamlit.app**
   (Streamlit Community Cloud, gratis). El equipo lo ve con el Mac apagado.

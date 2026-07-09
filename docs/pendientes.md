@@ -7,7 +7,7 @@
 - [ ] **SABI** — confirmar acceso de la UCA (biblioteca) para facturación/empleo por bodega (inteligencia económica y de negocios). Alternativa: Registro Mercantil/BORME.
 - [ ] **Más conjuntos de Dataestur** — empleo turístico, empresas turísticas (DIRCE), procedencia de extranjeros (FRONTUR/EGATUR/TURISMO_RECEPTOR), precios (IPC), museos.
   - [ ] Revisar el endpoint `AFILIACION_TURISMO_DL` (falló al decodificar; formato distinto).
-- [ ] **Google Trends** (pytrends) — interés de búsqueda del enoturismo de Jerez y comparación con Rioja/Ribera (inteligencia de mercado).
+- [x] **Google Trends** (pytrends) — interés de búsqueda "bodegas Jerez" vs Rioja/Ribera/Rías Baixas (últimos 5 años) + origen por CCAA. En `datos/procesado/google_trends/`. Hallazgo: Jerez 2º de 4 (media 37; líder Rioja 56), tendencia −15% (2 años vs 2 años). Módulo `enolytics/ingesta/google_trends.py`.
 - [x] **Ampliar scraping de la Ruta** — 167 recursos en 11 categorías (bodegas 41, restaurantes 27, recursos culturales 27, naturales 20, actividades 19, alojamientos 14, museos 7, turismo accesible 6, enotecas 3, caterings 2, agencias 1). En `datos/procesado/oferta_enoturistica.csv`. Falta: agenda de eventos + enriquecer fichas (GPS) de no-bodegas.
 - [ ] **TripAdvisor** — segunda fuente de reseñas (más visitante internacional), vía Outscraper.
 - [ ] Otras plataformas de reseñas: **Civitatis, GetYourGuide** (precios de experiencias, canales de reserva), **Vivino**.
@@ -32,7 +32,7 @@
 - [x] **Clientes** — reseñas (satisfacción, atributos) + índices Dataestur. Falta: perfil/fidelización (cuestionario o ACEVIN).
 - [x] **Competidores** — reputación + IPCA. Falta: precios y otras rutas.
 - [~] **Económica** — gasto Dataestur (hecho). Falta: por bodega (SABI).
-- [~] **Mercado** — gasto/percepción Dataestur. Falta: Google Trends, procedencia.
+- [x] **Mercado** — gasto/percepción Dataestur + **Google Trends** (interés de búsqueda comparativo vs rutas competidoras + origen por CCAA). Falta (opcional): procedencia internacional (FRONTUR).
 - [~] **Negocios** — catálogo de bodegas. Falta: museos/enotecas/eventos + empleo.
 - [x] **Tecnológica** — auditoría automática de webs (`datos/procesado/auditoria_web.csv`): HTTPS, móvil, inglés, reserva online, inmersiva → índice madurez /5. 29/42 auditadas (13 bloquean bot/sin web). Falta: accesibilidad física de Google Maps; afinar sobre subpáginas.
 - [ ] **Sostenibilidad** — certificaciones (FEV/CAAE) + transporte + consumos (estimados).

@@ -32,6 +32,22 @@ CATEGORIAS_RUTA = [
     "recursos-culturales", "recursos-naturales", "turismo-accesible",
 ]
 
+# --- Fuente: Google Trends (Inteligencia de Mercado) ---
+# Interés de búsqueda del enoturismo de Jerez frente a sus rutas competidoras.
+# Los términos se comparan entre sí (Google los normaliza 0-100), así que deben
+# compartir la misma intención de búsqueda para que la comparación sea justa.
+GOOGLE_TRENDS_GEO = "ES"                # España
+GOOGLE_TRENDS_PERIODO = "today 5-y"     # últimos 5 años
+# El primero es el foco (Jerez); el resto, competidores del modelo (memoria).
+# "bodegas <zona>" funciona como proxy de intención de visita (enoturismo) y tiene
+# mucho más volumen de búsqueda que "enoturismo <zona>", que salía casi a cero.
+TERMINOS_TRENDS = [
+    "bodegas Jerez",
+    "bodegas Rioja",
+    "bodegas Ribera del Duero",
+    "bodegas Rías Baixas",
+]
+
 # --- Parámetros de scraping (cortesía con los servidores) ---
 USER_AGENT = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
@@ -89,5 +105,6 @@ def hay_clave_resenas() -> bool:
 
 def asegurar_directorios() -> None:
     """Crea las carpetas de datos si no existen (idempotente)."""
-    for d in (DATOS_CATALOGO, DATOS_CRUDO_RESENAS, DATOS_PROCESADO):
+    for d in (DATOS_CATALOGO, DATOS_CRUDO_RESENAS, DATOS_PROCESADO,
+              DATOS_PROCESADO / "google_trends"):
         d.mkdir(parents=True, exist_ok=True)
