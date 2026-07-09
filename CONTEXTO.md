@@ -162,7 +162,7 @@ streamlit, pandas, sklearn, plotly, matplotlib, requests, bs4.
    memoria; incorporar indicadores oficiales (INE, Dataestur, ACEVIN, Google Trends).
 
 ### Despliegue permanente ✅ PUBLICADO (2026-07-09)
-- **El dashboard está EN LÍNEA 24/7:** 👉 **https://enolytics.streamlit.app**
+- **El dashboard está EN LÍNEA 24/7:** 👉 **https://enolytics-feder-uca.streamlit.app**
   (Streamlit Community Cloud, gratis). El equipo lo ve con el Mac apagado.
 - **Repositorio GitHub:** `Antonio-Ramos-UCA/enolytics` → https://github.com/Antonio-Ramos-UCA/enolytics
   **PÚBLICO** (se decidió hacerlo público para evitar la fricción del OAuth de repos privados

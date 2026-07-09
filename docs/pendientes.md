@@ -40,7 +40,7 @@
 ## Dashboard y producto
 - [x] **Reorganizar en pestañas** por inteligencia (Gestor: Visión general · Clientes y experiencia · Económica y mercado. Bodega: Ficha · Reseñas y análisis). Añadir más pestañas al sumar inteligencias.
 - [ ] Etiquetar cada indicador por origen (🟢 oficial · 🔵 reseñas · 🟡 estimado) para rigor.
-- [x] **Enlace permanente** — PUBLICADO en **https://enolytics.streamlit.app** (Streamlit Community Cloud, repo público `Antonio-Ramos-UCA/enolytics`). Redespliega solo al hacer `git push`. Falta (opcional): restringir vista por correo desde Settings → Sharing.
+- [x] **Enlace permanente** — PUBLICADO en **https://enolytics-feder-uca.streamlit.app** (Streamlit Community Cloud, repo público `Antonio-Ramos-UCA/enolytics`). Redespliega solo al hacer `git push`. Falta (opcional): restringir vista por correo desde Settings → Sharing.
 - [ ] **Automatización incremental** de reseñas (API Outscraper + programación) — la parte "periódica" de la memoria.
 
 ## Pendientes menores de datos
