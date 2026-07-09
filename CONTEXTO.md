@@ -161,6 +161,26 @@ streamlit, pandas, sklearn, plotly, matplotlib, requests, bs4.
 6. **En paralelo (no bloquea):** diseñar cuestionarios a partir de la Tabla 1 de la
    memoria; incorporar indicadores oficiales (INE, Dataestur, ACEVIN, Google Trends).
 
+### Despliegue permanente (EN CURSO — retomar aquí) (2026-07-07)
+- Objetivo: que el equipo vea el dashboard **con el Mac apagado** → publicar en
+  **Streamlit Community Cloud** (gratis), **privado/restringido al equipo**.
+- **Hecho:** `requirements.txt` ligero (streamlit, pandas, plotly) para el deploy; el
+  completo está en `requirements-dev.txt`. **Repo git inicializado** en la carpeta del
+  proyecto, rama `main`, primer commit hecho (~36 archivos, 6 MB; corpus xlsx excluido por
+  .gitignore). `credential.helper=osxkeychain` configurado.
+- **BLOQUEADO en la autenticación de GitHub:** la credencial guardada (usuario
+  `antoniorramosenolytics`, token `ghp_...`) está **CADUCADA (401 Bad credentials)**, y el
+  login web estaba **temporalmente bloqueado** ("varios intentos fallidos"). El usuario
+  tiene además otra cuenta posible: `Antonio-Ramos-UCA`.
+- **PRÓXIMO al retomar:** el usuario entra en GitHub (cuando se levante el bloqueo), crea un
+  **Personal Access Token classic** (scope `repo`, github.com/settings/tokens) y lo pasa →
+  con él: crear repo privado `enolytics` (API o web), `git remote add origin` + `git push -u
+  origin main`, luego conectar Streamlit Cloud (share.streamlit.io → New app → repo, rama
+  main, fichero `enolytics/dashboard/app.py`) y restringir vista a correos del equipo.
+- Alternativa si falla el PAT: **GitHub Desktop** (OAuth in-app) → Add Local Repository →
+  Publish (privado).
+- Mientras tanto el enlace temporal Cloudflare sigue sirviendo (con el Mac encendido).
+
 ### Dashboard: 7 pestañas = 7 inteligencias (2026-07-07)
 - Vista Gestor reorganizada: cabecera de métricas + **7 pestañas, una por inteligencia**
   (💶 Económica · 📈 Mercado · 🥊 Competidores · 😊 Clientes · 🏛️ Negocios · 🖥️ Tecnológica ·
