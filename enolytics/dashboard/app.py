@@ -797,9 +797,12 @@ if rol == "Gestor de destino":
             n_no = len(auditoria) - len(aud_ok)
             st.caption("Madurez digital de las webs de las bodegas: HTTPS, adaptación móvil, "
                        "inglés, reserva online, tecnología inmersiva.")
+            _nav = int((aud_ok["metodo"] == "navegador").sum()) if "metodo" in aud_ok.columns else 0
+            _nota_nav = (f" {_nav} webs con verificación de edad o JavaScript se leyeron abriendo "
+                         f"un **navegador real**, para que las bodegas que bloquean robots no "
+                         f"salgan penalizadas injustamente." if _nav else "")
             fuente("estimado", "Auditoría automática de la **página de inicio** de cada bodega. "
-                               "Es un *proxy*: no ve subpáginas y las webs que bloquean robots "
-                               "se excluyen (falsos negativos).")
+                               "Es un *proxy*: no ve subpáginas." + _nota_nav)
             t1, t2, t3 = st.columns(3)
             t1.metric("Webs auditadas", len(aud_ok))
             t2.metric("Madurez digital media", f"{aud_ok['madurez_digital'].mean():.1f}/5")
@@ -1006,9 +1009,10 @@ if rol == "Gestor de destino":
                            "mayor). No se comprueba la frecuencia ni el horario del servicio.")
                 st.divider()
 
-            st.caption("⚠️ La auditoría web es un *proxy de comunicación*, no una certificación. "
-                       "Algunas bodegas (p. ej. González Byass, Tradición) bloquean el robot y "
-                       "salen sin señal (falso negativo). Nota del Marco: por el sistema de "
+            st.caption("⚠️ La auditoría web es un *proxy de comunicación*, no una certificación: "
+                       "mide lo que la bodega **dice**, no su desempeño ambiental. Las webs con "
+                       "verificación de edad se leen abriendo un **navegador real**, para no "
+                       "penalizar a quien bloquea robots. Nota del Marco: por el sistema de "
                        "criaderas y solera, los vinos tradicionales no pueden certificarse como "
                        "«vino ecológico»; la señal ecológica se refiere a viñedo/vinos tranquilos.")
 

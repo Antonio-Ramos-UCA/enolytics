@@ -23,11 +23,10 @@ from __future__ import annotations
 import csv
 import re
 
-import requests
 from bs4 import BeautifulSoup
 
 from enolytics import config
-from enolytics.ingesta import ruta_jerez
+from enolytics.ingesta import navegador, ruta_jerez
 
 # --- Accesibilidad digital: 8 comprobaciones objetivas sobre el HTML (base WCAG) ---
 COMPROBACIONES = {
@@ -125,24 +124,22 @@ def _enlaces_vagos(soup: BeautifulSoup) -> int:
     return n
 
 
-def auditar_bodega(url: str, timeout: int = 12) -> dict:
+def auditar_bodega(url: str) -> dict:
     """Audita la accesibilidad digital y las señales de accesibilidad física de una web."""
     base = {k: False for k in COMPROBACIONES}
-    base.update({"web_ok": False, "menciona_accesibilidad_fisica": False,
+    base.update({"web_ok": False, "metodo": "", "menciona_accesibilidad_fisica": False,
                  "menciona_apoyo_sensorial": False, "enlaces_poco_descriptivos": 0,
                  "indice_accesibilidad_digital": 0})
-    if not isinstance(url, str) or not url.startswith("http"):
-        return base
-    try:
-        resp = requests.get(url, timeout=timeout, headers={"User-Agent": config.USER_AGENT})
-        if resp.status_code != 200:
-            return base
-        html = resp.text
-        soup = BeautifulSoup(html, "html.parser")
-    except requests.RequestException:
+
+    # Lector con reintento en navegador real: si no, las webs con verificación de edad
+    # (las de las bodegas grandes) saldrían con 0 y falsearían el índice a la baja.
+    html, metodo = navegador.obtener_html(url)
+    if not html:
         return base
 
+    soup = BeautifulSoup(html, "html.parser")
     base["web_ok"] = True
+    base["metodo"] = metodo
     base.update(_analizar_digital(soup, html))
     base.update(_analizar_fisica(html.lower()))
     base["enlaces_poco_descriptivos"] = _enlaces_vagos(soup)
@@ -168,7 +165,7 @@ def auditar_todas(verbose: bool = True) -> list[dict]:
 
     config.asegurar_directorios()
     ruta = config.DATOS_PROCESADO / "accesibilidad.csv"
-    cols = (["bodega", "localidad", "web", "web_ok"] + list(COMPROBACIONES)
+    cols = (["bodega", "localidad", "web", "web_ok", "metodo"] + list(COMPROBACIONES)
             + ["enlaces_poco_descriptivos", "menciona_accesibilidad_fisica",
                "menciona_apoyo_sensorial", "indice_accesibilidad_digital"])
     with open(ruta, "w", newline="", encoding="utf-8") as f:

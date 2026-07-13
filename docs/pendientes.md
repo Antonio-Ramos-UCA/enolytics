@@ -49,6 +49,7 @@
 - [ ] **Automatización incremental** de reseñas (API Outscraper + programación) — la parte "periódica" de la memoria.
 
 ## Pendientes menores de datos
+- [x] **Superar el bloqueo anti-bot** (`enolytics/ingesta/navegador.py`, Playwright): las webs con verificación de edad se leen abriendo un Chromium real. **29 → 38 webs auditadas** en las 3 auditorías (madurez, accesibilidad, sostenibilidad); 15 rescatadas. **Bodegas Tradición (piloto) recuperada: 5/5 madurez, 7/8 accesibilidad.** Siguen sin web accesible: Emilio Hidalgo (piloto), Yuste, Caydsa, El Piraña.
 - [ ] Resolver identidad de **AC Wines** en Google (excluida del corpus).
 - [ ] Completar datos de ficha de **Bodegas Emilio Hidalgo** (piloto).
 

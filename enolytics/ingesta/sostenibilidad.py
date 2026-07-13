@@ -27,11 +27,10 @@ import re
 import time
 from urllib.parse import urljoin, urlparse
 
-import requests
 from bs4 import BeautifulSoup
 
 from enolytics import config
-from enolytics.ingesta import ruta_jerez
+from enolytics.ingesta import navegador, ruta_jerez
 
 # Ejes de sostenibilidad y sus señales (palabras clave, ES + EN)
 EJES = {
@@ -61,16 +60,12 @@ _PISTAS_ENLACE = ["sosteni", "sustainab", "ecolog", "medio-ambiente", "medioambi
                   "naturaleza", "vinedo", "viñedo"]
 
 
-def _texto_de(url: str, timeout: int = 12) -> tuple[str, BeautifulSoup | None]:
-    """Descarga una página y devuelve (texto_en_minúsculas, soup) o ('', None)."""
-    try:
-        r = requests.get(url, timeout=timeout, headers={"User-Agent": config.USER_AGENT})
-        if r.status_code != 200 or "text/html" not in r.headers.get("Content-Type", "text/html"):
-            return "", None
-        soup = BeautifulSoup(r.text, "html.parser")
-        return r.text.lower(), soup
-    except requests.RequestException:
+def _texto_de(url: str) -> tuple[str, BeautifulSoup | None]:
+    """Descarga una página (con navegador real si hace falta) → (texto_minúsculas, soup)."""
+    html, _ = navegador.obtener_html(url)
+    if not html:
         return "", None
+    return html.lower(), BeautifulSoup(html, "html.parser")
 
 
 def _subpaginas_sostenibilidad(url_base: str, soup: BeautifulSoup, maximo: int = 2) -> list[str]:

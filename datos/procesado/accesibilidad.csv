@@ -1,43 +1,43 @@
-bodega,localidad,web,web_ok,idioma_declarado,titulo_pagina,imagenes_con_alt,zoom_permitido,encabezado_h1,jerarquia_encabezados,formularios_etiquetados,estructura_semantica,enlaces_poco_descriptivos,menciona_accesibilidad_fisica,menciona_apoyo_sensorial,indice_accesibilidad_digital
-Bodega Cooperativa Albarizas,Trebujena,https://vinosdealbarizas.com/,True,True,True,True,True,False,False,True,True,0,False,False,6
-Bodega Gago & Co. Barrels – Wines,Jerez de la Frontera,https://gagobarrels.com/visitanos/,True,True,True,True,True,False,False,True,True,0,False,False,6
-Bodega Mar 7,Sanlúcar de Barrameda,http://despachodevinosmar7.com/,True,True,True,True,False,False,False,True,True,0,True,False,5
-"Bodega, Viña Y Casa Rural Santa Petronila",Jerez de la Frontera,https://santapetronila.com/,True,True,True,True,False,True,False,False,True,0,False,False,5
-Bodegas Ac Wines & Spirits – Sucesores...,Sanlúcar de Barrameda,https://acwines.es/,True,True,True,False,False,True,True,True,True,0,False,False,6
-Bodegas Altanza,Jerez de la Frontera,https://galeriadeljerez.com/,False,False,False,False,False,False,False,False,False,0,False,False,0
-Bodegas Barbadillo,Sanlúcar de Barrameda,https://www.barbadillo.com/,True,True,True,True,False,True,True,True,True,0,False,False,7
-Bodegas Barón,Sanlúcar de Barrameda,https://bodegasbaron.es/,True,True,True,True,True,True,True,True,True,0,False,False,8
-Bodegas Caydsa,Sanlúcar de Barrameda,https://www.caydsa.es/cooperativa-caydsa-visitas/,True,True,True,True,False,True,False,True,True,0,False,False,6
-Bodegas Cayetano Del Pino,Jerez de la Frontera,https://cayetanodelpino.com/visitas,True,True,True,True,True,True,True,True,True,1,True,False,8
-Bodegas Cortijo De Jara,Jerez de la Frontera,https://cortijodejara.es/,True,True,True,True,False,True,True,True,True,0,False,False,7
-Bodegas Delgado Zuleta,Sanlúcar de Barrameda,https://www.delgadozuleta.com/,False,False,False,False,False,False,False,False,False,0,False,False,0
-Bodegas Dios Baco,Jerez de la Frontera,https://bodegasdiosbaco.com/,True,True,True,True,True,True,True,True,True,0,False,False,8
-Bodegas Díez Mérito,Jerez de la Frontera,https://diezmerito.com/,True,True,True,True,True,True,True,True,True,24,False,False,8
-Bodegas Espinosa De Los Monteros,Jerez de la Frontera,https://www.bodegasespinosadelosmonteros.com/,True,True,True,True,True,False,False,True,True,0,False,False,6
-Bodegas Forlong,El Puerto de Santa María,https://bodegadeforlong.com/,True,True,True,True,False,True,True,True,True,0,False,False,7
-Bodegas Fundador,Jerez de la Frontera,https://brandyfundador.com/,True,True,True,True,True,False,False,True,True,0,False,False,6
-Bodegas González Byass – Tío Pepe,Jerez de la Frontera,https://www.tiopepe.com/es-es/validate,False,False,False,False,False,False,False,False,False,0,False,False,0
-Bodegas Gutiérrez Colosía,El Puerto de Santa María,http://www.gutierrezcolosia.com/,True,True,True,False,True,True,False,True,True,0,False,False,6
-Bodegas Halcón,Lebrija,https://www.bodegashalcon.es/,False,False,False,False,False,False,False,False,False,0,False,False,0
-Bodegas Herederos De Argüeso,Sanlúcar de Barrameda,https://herederosdeargueso.com/,True,True,True,False,True,True,True,False,True,0,False,False,6
-Bodegas Hidalgo – La Gitana,Sanlúcar de Barrameda,http://www.bodegashidalgolagitana.com/,True,True,True,True,False,True,True,False,True,2,False,False,6
-Bodegas Luis Pérez,Jerez de la Frontera,http://bodegasluisperez.com/,True,True,True,True,True,True,False,True,False,0,False,False,6
-Bodegas Lustau,Jerez de la Frontera,https://lustau.es/,True,False,True,True,False,True,True,True,True,0,False,False,6
-Bodegas Manuel Aragón,Chiclana de la Frontera,https://www.bodegamanuelaragon.com/es/,True,True,True,True,True,True,True,False,True,0,False,False,7
-Bodegas Miguel Domecq – Entrechuelos,Jerez de la Frontera,https://migueldomecq.com/,True,True,True,True,True,True,True,True,True,0,False,False,8
-Bodegas Osborne,El Puerto de Santa María,https://www.osborne.es/es/,True,True,True,True,True,False,False,True,False,0,False,False,5
-Bodegas Páez Morilla,Jerez de la Frontera,https://www.bodegaspaezmorilla.net/visitas,True,True,True,False,True,False,False,True,True,0,False,False,5
-Bodegas Real Tesoro & Valdespino,Jerez de la Frontera,https://www.grupoestevez.es/instalaciones.cfm,False,False,False,False,False,False,False,False,False,0,False,False,0
-Bodegas Rey Fernando De Castilla,Jerez de la Frontera,http://fernandodecastilla.es/,True,True,True,True,True,True,True,True,True,0,False,False,8
-Bodegas Tradición,Jerez de la Frontera,https://bodegastradicion.es/es/,False,False,False,False,False,False,False,False,False,0,False,False,0
-Bodegas Williams & Humbert Sau,Jerez de la Frontera,https://www.williams-humbert.com/,False,False,False,False,False,False,False,False,False,0,False,False,0
-Bodegas Yuste,Sanlúcar de Barrameda,https://bodegasyuste.com/,False,False,False,False,False,False,False,False,False,0,False,False,0
-Bodegas Álvaro Domecq,Jerez de la Frontera,https://www.alvarodomecq.com/,False,False,False,False,False,False,False,False,False,0,False,False,0
-Cooperativa Agrícola Virgen De Palomares,Trebujena,https://vinosdetrebujena.com/visitas-y-catas/,True,True,True,True,True,False,False,True,True,0,True,False,6
-Cooperativa De Viticultores Chiclaneros,Chiclana de la Frontera,https://www.bodegacooperativa.com/content/10-la-bodega,True,True,True,False,True,True,True,True,True,0,False,False,7
-Covisan – Cooperativa Vitivinícola Sanluqueña,Sanlúcar de Barrameda,https://covisan.net/,True,True,True,True,True,False,False,True,True,0,False,False,6
-Finca La Pintora,Rota,https://www.fincalapintora.com/,False,False,False,False,False,False,False,False,False,0,False,False,0
-Viña El Carmen,Jerez de la Frontera,https://vecwines.com/,False,False,False,False,False,False,False,False,False,0,False,False,0
-Viña La Torre,El Puerto de Santa María / Jerez de la Frontera,https://albarizadelatorre.es/,True,True,True,False,False,True,True,True,True,1,True,False,6
-Viñedos Bodega El Piraña,Trebujena,,False,False,False,False,False,False,False,False,False,0,False,False,0
-Bodegas Emilio Hidalgo,Jerez de la Frontera,https://www.emiliohidalgo.es,False,False,False,False,False,False,False,False,False,0,False,False,0
+bodega,localidad,web,web_ok,metodo,idioma_declarado,titulo_pagina,imagenes_con_alt,zoom_permitido,encabezado_h1,jerarquia_encabezados,formularios_etiquetados,estructura_semantica,enlaces_poco_descriptivos,menciona_accesibilidad_fisica,menciona_apoyo_sensorial,indice_accesibilidad_digital
+Bodega Cooperativa Albarizas,Trebujena,https://vinosdealbarizas.com/,True,requests,True,True,True,True,False,False,True,True,0,False,False,6
+Bodega Gago & Co. Barrels – Wines,Jerez de la Frontera,https://gagobarrels.com/visitanos/,True,navegador,True,True,True,True,False,False,True,True,0,False,False,6
+Bodega Mar 7,Sanlúcar de Barrameda,http://despachodevinosmar7.com/,True,requests,True,True,True,False,False,False,True,True,0,True,False,5
+"Bodega, Viña Y Casa Rural Santa Petronila",Jerez de la Frontera,https://santapetronila.com/,True,requests,True,True,True,False,True,False,False,True,0,False,False,5
+Bodegas Ac Wines & Spirits – Sucesores...,Sanlúcar de Barrameda,https://acwines.es/,True,navegador,True,True,False,False,True,True,False,True,0,False,False,5
+Bodegas Altanza,Jerez de la Frontera,https://galeriadeljerez.com/,True,navegador,False,True,True,True,True,False,True,False,0,False,False,5
+Bodegas Barbadillo,Sanlúcar de Barrameda,https://www.barbadillo.com/,True,requests,True,True,True,False,True,True,True,True,0,False,False,7
+Bodegas Barón,Sanlúcar de Barrameda,https://bodegasbaron.es/,True,navegador,True,True,True,True,True,True,False,True,0,False,False,7
+Bodegas Caydsa,Sanlúcar de Barrameda,https://www.caydsa.es/cooperativa-caydsa-visitas/,True,requests,True,True,True,False,True,False,True,True,0,False,False,6
+Bodegas Cayetano Del Pino,Jerez de la Frontera,https://cayetanodelpino.com/visitas,True,requests,True,True,True,True,True,True,True,True,1,True,False,8
+Bodegas Cortijo De Jara,Jerez de la Frontera,https://cortijodejara.es/,True,requests,True,True,True,False,True,True,True,True,0,False,False,7
+Bodegas Delgado Zuleta,Sanlúcar de Barrameda,https://www.delgadozuleta.com/,False,,False,False,False,False,False,False,False,False,0,False,False,0
+Bodegas Dios Baco,Jerez de la Frontera,https://bodegasdiosbaco.com/,True,navegador,True,True,True,True,True,True,True,True,0,False,False,8
+Bodegas Díez Mérito,Jerez de la Frontera,https://diezmerito.com/,True,requests,True,True,True,True,True,True,True,True,24,False,False,8
+Bodegas Espinosa De Los Monteros,Jerez de la Frontera,https://www.bodegasespinosadelosmonteros.com/,True,requests,True,True,True,True,False,False,True,True,0,False,False,6
+Bodegas Forlong,El Puerto de Santa María,https://bodegadeforlong.com/,True,requests,True,True,True,False,True,True,True,True,0,False,False,7
+Bodegas Fundador,Jerez de la Frontera,https://brandyfundador.com/,True,navegador,True,True,True,True,False,False,False,True,0,False,False,5
+Bodegas González Byass – Tío Pepe,Jerez de la Frontera,https://www.tiopepe.com/es-es/validate,True,navegador,True,True,True,True,True,True,True,True,0,False,False,8
+Bodegas Gutiérrez Colosía,El Puerto de Santa María,http://www.gutierrezcolosia.com/,True,requests,True,True,False,True,True,False,True,True,0,False,False,6
+Bodegas Halcón,Lebrija,https://www.bodegashalcon.es/,True,navegador,True,True,True,True,True,False,True,False,0,False,False,6
+Bodegas Herederos De Argüeso,Sanlúcar de Barrameda,https://herederosdeargueso.com/,True,navegador,True,True,True,True,True,True,False,True,0,False,False,7
+Bodegas Hidalgo – La Gitana,Sanlúcar de Barrameda,http://www.bodegashidalgolagitana.com/,True,requests,True,True,True,False,True,True,False,True,2,False,False,6
+Bodegas Luis Pérez,Jerez de la Frontera,http://bodegasluisperez.com/,True,navegador,True,True,True,True,True,False,True,False,0,False,False,6
+Bodegas Lustau,Jerez de la Frontera,https://lustau.es/,True,requests,False,True,True,False,True,True,True,True,0,False,False,6
+Bodegas Manuel Aragón,Chiclana de la Frontera,https://www.bodegamanuelaragon.com/es/,True,navegador,True,True,True,True,True,True,False,True,0,False,False,7
+Bodegas Miguel Domecq – Entrechuelos,Jerez de la Frontera,https://migueldomecq.com/,True,requests,True,True,True,True,True,True,True,True,0,False,False,8
+Bodegas Osborne,El Puerto de Santa María,https://www.osborne.es/es/,True,navegador,True,True,True,True,False,False,True,True,8,False,False,6
+Bodegas Páez Morilla,Jerez de la Frontera,https://www.bodegaspaezmorilla.net/visitas,True,requests,True,True,False,True,False,False,True,True,0,False,False,5
+Bodegas Real Tesoro & Valdespino,Jerez de la Frontera,https://www.grupoestevez.es/instalaciones.cfm,True,navegador,True,True,True,False,True,True,True,True,0,False,False,7
+Bodegas Rey Fernando De Castilla,Jerez de la Frontera,http://fernandodecastilla.es/,True,requests,True,True,True,True,True,True,True,True,0,False,False,8
+Bodegas Tradición,Jerez de la Frontera,https://bodegastradicion.es/es/,True,navegador,True,True,True,True,True,False,True,True,0,False,False,7
+Bodegas Williams & Humbert Sau,Jerez de la Frontera,https://www.williams-humbert.com/,True,navegador,True,True,True,True,True,False,True,False,0,False,False,6
+Bodegas Yuste,Sanlúcar de Barrameda,https://bodegasyuste.com/,False,,False,False,False,False,False,False,False,False,0,False,False,0
+Bodegas Álvaro Domecq,Jerez de la Frontera,https://www.alvarodomecq.com/,True,navegador,True,True,True,True,False,False,True,True,0,False,False,6
+Cooperativa Agrícola Virgen De Palomares,Trebujena,https://vinosdetrebujena.com/visitas-y-catas/,True,requests,True,True,True,True,False,False,True,True,0,True,False,6
+Cooperativa De Viticultores Chiclaneros,Chiclana de la Frontera,https://www.bodegacooperativa.com/content/10-la-bodega,True,requests,True,True,False,True,True,True,True,True,0,False,False,7
+Covisan – Cooperativa Vitivinícola Sanluqueña,Sanlúcar de Barrameda,https://covisan.net/,True,requests,True,True,True,True,False,False,True,True,0,False,False,6
+Finca La Pintora,Rota,https://www.fincalapintora.com/,True,navegador,True,True,True,False,True,True,True,True,0,False,False,7
+Viña El Carmen,Jerez de la Frontera,https://vecwines.com/,True,navegador,True,True,True,True,True,False,True,False,0,False,False,6
+Viña La Torre,El Puerto de Santa María / Jerez de la Frontera,https://albarizadelatorre.es/,True,requests,True,True,False,False,True,True,True,True,1,True,False,6
+Viñedos Bodega El Piraña,Trebujena,,False,,False,False,False,False,False,False,False,False,0,False,False,0
+Bodegas Emilio Hidalgo,Jerez de la Frontera,https://www.emiliohidalgo.es,False,,False,False,False,False,False,False,False,False,0,False,False,0
