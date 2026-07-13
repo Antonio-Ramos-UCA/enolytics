@@ -182,6 +182,13 @@ def cargar_trends_regiones() -> pd.DataFrame:
 
 
 @st.cache_data
+def cargar_acevin() -> pd.DataFrame:
+    """Visitantes por ruta del vino y año (ACEVIN, fuente oficial)."""
+    ruta = config.DATOS_PROCESADO / "acevin" / "visitantes_rutas.csv"
+    return pd.read_csv(ruta) if ruta.exists() else pd.DataFrame()
+
+
+@st.cache_data
 def cargar_gasto_cadiz() -> pd.DataFrame:
     ruta = config.DATOS_PROCESADO / "dataestur" / "GASTO_TPV_DESTINO_PROV_MES_HISTORICO_DL.csv"
     if not ruta.exists():
@@ -246,6 +253,7 @@ gasto_cadiz = cargar_gasto_cadiz()
 satisf_cadiz = cargar_satisfaccion_cadiz()
 trends_temporal = cargar_trends_temporal()
 trends_regiones = cargar_trends_regiones()
+acevin = cargar_acevin()
 
 st.title("🍷 ENOLYTICS — Inteligencia enoturística del Marco de Jerez")
 
@@ -273,7 +281,13 @@ if rol == "Gestor de destino":
     h1, h2, h3, h4 = st.columns(4)
     h1.metric("Bodegas", len(df_f))
     h2.metric("Recursos enoturísticos", len(oferta) if not oferta.empty else "—")
-    if not censo.empty:
+    if not acevin.empty:
+        _ult = int(acevin["anio"].max())
+        _vis = acevin[(acevin["anio"] == _ult) & (acevin["ruta"] == "Marco de Jerez")]["visitantes"]
+        if not _vis.empty:
+            h3.metric(f"Visitantes {_ult}", f"{int(_vis.iloc[0]):,}".replace(",", "."),
+                      help="Visitas a bodegas y museos del Marco (ACEVIN).")
+    elif not censo.empty:
         h3.metric("Reseñas en Google", f"{int(censo['total_resenas'].fillna(0).sum()):,}")
     if not sostenibilidad.empty:
         h4.metric("Bodegas sostenibles", int(sostenibilidad["certificado_swfcp"].sum()))
@@ -374,25 +388,101 @@ if rol == "Gestor de destino":
 
     # ----- 3. Inteligencia de Competidores -----
     with tab_comp:
-        st.caption("Posicionamiento y reputación online frente al conjunto del Marco. El análisis "
-                   "competitivo IPCA por bodega está en la vista 'Bodega individual'.")
-        if censo.empty:
-            st.info("Sin datos de reseñas todavía.")
+        st.caption("El Marco de Jerez **frente a otras rutas del vino de España**. "
+                   "Fuente oficial: Observatorio Turístico de Rutas del Vino de España (ACEVIN).")
+
+        # --- A. Posición del Marco entre las rutas del vino (ACEVIN) ---
+        if acevin.empty:
+            st.info("Sin datos de ACEVIN todavía.")
         else:
-            cen = censo.dropna(subset=["total_resenas"]).sort_values("total_resenas", ascending=False)
-            cola, colb = st.columns(2)
-            with cola:
-                st.caption("Nº de reseñas por bodega (Top 15)")
-                st.bar_chart(cen.head(15).set_index("bodega")["total_resenas"])
-            with colb:
-                st.caption("Nota media por bodega (Top 15 por reseñas)")
-                st.bar_chart(cen.head(15).set_index("bodega")["rating"])
-            st.dataframe(
-                cen[["bodega", "nombre_google", "rating", "total_resenas"]].rename(
-                    columns={"bodega": "Bodega", "nombre_google": "Nombre en Google",
-                             "rating": "Nota", "total_resenas": "Reseñas"}),
-                use_container_width=True, hide_index=True,
-            )
+            FOCO = "Marco de Jerez"
+            ult = int(acevin["anio"].max())
+            prev = int(acevin[acevin["anio"] < ult]["anio"].max()) if (acevin["anio"] < ult).any() else None
+
+            rank_ult = (acevin[acevin["anio"] == ult]
+                        .sort_values("visitantes", ascending=False)
+                        .reset_index(drop=True))
+            pos = int(rank_ult.index[rank_ult["ruta"] == FOCO][0]) + 1 if FOCO in set(rank_ult["ruta"]) else None
+            vis_ult = int(rank_ult.loc[rank_ult["ruta"] == FOCO, "visitantes"].iloc[0]) if pos else 0
+
+            c1, c2, c3 = st.columns(3)
+            c1.metric(f"Posición del Marco ({ult})", f"{pos}º de {len(rank_ult)}",
+                      help="Ranking por nº de visitantes a bodegas y museos (ACEVIN).")
+            c2.metric(f"Visitantes {ult}", f"{vis_ult:,}".replace(",", "."))
+            if prev:
+                vis_prev = acevin[(acevin["anio"] == prev) & (acevin["ruta"] == FOCO)]["visitantes"]
+                if not vis_prev.empty and int(vis_prev.iloc[0]):
+                    var = (vis_ult - int(vis_prev.iloc[0])) / int(vis_prev.iloc[0]) * 100
+                    c3.metric(f"Crecimiento vs {prev}", f"{var:+.1f}%")
+
+            st.markdown(f"**Visitantes por ruta del vino ({ult})**")
+            st.bar_chart(rank_ult.set_index("ruta")["visitantes"])
+
+            st.markdown("**Evolución de visitantes por ruta**")
+            piv = acevin.pivot_table(index="anio", columns="ruta", values="visitantes")
+            st.line_chart(piv)
+
+            # Tabla-ranking con crecimiento interanual
+            if prev:
+                tab = rank_ult.merge(
+                    acevin[acevin["anio"] == prev][["ruta", "visitantes"]],
+                    on="ruta", how="left", suffixes=("", "_prev"))
+                tab["Crecimiento"] = ((tab["visitantes"] - tab["visitantes_prev"])
+                                      / tab["visitantes_prev"] * 100).round(1)
+                tab.insert(0, "Pos.", range(1, len(tab) + 1))
+                st.dataframe(
+                    tab[["Pos.", "ruta", "visitantes", "visitantes_prev", "Crecimiento"]].rename(
+                        columns={"ruta": "Ruta del vino", "visitantes": f"Visitantes {ult}",
+                                 "visitantes_prev": f"Visitantes {prev}", "Crecimiento": "Crec. %"}),
+                    use_container_width=True, hide_index=True,
+                )
+
+            # --- B. Demanda real vs. interés digital (el contraste estratégico) ---
+            if not trends_temporal.empty:
+                st.divider()
+                st.markdown("**Demanda real (visitas) vs. interés digital (búsquedas)**")
+                tcols = [c for c in trends_temporal.columns if c != "fecha"]
+                medias_t = trends_temporal[tcols].mean().sort_values(ascending=False)
+                lider_t = medias_t.index[0].replace("bodegas ", "")
+                if pos == 1 and "Jerez" not in lider_t:
+                    vis_fmt = f"{vis_ult:,}".replace(",", ".")
+                    st.warning(
+                        f"⚠️ **Paradoja competitiva:** el Marco de Jerez es **1º de España en "
+                        f"visitantes reales** ({vis_fmt} en {ult}), pero **no lidera el interés "
+                        f"de búsqueda** en Google (lo lidera *{lider_t}*). Hay margen de mejora "
+                        f"en captación y posicionamiento digital."
+                    )
+                st.caption(
+                    "Matiz: ACEVIN cuenta Rioja Alta y Rioja Alavesa como **rutas separadas**. "
+                    "Sumadas, la Rioja supera al Marco en visitantes, lo que ayuda a explicar su "
+                    "mayor volumen de búsquedas. El Marco es líder **como ruta individual**."
+                )
+
+        # --- C. Posicionamiento dentro del Marco (benchmarking interno) ---
+        st.divider()
+        with st.expander("Posicionamiento dentro del Marco (reputación por bodega)"):
+            if censo.empty:
+                st.info("Sin datos de reseñas todavía.")
+            else:
+                st.caption("Reputación online de cada bodega del Marco. El análisis competitivo "
+                           "IPCA por bodega está en la vista 'Bodega individual'.")
+                cen = censo.dropna(subset=["total_resenas"]).sort_values("total_resenas", ascending=False)
+                cola, colb = st.columns(2)
+                with cola:
+                    st.caption("Nº de reseñas por bodega (Top 15)")
+                    st.bar_chart(cen.head(15).set_index("bodega")["total_resenas"])
+                with colb:
+                    st.caption("Nota media por bodega (Top 15 por reseñas)")
+                    st.bar_chart(cen.head(15).set_index("bodega")["rating"])
+                st.dataframe(
+                    cen[["bodega", "nombre_google", "rating", "total_resenas"]].rename(
+                        columns={"bodega": "Bodega", "nombre_google": "Nombre en Google",
+                                 "rating": "Nota", "total_resenas": "Reseñas"}),
+                    use_container_width=True, hide_index=True,
+                )
+
+        st.caption("⚠️ Pendiente (Tabla 1 de la memoria): **comparación de precios** de servicios "
+                   "enoturísticos y **estrategias diferenciadoras** de otras rutas.")
 
     # ----- 4. Inteligencia de Clientes -----
     with tab_cli:
