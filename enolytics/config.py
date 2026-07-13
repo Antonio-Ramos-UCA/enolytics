@@ -78,6 +78,100 @@ INTELIGENCIAS = [
     "sostenibilidad",
 ]
 
+# Objetivo de cada inteligencia, según la Memoria Científico-Técnica (p. 5), y su
+# categoría en el marco de indicadores de SEGITTUR (Tabla 1). Se muestran en el
+# dashboard para que cada pestaña declare qué persigue y de dónde bebe.
+OBJETIVOS_INTELIGENCIAS = {
+    "economica": {
+        "titulo": "Inteligencia Económica",
+        "segittur": "Sostenibilidad",
+        "objetivo": (
+            "Evalúa el impacto económico del enoturismo en el territorio, la rentabilidad "
+            "del sector y su contribución al empleo y desarrollo local."
+        ),
+        "indicadores": ["Impacto económico del enoturismo",
+                        "Contribución al empleo y desarrollo local",
+                        "Rentabilidad del sector enoturístico"],
+    },
+    "mercado": {
+        "titulo": "Inteligencia de Mercado",
+        "segittur": "Demanda",
+        "objetivo": (
+            "Analiza tendencias del turismo del vino, patrones de búsqueda en plataformas "
+            "digitales y la predisposición de los turistas al gasto en experiencias enoturísticas."
+        ),
+        "indicadores": ["Patrones de búsquedas online y redes sociales",
+                        "Tendencias emergentes en el turismo del vino",
+                        "Comparación de la demanda con otros destinos",
+                        "Predisposición al gasto en enoturismo"],
+    },
+    "competidores": {
+        "titulo": "Inteligencia de Competidores",
+        "segittur": "Oferta / Demanda / Sostenibilidad",
+        "objetivo": (
+            "Compara la oferta del Marco de Jerez con otros destinos enoturísticos, "
+            "identificando estrategias diferenciadoras y posicionamiento relativo en el mercado."
+        ),
+        "indicadores": ["Comparación de la oferta con otros destinos",
+                        "Estrategias diferenciadoras de otras regiones",
+                        "Reputación online del destino",
+                        "Comparación de precios con otros destinos"],
+    },
+    "clientes": {
+        "titulo": "Inteligencia de Clientes",
+        "segittur": "Demanda",
+        "objetivo": (
+            "Examina el perfil y comportamiento de los visitantes, sus motivaciones, "
+            "niveles de satisfacción y fidelización."
+        ),
+        "indicadores": ["Perfil y comportamiento de los visitantes",
+                        "Motivaciones de visita y fidelización",
+                        "Canales de planificación y reserva",
+                        "Volumen de visitas a bodegas y museos",
+                        "Nivel de satisfacción y percepción"],
+    },
+    "negocios": {
+        "titulo": "Inteligencia de Negocios",
+        "segittur": "Oferta / Sostenibilidad",
+        "objetivo": (
+            "Mide la capacidad del sector enoturístico en términos de infraestructura, "
+            "servicios, formación del personal y estrategias de innovación."
+        ),
+        "indicadores": ["Nº de bodegas abiertas al turismo",
+                        "Nº de museos y centros de interpretación",
+                        "Nº de enotecas, agencias y empresas de servicios",
+                        "Nº de eventos enoturísticos organizados",
+                        "Nº de empleados y nivel de formación del personal",
+                        "Estrategias de innovación en bodegas"],
+    },
+    "tecnologica": {
+        "titulo": "Inteligencia Tecnológica",
+        "segittur": "Oferta / Sostenibilidad",
+        "objetivo": (
+            "Evalúa la implementación de tecnologías en la experiencia enoturística y la "
+            "accesibilidad del destino, incluyendo la adopción de herramientas digitales "
+            "para mejorar la interacción con los visitantes."
+        ),
+        "indicadores": ["Adopción de tecnologías (realidad aumentada, visitas virtuales, "
+                        "reservas digitales)",
+                        "Grado de accesibilidad universal en instalaciones y servicios",
+                        "Índice de accesibilidad digital en sitios web"],
+    },
+    "sostenibilidad": {
+        "titulo": "Inteligencia en Sostenibilidad",
+        "segittur": "Sostenibilidad",
+        "objetivo": (
+            "Evalúa el impacto ambiental, social y económico del enoturismo, con especial "
+            "atención a la eficiencia en el uso de recursos y la adopción de estrategias de "
+            "economía circular."
+        ),
+        "indicadores": ["Impacto ambiental (consumo de agua, energía, huella de carbono)",
+                        "Certificaciones ambientales",
+                        "Prácticas de economía circular",
+                        "Uso de medios de transporte sostenibles"],
+    },
+}
+
 # Fuentes de reseñas previstas (para el módulo de ingesta de reseñas)
 FUENTES_RESENAS = ["google", "tripadvisor"]
 

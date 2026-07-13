@@ -215,6 +215,18 @@ def cargar_evolucion() -> pd.DataFrame:
     return nlp.evolucion_atributos(an, freq="Y", min_menciones=15)
 
 
+def cabecera_inteligencia(clave: str) -> None:
+    """Muestra el objetivo de la inteligencia según la memoria + su categoría SEGITTUR."""
+    info = config.OBJETIVOS_INTELIGENCIAS.get(clave)
+    if not info:
+        return
+    st.info(f"🎯 **Objetivo (Memoria Científico-Técnica):** {info['objetivo']}")
+    with st.expander(f"Categoría SEGITTUR: **{info['segittur']}** · Indicadores previstos "
+                     f"(Tabla 1 de la memoria)"):
+        for ind in info["indicadores"]:
+            st.markdown(f"- {ind}")
+
+
 def resumen_dipa(ev: pd.DataFrame, anios: int = 3) -> pd.DataFrame:
     """Compara el desempeño de los primeros vs. los últimos `anios` con datos (DIPA)."""
     if ev.empty:
@@ -308,6 +320,7 @@ if rol == "Gestor de destino":
 
     # ----- 1. Inteligencia Económica -----
     with tab_eco:
+        cabecera_inteligencia("economica")
         st.caption("Impacto económico del enoturismo. Fuente oficial: Dataestur (SEGITTUR), "
                    "provincia de Cádiz. Pendiente: facturación y empleo por bodega (SABI).")
         if gasto_anio.empty:
@@ -327,6 +340,7 @@ if rol == "Gestor de destino":
 
     # ----- 2. Inteligencia de Mercado -----
     with tab_mer:
+        cabecera_inteligencia("mercado")
         st.caption("Demanda y percepción del destino. Fuentes: Google Trends (interés de "
                    "búsqueda) y Dataestur (gasto y percepción). Comparación con las rutas "
                    "del vino competidoras.")
@@ -388,6 +402,7 @@ if rol == "Gestor de destino":
 
     # ----- 3. Inteligencia de Competidores -----
     with tab_comp:
+        cabecera_inteligencia("competidores")
         st.caption("El Marco de Jerez **frente a otras rutas del vino de España**. "
                    "Fuente oficial: Observatorio Turístico de Rutas del Vino de España (ACEVIN).")
 
@@ -486,6 +501,7 @@ if rol == "Gestor de destino":
 
     # ----- 4. Inteligencia de Clientes -----
     with tab_cli:
+        cabecera_inteligencia("clientes")
         st.caption("Satisfacción, motivaciones y atributos valorados por el visitante "
                    "(análisis de 10.972 reseñas de Google).")
         if tabla_ipa.empty and evolucion.empty:
@@ -515,6 +531,7 @@ if rol == "Gestor de destino":
 
     # ----- 5. Inteligencia de Negocios -----
     with tab_neg:
+        cabecera_inteligencia("negocios")
         st.caption("Infraestructura y oferta enoturística del destino (club de producto de la Ruta).")
         if not oferta.empty:
             oc1, oc2 = st.columns([1, 2])
@@ -541,6 +558,7 @@ if rol == "Gestor de destino":
 
     # ----- 6. Inteligencia Tecnológica -----
     with tab_tec:
+        cabecera_inteligencia("tecnologica")
         if auditoria.empty:
             st.info("Sin auditoría web todavía.")
         else:
@@ -575,6 +593,7 @@ if rol == "Gestor de destino":
 
     # ----- 7. Inteligencia en Sostenibilidad -----
     with tab_sos:
+        cabecera_inteligencia("sostenibilidad")
         if sostenibilidad.empty:
             st.info("Sin datos de sostenibilidad todavía.")
         else:
