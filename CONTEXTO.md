@@ -281,8 +281,16 @@ datos con Fernando (FMH) y Águeda (ACM), que están en el equipo de trabajo.
        (indicador ya previsto: *IPA/IPCA por procedencia*).
      · **Google Trends por región/país** (ya tenemos el origen por CCAA; ampliar a internacional).
      → Alimenta **Clientes** (perfil) y **Mercado** (procedencia).
+   - **(c) ⭐ IDIOMA DE LAS RESEÑAS → procedencia.** *La más barata de las tres: los datos ya los
+     tenemos.* Detectar el idioma de las 10.972 reseñas (`langdetect`) → columna `idioma` y
+     segmento **nacional vs. internacional**. Permite el **IPA/IPCA por procedencia** (¿valora
+     lo mismo el turista internacional que el nacional?) y mide el peso del visitante extranjero
+     por bodega. **Además corrige un sesgo actual**: el léxico de atributos es solo español, así
+     que ~1/3 de las reseñas se analizan mal → **el IPA de hoy está sesgado hacia el nacional**.
+     ⚠️ El idioma es un *proxy* de la procedencia, no la procedencia real → etiquetar 🟡 estimado.
    - Recordatorio de lo que **NO** es: el módulo `transporte.py` (OpenStreetMap) mide si *se
      puede llegar* sin coche, no cuánta gente hay ni de dónde viene.
+   - **Estado: las tres (a, b, c) quedan PENDIENTES por decisión de Antonio (13/07).**
 
 ---
 

@@ -26,7 +26,12 @@
 - [ ] **Consejo Regulador de Jerez** — memorias anuales (producción, ventas, exportación).
 
 ## Calidad del análisis (NLP)
-- [ ] **Sentimiento/atributos multilingües** — ~1/3 de reseñas no son en español; instalar `transformers` (BERT multilingüe) o ampliar el léxico a EN/DE/IT/FR.
+- [ ] ⭐ **IDIOMA DE LAS RESEÑAS → procedencia del visitante** (interesa especialmente a Antonio; **la más barata: los datos ya los tenemos**).
+  - **Qué:** detectar el idioma de cada una de las 10.972 reseñas (`langdetect`/`langid`, o el campo de idioma si Outscraper lo trae) → nueva columna `idioma` en `resenas.csv` y segmento **nacional (ES) vs. internacional**.
+  - **Para qué:** (1) **IPA/IPCA por procedencia** — ¿valora lo mismo el enoturista internacional que el nacional? (2) medir el **peso real del visitante internacional** por bodega; (3) detectar bodegas con vocación exportadora vs. locales.
+  - **Por qué importa:** hoy el léxico de atributos es **solo español**, así que ~1/3 de las reseñas se analizan mal o no se analizan → el IPA actual está **sesgado hacia el visitante nacional**. Esto lo arregla y a la vez abre un eje de análisis nuevo.
+  - **Ojo:** el idioma de la reseña es un *proxy* de la procedencia, no la procedencia real (un español puede escribir en inglés). Etiquetar como 🟡 estimado.
+- [ ] **Sentimiento/atributos multilingües** — ~1/3 de reseñas no son en español; instalar `transformers` (BERT multilingüe) o ampliar el léxico a EN/DE/IT/FR. (Va de la mano de la tarea anterior.)
 - [ ] **Modelado de temas (LDA)** — descubrir atributos automáticamente, más allá del léxico fijo.
 - [ ] Validar/afinar el léxico de atributos con criterio experto (Paula / bodegas).
 
