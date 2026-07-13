@@ -291,6 +291,20 @@ datos con Fernando (FMH) y Águeda (ACM), que están en el equipo de trabajo.
    - Recordatorio de lo que **NO** es: el módulo `transporte.py` (OpenStreetMap) mide si *se
      puede llegar* sin coche, no cuánta gente hay ni de dónde viene.
    - **Estado: las tres (a, b, c) quedan PENDIENTES por decisión de Antonio (13/07).**
+7. ⭐⭐ **CONECTIVIDAD AÉREA (Dataestur) — la pieza que nos falta para ser PREDICTIVOS.**
+   Aportado por Antonio (13/07):
+   https://www.dataestur.es/blog/como-usar-datos-conectividad-aerea-pasajeros-destinos/
+   - Ofrece **búsquedas de vuelos, reservas confirmadas y asientos programados con hasta
+     3 MESES DE PROYECCIÓN**, además del tráfico de pasajeros.
+   - **Por qué es la pieza clave:** la memoria promete *"capacidad predictiva"*, *"datos en
+     tiempo real"* y *"simulaciones y proyecciones de escenarios"*. **Hoy TODOS nuestros
+     indicadores miran al pasado** (reseñas, visitantes del año anterior, auditorías). Esta es
+     la **primera fuente que mira al futuro** y permitiría cumplir esa promesa de la memoria.
+   - Jerez **tiene aeropuerto propio** (lo detectamos en OSM). Comprobar si está entre los 23
+     destinos con informe mensual; si no, aproximar con Sevilla.
+   - Indicadores: conversión búsqueda→reserva, **antelación de compra por mercado emisor**,
+     estancia media, ocupación estimada → **Mercado**, **Clientes** y **estacionalidad (P4A)**.
+   - Acceso por la **API de Dataestur** (ya tenemos cliente en `enolytics/ingesta/dataestur.py`).
 
 ---
 

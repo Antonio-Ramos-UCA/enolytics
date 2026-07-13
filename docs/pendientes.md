@@ -23,6 +23,19 @@
   - **Procedencia inferida de las reseñas**: detectar el **idioma** de cada reseña (1/3 no están en español) → segmentar nacional vs. internacional, y cruzarlo con el IPA (indicador ya previsto: *IPA/IPCA por procedencia*).
   - **Google Trends por región/país** (ya lo tenemos parcialmente: de dónde se busca "bodegas Jerez" → Andalucía, Ceuta, Extremadura…). Ampliar a interés internacional ("sherry tour").
   - Cubre indicadores de la Tabla 1: *perfil y comportamiento de los visitantes* (Clientes) y *procedencia* (Mercado).
+- [ ] ⭐ **CONECTIVIDAD AÉREA (Dataestur) — el único dato PREDICTIVO que hemos encontrado.**
+  Fuente: https://www.dataestur.es/blog/como-usar-datos-conectividad-aerea-pasajeros-destinos/
+  - **Qué ofrece:** 4 indicadores, y **tres de ellos miran al FUTURO (hasta 3 meses de proyección)**:
+    1. **Búsquedas online de vuelos** (proyección 3 meses) → intención de viaje *antes* de que ocurra.
+    2. **Reservas confirmadas** (proyección 3 meses) → demanda ya comprometida.
+    3. **Oferta de asientos programada** (3 meses) → capacidad de llegada.
+    4. Tráfico de pasajeros estimado (mes anterior).
+  - **Por qué es importante:** la memoria promete *"modelos de integración de datos **en tiempo real** que permitan mejorar la **capacidad predictiva**"* y *"**simulaciones y proyecciones** de escenarios turísticos"*. **Hoy TODOS nuestros datos miran al pasado.** Esta es la primera fuente que permitiría cumplir esa promesa.
+  - **Encaja con el Marco:** Jerez **tiene aeropuerto propio** (aparece en nuestros datos de OSM). Habría que ver si está entre los 23 destinos con informe mensual, y si no, usar el de Sevilla/Cádiz como aproximación.
+  - **Indicadores que propone construir:** tasa de conversión búsqueda→reserva, **antelación de compra por mercado emisor**, duración media de estancia, ocupación estimada.
+  - **Alimenta:** **Mercado** (demanda futura, mercados prioritarios, demanda potencial sin cobertura aérea), **Clientes** (procedencia real del internacional) y **estacionalidad** (FEDER P4A).
+  - **Acceso:** API de Dataestur (ya tenemos cliente en `enolytics/ingesta/dataestur.py`) + cuadro de mando en `/transporte/informacion-transporte-aereo-pasajeros/`. También vía SIT de SEGITTUR (previa solicitud).
+  - **Tarea:** leer el blog entero, localizar los conjuntos concretos en la API y evaluar la cobertura para Jerez.
 - [ ] **Consejo Regulador de Jerez** — memorias anuales (producción, ventas, exportación).
 
 ## Calidad del análisis (NLP)
