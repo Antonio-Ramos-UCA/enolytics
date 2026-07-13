@@ -51,6 +51,12 @@ No hace falta saber Git: **Claude lo gestiona por ti**. Tu rutina es:
   uno nunca rompe lo que ve el equipo o las bodegas.
 - Si hay algún choque, Claude lo resuelve al integrar.
 
+> ⚠️ **Tras integrar, REINICIA la app.** Streamlit vuelve a ejecutar `app.py`, pero se queda con
+> la versión **antigua en memoria** de los módulos importados (`config.py`, `ingesta/*.py`…).
+> Si has tocado algo fuera de `app.py`, la app puede dar un `AttributeError` por quedarse a
+> medio actualizar. **Solución:** en el dashboard → **"Manage app"** (abajo a la derecha) →
+> menú **⋮** → **"Reboot app"**. Tarda ~30 s y arranca limpio.
+
 ## 7. Cómo dejamos las cosas para no perder el hilo
 
 - Cada avance se anota en **`CONTEXTO.md`** (diario del proyecto) y las tareas en
