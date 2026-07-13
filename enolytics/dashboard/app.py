@@ -167,6 +167,12 @@ def cargar_auditoria() -> pd.DataFrame:
 
 
 @st.cache_data
+def cargar_accesibilidad() -> pd.DataFrame:
+    ruta = config.DATOS_PROCESADO / "accesibilidad.csv"
+    return pd.read_csv(ruta) if ruta.exists() else pd.DataFrame()
+
+
+@st.cache_data
 def cargar_trends_temporal() -> pd.DataFrame:
     ruta = config.DATOS_PROCESADO / "google_trends" / "interes_temporal.csv"
     if not ruta.exists():
@@ -297,6 +303,7 @@ evolucion = cargar_evolucion()
 oferta = cargar_oferta()
 sostenibilidad = cargar_sostenibilidad()
 auditoria = cargar_auditoria()
+accesibilidad = cargar_accesibilidad()
 gasto_cadiz = cargar_gasto_cadiz()
 satisf_cadiz = cargar_satisfaccion_cadiz()
 trends_temporal = cargar_trends_temporal()
@@ -772,6 +779,71 @@ if rol == "Gestor de destino":
                 st.caption(f"⚠️ {n_no} bodegas no auditables automáticamente (sin web, verificación "
                            "de edad o protección anti-bot — frecuente en las webs más avanzadas). "
                            "No se muestran para no falsear el índice.")
+
+        # ----- Accesibilidad universal (indicador de la Tabla 1 de la memoria) -----
+        if not accesibilidad.empty:
+            st.divider()
+            st.subheader("♿ Accesibilidad universal")
+            acc_ok = accesibilidad[accesibilidad["web_ok"] == True]  # noqa: E712
+            if acc_ok.empty:
+                st.info("Sin webs auditables para accesibilidad.")
+            else:
+                fuente("observado", "Comprobaciones objetivas sobre el HTML de cada web, basadas "
+                                    "en las **WCAG**. No sustituye a una auditoría WCAG completa: "
+                                    "el contraste de color y la navegación por teclado exigen "
+                                    "renderizar la página.")
+                a1, a2, a3 = st.columns(3)
+                a1.metric("Accesibilidad digital media",
+                          f"{acc_ok['indice_accesibilidad_digital'].mean():.1f}/8")
+                a2.metric("Webs sin barreras graves",
+                          int((acc_ok["indice_accesibilidad_digital"] >= 7).sum()),
+                          f"de {len(acc_ok)} auditadas")
+                a3.metric("Declaran el idioma",
+                          f"{acc_ok['idioma_declarado'].mean() * 100:.0f}%",
+                          help="Sin <html lang>, los lectores de pantalla no saben en qué idioma "
+                               "leer la página.")
+
+                st.markdown("**Cumplimiento por criterio (% de webs)**")
+                criterios = {
+                    "Idioma declarado": "idioma_declarado",
+                    "Título de página": "titulo_pagina",
+                    "Imágenes con texto alternativo": "imagenes_con_alt",
+                    "Zoom permitido": "zoom_permitido",
+                    "Encabezado principal (h1)": "encabezado_h1",
+                    "Jerarquía de encabezados": "jerarquia_encabezados",
+                    "Formularios etiquetados": "formularios_etiquetados",
+                    "Estructura semántica": "estructura_semantica",
+                }
+                cumpl = pd.Series({k: acc_ok[v].mean() * 100
+                                   for k, v in criterios.items() if v in acc_ok.columns})
+                st.bar_chart(cumpl.sort_values())
+
+                # Accesibilidad física/sensorial: solo lo que comunican (proxy)
+                st.markdown("**Accesibilidad física y sensorial comunicada**")
+                fuente("estimado", "*Proxy*: detecta si la web **menciona** accesibilidad para "
+                                   "movilidad reducida, audioguías, etc. **No confirma** que la "
+                                   "bodega sea accesible. El dato real exige Google Maps o "
+                                   "preguntar a la bodega.")
+                f1, f2 = st.columns(2)
+                n_fis = int(acc_ok["menciona_accesibilidad_fisica"].sum())
+                n_sen = int(acc_ok["menciona_apoyo_sensorial"].sum())
+                f1.metric("Mencionan accesibilidad física", n_fis,
+                          f"{n_fis / len(acc_ok) * 100:.0f}% de las webs")
+                f2.metric("Mencionan apoyo sensorial", n_sen,
+                          f"{n_sen / len(acc_ok) * 100:.0f}% (audioguías, braille…)")
+
+                st.markdown("**Ranking de accesibilidad digital**")
+                st.dataframe(
+                    acc_ok.sort_values("indice_accesibilidad_digital", ascending=False)[
+                        ["bodega", "localidad", "indice_accesibilidad_digital",
+                         "menciona_accesibilidad_fisica", "menciona_apoyo_sensorial"]
+                    ].rename(columns={
+                        "bodega": "Bodega", "localidad": "Localidad",
+                        "indice_accesibilidad_digital": "Accesibilidad digital /8",
+                        "menciona_accesibilidad_fisica": "Menciona acces. física",
+                        "menciona_apoyo_sensorial": "Menciona apoyo sensorial"}),
+                    use_container_width=True, hide_index=True,
+                )
 
     # ----- 7. Inteligencia en Sostenibilidad -----
     with tab_sos:
