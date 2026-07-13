@@ -305,6 +305,21 @@ datos con Fernando (FMH) y Águeda (ACM), que están en el equipo de trabajo.
    - Indicadores: conversión búsqueda→reserva, **antelación de compra por mercado emisor**,
      estancia media, ocupación estimada → **Mercado**, **Clientes** y **estacionalidad (P4A)**.
    - Acceso por la **API de Dataestur** (ya tenemos cliente en `enolytics/ingesta/dataestur.py`).
+8. ⭐⭐ **BLOG DE DATAESTUR — mina de fuentes** (aportado por Antonio, 13/07).
+   https://www.dataestur.es/blog/ → **`docs/fuentes_blog_dataestur.md`** cruza cada artículo con
+   la laguna concreta que tapa. Revisadas las páginas 1-4 (faltan 5-9).
+   **Tapa indicadores de la Tabla 1 que hoy están a CERO:**
+   - **Empleo turístico** (empresas + empleo, DIRCE) → Económica y Negocios.
+   - **Rentabilidad del sector** (hostelería: beneficios, ventas, trabajadores) → **alternativa
+     pública y gratuita a SABI**, que sigue pendiente de acceso.
+   - **Redes sociales** → Mercado (la memoria las cita expresamente y no las tenemos).
+   - **Impacto de un gran evento en los desplazamientos** → desplazamientos **+ eventos
+     enoturísticos** (medir el efecto de la **Vendimia** en las llegadas).
+   - **⭐ Índice de sentimiento oficial de SEGITTUR** → **benchmark para validar nuestro
+     análisis de sentimiento**, que hoy se deriva de **las estrellas** y no de un modelo NLP.
+     **Muy valioso para la publicación JCR** (comparar nuestro índice con el oficial).
+   - **Calendario de publicación de datos 2026** → imprescindible para la **automatización
+     periódica** (el "tiempo real" que promete la memoria).
 
 ---
 

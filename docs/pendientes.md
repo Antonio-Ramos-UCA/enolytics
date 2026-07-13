@@ -36,6 +36,14 @@
   - **Alimenta:** **Mercado** (demanda futura, mercados prioritarios, demanda potencial sin cobertura aérea), **Clientes** (procedencia real del internacional) y **estacionalidad** (FEDER P4A).
   - **Acceso:** API de Dataestur (ya tenemos cliente en `enolytics/ingesta/dataestur.py`) + cuadro de mando en `/transporte/informacion-transporte-aereo-pasajeros/`. También vía SIT de SEGITTUR (previa solicitud).
   - **Tarea:** leer el blog entero, localizar los conjuntos concretos en la API y evaluar la cobertura para Jerez.
+- [ ] ⭐ **BLOG DE DATAESTUR — mina de fuentes** (https://www.dataestur.es/blog/). Revisadas las páginas 1-4 y **cruzados los artículos con nuestras lagunas** en **[docs/fuentes_blog_dataestur.md](fuentes_blog_dataestur.md)**. Lo que tapa (todo son indicadores de la Tabla 1 hoy a CERO):
+  - **Empleo turístico** (empresas + empleo, DIRCE) → Económica y Negocios.
+  - **Rentabilidad** (hostelería: beneficios, ventas, trabajadores) → alternativa **gratuita a SABI**.
+  - **Redes sociales** (qué interesa de España en RRSS) → Mercado (la memoria las cita y no las tenemos).
+  - **Impacto de un gran evento en los desplazamientos** → desplazamientos + eventos enoturísticos (¡la Vendimia!).
+  - **Índice de sentimiento oficial de SEGITTUR** → **benchmark para validar nuestro análisis de sentimiento** (hoy derivado de las estrellas, no de un modelo NLP). Muy útil para el paper.
+  - **Calendario de publicación 2026** → imprescindible para la **automatización periódica** ("tiempo real").
+  - [ ] Falta revisar las **páginas 5-9** del blog.
 - [ ] **Consejo Regulador de Jerez** — memorias anuales (producción, ventas, exportación).
 
 ## Calidad del análisis (NLP)
