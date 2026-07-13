@@ -161,6 +161,115 @@ streamlit, pandas, sklearn, plotly, matplotlib, requests, bs4.
 6. **En paralelo (no bloquea):** diseñar cuestionarios a partir de la Tabla 1 de la
    memoria; incorporar indicadores oficiales (INE, Dataestur, ACEVIN, Google Trends).
 
+## ═══ SESIÓN 2026-07-13 ═══
+
+### 0. Auditoría de coherencia MEMORIA ↔ PROTOTIPO (documento clave)
+- **`docs/auditoria_coherencia.md`**: contraste indicador a indicador de lo comprometido en la
+  memoria firmada frente a lo que hace el prototipo. **Leerlo antes de seguir.**
+- Veredicto: el núcleo diferencial está hecho (7 inteligencias + IPA/IPCA/DIPA/DIPCA + minería
+  de reseñas), pero hay **3 desviaciones conscientes**, **1 desajuste conceptual** y lagunas.
+- **Decisiones pendientes de Antonio y Paula (¡importante!):**
+  - Memoria dice **Power BI** → usamos **Streamlit**. Hay que **justificarlo por escrito** ante FEDER.
+  - Memoria compromete **Azure** con **3.500 € presupuestados** → usamos CSV + Streamlit gratis.
+    **Ese dinero está SIN EJECUTAR.** Decidir qué se hace.
+  - Memoria dice *"acceso protegido, solo personas autorizadas"* → el dashboard es **público**.
+    Contradice literalmente la memoria. Reversible en 2 min.
+  - Errata en la memoria (p. 4): menciona **"SIPA"** una sola vez. Decidir si entra o es errata.
+  - **Cuestionarios**: son hito de la Fase 1 y muchos indicadores solo se cubren así.
+- **`docs/plan_profundizacion.md`**: plan por inteligencia (lo que falta + mejoras propias),
+  con reparto sugerido entre Antonio, Paula y Fernando.
+- **`docs/protocolo_trabajo.md`**: cómo trabajar los 3 en paralelo (ramas, PR, integración
+  semanal). Reparto: **Antonio** = Económica+Mercado · **Paula** = Clientes+Competidores ·
+  **Fernando** = Negocios+Tecnológica+Sostenibilidad. (Alfredo no participa.)
+  ⚠️ **Tras integrar, hacer Reboot** en Streamlit: cachea los módulos importados y da
+  `AttributeError` si tocas algo fuera de `app.py`.
+
+### 1. Competidores REORIENTADO + ACEVIN (corrige el desajuste conceptual)
+- La memoria define "competidores" como **otros destinos**, no bodegas del propio Marco.
+  Pestaña reescrita: el Marco frente a las demás rutas del vino.
+- **`enolytics/ingesta/acevin.py`** — Observatorio Turístico de las Rutas del Vino (PDF oficiales,
+  extracción por regex). 4 salidas en `datos/procesado/acevin/`:
+  `visitantes_rutas.csv` (2022-24) · `oferta_rutas.csv` (37 rutas) ·
+  `ingresos_rutas.csv` (parcial) · `perfil_demanda.csv` (16 indicadores, **NACIONAL**).
+- **HALLAZGOS (los genera el dashboard solo, con guardas que impiden afirmar sin dato):**
+  1. **El Marco es la ruta nº1 de España en 2024**: 425.652 visitantes (+11,2%), adelantando a
+     Rioja Alta (389.399 → 316.922, **−18,6%**).
+  2. **Desequilibrio demanda-oferta**: 1º en visitantes pero **7º en oferta** (111 servicios
+     frente a los 334 de Ribera del Duero).
+  3. **Brecha de monetización**: ingresa **40,4 €/visitante** vs **70,0 €** de Rioja Alta
+     (media nacional 37,0 €). Lidera en volumen, monetiza mal.
+  4. **Paradoja competitiva**: 1º en visitas reales, pero **no lidera el interés de búsqueda**.
+- ⚠️ El informe de demanda de ACEVIN es **nacional, no por ruta**: sirve de *benchmark* y de
+  **plantilla validada de cuestionario** (628 encuestas, 95% confianza).
+
+### 2. Objetivos de la memoria + categorías SEGITTUR en cada pestaña
+- `config.OBJETIVOS_INTELIGENCIAS`: objetivo literal (memoria p.5), categoría SEGITTUR e
+  indicadores previstos (Tabla 1) de las 7. Helper `cabecera_inteligencia()`.
+
+### 3. Etiquetado del ORIGEN de cada indicador (rigor)
+- `config.ORIGENES_DATO` + helpers `fuente()` / `leyenda_origenes()`. 13 etiquetas:
+  🟢 oficial · 🔵 observado · 🟡 estimado. Obliga a confesar las limitaciones (el gasto es
+  **provincial**, no enoturístico; la "importancia" del IPA **se infiere**, no se pregunta;
+  la sostenibilidad web mide **comunicación**, no desempeño).
+
+### 4. Accesibilidad universal (mayor laguna de la memoria, estaba a CERO)
+- **`enolytics/ingesta/accesibilidad.py`**: 8 comprobaciones WCAG sobre el HTML →
+  **índice de accesibilidad digital /8** (que la memoria pide literalmente) + señales de
+  accesibilidad física/sensorial. `datos/procesado/accesibilidad.csv`.
+- **HALLAZGO: 0 de 38 bodegas mencionan apoyo sensorial** (audioguías, braille, signos).
+  Solo 4 mencionan accesibilidad física. Media digital 6,4/8; **un tercio bloquea el zoom**
+  (`user-scalable=no`) → barrera grave y de **arreglo trivial**.
+
+### 5. Transporte sostenible (OpenStreetMap)
+- **`enolytics/ingesta/transporte.py`**: distancia de cada bodega a estación/parada (Overpass).
+  ⚠️ Overpass devuelve **406 con User-Agent de navegador**: exige identificarse.
+- **HALLAZGO (contrario a lo esperado): el 88% de las bodegas SÍ es accesible en transporte
+  público** (34 a pie), pero el 76% de los enoturistas llega en coche (ACEVIN).
+  → *"La infraestructura existe, pero no se usa"*: el cuello de botella es **información y
+  hábito**, no inversión.
+
+### 6. ⭐ MOTOR DE RECOMENDACIONES ACCIONABLES (el diferencial de la memoria)
+- **`enolytics/analitica/recomendaciones.py`**. La memoria promete que ENOLYTICS *"no solo
+  recopila datos, sino que los transforma en recomendaciones accionables"*. Ya lo hace.
+- Reglas que cruzan las 7 inteligencias; cada una **solo se dispara si el dato la sostiene** y
+  declara su **diagnóstico** (evidencia numérica) y su **fuente**.
+- **Destino: 8 recomendaciones (5 de prioridad alta)**, sobre las pestañas.
+  **Bodega: nueva pestaña 🎯** en la vista individual.
+- **HALLAZGO METODOLÓGICO (muy publicable):** el **IPA clásico se equivoca** con
+  «Organización y reserva»: lo clasifica como *«Baja prioridad»* porque se menciona poco (233
+  menciones), pero **el visitante solo habla de la reserva cuando falla** → el nº de menciones
+  **infravalora sistemáticamente** los atributos que solo afloran al fracasar. Y es **el peor
+  valorado del Marco: 3,66/5 frente a una media de 4,4**. Se añadió una regla de *desempeño
+  crítico absoluto* que sí lo captura. **Es una crítica fundada al IPA sobre reseñas.**
+
+### 7. Playwright: rescate de las webs que bloquean robots
+- **`enolytics/ingesta/navegador.py`**: lector en 2 pasos. `requests` (rápido) y, si topa con un
+  muro (verificación de edad, JavaScript, texto mínimo), abre **Chromium real**, acepta el aviso
+  y lee la página renderizada. Los 3 auditores lo usan y **registran el método en el CSV**.
+- **29 → 38 webs auditadas** (15 rescatadas). **Bodegas Tradición (piloto) pasa de 0 a 5/5 en
+  madurez digital y 7/8 en accesibilidad.** González Byass 8/8 accesibilidad.
+- ⚠️ **Emilio Hidalgo (la otra piloto) sigue sin datos: NO es un bloqueo, su web no responde.**
+  Hará falta **Fernando** (es de Emilio Hidalgo y está en el equipo).
+- Corregido: `auditoria_web.py` no tenía bloque `__main__` y no hacía nada al ejecutarse.
+
+### ⚠️ RIESGO ABIERTO: las 2 bodegas piloto son las peor cubiertas
+La memoria fija el piloto (Fase 3) en **Emilio Hidalgo y Tradición**. Tradición ya está
+resuelta con Playwright; **Emilio Hidalgo sigue sin web accesible y sin GPS**. Recoger sus
+datos con Fernando (FMH) y Águeda (ACM), que están en el equipo de trabajo.
+
+### PRÓXIMOS PASOS sugeridos (ver `docs/plan_profundizacion.md`)
+1. **Índice de Competitividad Enoturística (ICE)** — la memoria menciona *"índices de
+   competitividad que comparan destinos"*. Salida académica.
+2. **Estacionalidad** — alineado con FEDER **P4A** ("reducir la estacionalidad") y **no se mide**.
+   Datos ya disponibles (fechas de 10.972 reseñas + Trends semanal).
+3. **NLP prometido**: modelado de temas (LDA/BERT) y **sentimiento con modelo real** (hoy se
+   deriva de las estrellas) + multilingüe (1/3 de reseñas no están en español).
+4. **Accesibilidad física real** (Google Maps) y **precios entre rutas** (Civitatis/GetYourGuide).
+5. **Redactar los hallazgos** para JCR (hay material de sobra: la crítica al IPA, la paradoja
+   competitiva, la brecha de monetización, el vacío de accesibilidad sensorial).
+
+---
+
 ### Inteligencia de Sostenibilidad: auditoría web (2026-07-09)
 - Módulo `enolytics/ingesta/sostenibilidad.py`: `auditar_bodega(url)` / `auditar_todas()`.
   Consolida catálogo + FEV (leído del CSV previo) + **auditoría web por 7 ejes**

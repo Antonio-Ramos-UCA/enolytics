@@ -1,7 +1,7 @@
 # ENOLYTICS — Tareas pendientes (backlog)
 
 > Lista viva de todo lo que queda por hacer, para no perder el hilo entre sesiones.
-> Marca con [x] lo completado. Última actualización: 2026-07-07.
+> Marca con [x] lo completado. Última actualización: 2026-07-13.
 
 ## Datos y fuentes
 - [ ] **SABI** — confirmar acceso de la UCA (biblioteca) para facturación/empleo por bodega (inteligencia económica y de negocios). Alternativa: Registro Mercantil/BORME.
