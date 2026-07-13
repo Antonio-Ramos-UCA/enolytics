@@ -267,6 +267,22 @@ datos con Fernando (FMH) y Águeda (ACM), que están en el equipo de trabajo.
 4. **Accesibilidad física real** (Google Maps) y **precios entre rutas** (Civitatis/GetYourGuide).
 5. **Redactar los hallazgos** para JCR (hay material de sobra: la crítica al IPA, la paradoja
    competitiva, la brecha de monetización, el vacío de accesibilidad sensorial).
+6. ⭐ **AFLUENCIA + DESPLAZAMIENTOS** (pedido expreso de Antonio, 13/07). **Son dos cosas
+   distintas y no hay que confundirlas** (ni con el transporte sostenible, que ya está hecho):
+   - **(a) AFLUENCIA — Google Places.** *Cuánta gente hay* en cada bodega: curvas de ocupación
+     por hora y día de la semana (*"popular times"*), estacionalidad y detección de saturación.
+     Proxy de visitantes **sin sensores**. Vías: Outscraper (campo `popular_times`) o la
+     librería `populartimes`. ⚠️ No es un dato de la API oficial de Places: validar cobertura y
+     términos de uso. → Alimenta **Clientes** y **Negocios**, y da la **estacionalidad** que
+     exige FEDER P4A. Encaja con el hallazgo "1º en visitantes, 7º en oferta" (¿saturación?).
+   - **(b) DESPLAZAMIENTOS Y PROCEDENCIA.** *De dónde viene* y *cómo se mueve* el visitante:
+     · **Dataestur / INE — estudios de movilidad** (telefonía móvil): flujos entre provincias.
+     · **Idioma de las reseñas** → nacional vs. internacional, y cruzarlo con el IPA
+       (indicador ya previsto: *IPA/IPCA por procedencia*).
+     · **Google Trends por región/país** (ya tenemos el origen por CCAA; ampliar a internacional).
+     → Alimenta **Clientes** (perfil) y **Mercado** (procedencia).
+   - Recordatorio de lo que **NO** es: el módulo `transporte.py` (OpenStreetMap) mide si *se
+     puede llegar* sin coche, no cuánta gente hay ni de dónde viene.
 
 ---
 

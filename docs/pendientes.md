@@ -18,6 +18,11 @@
 - [x] **Certificaciones de sostenibilidad** — FEV SWfCP cruzado (4: Barbadillo, González Byass, Lustau, Osborne) + **auditoría web de sostenibilidad** por 7 ejes (`enolytics/ingesta/sostenibilidad.py`): 10 bodegas comunican ecológico; Miguel Domecq 7/7. En `datos/procesado/sostenibilidad.csv`. Nota: el buscador público de **CAAE** solo expone su lista internacional (Perú/México), no el registro español; por la solera, los vinos de Jerez tradicionales no certifican "vino ecológico". Falta (opcional): indicadores de consumo (estimados) y transporte sostenible.
 - [ ] **Atributos de Google Maps** (accesibilidad, reserva online) vía servicio "Google Maps" de Outscraper (inteligencia tecnológica).
 - [ ] **Afluencia con Google Places** — estimar la afluencia/ocupación de cada bodega a partir de los *"popular times"* (horas punta, ocupación por franja/día y "live busyness") de Google Maps/Places. Proxy de visitantes sin sensores: perfiles de estacionalidad y horarios de mayor demanda por bodega y para el destino (inteligencia de clientes/negocios). Vías: Outscraper (campo popular_times) o librería `populartimes`. Ojo: no es un dato oficial de la API estándar de Places; validar cobertura y términos de uso.
+- [ ] **Desplazamientos y procedencia del enoturista** (⚠️ *distinto* de la afluencia y del transporte sostenible: aquí se trata de **de dónde viene** y **cómo se mueve** el visitante). Tres vías complementarias:
+  - **Dataestur / INE — estudios de movilidad** (basados en telefonía móvil): flujos de viajeros entre provincias/CCAA hacia Cádiz. Fuente oficial.
+  - **Procedencia inferida de las reseñas**: detectar el **idioma** de cada reseña (1/3 no están en español) → segmentar nacional vs. internacional, y cruzarlo con el IPA (indicador ya previsto: *IPA/IPCA por procedencia*).
+  - **Google Trends por región/país** (ya lo tenemos parcialmente: de dónde se busca "bodegas Jerez" → Andalucía, Ceuta, Extremadura…). Ampliar a interés internacional ("sherry tour").
+  - Cubre indicadores de la Tabla 1: *perfil y comportamiento de los visitantes* (Clientes) y *procedencia* (Mercado).
 - [ ] **Consejo Regulador de Jerez** — memorias anuales (producción, ventas, exportación).
 
 ## Calidad del análisis (NLP)
