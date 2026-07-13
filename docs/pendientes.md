@@ -42,6 +42,7 @@
 - [x] **Sostenibilidad** — certificación FEV (4) + índice de sostenibilidad comunicada (7 ejes) + **transporte sostenible** (`transporte_sostenible.csv`, OpenStreetMap): 88% de las bodegas accesibles en transporte público. Falta (opcional): consumos estimados (agua/energía/huella).
 
 ## Dashboard y producto
+- [x] **Motor de recomendaciones accionables** (`enolytics/analitica/recomendaciones.py`) — el diferencial que promete la memoria. Reglas que cruzan las 7 inteligencias y generan recomendaciones priorizadas, cada una con su diagnóstico (dato que la justifica) y su fuente. Dos niveles: destino (8 recomendaciones, 5 de prioridad alta) y bodega individual.
 - [x] **Reorganizar en pestañas** por inteligencia (Gestor: Visión general · Clientes y experiencia · Económica y mercado. Bodega: Ficha · Reseñas y análisis). Añadir más pestañas al sumar inteligencias.
 - [x] **Etiquetado del origen de cada indicador** (🟢 oficial · 🔵 observado · 🟡 estimado) con leyenda en el dashboard. 13 etiquetas en las 7 inteligencias. `config.ORIGENES_DATO` + helper `fuente()`.
 - [x] **Enlace permanente** — PUBLICADO en **https://enolytics-feder-uca.streamlit.app** (Streamlit Community Cloud, repo público `Antonio-Ramos-UCA/enolytics`). Redespliega solo al hacer `git push`. Falta (opcional): restringir vista por correo desde Settings → Sharing.

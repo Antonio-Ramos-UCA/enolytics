@@ -23,6 +23,7 @@ from enolytics import config  # noqa: E402
 from enolytics.etl import resenas as etl_resenas  # noqa: E402
 from enolytics.nlp import analisis as nlp  # noqa: E402
 from enolytics.analitica import ipa as modelo_ipa  # noqa: E402
+from enolytics.analitica import recomendaciones as reco  # noqa: E402
 
 
 st.set_page_config(page_title="ENOLYTICS — Marco de Jerez", page_icon="🍷", layout="wide")
@@ -264,6 +265,28 @@ def leyenda_origenes() -> None:
                    "estadística oficial con estimaciones sin advertirlo.")
 
 
+def pintar_recomendaciones(recs: list, titulo: str, vacio: str) -> None:
+    """Muestra las recomendaciones accionables, ordenadas por prioridad."""
+    if not recs:
+        st.success(f"✅ {vacio}")
+        return
+
+    n_alta = sum(1 for r in recs if r.prioridad == "alta")
+    st.markdown(f"### {titulo}")
+    st.caption(f"{len(recs)} recomendaciones · **{n_alta} de prioridad alta**. "
+               "Generadas automáticamente cruzando las 7 inteligencias; cada una declara el dato "
+               "que la justifica y su fuente.")
+
+    for r in recs:
+        icono = reco.ICONO_PRIORIDAD.get(r.prioridad, "•")
+        with st.expander(f"{icono} **{r.titulo}** · _{r.inteligencia}_",
+                         expanded=(r.prioridad == "alta")):
+            st.markdown(f"**Diagnóstico.** {r.diagnostico}")
+            st.markdown(f"**Acción propuesta.** {r.accion}")
+            if r.fuente:
+                st.caption(f"Fuente: {r.fuente}")
+
+
 def cabecera_inteligencia(clave: str) -> None:
     """Muestra el objetivo de la inteligencia según la memoria + su categoría SEGITTUR."""
     info = config.OBJETIVOS_INTELIGENCIAS.get(clave)
@@ -357,6 +380,20 @@ if rol == "Gestor de destino":
         h3.metric("Reseñas en Google", f"{int(censo['total_resenas'].fillna(0).sum()):,}")
     if not sostenibilidad.empty:
         h4.metric("Bodegas sostenibles", int(sostenibilidad["certificado_swfcp"].sum()))
+
+    # ----- Recomendaciones accionables para el destino -----
+    recs_destino = reco.recomendaciones_destino(
+        acevin=acevin, acevin_oferta=acevin_oferta, acevin_ingresos=acevin_ingresos,
+        acevin_demanda=acevin_demanda, trends=trends_temporal,
+        accesibilidad=accesibilidad, transporte=transporte, auditoria=auditoria,
+        sostenibilidad=sostenibilidad, resumen_dipa=resumen_dipa(evolucion),
+        tabla_ipa=tabla_ipa,
+    )
+    with st.container(border=True):
+        pintar_recomendaciones(
+            recs_destino,
+            titulo="🎯 Recomendaciones accionables para el destino",
+            vacio="No hay recomendaciones pendientes con los datos actuales.")
 
     st.caption("Una pestaña por cada una de las **7 inteligencias competitivas** del modelo ENOLYTICS.")
     leyenda_origenes()
@@ -983,7 +1020,44 @@ else:
     b = df_f[df_f["nombre"] == nombre].iloc[0]
     an_bod = anotadas[anotadas["bodega"] == nombre] if not anotadas.empty else pd.DataFrame()
 
-    tab_ficha, tab_res = st.tabs(["🏭 Ficha", "😊 Reseñas y análisis"])
+    tab_reco, tab_ficha, tab_res = st.tabs(
+        ["🎯 Recomendaciones", "🏭 Ficha", "😊 Reseñas y análisis"])
+
+    # ----- Pestaña: Recomendaciones accionables de esta bodega -----
+    with tab_reco:
+        def _fila(df, col="bodega"):
+            """Fila de esta bodega en un dataset, como dict (o None)."""
+            if df is None or df.empty or col not in df.columns:
+                return None
+            sel = df[df[col] == nombre]
+            return sel.iloc[0].to_dict() if not sel.empty else None
+
+        comp_an = anotadas[anotadas["bodega"] != nombre] if not anotadas.empty else pd.DataFrame()
+        ipa_bod = ipa_desde_anotadas(an_bod) if not an_bod.empty else pd.DataFrame()
+        ipca_bod = (ipca_desde_anotadas(an_bod, comp_an)
+                    if not an_bod.empty and not comp_an.empty else pd.DataFrame())
+        dipca_bod = (dipca_bodega(an_bod, comp_an)
+                     if not an_bod.empty and not comp_an.empty else pd.DataFrame())
+
+        fila_cen = _fila(censo)
+        rating_bod = fila_cen.get("rating") if fila_cen else None
+        rating_marco = (censo["rating"].mean() if not censo.empty
+                        and "rating" in censo.columns else None)
+
+        recs_bod = reco.recomendaciones_bodega(
+            nombre,
+            ipa=ipa_bod, ipca=ipca_bod, dipca=dipca_bod,
+            fila_auditoria=_fila(auditoria),
+            fila_accesibilidad=_fila(accesibilidad),
+            fila_sostenibilidad=_fila(sostenibilidad),
+            fila_transporte=_fila(transporte),
+            rating=rating_bod, rating_marco=rating_marco,
+        )
+        pintar_recomendaciones(
+            recs_bod,
+            titulo=f"🎯 Qué debería priorizar {nombre}",
+            vacio="Sin recomendaciones pendientes: esta bodega no presenta puntos críticos "
+                  "con los datos disponibles.")
 
     # ----- Pestaña: Ficha -----
     with tab_ficha:
