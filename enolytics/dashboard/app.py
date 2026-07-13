@@ -236,6 +236,21 @@ def cargar_evolucion() -> pd.DataFrame:
     return nlp.evolucion_atributos(an, freq="Y", min_menciones=15)
 
 
+def fuente(origen: str, detalle: str) -> None:
+    """Etiqueta el origen del dato del bloque: 🟢 oficial · 🔵 observado · 🟡 estimado."""
+    emoji, etiqueta, _ = config.ORIGENES_DATO.get(origen, ("", "", ""))
+    st.caption(f"{emoji} **{etiqueta}** · {detalle}")
+
+
+def leyenda_origenes() -> None:
+    """Explica los distintivos de origen del dato (rigor metodológico)."""
+    with st.expander("ℹ️ Cómo leer los datos: origen de cada indicador"):
+        for emoji, etiqueta, desc in config.ORIGENES_DATO.values():
+            st.markdown(f"{emoji} **{etiqueta}** — {desc}")
+        st.caption("Todo indicador del cuadro de mando lleva su distintivo. Nunca se mezcla "
+                   "estadística oficial con estimaciones sin advertirlo.")
+
+
 def cabecera_inteligencia(clave: str) -> None:
     """Muestra el objetivo de la inteligencia según la memoria + su categoría SEGITTUR."""
     info = config.OBJETIVOS_INTELIGENCIAS.get(clave)
@@ -329,6 +344,7 @@ if rol == "Gestor de destino":
         h4.metric("Bodegas sostenibles", int(sostenibilidad["certificado_swfcp"].sum()))
 
     st.caption("Una pestaña por cada una de las **7 inteligencias competitivas** del modelo ENOLYTICS.")
+    leyenda_origenes()
     tab_eco, tab_mer, tab_comp, tab_cli, tab_neg, tab_tec, tab_sos = st.tabs(
         ["💶 Económica", "📈 Mercado", "🥊 Competidores", "😊 Clientes",
          "🏛️ Negocios", "🖥️ Tecnológica", "🌱 Sostenibilidad"])
@@ -363,6 +379,8 @@ if rol == "Gestor de destino":
 
             foco_m = mon[mon["ruta"] == "Marco de Jerez"]
             if not foco_m.empty:
+                fuente("oficial", f"ACEVIN, informe de visitas {anio_i}. El «ingreso por "
+                                  f"visitante» lo calcula ENOLYTICS (ingresos ÷ visitantes).")
                 e1, e2, e3 = st.columns(3)
                 e1.metric(f"Ingresos del enoturismo ({anio_i})",
                           f"{foco_m['ingresos_eur'].iloc[0] / 1e6:.1f} M€",
@@ -396,6 +414,9 @@ if rol == "Gestor de destino":
         if gasto_anio.empty:
             st.info("Sin datos de gasto todavía.")
         else:
+            fuente("estimado", "Gasto turístico con tarjeta de **toda la provincia de Cádiz** "
+                               "(Dataestur/SEGITTUR). Es una **aproximación**: no aísla el gasto "
+                               "específicamente enoturístico.")
             nac = gasto_anio[gasto_anio["TIPO_ORIGEN"] == "Total Nacional"]["GASTO"].sum()
             intl = gasto_anio[gasto_anio["TIPO_ORIGEN"] == "Internacional"]["GASTO"].sum()
             m1, m2, m3 = st.columns(3)
@@ -434,6 +455,9 @@ if rol == "Gestor de destino":
             var = (fin - ini) / ini * 100 if ini else 0.0
 
             st.markdown("**Interés de búsqueda en Google (últimos 5 años, escala 0-100 comparativa)**")
+            fuente("observado", "Google Trends sobre el término «bodegas [zona]», usado como "
+                                "**proxy de intención de visita**. Escala relativa (0-100), no "
+                                "es volumen absoluto de búsquedas.")
             c1, c2, c3 = st.columns(3)
             etq_foco = foco.replace("bodegas ", "").strip()
             c1.metric(f"Posición de {etq_foco}", f"{rank}º de {len(termcols)}",
@@ -490,6 +514,8 @@ if rol == "Gestor de destino":
             pos = int(rank_ult.index[rank_ult["ruta"] == FOCO][0]) + 1 if FOCO in set(rank_ult["ruta"]) else None
             vis_ult = int(rank_ult.loc[rank_ult["ruta"] == FOCO, "visitantes"].iloc[0]) if pos else 0
 
+            fuente("oficial", f"ACEVIN — Observatorio Turístico de las Rutas del Vino de España, "
+                              f"informes {int(acevin['anio'].min())}-{ult}.")
             c1, c2, c3 = st.columns(3)
             c1.metric(f"Posición del Marco ({ult})", f"{pos}º de {len(rank_ult)}",
                       help="Ranking por nº de visitantes a bodegas y museos (ACEVIN).")
@@ -526,6 +552,8 @@ if rol == "Gestor de destino":
             if not acevin_oferta.empty:
                 st.divider()
                 st.markdown("**Oferta enoturística por ruta** (servicios y entidades asociadas)")
+                fuente("oficial", "ACEVIN (37 rutas). El indicador «visitantes por servicio» lo "
+                                  "calcula ENOLYTICS cruzando visitantes ÷ servicios.")
                 of = (acevin_oferta.sort_values("servicios", ascending=False)
                       .reset_index(drop=True))
                 fila_foco = of[of["ruta"] == FOCO]
@@ -592,6 +620,7 @@ if rol == "Gestor de destino":
             else:
                 st.caption("Reputación online de cada bodega del Marco. El análisis competitivo "
                            "IPCA por bodega está en la vista 'Bodega individual'.")
+                fuente("observado", "Censo de reseñas y notas de Google Maps.")
                 cen = censo.dropna(subset=["total_resenas"]).sort_values("total_resenas", ascending=False)
                 cola, colb = st.columns(2)
                 with cola:
@@ -623,13 +652,16 @@ if rol == "Gestor de destino":
             if not _v.empty:
                 st.metric(f"Volumen de visitas a bodegas y museos del Marco ({_u})",
                           f"{int(_v.iloc[0]):,}".replace(",", "."),
-                          help="Fuente: ACEVIN. Cubre el indicador «Volumen de visitas a bodegas "
-                               "y Museos del Vino» de la memoria.")
+                          help="Cubre el indicador «Volumen de visitas a bodegas y Museos del "
+                               "Vino» de la memoria.")
+                fuente("oficial", "ACEVIN — Observatorio Turístico de las Rutas del Vino.")
 
         # --- Perfil del enoturista (benchmark NACIONAL de ACEVIN) ---
         if not acevin_demanda.empty:
             with st.expander("👤 Perfil del enoturista — *benchmark nacional* (ACEVIN)",
                              expanded=True):
+                fuente("oficial", "ACEVIN — Análisis de la demanda turística (628 encuestas, "
+                                  "95% de confianza, ±3,9%).")
                 st.caption("⚠️ **Dato nacional**, no específico del Marco: ACEVIN no desglosa por "
                            "ruta (628 encuestas, 95% confianza). Sirve como **referencia** para "
                            "comparar y como plantilla validada para un cuestionario propio. "
@@ -650,7 +682,10 @@ if rol == "Gestor de destino":
             st.info("Sin datos de reseñas todavía.")
         if not tabla_ipa.empty:
             st.subheader("Análisis Importancia-Desempeño (IPA) del destino")
-            st.caption("Importancia = nº de menciones · desempeño = nota media.")
+            fuente("estimado", "Calculado sobre 10.972 reseñas de Google. **Importancia** = nº de "
+                               "menciones del atributo; **desempeño** = nota media de las reseñas "
+                               "que lo mencionan. Son *proxies*: la importancia no se pregunta al "
+                               "visitante, se infiere de cuánto habla de cada atributo.")
             st.plotly_chart(figura_ipa(tabla_ipa), use_container_width=True)
             st.dataframe(
                 tabla_ipa.rename(columns={"atributo": "Atributo", "importancia": "Importancia",
@@ -675,6 +710,8 @@ if rol == "Gestor de destino":
     with tab_neg:
         cabecera_inteligencia("negocios")
         st.caption("Infraestructura y oferta enoturística del destino (club de producto de la Ruta).")
+        fuente("observado", "Catálogo extraído de la web oficial de la Ruta del Vino y Brandy "
+                            "del Marco de Jerez (11 categorías).")
         if not oferta.empty:
             oc1, oc2 = st.columns([1, 2])
             with oc1:
@@ -706,8 +743,11 @@ if rol == "Gestor de destino":
         else:
             aud_ok = auditoria[auditoria["web_ok"] == True]  # noqa: E712
             n_no = len(auditoria) - len(aud_ok)
-            st.caption("Madurez digital de las webs de las bodegas (proxy automático de la "
-                       "home): HTTPS, adaptación móvil, inglés, reserva online, tecnología inmersiva.")
+            st.caption("Madurez digital de las webs de las bodegas: HTTPS, adaptación móvil, "
+                       "inglés, reserva online, tecnología inmersiva.")
+            fuente("estimado", "Auditoría automática de la **página de inicio** de cada bodega. "
+                               "Es un *proxy*: no ve subpáginas y las webs que bloquean robots "
+                               "se excluyen (falsos negativos).")
             t1, t2, t3 = st.columns(3)
             t1.metric("Webs auditadas", len(aud_ok))
             t2.metric("Madurez digital media", f"{aud_ok['madurez_digital'].mean():.1f}/5")
@@ -760,6 +800,8 @@ if rol == "Gestor de destino":
                           f"{sostenibilidad['indice_sostenibilidad'].mean():.1f}/7",
                           help="Nº medio de ejes de sostenibilidad con presencia en la web.")
 
+            fuente("oficial", "Certificación **Sustainable Wineries for Climate Protection** "
+                              "(Federación Española del Vino).")
             st.markdown("**🌱 Bodegas con certificación climática FEV:**")
             for _, r in cert.iterrows():
                 st.markdown(f"- **{r['bodega']}** · {r['localidad']}")
@@ -768,6 +810,9 @@ if rol == "Gestor de destino":
             ejes_cols = [c for c in sostenibilidad.columns if c.startswith("eje_")]
             if ejes_cols:
                 st.markdown("**Sostenibilidad comunicada por eje (% de bodegas)**")
+                fuente("estimado", "Auditoría de las webs por palabras clave. Mide lo que la "
+                                   "bodega **comunica**, no su desempeño ambiental real ni una "
+                                   "certificación.")
                 adop = (sostenibilidad[ejes_cols].sum() / n_bod * 100).round(0)
                 adop.index = [c.replace("eje_", "").capitalize() for c in adop.index]
                 st.bar_chart(adop.sort_values(ascending=False))

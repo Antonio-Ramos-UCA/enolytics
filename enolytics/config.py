@@ -78,6 +78,18 @@ INTELIGENCIAS = [
     "sostenibilidad",
 ]
 
+# Origen de cada indicador del dashboard. Distinguirlos es un requisito de rigor: en el
+# mismo cuadro de mando conviven estadística oficial, dato observado y estimaciones propias.
+ORIGENES_DATO = {
+    "oficial": ("🟢", "Dato oficial",
+                "Estadística publicada por un organismo (ACEVIN, Dataestur/SEGITTUR, FEV)."),
+    "observado": ("🔵", "Dato observado",
+                  "Medido directamente de fuentes públicas (reseñas de Google, webs de bodegas)."),
+    "estimado": ("🟡", "Estimación / proxy",
+                 "Aproximación calculada por ENOLYTICS. Interpretar con cautela."),
+}
+
+
 # Objetivo de cada inteligencia, según la Memoria Científico-Técnica (p. 5), y su
 # categoría en el marco de indicadores de SEGITTUR (Tabla 1). Se muestran en el
 # dashboard para que cada pestaña declare qué persigue y de dónde bebe.
