@@ -173,6 +173,13 @@ def cargar_accesibilidad() -> pd.DataFrame:
 
 
 @st.cache_data
+def cargar_transporte() -> pd.DataFrame:
+    """Accesibilidad de cada bodega en transporte público (OpenStreetMap)."""
+    ruta = config.DATOS_PROCESADO / "transporte_sostenible.csv"
+    return pd.read_csv(ruta) if ruta.exists() else pd.DataFrame()
+
+
+@st.cache_data
 def cargar_trends_temporal() -> pd.DataFrame:
     ruta = config.DATOS_PROCESADO / "google_trends" / "interes_temporal.csv"
     if not ruta.exists():
@@ -304,6 +311,7 @@ oferta = cargar_oferta()
 sostenibilidad = cargar_sostenibilidad()
 auditoria = cargar_auditoria()
 accesibilidad = cargar_accesibilidad()
+transporte = cargar_transporte()
 gasto_cadiz = cargar_gasto_cadiz()
 satisf_cadiz = cargar_satisfaccion_cadiz()
 trends_temporal = cargar_trends_temporal()
@@ -898,6 +906,68 @@ if rol == "Gestor de destino":
                        .rename(columns={"bodega": "Bodega", "localidad": "Localidad",
                                         "indice_sostenibilidad": "Índice /7"}))
                 st.dataframe(top, hide_index=True, use_container_width=True)
+
+            # ----- Transporte sostenible (indicador de la Tabla 1 de la memoria) -----
+            if not transporte.empty:
+                st.divider()
+                st.subheader("🚉 Transporte sostenible")
+                fuente("observado", "Distancia en línea recta de cada bodega a la estación de tren "
+                                    "o parada de autobús más cercana (**OpenStreetMap**). Mide si "
+                                    "el visitante *puede* elegir el transporte público.")
+
+                n_tot = len(transporte)
+                n_ok = int(transporte["accesible_transporte_publico"].sum())
+                a_pie = int((transporte["categoria_transporte"]
+                             == "A pie desde el transporte público").sum())
+                t1, t2, t3 = st.columns(3)
+                t1.metric("Accesibles en transporte público", f"{n_ok}/{n_tot}",
+                          f"{n_ok / n_tot * 100:.0f}% del Marco")
+                t2.metric("A pie desde una parada", a_pie,
+                          f"{a_pie / n_tot * 100:.0f}%")
+                t3.metric("Requieren vehículo privado", n_tot - n_ok,
+                          f"{(n_tot - n_ok) / n_tot * 100:.0f}%",
+                          delta_color="inverse")
+
+                st.markdown("**Bodegas por accesibilidad en transporte público**")
+                st.bar_chart(transporte["categoria_transporte"].value_counts())
+
+                # Cruce con ACEVIN: ¿la infraestructura explica el uso del coche?
+                if not acevin_demanda.empty:
+                    coche = acevin_demanda[
+                        acevin_demanda["indicador"] == "Llegan en vehículo propio o alquilado"]
+                    pct_ok = n_ok / n_tot * 100
+                    if not coche.empty and pct_ok >= 75 and coche["valor"].iloc[0] >= 60:
+                        st.info(
+                            f"💡 **La infraestructura existe, pero no se usa.** El "
+                            f"**{pct_ok:.0f}% de las bodegas del Marco es accesible en transporte "
+                            f"público** ({a_pie} de ellas, a pie desde una parada); sin embargo, "
+                            f"el **{coche['valor'].iloc[0]:.0f}% de los enoturistas llega en "
+                            f"vehículo propio** (ACEVIN). El cuello de botella **no es la "
+                            f"conexión, es la información y el hábito** → oportunidad de "
+                            f"**promocionar el transporte público existente** (rutas, horarios, "
+                            f"paquetes combinados) para reducir la huella del enoturismo."
+                        )
+                    elif not coche.empty and pct_ok < 60:
+                        st.warning(
+                            f"⚠️ **El coche es una necesidad, no una elección:** solo el "
+                            f"{pct_ok:.0f}% de las bodegas es accesible en transporte público, y "
+                            f"el {coche['valor'].iloc[0]:.0f}% de los enoturistas llega en coche."
+                        )
+
+                st.dataframe(
+                    transporte.sort_values("dist_bus_km")[
+                        ["bodega", "localidad", "categoria_transporte",
+                         "dist_bus_km", "dist_tren_km", "estacion_tren"]
+                    ].rename(columns={
+                        "bodega": "Bodega", "localidad": "Localidad",
+                        "categoria_transporte": "Accesibilidad",
+                        "dist_bus_km": "Bus (km)", "dist_tren_km": "Tren (km)",
+                        "estacion_tren": "Estación más cercana"}),
+                    use_container_width=True, hide_index=True,
+                )
+                st.caption("⚠️ Distancias **en línea recta**, no por carretera (la real será algo "
+                           "mayor). No se comprueba la frecuencia ni el horario del servicio.")
+                st.divider()
 
             st.caption("⚠️ La auditoría web es un *proxy de comunicación*, no una certificación. "
                        "Algunas bodegas (p. ej. González Byass, Tradición) bloquean el robot y "

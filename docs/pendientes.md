@@ -39,7 +39,7 @@
 - [x] **Mercado** — gasto/percepción Dataestur + **Google Trends** (interés de búsqueda comparativo vs rutas competidoras + origen por CCAA). Falta (opcional): procedencia internacional (FRONTUR).
 - [~] **Negocios** — catálogo de bodegas. Falta: museos/enotecas/eventos + empleo.
 - [x] **Tecnológica** — madurez digital (`auditoria_web.csv`: HTTPS, móvil, inglés, reserva, inmersiva → /5) + **accesibilidad universal** (`accesibilidad.csv`: índice WCAG /8 + señales de accesibilidad física/sensorial). 29/42 auditadas. **Hallazgo: 0 de 29 bodegas mencionan apoyo sensorial (audioguías, braille, signos); solo 4 mencionan accesibilidad física.** Falta: accesibilidad física REAL vía Google Maps; contraste/teclado (exige renderizar).
-- [x] **Sostenibilidad** — certificación climática FEV (4 bodegas) + índice de sostenibilidad comunicada por auditoría web (7 ejes: ecológico, clima, energía, agua, residuos, biodiversidad, general). Falta (opcional): transporte + consumos estimados.
+- [x] **Sostenibilidad** — certificación FEV (4) + índice de sostenibilidad comunicada (7 ejes) + **transporte sostenible** (`transporte_sostenible.csv`, OpenStreetMap): 88% de las bodegas accesibles en transporte público. Falta (opcional): consumos estimados (agua/energía/huella).
 
 ## Dashboard y producto
 - [x] **Reorganizar en pestañas** por inteligencia (Gestor: Visión general · Clientes y experiencia · Económica y mercado. Bodega: Ficha · Reseñas y análisis). Añadir más pestañas al sumar inteligencias.
