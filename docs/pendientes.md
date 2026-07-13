@@ -13,7 +13,7 @@
 - [ ] Otras plataformas de reseñas: **Civitatis, GetYourGuide** (precios de experiencias, canales de reserva), **Vivino**.
 - [x] **ACEVIN — visitantes por ruta del vino** (`enolytics/ingesta/acevin.py`): descarga los informes oficiales del Observatorio RVE (PDF) y extrae visitantes por ruta 2022-2024 → `datos/procesado/acevin/visitantes_rutas.csv`. **Hallazgo: el Marco de Jerez es 1º de España en 2024 (425.652, +11,2%), adelantando a Rioja Alta (−18,6%).**
 - [ ] **Censo de reseñas de otras rutas** (Rioja, Ribera) para comparar *reputación online entre destinos* (requiere Outscraper).
-- [ ] **Precios de servicios enoturísticos** comparados entre rutas (Civitatis/GetYourGuide) — indicador de la Tabla 1 aún sin cubrir.
+- [x] **Oferta y precios comparados entre rutas** — ACEVIN: `oferta_rutas.csv` (37 rutas), `ingresos_rutas.csv` (parcial). **Hallazgos: el Marco es 1º en visitantes pero 7º en oferta (111 servicios vs 334 de Ribera), e ingresa 40,4 €/visitante frente a 70,0 € de Rioja Alta.** Falta: precios de experiencias (Civitatis/GetYourGuide).
 - [ ] **Estrategias diferenciadoras** de otras rutas (análisis cualitativo) — indicador de la Tabla 1 aún sin cubrir.
 - [x] **Certificaciones de sostenibilidad** — FEV SWfCP cruzado (4: Barbadillo, González Byass, Lustau, Osborne) + **auditoría web de sostenibilidad** por 7 ejes (`enolytics/ingesta/sostenibilidad.py`): 10 bodegas comunican ecológico; Miguel Domecq 7/7. En `datos/procesado/sostenibilidad.csv`. Nota: el buscador público de **CAAE** solo expone su lista internacional (Perú/México), no el registro español; por la solera, los vinos de Jerez tradicionales no certifican "vino ecológico". Falta (opcional): indicadores de consumo (estimados) y transporte sostenible.
 - [ ] **Atributos de Google Maps** (accesibilidad, reserva online) vía servicio "Google Maps" de Outscraper (inteligencia tecnológica).
@@ -33,7 +33,7 @@
 - [ ] IPA/IPCA por **atributo cruzado con procedencia** (nacional vs internacional).
 
 ## Las 7 inteligencias (estado)
-- [x] **Clientes** — reseñas (satisfacción, atributos) + índices Dataestur. Falta: perfil/fidelización (cuestionario o ACEVIN).
+- [x] **Clientes** — reseñas (satisfacción, atributos) + índices Dataestur + **perfil del enoturista (ACEVIN, 16 indicadores)** y **volumen de visitas**. ⚠️ El perfil de ACEVIN es NACIONAL (no por ruta): sirve de benchmark y de plantilla de cuestionario.
 - [x] **Competidores** — reputación + IPCA. Falta: precios y otras rutas.
 - [~] **Económica** — gasto Dataestur (hecho). Falta: por bodega (SABI).
 - [x] **Mercado** — gasto/percepción Dataestur + **Google Trends** (interés de búsqueda comparativo vs rutas competidoras + origen por CCAA). Falta (opcional): procedencia internacional (FRONTUR).

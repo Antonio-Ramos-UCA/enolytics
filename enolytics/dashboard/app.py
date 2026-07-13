@@ -189,6 +189,27 @@ def cargar_acevin() -> pd.DataFrame:
 
 
 @st.cache_data
+def cargar_acevin_oferta() -> pd.DataFrame:
+    """Oferta (servicios y entidades) de cada ruta del vino (ACEVIN)."""
+    ruta = config.DATOS_PROCESADO / "acevin" / "oferta_rutas.csv"
+    return pd.read_csv(ruta) if ruta.exists() else pd.DataFrame()
+
+
+@st.cache_data
+def cargar_acevin_ingresos() -> pd.DataFrame:
+    """Ingresos del enoturismo en bodegas y museos por ruta (ACEVIN, cobertura parcial)."""
+    ruta = config.DATOS_PROCESADO / "acevin" / "ingresos_rutas.csv"
+    return pd.read_csv(ruta) if ruta.exists() else pd.DataFrame()
+
+
+@st.cache_data
+def cargar_acevin_demanda() -> pd.DataFrame:
+    """Perfil del enoturista (ACEVIN). ⚠️ Dato NACIONAL, no desglosado por ruta."""
+    ruta = config.DATOS_PROCESADO / "acevin" / "perfil_demanda.csv"
+    return pd.read_csv(ruta) if ruta.exists() else pd.DataFrame()
+
+
+@st.cache_data
 def cargar_gasto_cadiz() -> pd.DataFrame:
     ruta = config.DATOS_PROCESADO / "dataestur" / "GASTO_TPV_DESTINO_PROV_MES_HISTORICO_DL.csv"
     if not ruta.exists():
@@ -266,6 +287,9 @@ satisf_cadiz = cargar_satisfaccion_cadiz()
 trends_temporal = cargar_trends_temporal()
 trends_regiones = cargar_trends_regiones()
 acevin = cargar_acevin()
+acevin_oferta = cargar_acevin_oferta()
+acevin_ingresos = cargar_acevin_ingresos()
+acevin_demanda = cargar_acevin_demanda()
 
 st.title("🍷 ENOLYTICS — Inteligencia enoturística del Marco de Jerez")
 
@@ -321,8 +345,54 @@ if rol == "Gestor de destino":
     # ----- 1. Inteligencia Económica -----
     with tab_eco:
         cabecera_inteligencia("economica")
-        st.caption("Impacto económico del enoturismo. Fuente oficial: Dataestur (SEGITTUR), "
-                   "provincia de Cádiz. Pendiente: facturación y empleo por bodega (SABI).")
+        st.caption("Impacto económico del enoturismo. Fuentes oficiales: ACEVIN (ingresos del "
+                   "enoturismo) y Dataestur (gasto turístico en Cádiz). "
+                   "Pendiente: facturación y empleo por bodega (SABI).")
+
+        # --- Rentabilidad: ingresos del enoturismo y monetización por visitante (ACEVIN) ---
+        if not acevin_ingresos.empty and not acevin.empty:
+            ing = acevin_ingresos[acevin_ingresos["ruta"] != "TOTAL Rutas del Vino de España"]
+            total = acevin_ingresos[acevin_ingresos["ruta"] == "TOTAL Rutas del Vino de España"]
+            anio_i = int(acevin_ingresos["anio"].max())
+            vis_i = (acevin[acevin["anio"] == anio_i].set_index("ruta")["visitantes"])
+
+            mon = ing.copy()
+            mon["visitantes"] = mon["ruta"].map(vis_i)
+            mon = mon.dropna(subset=["visitantes"])
+            mon["eur_por_visitante"] = (mon["ingresos_eur"] / mon["visitantes"]).round(1)
+
+            foco_m = mon[mon["ruta"] == "Marco de Jerez"]
+            if not foco_m.empty:
+                e1, e2, e3 = st.columns(3)
+                e1.metric(f"Ingresos del enoturismo ({anio_i})",
+                          f"{foco_m['ingresos_eur'].iloc[0] / 1e6:.1f} M€",
+                          help="Ingresos por visitas a bodegas y museos del Marco (ACEVIN). "
+                               "No incluye alojamiento ni restauración.")
+                e2.metric("Ingreso por visitante", f"{foco_m['eur_por_visitante'].iloc[0]:.1f} €")
+                if not total.empty:
+                    media_nac = total["ingresos_eur"].iloc[0] / 3_036_878
+                    e3.metric("Media nacional", f"{media_nac:.1f} €",
+                              f"{foco_m['eur_por_visitante'].iloc[0] - media_nac:+.1f} € vs Marco",
+                              help="Ingreso medio por visitante en el conjunto de las Rutas del "
+                                   "Vino de España.")
+
+                st.markdown("**Ingreso por visitante frente a las rutas líderes**")
+                st.bar_chart(mon.set_index("ruta")["eur_por_visitante"])
+
+                mejor = mon.sort_values("eur_por_visitante", ascending=False).iloc[0]
+                if mejor["ruta"] != "Marco de Jerez":
+                    brecha = mejor["eur_por_visitante"] - foco_m["eur_por_visitante"].iloc[0]
+                    st.warning(
+                        f"⚠️ **Brecha de monetización:** el Marco ingresa "
+                        f"**{foco_m['eur_por_visitante'].iloc[0]:.1f} € por visitante**, frente a "
+                        f"los **{mejor['eur_por_visitante']:.1f} €** de *{mejor['ruta']}* "
+                        f"(**{brecha:.1f} € menos por cada visita**). Lidera en volumen, pero "
+                        f"convierte menos cada visita en ingreso: margen en precio de la visita, "
+                        f"venta en tienda y experiencias premium."
+                    )
+                st.caption("⚠️ Cobertura parcial: ACEVIN solo publica en texto los ingresos de las "
+                           "rutas destacadas; el resto va en un gráfico como imagen.")
+                st.divider()
         if gasto_anio.empty:
             st.info("Sin datos de gasto todavía.")
         else:
@@ -452,6 +522,47 @@ if rol == "Gestor de destino":
                     use_container_width=True, hide_index=True,
                 )
 
+            # --- A-bis. Comparación de la OFERTA entre rutas (indicador de la Tabla 1) ---
+            if not acevin_oferta.empty:
+                st.divider()
+                st.markdown("**Oferta enoturística por ruta** (servicios y entidades asociadas)")
+                of = (acevin_oferta.sort_values("servicios", ascending=False)
+                      .reset_index(drop=True))
+                fila_foco = of[of["ruta"] == FOCO]
+                serv_foco = int(fila_foco["servicios"].iloc[0]) if not fila_foco.empty else None
+                pos_of = int(fila_foco.index[0]) + 1 if not fila_foco.empty else None
+
+                # Cruce oferta × visitantes → intensidad de uso de la oferta
+                cruce = rank_ult.merge(of[["ruta", "servicios"]], on="ruta", how="inner")
+                cruce["vis_por_servicio"] = (cruce["visitantes"] / cruce["servicios"]).round(0)
+                cruce = cruce.sort_values("vis_por_servicio", ascending=False)
+
+                o1, o2 = st.columns(2)
+                if serv_foco:
+                    o1.metric("Servicios del Marco", serv_foco,
+                              f"{pos_of}º de {len(of)} rutas en oferta")
+                if not cruce.empty and FOCO in set(cruce["ruta"]):
+                    vps = int(cruce.loc[cruce["ruta"] == FOCO, "vis_por_servicio"].iloc[0])
+                    o2.metric("Visitantes por servicio", f"{vps:,}".replace(",", "."),
+                              help="Visitantes de la ruta ÷ nº de servicios y entidades. "
+                                   "Un valor muy alto indica que la oferta va por detrás "
+                                   "de la demanda.")
+
+                st.caption("Top 12 rutas por tamaño de la oferta")
+                st.bar_chart(of.head(12).set_index("ruta")["servicios"])
+
+                # Desequilibrio: lidera la demanda pero su oferta está muy por detrás
+                if pos and pos_of and pos_of > pos:
+                    st.warning(
+                        f"⚠️ **Desequilibrio demanda-oferta:** el Marco es **{pos}º en visitantes** "
+                        f"pero solo **{pos_of}º en oferta** ({serv_foco} servicios, frente a los "
+                        f"{int(of.iloc[0]['servicios'])} de *{of.iloc[0]['ruta']}*). Atrae más "
+                        f"gente que nadie con una oferta asociada mucho menor → margen para "
+                        f"**ampliar y diversificar la oferta** (prioridad FEDER P4A)."
+                    )
+                st.caption("Visitantes por servicio (a más alto, más tensionada está la oferta)")
+                st.bar_chart(cruce.set_index("ruta")["vis_por_servicio"])
+
             # --- B. Demanda real vs. interés digital (el contraste estratégico) ---
             if not trends_temporal.empty:
                 st.divider()
@@ -502,8 +613,39 @@ if rol == "Gestor de destino":
     # ----- 4. Inteligencia de Clientes -----
     with tab_cli:
         cabecera_inteligencia("clientes")
-        st.caption("Satisfacción, motivaciones y atributos valorados por el visitante "
-                   "(análisis de 10.972 reseñas de Google).")
+        st.caption("Satisfacción, perfil y atributos valorados por el visitante. Fuentes: "
+                   "reseñas de Google (10.972) y Observatorio de la Demanda de ACEVIN.")
+
+        # --- Volumen de visitas al Marco (indicador de la Tabla 1) ---
+        if not acevin.empty:
+            _u = int(acevin["anio"].max())
+            _v = acevin[(acevin["anio"] == _u) & (acevin["ruta"] == "Marco de Jerez")]["visitantes"]
+            if not _v.empty:
+                st.metric(f"Volumen de visitas a bodegas y museos del Marco ({_u})",
+                          f"{int(_v.iloc[0]):,}".replace(",", "."),
+                          help="Fuente: ACEVIN. Cubre el indicador «Volumen de visitas a bodegas "
+                               "y Museos del Vino» de la memoria.")
+
+        # --- Perfil del enoturista (benchmark NACIONAL de ACEVIN) ---
+        if not acevin_demanda.empty:
+            with st.expander("👤 Perfil del enoturista — *benchmark nacional* (ACEVIN)",
+                             expanded=True):
+                st.caption("⚠️ **Dato nacional**, no específico del Marco: ACEVIN no desglosa por "
+                           "ruta (628 encuestas, 95% confianza). Sirve como **referencia** para "
+                           "comparar y como plantilla validada para un cuestionario propio. "
+                           "Cubre los indicadores de perfil, motivaciones y canales de la memoria.")
+                for cat in ["Perfil", "Comportamiento", "Promoción y comercialización",
+                            "Impacto económico"]:
+                    sub = acevin_demanda[acevin_demanda["categoria"] == cat]
+                    if sub.empty:
+                        continue
+                    st.markdown(f"**{cat}**")
+                    cols = st.columns(min(4, len(sub)))
+                    for i, (_, r) in enumerate(sub.iterrows()):
+                        val = (f"{r['valor']:.0f} %" if r["unidad"] == "%"
+                               else f"{r['valor']:g} {r['unidad']}")
+                        cols[i % len(cols)].metric(r["indicador"], val)
+            st.divider()
         if tabla_ipa.empty and evolucion.empty:
             st.info("Sin datos de reseñas todavía.")
         if not tabla_ipa.empty:
