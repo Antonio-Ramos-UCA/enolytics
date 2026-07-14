@@ -50,7 +50,7 @@ def recomendaciones_destino(
     acevin=None, acevin_oferta=None, acevin_ingresos=None, acevin_demanda=None,
     trends=None, accesibilidad=None, transporte=None, auditoria=None,
     sostenibilidad=None, resumen_dipa=None, tabla_ipa=None, respuestas=None,
-    anotadas=None,
+    anotadas=None, aereo_mercados=None, aereo_capacidad=None,
 ) -> list[Recomendacion]:
     """Genera las recomendaciones para el conjunto del Marco de Jerez."""
     recs: list[Recomendacion] = []
@@ -149,6 +149,29 @@ def recomendaciones_destino(
                             "en los mercados emisores y presencia en plataformas de reserva. "
                             "El potencial de crecimiento está en la fase de *descubrimiento*."),
                     fuente="Google Trends + ACEVIN"))
+
+    # --- 3-bis. Demanda aérea sin conectividad directa (Mercado) ---
+    if not _vacio(aereo_mercados) and not _vacio(aereo_capacidad):
+        mer = aereo_mercados[aereo_mercados["pais"] != "Total"].copy()
+        asientos = (aereo_capacidad[aereo_capacidad["PAIS_ORIGEN"] != "Total"]
+                    .groupby("PAIS_ORIGEN")["ASIENTOS"].sum())
+        mer["asientos"] = mer["pais"].map(asientos).fillna(0)
+        sin_vuelo = mer[(mer["asientos"] == 0) & (mer["busquedas"] >= 100_000)]
+        if not sin_vuelo.empty:
+            total_b = int(sin_vuelo["busquedas"].sum())
+            paises = ", ".join(sin_vuelo.sort_values("busquedas", ascending=False)
+                               .head(4)["pais"].tolist())
+            recs.append(Recomendacion(
+                prioridad="alta", inteligencia="Mercado",
+                titulo="Negociar rutas aéreas directas con los mercados que ya nos buscan",
+                diagnostico=(f"**{total_b:,}".replace(",", ".") +
+                             f" búsquedas de vuelo a Jerez proceden de países **sin un solo "
+                             f"asiento directo**: {paises}. La demanda **ya existe y está "
+                             f"medida**; lo que falta es el avión."),
+                accion=("Llevar estos datos a la mesa de negociación con aerolíneas y con el "
+                        "Patronato de Turismo: no es una hipótesis, es **intención de viaje "
+                        "cuantificada**. Es el argumento más fuerte para abrir ruta."),
+                fuente="Dataestur — conectividad aérea"))
 
     # --- 4. Accesibilidad sensorial inexistente (Tecnológica) ---
     if not _vacio(accesibilidad):

@@ -23,19 +23,13 @@
   - **Procedencia inferida de las reseñas**: detectar el **idioma** de cada reseña (1/3 no están en español) → segmentar nacional vs. internacional, y cruzarlo con el IPA (indicador ya previsto: *IPA/IPCA por procedencia*).
   - **Google Trends por región/país** (ya lo tenemos parcialmente: de dónde se busca "bodegas Jerez" → Andalucía, Ceuta, Extremadura…). Ampliar a interés internacional ("sherry tour").
   - Cubre indicadores de la Tabla 1: *perfil y comportamiento de los visitantes* (Clientes) y *procedencia* (Mercado).
-- [ ] ⭐ **CONECTIVIDAD AÉREA (Dataestur) — el único dato PREDICTIVO que hemos encontrado.**
-  Fuente: https://www.dataestur.es/blog/como-usar-datos-conectividad-aerea-pasajeros-destinos/
-  - **Qué ofrece:** 4 indicadores, y **tres de ellos miran al FUTURO (hasta 3 meses de proyección)**:
-    1. **Búsquedas online de vuelos** (proyección 3 meses) → intención de viaje *antes* de que ocurra.
-    2. **Reservas confirmadas** (proyección 3 meses) → demanda ya comprometida.
-    3. **Oferta de asientos programada** (3 meses) → capacidad de llegada.
-    4. Tráfico de pasajeros estimado (mes anterior).
-  - **Por qué es importante:** la memoria promete *"modelos de integración de datos **en tiempo real** que permitan mejorar la **capacidad predictiva**"* y *"**simulaciones y proyecciones** de escenarios turísticos"*. **Hoy TODOS nuestros datos miran al pasado.** Esta es la primera fuente que permitiría cumplir esa promesa.
-  - **Encaja con el Marco:** Jerez **tiene aeropuerto propio** (aparece en nuestros datos de OSM). Habría que ver si está entre los 23 destinos con informe mensual, y si no, usar el de Sevilla/Cádiz como aproximación.
-  - **Indicadores que propone construir:** tasa de conversión búsqueda→reserva, **antelación de compra por mercado emisor**, duración media de estancia, ocupación estimada.
-  - **Alimenta:** **Mercado** (demanda futura, mercados prioritarios, demanda potencial sin cobertura aérea), **Clientes** (procedencia real del internacional) y **estacionalidad** (FEDER P4A).
-  - **Acceso:** API de Dataestur (ya tenemos cliente en `enolytics/ingesta/dataestur.py`) + cuadro de mando en `/transporte/informacion-transporte-aereo-pasajeros/`. También vía SIT de SEGITTUR (previa solicitud).
-  - **Tarea:** leer el blog entero, localizar los conjuntos concretos en la API y evaluar la cobertura para Jerez.
+- [x] ✅ ⭐ **CONECTIVIDAD AÉREA (Dataestur)** — `enolytics/ingesta/conectividad_aerea.py`. **EL PRIMER INDICADOR PREDICTIVO DE ENOLYTICS.**
+  - **Jerez de la Frontera es ciudad destino propia** en Dataestur (no hace falta aproximar con Sevilla).
+  - 4 conjuntos en `datos/procesado/conectividad_aerea/`: búsquedas y reservas **por fecha de inicio de viaje** (miran al futuro), capacidad (asientos programados) y tráfico real. **Datos hasta agosto de 2026** (por delante de hoy). Vienen **por país emisor**, con **antelación de compra** y **estancia media prevista**.
+  - 🚨 **HALLAZGO EXCEPCIONAL: 2.631.321 búsquedas de vuelo a Jerez proceden de países SIN UN SOLO ASIENTO DIRECTO** (Italia 634k, EE.UU. 621k, Francia 591k, Países Bajos 422k). Solo **9 países** tienen vuelo directo. **La demanda existe y está medida; lo que falta es el avión.** Es el argumento más fuerte para negociar rutas con aerolíneas y el Patronato.
+  - Otros datos: Alemania es el 2º mercado emisor (5,1M búsquedas) y planifica con ~167 días de antelación → **dice cuándo lanzar cada campaña**. EE.UU. es el que mejor convierte (5,87%) y el de estancia más larga.
+  - Falta (opcional): estacionalidad mensual y cruce con los meses valle del enoturismo.
+
 - [ ] ⭐ **BLOG DE DATAESTUR — mina de fuentes** (https://www.dataestur.es/blog/). Revisadas las páginas 1-4 y **cruzados los artículos con nuestras lagunas** en **[docs/fuentes_blog_dataestur.md](fuentes_blog_dataestur.md)**. Lo que tapa (todo son indicadores de la Tabla 1 hoy a CERO):
   - **Empleo turístico** (empresas + empleo, DIRCE) → Económica y Negocios.
   - **Rentabilidad** (hostelería: beneficios, ventas, trabajadores) → alternativa **gratuita a SABI**.

@@ -1,0 +1,267 @@
+ANYOMES,TIPO_ORIGEN,PAIS_ORIGEN,CIUDAD_DESTINO,PASAJEROS,VARIACION_INTERANUAL,AÑO,MES,fecha
+202301,Nacional,España,Jerez de la Frontera,21148,87.28,2023,1,2023-01-01
+202301,Nacional,Total,Jerez de la Frontera,21148,87.28,2023,1,2023-01-01
+202301,Internacional,Total,Jerez de la Frontera,687,-60.69,2023,1,2023-01-01
+202301,Internacional,Alemania,Jerez de la Frontera,687,,2023,1,2023-01-01
+202302,Nacional,España,Jerez de la Frontera,19862,66.78,2023,2,2023-02-01
+202302,Nacional,Total,Jerez de la Frontera,19862,66.78,2023,2,2023-02-01
+202302,Internacional,Alemania,Jerez de la Frontera,1133,83.63,2023,2,2023-02-01
+202302,Internacional,Total,Jerez de la Frontera,1133,-51.76,2023,2,2023-02-01
+202303,Nacional,España,Jerez de la Frontera,23701,56.77,2023,3,2023-03-01
+202303,Nacional,Total,Jerez de la Frontera,23701,56.77,2023,3,2023-03-01
+202303,Internacional,Alemania,Jerez de la Frontera,6158,14.39,2023,3,2023-03-01
+202303,Internacional,Reino Unido,Jerez de la Frontera,505,65.03,2023,3,2023-03-01
+202303,Internacional,Total,Jerez de la Frontera,6663,-6.64,2023,3,2023-03-01
+202304,Internacional,Total,Jerez de la Frontera,14537,-13.32,2023,4,2023-04-01
+202304,Internacional,Reino Unido,Jerez de la Frontera,2216,1.14,2023,4,2023-04-01
+202304,Internacional,Luxemburgo,Jerez de la Frontera,600,-30.23,2023,4,2023-04-01
+202304,Nacional,Total,Jerez de la Frontera,29045,39.59,2023,4,2023-04-01
+202304,Internacional,Alemania,Jerez de la Frontera,11020,-4.79,2023,4,2023-04-01
+202304,Nacional,España,Jerez de la Frontera,29045,39.59,2023,4,2023-04-01
+202304,Internacional,Bélgica,Jerez de la Frontera,701,45.73,2023,4,2023-04-01
+202305,Nacional,España,Jerez de la Frontera,29306,45.26,2023,5,2023-05-01
+202305,Nacional,Total,Jerez de la Frontera,29306,45.26,2023,5,2023-05-01
+202305,Internacional,Alemania,Jerez de la Frontera,13508,-21.22,2023,5,2023-05-01
+202305,Internacional,Bélgica,Jerez de la Frontera,1093,116.43,2023,5,2023-05-01
+202305,Internacional,Luxemburgo,Jerez de la Frontera,552,-13.75,2023,5,2023-05-01
+202305,Internacional,Reino Unido,Jerez de la Frontera,2828,5.95,2023,5,2023-05-01
+202305,Internacional,Total,Jerez de la Frontera,17981,-23.59,2023,5,2023-05-01
+202306,Internacional,Total,Jerez de la Frontera,19623,-17.9,2023,6,2023-06-01
+202306,Internacional,Suiza,Jerez de la Frontera,126,,2023,6,2023-06-01
+202306,Internacional,Reino Unido,Jerez de la Frontera,3075,8.23,2023,6,2023-06-01
+202306,Internacional,Luxemburgo,Jerez de la Frontera,516,-25.86,2023,6,2023-06-01
+202306,Internacional,Alemania,Jerez de la Frontera,14674,-20.66,2023,6,2023-06-01
+202306,Nacional,Total,Jerez de la Frontera,27635,16.23,2023,6,2023-06-01
+202306,Nacional,España,Jerez de la Frontera,27635,16.23,2023,6,2023-06-01
+202306,Internacional,Bélgica,Jerez de la Frontera,1232,217.52,2023,6,2023-06-01
+202307,Nacional,España,Jerez de la Frontera,29130,-5.09,2023,7,2023-07-01
+202307,Nacional,Total,Jerez de la Frontera,29130,-5.09,2023,7,2023-07-01
+202307,Internacional,Alemania,Jerez de la Frontera,14342,-16.41,2023,7,2023-07-01
+202307,Internacional,Bélgica,Jerez de la Frontera,709,-17.07,2023,7,2023-07-01
+202307,Internacional,Luxemburgo,Jerez de la Frontera,580,4.5,2023,7,2023-07-01
+202307,Internacional,Reino Unido,Jerez de la Frontera,2951,-32.16,2023,7,2023-07-01
+202307,Internacional,Suiza,Jerez de la Frontera,1179,16.38,2023,7,2023-07-01
+202307,Internacional,Total,Jerez de la Frontera,19761,-23.14,2023,7,2023-07-01
+202308,Internacional,Bélgica,Jerez de la Frontera,496,-36.08,2023,8,2023-08-01
+202308,Internacional,Total,Jerez de la Frontera,19055,-32.14,2023,8,2023-08-01
+202308,Internacional,Suiza,Jerez de la Frontera,1188,10.0,2023,8,2023-08-01
+202308,Internacional,Reino Unido,Jerez de la Frontera,3140,-28.49,2023,8,2023-08-01
+202308,Internacional,Alemania,Jerez de la Frontera,13767,-29.51,2023,8,2023-08-01
+202308,Nacional,Total,Jerez de la Frontera,29123,-8.52,2023,8,2023-08-01
+202308,Nacional,España,Jerez de la Frontera,29123,-8.52,2023,8,2023-08-01
+202308,Internacional,Luxemburgo,Jerez de la Frontera,464,-7.93,2023,8,2023-08-01
+202309,Internacional,Total,Jerez de la Frontera,20556,-24.4,2023,9,2023-09-01
+202309,Nacional,España,Jerez de la Frontera,28275,3.19,2023,9,2023-09-01
+202309,Nacional,Total,Jerez de la Frontera,28275,3.19,2023,9,2023-09-01
+202309,Internacional,Alemania,Jerez de la Frontera,15402,-19.63,2023,9,2023-09-01
+202309,Internacional,Bélgica,Jerez de la Frontera,651,41.21,2023,9,2023-09-01
+202309,Internacional,Luxemburgo,Jerez de la Frontera,565,-7.98,2023,9,2023-09-01
+202309,Internacional,Reino Unido,Jerez de la Frontera,2807,-33.87,2023,9,2023-09-01
+202309,Internacional,Suiza,Jerez de la Frontera,1003,10.46,2023,9,2023-09-01
+202309,Internacional,Egipto,Jerez de la Frontera,128,,2023,9,2023-09-01
+202310,Internacional,Reino Unido,Jerez de la Frontera,2630,-24.55,2023,10,2023-10-01
+202310,Internacional,Total,Jerez de la Frontera,19480,-21.3,2023,10,2023-10-01
+202310,Internacional,Luxemburgo,Jerez de la Frontera,640,-28.88,2023,10,2023-10-01
+202310,Internacional,Suiza,Jerez de la Frontera,702,-2.77,2023,10,2023-10-01
+202310,Internacional,Alemania,Jerez de la Frontera,14671,-16.04,2023,10,2023-10-01
+202310,Nacional,Total,Jerez de la Frontera,27841,3.26,2023,10,2023-10-01
+202310,Internacional,Bélgica,Jerez de la Frontera,837,30.37,2023,10,2023-10-01
+202310,Nacional,España,Jerez de la Frontera,27841,3.26,2023,10,2023-10-01
+202311,Nacional,España,Jerez de la Frontera,18379,-15.52,2023,11,2023-11-01
+202311,Nacional,Total,Jerez de la Frontera,18379,-15.52,2023,11,2023-11-01
+202311,Internacional,Alemania,Jerez de la Frontera,3860,0.44,2023,11,2023-11-01
+202311,Internacional,Bélgica,Jerez de la Frontera,97,25.97,2023,11,2023-11-01
+202311,Internacional,Luxemburgo,Jerez de la Frontera,109,-27.81,2023,11,2023-11-01
+202311,Internacional,Total,Jerez de la Frontera,4066,-10.16,2023,11,2023-11-01
+202312,Nacional,España,Jerez de la Frontera,19059,-16.55,2023,12,2023-12-01
+202312,Nacional,Total,Jerez de la Frontera,19059,-16.55,2023,12,2023-12-01
+202312,Internacional,Alemania,Jerez de la Frontera,1705,46.98,2023,12,2023-12-01
+202312,Internacional,Total,Jerez de la Frontera,1705,46.98,2023,12,2023-12-01
+202401,Internacional,Total,Jerez de la Frontera,470,-31.58,2024,1,2024-01-01
+202401,Internacional,Alemania,Jerez de la Frontera,470,-31.58,2024,1,2024-01-01
+202401,Nacional,Total,Jerez de la Frontera,16407,-22.41,2024,1,2024-01-01
+202401,Nacional,España,Jerez de la Frontera,16407,-22.41,2024,1,2024-01-01
+202402,Nacional,España,Jerez de la Frontera,20181,1.6,2024,2,2024-02-01
+202402,Nacional,Total,Jerez de la Frontera,20181,1.6,2024,2,2024-02-01
+202402,Internacional,Alemania,Jerez de la Frontera,2136,88.52,2024,2,2024-02-01
+202402,Internacional,Total,Jerez de la Frontera,2136,88.52,2024,2,2024-02-01
+202403,Nacional,España,Jerez de la Frontera,23098,-2.54,2024,3,2024-03-01
+202403,Nacional,Total,Jerez de la Frontera,23098,-2.54,2024,3,2024-03-01
+202403,Internacional,Alemania,Jerez de la Frontera,7087,15.08,2024,3,2024-03-01
+202403,Internacional,Reino Unido,Jerez de la Frontera,171,-66.13,2024,3,2024-03-01
+202403,Internacional,Total,Jerez de la Frontera,7513,12.75,2024,3,2024-03-01
+202403,Internacional,Luxemburgo,Jerez de la Frontera,123,,2024,3,2024-03-01
+202403,Internacional,Bélgica,Jerez de la Frontera,132,,2024,3,2024-03-01
+202404,Internacional,Total,Jerez de la Frontera,17185,18.21,2024,4,2024-04-01
+202404,Internacional,Luxemburgo,Jerez de la Frontera,636,6.0,2024,4,2024-04-01
+202404,Internacional,Bélgica,Jerez de la Frontera,610,-12.98,2024,4,2024-04-01
+202404,Internacional,Reino Unido,Jerez de la Frontera,2048,-7.58,2024,4,2024-04-01
+202404,Nacional,Total,Jerez de la Frontera,26415,-9.05,2024,4,2024-04-01
+202404,Nacional,España,Jerez de la Frontera,26415,-9.05,2024,4,2024-04-01
+202404,Internacional,Alemania,Jerez de la Frontera,13891,26.05,2024,4,2024-04-01
+202405,Nacional,España,Jerez de la Frontera,28195,-3.79,2024,5,2024-05-01
+202405,Nacional,Total,Jerez de la Frontera,28195,-3.79,2024,5,2024-05-01
+202405,Internacional,Alemania,Jerez de la Frontera,18235,34.99,2024,5,2024-05-01
+202405,Internacional,Bélgica,Jerez de la Frontera,668,-38.88,2024,5,2024-05-01
+202405,Internacional,Luxemburgo,Jerez de la Frontera,640,15.94,2024,5,2024-05-01
+202405,Internacional,Reino Unido,Jerez de la Frontera,3150,11.38,2024,5,2024-05-01
+202405,Internacional,Total,Jerez de la Frontera,22693,26.2,2024,5,2024-05-01
+202406,Internacional,Total,Jerez de la Frontera,25731,31.12,2024,6,2024-06-01
+202406,Internacional,Suiza,Jerez de la Frontera,111,-11.9,2024,6,2024-06-01
+202406,Internacional,Reino Unido,Jerez de la Frontera,3543,15.21,2024,6,2024-06-01
+202406,Internacional,Luxemburgo,Jerez de la Frontera,701,35.85,2024,6,2024-06-01
+202406,Nacional,España,Jerez de la Frontera,24537,-11.21,2024,6,2024-06-01
+202406,Internacional,Alemania,Jerez de la Frontera,20564,40.13,2024,6,2024-06-01
+202406,Nacional,Total,Jerez de la Frontera,24537,-11.21,2024,6,2024-06-01
+202406,Internacional,Bélgica,Jerez de la Frontera,812,-34.09,2024,6,2024-06-01
+202407,Internacional,Reino Unido,Jerez de la Frontera,2471,-16.26,2024,7,2024-07-01
+202407,Internacional,Total,Jerez de la Frontera,23957,21.23,2024,7,2024-07-01
+202407,Internacional,Suiza,Jerez de la Frontera,468,-60.3,2024,7,2024-07-01
+202407,Internacional,Luxemburgo,Jerez de la Frontera,545,-6.03,2024,7,2024-07-01
+202407,Nacional,España,Jerez de la Frontera,23388,-19.71,2024,7,2024-07-01
+202407,Internacional,Alemania,Jerez de la Frontera,20071,39.94,2024,7,2024-07-01
+202407,Nacional,Total,Jerez de la Frontera,23388,-19.71,2024,7,2024-07-01
+202407,Internacional,Bélgica,Jerez de la Frontera,402,-43.3,2024,7,2024-07-01
+202408,Nacional,España,Jerez de la Frontera,25047,-13.99,2024,8,2024-08-01
+202408,Nacional,Total,Jerez de la Frontera,25047,-13.99,2024,8,2024-08-01
+202408,Internacional,Alemania,Jerez de la Frontera,18991,37.94,2024,8,2024-08-01
+202408,Internacional,Luxemburgo,Jerez de la Frontera,642,38.36,2024,8,2024-08-01
+202408,Internacional,Reino Unido,Jerez de la Frontera,3593,14.42,2024,8,2024-08-01
+202408,Internacional,Suiza,Jerez de la Frontera,493,-58.5,2024,8,2024-08-01
+202408,Internacional,Total,Jerez de la Frontera,23719,24.47,2024,8,2024-08-01
+202409,Internacional,Reino Unido,Jerez de la Frontera,2155,-23.22,2024,9,2024-09-01
+202409,Internacional,Total,Jerez de la Frontera,23458,14.11,2024,9,2024-09-01
+202409,Internacional,Suiza,Jerez de la Frontera,726,-27.61,2024,9,2024-09-01
+202409,Internacional,Luxemburgo,Jerez de la Frontera,592,4.77,2024,9,2024-09-01
+202409,Internacional,Alemania,Jerez de la Frontera,19419,26.08,2024,9,2024-09-01
+202409,Internacional,Bélgica,Jerez de la Frontera,566,-13.05,2024,9,2024-09-01
+202409,Nacional,Total,Jerez de la Frontera,29792,5.36,2024,9,2024-09-01
+202409,Nacional,España,Jerez de la Frontera,29792,5.36,2024,9,2024-09-01
+202410,Internacional,Total,Jerez de la Frontera,23136,18.76,2024,10,2024-10-01
+202410,Internacional,Suiza,Jerez de la Frontera,596,-15.09,2024,10,2024-10-01
+202410,Internacional,Luxemburgo,Jerez de la Frontera,532,-16.87,2024,10,2024-10-01
+202410,Internacional,Reino Unido,Jerez de la Frontera,2196,-16.5,2024,10,2024-10-01
+202410,Internacional,Alemania,Jerez de la Frontera,19407,32.28,2024,10,2024-10-01
+202410,Nacional,Total,Jerez de la Frontera,27298,-1.95,2024,10,2024-10-01
+202410,Nacional,España,Jerez de la Frontera,27298,-1.95,2024,10,2024-10-01
+202410,Internacional,Bélgica,Jerez de la Frontera,405,-51.61,2024,10,2024-10-01
+202411,Nacional,España,Jerez de la Frontera,20138,9.57,2024,11,2024-11-01
+202411,Nacional,Total,Jerez de la Frontera,20138,9.57,2024,11,2024-11-01
+202411,Internacional,Alemania,Jerez de la Frontera,5221,35.25,2024,11,2024-11-01
+202411,Internacional,Luxemburgo,Jerez de la Frontera,164,50.45,2024,11,2024-11-01
+202411,Internacional,Total,Jerez de la Frontera,5385,32.43,2024,11,2024-11-01
+202412,Internacional,Alemania,Jerez de la Frontera,1882,10.38,2024,12,2024-12-01
+202412,Internacional,Total,Jerez de la Frontera,1882,10.38,2024,12,2024-12-01
+202412,Nacional,Total,Jerez de la Frontera,19439,1.99,2024,12,2024-12-01
+202412,Nacional,España,Jerez de la Frontera,19439,1.99,2024,12,2024-12-01
+202501,Nacional,España,Jerez de la Frontera,15602,-4.9,2025,1,2025-01-01
+202501,Nacional,Total,Jerez de la Frontera,15602,-4.9,2025,1,2025-01-01
+202501,Internacional,Alemania,Jerez de la Frontera,781,66.17,2025,1,2025-01-01
+202501,Internacional,Total,Jerez de la Frontera,781,66.17,2025,1,2025-01-01
+202502,Nacional,España,Jerez de la Frontera,16459,-18.44,2025,2,2025-02-01
+202502,Nacional,Total,Jerez de la Frontera,16459,-18.44,2025,2,2025-02-01
+202502,Internacional,Alemania,Jerez de la Frontera,2013,-5.75,2025,2,2025-02-01
+202502,Internacional,Total,Jerez de la Frontera,2080,-2.62,2025,2,2025-02-01
+202502,Internacional,Reino Unido,Jerez de la Frontera,67,,2025,2,2025-02-01
+202503,Internacional,Total,Jerez de la Frontera,5970,-20.53,2025,3,2025-03-01
+202503,Internacional,Alemania,Jerez de la Frontera,5970,-15.76,2025,3,2025-03-01
+202503,Nacional,España,Jerez de la Frontera,20548,-11.03,2025,3,2025-03-01
+202503,Nacional,Total,Jerez de la Frontera,20548,-11.03,2025,3,2025-03-01
+202504,Internacional,Total,Jerez de la Frontera,11293,-34.28,2025,4,2025-04-01
+202504,Internacional,Luxemburgo,Jerez de la Frontera,487,-23.42,2025,4,2025-04-01
+202504,Internacional,Bélgica,Jerez de la Frontera,531,-12.95,2025,4,2025-04-01
+202504,Nacional,España,Jerez de la Frontera,21544,-18.44,2025,4,2025-04-01
+202504,Nacional,Total,Jerez de la Frontera,21544,-18.44,2025,4,2025-04-01
+202504,Internacional,Alemania,Jerez de la Frontera,10275,-26.03,2025,4,2025-04-01
+202505,Nacional,España,Jerez de la Frontera,24109,-14.49,2025,5,2025-05-01
+202505,Nacional,Total,Jerez de la Frontera,24109,-14.49,2025,5,2025-05-01
+202505,Internacional,Alemania,Jerez de la Frontera,20091,10.17,2025,5,2025-05-01
+202505,Internacional,Bélgica,Jerez de la Frontera,536,-19.76,2025,5,2025-05-01
+202505,Internacional,Luxemburgo,Jerez de la Frontera,1382,115.93,2025,5,2025-05-01
+202505,Internacional,Reino Unido,Jerez de la Frontera,3080,-2.22,2025,5,2025-05-01
+202505,Internacional,Total,Jerez de la Frontera,25089,10.55,2025,5,2025-05-01
+202506,Internacional,Polonia,Jerez de la Frontera,532,,2025,6,2025-06-01
+202506,Internacional,Total,Jerez de la Frontera,25338,-1.52,2025,6,2025-06-01
+202506,Internacional,Suiza,Jerez de la Frontera,131,18.01,2025,6,2025-06-01
+202506,Internacional,Reino Unido,Jerez de la Frontera,2618,-26.1,2025,6,2025-06-01
+202506,Nacional,Total,Jerez de la Frontera,22011,-10.29,2025,6,2025-06-01
+202506,Internacional,Bélgica,Jerez de la Frontera,642,-20.93,2025,6,2025-06-01
+202506,Internacional,Alemania,Jerez de la Frontera,20188,-1.82,2025,6,2025-06-01
+202506,Nacional,España,Jerez de la Frontera,22011,-10.29,2025,6,2025-06-01
+202506,Internacional,Luxemburgo,Jerez de la Frontera,1227,75.03,2025,6,2025-06-01
+202507,Internacional,Reino Unido,Jerez de la Frontera,2702,9.34,2025,7,2025-07-01
+202507,Internacional,Polonia,Jerez de la Frontera,698,,2025,7,2025-07-01
+202507,Internacional,Suiza,Jerez de la Frontera,565,20.72,2025,7,2025-07-01
+202507,Internacional,Luxemburgo,Jerez de la Frontera,636,16.69,2025,7,2025-07-01
+202507,Internacional,Total,Jerez de la Frontera,25183,5.11,2025,7,2025-07-01
+202507,Internacional,Alemania,Jerez de la Frontera,20016,-0.27,2025,7,2025-07-01
+202507,Nacional,Total,Jerez de la Frontera,25077,7.22,2025,7,2025-07-01
+202507,Nacional,España,Jerez de la Frontera,25077,7.22,2025,7,2025-07-01
+202507,Internacional,Bélgica,Jerez de la Frontera,566,40.79,2025,7,2025-07-01
+202508,Internacional,Bélgica,Jerez de la Frontera,682,,2025,8,2025-08-01
+202508,Internacional,Polonia,Jerez de la Frontera,870,,2025,8,2025-08-01
+202508,Internacional,Total,Jerez de la Frontera,26178,10.36,2025,8,2025-08-01
+202508,Internacional,Suiza,Jerez de la Frontera,631,27.99,2025,8,2025-08-01
+202508,Nacional,Total,Jerez de la Frontera,26403,5.41,2025,8,2025-08-01
+202508,Internacional,Luxemburgo,Jerez de la Frontera,696,8.41,2025,8,2025-08-01
+202508,Internacional,Alemania,Jerez de la Frontera,20160,6.15,2025,8,2025-08-01
+202508,Nacional,España,Jerez de la Frontera,26403,5.41,2025,8,2025-08-01
+202508,Internacional,Reino Unido,Jerez de la Frontera,3139,-12.63,2025,8,2025-08-01
+202509,Internacional,Total,Jerez de la Frontera,27742,18.26,2025,9,2025-09-01
+202509,Internacional,Suiza,Jerez de la Frontera,785,8.12,2025,9,2025-09-01
+202509,Internacional,Reino Unido,Jerez de la Frontera,2677,24.22,2025,9,2025-09-01
+202509,Internacional,Luxemburgo,Jerez de la Frontera,957,61.65,2025,9,2025-09-01
+202509,Internacional,Polonia,Jerez de la Frontera,700,,2025,9,2025-09-01
+202509,Internacional,Alemania,Jerez de la Frontera,22095,13.78,2025,9,2025-09-01
+202509,Nacional,Total,Jerez de la Frontera,23077,-22.53,2025,9,2025-09-01
+202509,Nacional,España,Jerez de la Frontera,23077,-22.53,2025,9,2025-09-01
+202509,Internacional,Bélgica,Jerez de la Frontera,528,-6.71,2025,9,2025-09-01
+202510,Nacional,España,Jerez de la Frontera,21612,-20.82,2025,10,2025-10-01
+202510,Nacional,Total,Jerez de la Frontera,21612,-20.82,2025,10,2025-10-01
+202510,Internacional,Alemania,Jerez de la Frontera,20980,8.1,2025,10,2025-10-01
+202510,Internacional,Bélgica,Jerez de la Frontera,665,64.19,2025,10,2025-10-01
+202510,Internacional,Luxemburgo,Jerez de la Frontera,965,81.39,2025,10,2025-10-01
+202510,Internacional,Reino Unido,Jerez de la Frontera,2841,29.37,2025,10,2025-10-01
+202510,Internacional,Suiza,Jerez de la Frontera,1051,76.34,2025,10,2025-10-01
+202510,Internacional,Total,Jerez de la Frontera,26976,16.59,2025,10,2025-10-01
+202510,Internacional,Polonia,Jerez de la Frontera,343,,2025,10,2025-10-01
+202510,Internacional,Portugal,Jerez de la Frontera,131,,2025,10,2025-10-01
+202511,Internacional,Suiza,Jerez de la Frontera,137,,2025,11,2025-11-01
+202511,Internacional,Total,Jerez de la Frontera,7178,33.29,2025,11,2025-11-01
+202511,Internacional,Reino Unido,Jerez de la Frontera,139,,2025,11,2025-11-01
+202511,Nacional,Total,Jerez de la Frontera,17869,-11.26,2025,11,2025-11-01
+202511,Nacional,España,Jerez de la Frontera,17869,-11.26,2025,11,2025-11-01
+202511,Internacional,Alemania,Jerez de la Frontera,6902,32.19,2025,11,2025-11-01
+202512,Nacional,España,Jerez de la Frontera,16681,-14.18,2025,12,2025-12-01
+202512,Nacional,Total,Jerez de la Frontera,16681,-14.18,2025,12,2025-12-01
+202512,Internacional,Alemania,Jerez de la Frontera,2086,10.83,2025,12,2025-12-01
+202512,Internacional,Total,Jerez de la Frontera,2086,10.83,2025,12,2025-12-01
+202601,Nacional,España,Jerez de la Frontera,17249,10.55,2026,1,2026-01-01
+202601,Nacional,Total,Jerez de la Frontera,17249,10.55,2026,1,2026-01-01
+202601,Internacional,Alemania,Jerez de la Frontera,897,14.85,2026,1,2026-01-01
+202601,Internacional,Total,Jerez de la Frontera,981,25.6,2026,1,2026-01-01
+202601,Internacional,Marruecos,Jerez de la Frontera,84,,2026,1,2026-01-01
+202602,Internacional,Total,Jerez de la Frontera,2120,1.92,2026,2,2026-02-01
+202602,Internacional,Alemania,Jerez de la Frontera,2120,5.31,2026,2,2026-02-01
+202602,Nacional,España,Jerez de la Frontera,16967,3.08,2026,2,2026-02-01
+202602,Nacional,Total,Jerez de la Frontera,16967,3.08,2026,2,2026-02-01
+202603,Nacional,España,Jerez de la Frontera,18984,-7.61,2026,3,2026-03-01
+202603,Nacional,Total,Jerez de la Frontera,18984,-7.61,2026,3,2026-03-01
+202603,Internacional,Alemania,Jerez de la Frontera,8098,35.64,2026,3,2026-03-01
+202603,Internacional,Total,Jerez de la Frontera,8098,35.64,2026,3,2026-03-01
+202604,Nacional,España,Jerez de la Frontera,24223,12.43,2026,4,2026-04-01
+202604,Nacional,Total,Jerez de la Frontera,24223,12.43,2026,4,2026-04-01
+202604,Internacional,Alemania,Jerez de la Frontera,13367,30.09,2026,4,2026-04-01
+202604,Internacional,Bélgica,Jerez de la Frontera,688,29.56,2026,4,2026-04-01
+202604,Internacional,Luxemburgo,Jerez de la Frontera,827,69.81,2026,4,2026-04-01
+202604,Internacional,Total,Jerez de la Frontera,15570,37.87,2026,4,2026-04-01
+202604,Internacional,Suiza,Jerez de la Frontera,688,,2026,4,2026-04-01
+202605,Internacional,Reino Unido,Jerez de la Frontera,6029,95.74,2026,5,2026-05-01
+202605,Internacional,Total,Jerez de la Frontera,28225,12.49,2026,5,2026-05-01
+202605,Internacional,Luxemburgo,Jerez de la Frontera,1267,-8.32,2026,5,2026-05-01
+202605,Internacional,Polonia,Jerez de la Frontera,512,,2026,5,2026-05-01
+202605,Internacional,Alemania,Jerez de la Frontera,19120,-4.83,2026,5,2026-05-01
+202605,Nacional,Total,Jerez de la Frontera,27568,14.34,2026,5,2026-05-01
+202605,Nacional,España,Jerez de la Frontera,27568,14.34,2026,5,2026-05-01
+202605,Internacional,Bélgica,Jerez de la Frontera,784,46.26,2026,5,2026-05-01
+202605,Internacional,Suiza,Jerez de la Frontera,513,,2026,5,2026-05-01

@@ -198,6 +198,18 @@ def cargar_trends_regiones() -> pd.DataFrame:
 
 
 @st.cache_data
+def cargar_aereo(clave: str) -> pd.DataFrame:
+    """Conectividad aérea de Jerez (Dataestur): busquedas, reservas, capacidad, mercados."""
+    ruta = config.DATOS_PROCESADO / "conectividad_aerea" / f"{clave}.csv"
+    if not ruta.exists():
+        return pd.DataFrame()
+    df = pd.read_csv(ruta)
+    if "fecha" in df.columns:
+        df["fecha"] = pd.to_datetime(df["fecha"], errors="coerce")
+    return df
+
+
+@st.cache_data
 def cargar_acevin() -> pd.DataFrame:
     """Visitantes por ruta del vino y año (ACEVIN, fuente oficial)."""
     ruta = config.DATOS_PROCESADO / "acevin" / "visitantes_rutas.csv"
@@ -504,6 +516,9 @@ gasto_cadiz = cargar_gasto_cadiz()
 satisf_cadiz = cargar_satisfaccion_cadiz()
 trends_temporal = cargar_trends_temporal()
 trends_regiones = cargar_trends_regiones()
+aereo_mercados = cargar_aereo("mercados")
+aereo_busquedas = cargar_aereo("busquedas")
+aereo_capacidad = cargar_aereo("capacidad")
 acevin = cargar_acevin()
 acevin_oferta = cargar_acevin_oferta()
 acevin_ingresos = cargar_acevin_ingresos()
@@ -554,6 +569,7 @@ if rol == "Gestor de destino":
         accesibilidad=accesibilidad, transporte=transporte, auditoria=auditoria,
         sostenibilidad=sostenibilidad, resumen_dipa=resumen_dipa(evolucion),
         tabla_ipa=tabla_ipa, respuestas=tabla_respuestas, anotadas=anotadas,
+        aereo_mercados=aereo_mercados, aereo_capacidad=aereo_capacidad,
     )
     with st.container(border=True):
         pintar_recomendaciones(
@@ -655,6 +671,77 @@ if rol == "Gestor de destino":
                    "del vino competidoras.")
         if gasto_anio.empty and satisf_cadiz.empty and trends_temporal.empty:
             st.info("Sin datos de mercado todavía.")
+
+        # --- ✈️ Conectividad aérea: el ÚNICO indicador que mira al futuro ---
+        if not aereo_mercados.empty:
+            st.subheader("✈️ Demanda aérea futura y mercados emisores")
+            fuente("oficial", "Dataestur (SEGITTUR) — conectividad aérea de **Jerez de la "
+                              "Frontera** (ciudad destino propia). Búsquedas y reservas de vuelo "
+                              "**según la fecha en que se quiere viajar**: es el **único "
+                              "indicador de ENOLYTICS que se adelanta al viaje**.")
+
+            # Horizonte futuro
+            if not aereo_busquedas.empty and "fecha" in aereo_busquedas.columns:
+                ult = aereo_busquedas["fecha"].max()
+                hoy = pd.Timestamp.today().normalize().replace(day=1)
+                meses_fut = max(0, (ult.year - hoy.year) * 12 + (ult.month - hoy.month))
+                if meses_fut > 0:
+                    st.success(f"🔮 Hay datos de demanda **hasta {ult:%B de %Y}**: "
+                               f"**{meses_fut} mes(es) por delante** de hoy.")
+
+            mer = aereo_mercados[aereo_mercados["pais"] != "Total"].copy()
+
+            # --- Demanda SIN conectividad directa (el hallazgo) ---
+            if not aereo_capacidad.empty:
+                asientos = (aereo_capacidad[aereo_capacidad["PAIS_ORIGEN"] != "Total"]
+                            .groupby("PAIS_ORIGEN")["ASIENTOS"].sum())
+                mer["asientos_directos"] = mer["pais"].map(asientos).fillna(0).astype(int)
+                sin_vuelo = (mer[(mer["asientos_directos"] == 0) & (mer["busquedas"] >= 100_000)]
+                             .sort_values("busquedas", ascending=False))
+                if not sin_vuelo.empty:
+                    total_b = int(sin_vuelo["busquedas"].sum())
+                    st.error(
+                        f"🚨 **Demanda potencial desatendida: {total_b:,}".replace(",", ".") +
+                        f" búsquedas de vuelo desde países SIN un solo asiento directo a Jerez.**"
+                        f" Los mayores: " +
+                        ", ".join(f"**{r['pais']}** ({int(r['busquedas']):,})".replace(",", ".")
+                                  for _, r in sin_vuelo.head(4).iterrows()) +
+                        ". Hay gente buscando cómo venir y **no encuentra vuelo directo**."
+                    )
+                    st.caption("Países con demanda de búsqueda alta y **cero conectividad directa**")
+                    st.dataframe(
+                        sin_vuelo[["pais", "busquedas", "reservas", "conversion_pct",
+                                   "antelacion_busqueda", "estancia_prevista"]].rename(columns={
+                            "pais": "País", "busquedas": "Búsquedas", "reservas": "Reservas",
+                            "conversion_pct": "Conversión %",
+                            "antelacion_busqueda": "Antelación (días)",
+                            "estancia_prevista": "Estancia prevista (días)"}),
+                        use_container_width=True, hide_index=True)
+
+            # --- Ranking de mercados emisores ---
+            top = mer.sort_values("busquedas", ascending=False).head(12)
+            st.markdown("**Mercados emisores: quién busca volar a Jerez**")
+            st.bar_chart(top.set_index("pais")["busquedas"])
+
+            st.caption("«Conversión» = qué porcentaje de las búsquedas acaba en reserva. Un "
+                       "mercado que busca mucho y reserva poco es **demanda no capturada**.")
+            st.dataframe(
+                top[["pais", "busquedas", "reservas", "conversion_pct",
+                     "antelacion_busqueda", "estancia_prevista"]].rename(columns={
+                    "pais": "País", "busquedas": "Búsquedas", "reservas": "Reservas",
+                    "conversion_pct": "Conversión %", "antelacion_busqueda": "Antelación (días)",
+                    "estancia_prevista": "Estancia prevista (días)"}),
+                use_container_width=True, hide_index=True)
+
+            # --- Antelación de compra: cuándo lanzar las campañas ---
+            ant = top.dropna(subset=["antelacion_busqueda"]).head(8)
+            if not ant.empty:
+                st.markdown("**¿Con cuánta antelación planifica cada mercado?**")
+                st.caption("Dice **cuándo lanzar la campaña** en cada país: si el alemán busca "
+                           "con ~170 días de antelación, promocionar el otoño en septiembre "
+                           "llega tarde.")
+                st.bar_chart(ant.set_index("pais")["antelacion_busqueda"])
+            st.divider()
 
         # --- Interés de búsqueda (Google Trends) ---
         if not trends_temporal.empty:
