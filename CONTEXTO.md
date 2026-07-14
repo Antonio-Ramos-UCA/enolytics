@@ -161,6 +161,81 @@ streamlit, pandas, sklearn, plotly, matplotlib, requests, bs4.
 6. **En paralelo (no bloquea):** diseñar cuestionarios a partir de la Tabla 1 de la
    memoria; incorporar indicadores oficiales (INE, Dataestur, ACEVIN, Google Trends).
 
+## ═══ SESIÓN 2026-07-14 ═══
+
+### ⚠️ LO PRIMERO: UN NÚMERO YA REPORTADO HA CAMBIADO
+**«Organización y reserva» pasa de 3,66★ a 4,00★** en el IPA del destino.
+Motivo: se corrigió un **bug del léxico** (ver §3) y se sumaron las reseñas internacionales.
+**Sigue siendo el peor atributo del Marco**, pero el 3,66 estaba **inflado por ruido**.
+👉 **Si algún borrador o comunicación cita el 3,66, hay que actualizarlo.**
+
+### 1. ⭐ Ficha de reputación estilo Booking/Amazon (idea de Antonio)
+- **`enolytics/analitica/reputacion.py`**. Antonio propuso replicar cómo Amazon y Booking
+  resumen las reseñas. Implementado en **los dos niveles** (bodega y destino):
+  distribución de estrellas · **"Lo que dicen los visitantes"** · aspectos con signo
+  (↗ destacan / ~ variadas / ↘ descontento) y nº de menciones · reseñas representativas.
+- **DIFERENCIA CLAVE CON AMAZON (importante para el paper):** el resumen de Amazon lo **genera
+  una IA** (caja negra, puede alucinar, no reproducible). **El nuestro se COMPONE a partir de los
+  datos agregados reales** → **determinista y auditable**. Mismos datos = mismo texto, siempre.
+  Es la diferencia entre poder publicarlo o no.
+- **Añadido algo que ni Amazon ni Booking muestran: la TASA DE RESPUESTA del propietario.**
+  - 🚨 **HALLAZGO: 11 de 33 bodegas no responden a NINGUNA reseña.**
+    **González Byass: 209 críticas de 1-2★ sin una sola respuesta.** Osborne 69. Lustau 51.
+    En el otro extremo, **Miguel Domecq responde al 62%**.
+  - Es **la recomendación más accionable de todo el dashboard**: responder es **gratis** y lo lee
+    el visitante que está decidiendo. Ya es recomendación de prioridad alta (destino y bodega).
+
+### 2. Idioma de las reseñas → procedencia (`enolytics/nlp/idioma.py`)
+- `langdetect` **con semilla fija** (`DetectorFactory.seed = 0`) para que sea **reproducible**:
+  sin fijarla, el mismo texto puede dar resultados distintos entre ejecuciones — inaceptable en
+  investigación. Se ejecuta **fuera del dashboard** y persiste en `resenas.csv` (columnas
+  `idioma` y `segmento_idioma`), para no meter langdetect en el servidor.
+- **Resultado:** Hispanohablante **5.090 (46,4%)** · Internacional **1.750 (15,9%)** ·
+  Sin determinar **4.132 (37,7%)**. Idiomas: inglés 905, alemán 290, italiano 180, francés 91.
+  El internacional puntúa **4,46★ vs 4,58★** del hispanohablante.
+- **CORRECCIÓN:** yo repetía "~1/3 de las reseñas no están en español". **Era falso: es el 15,9%.**
+- **Cautelas declaradas en el dashboard (🟡 estimado):**
+  - **Idioma ≠ nacionalidad.** Un mexicano escribe en español y **es turista internacional**.
+    Por eso hablamos de *idioma de la reseña*, nunca de "turista nacional/extranjero".
+  - **Un tercio de las reseñas no tiene texto** (solo estrellas) → nunca se les podrá detectar.
+  - Umbral de **20 caracteres**: por debajo, el detector falla ("Excelente", "Muy bien").
+
+### 3. ⭐ Léxico MULTILINGÜE + BUG CORREGIDO (`enolytics/nlp/analisis.py`)
+- **Extendido a ES/EN/DE/IT/FR** (cubre ~90% del visitante extranjero).
+  **Reseñas internacionales sin analizar: 35,8% → 11,4%** (analizables: 64% → **88,6%**).
+  Sin regresión en las hispanohablantes (5,1%).
+- 🐛 **BUG DEL LÉXICO ORIGINAL:** la clave suelta **«tiempo»** contaminaba «Organización y
+  reserva». Disparaba **118 reseñas españolas**, la mayoría **sin relación con la reserva**:
+  *"nada de las típicas turistadas"*, e incluso **reseñas de logística de camiones**. En español
+  es polisémica (**el clima**, la duración, uso genérico). **Sustituida por la locución
+  "tiempo de espera"**; añadida "cola". → De aquí sale el cambio de 3,66 a 4,00.
+- **DECISIÓN METODOLÓGICA IMPORTANTE (para el paper):** antes de tener el léxico multilingüe,
+  el IPA por idioma **se bloqueó a propósito**. Con léxico solo español, "Personal y trato"
+  aparecía en el 38,6% de las reseñas hispanas y solo en el 6,2% de las internacionales — y la
+  lectura tentadora ("al extranjero le importa menos el personal") **habría sido FALSA**: era un
+  **artefacto del léxico**. Se midió el sesgo, se corrigió, y solo entonces se mostró.
+- 🎯 **HALLAZGO (ya defendible, con cobertura comparable):**
+  | | Hispanohablante | Internacional |
+  |---|---|---|
+  | Menciona la reserva | 2,5% | **11,5%** (4,6× más) |
+  | La puntúa | **3,56★** 🔴 | 4,29★ |
+  **El visitante internacional habla mucho más de la reserva pero está satisfecho. Quien sufre
+  el problema de organización es el visitante NACIONAL.** Hipótesis a explorar: el extranjero
+  reserva con antelación por plataformas (y le funciona); el nacional improvisa y se topa con
+  horarios, esperas y colas.
+- ⚠️ **Cautela que queda:** las palabras clave de cada idioma capturan **matices distintos**
+  (el inglés *booking* es descriptivo; el español *espera*/*cola* ya arrastra queja). Es una
+  pista fuerte, no una prueba definitiva. Está escrito en el dashboard.
+
+### PENDIENTE INMEDIATO al retomar
+Sigue todo lo apuntado en la sesión anterior (ver §6-8 de abajo): **afluencia (Google Places)**,
+**desplazamientos/procedencia**, **conectividad aérea (el dato predictivo)** y el
+**blog de Dataestur** (empleo, rentabilidad, RRSS, eventos, índice de sentimiento oficial).
+Además: **sentimiento con modelo NLP real** (hoy se deriva de las estrellas), validándolo contra
+el **índice de sentimiento oficial de SEGITTUR**.
+
+---
+
 ## ═══ SESIÓN 2026-07-13 ═══
 
 ### 0. Auditoría de coherencia MEMORIA ↔ PROTOTIPO (documento clave)
