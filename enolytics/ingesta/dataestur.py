@@ -59,15 +59,28 @@ def consultar(endpoint: str, provincia: str | None = None,
     r = requests.get(url, params=params, timeout=60)
     r.raise_for_status()
 
-    # El API devuelve CSV con separador ';'. La codificación suele ser latin-1/cp1252.
-    for enc in ("utf-8", "cp1252", "latin-1"):
+    # ⚠️ El API NO siempre devuelve CSV: algunos conjuntos (PUERTOS_DL, AFILIACION_TURISMO_DL...)
+    # responden con un fichero **Excel**. Se detecta por la firma del contenido ("PK", cabecera
+    # ZIP de un .xlsx) y por el content-type, no por el endpoint.
+    es_excel = (r.content[:2] == b"PK"
+                or "excel" in r.headers.get("Content-Type", "").lower()
+                or "spreadsheet" in r.headers.get("Content-Type", "").lower())
+
+    if es_excel:
         try:
-            df = pd.read_csv(io.BytesIO(r.content), sep=";", encoding=enc, decimal=",")
-            break
-        except (UnicodeDecodeError, pd.errors.ParserError):
-            continue
+            df = pd.read_excel(io.BytesIO(r.content))
+        except Exception as e:
+            raise ValueError(f"No se pudo leer el Excel de {endpoint}: {e}") from e
     else:
-        raise ValueError(f"No se pudo decodificar la respuesta de {endpoint}")
+        # CSV con separador ';'. La codificación suele ser latin-1/cp1252.
+        for enc in ("utf-8", "cp1252", "latin-1"):
+            try:
+                df = pd.read_csv(io.BytesIO(r.content), sep=";", encoding=enc, decimal=",")
+                break
+            except (UnicodeDecodeError, pd.errors.ParserError):
+                continue
+        else:
+            raise ValueError(f"No se pudo decodificar la respuesta de {endpoint}")
 
     df.columns = [c.strip() for c in df.columns]
 

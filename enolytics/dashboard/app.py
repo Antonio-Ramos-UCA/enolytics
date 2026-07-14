@@ -210,6 +210,29 @@ def cargar_aereo(clave: str) -> pd.DataFrame:
 
 
 @st.cache_data
+def cargar_cruceros() -> pd.DataFrame:
+    """Cruceristas del puerto de la Bahía de Cádiz (Dataestur)."""
+    ruta = config.DATOS_PROCESADO / "cruceros" / "cruceros_cadiz.csv"
+    if not ruta.exists():
+        return pd.DataFrame()
+    df = pd.read_csv(ruta)
+    if "fecha" in df.columns:
+        df["fecha"] = pd.to_datetime(df["fecha"], errors="coerce")
+    return df
+
+
+@st.cache_data
+def estacionalidad_resenas(res: pd.DataFrame) -> pd.Series:
+    """Reparto de reseñas por mes — *proxy* de la estacionalidad de las visitas."""
+    if res.empty or "fecha" not in res.columns:
+        return pd.Series(dtype=float)
+    f = pd.to_datetime(res["fecha"], errors="coerce", utc=True).dropna()
+    if f.empty:
+        return pd.Series(dtype=float)
+    return f.dt.month.value_counts().sort_index()
+
+
+@st.cache_data
 def cargar_acevin() -> pd.DataFrame:
     """Visitantes por ruta del vino y año (ACEVIN, fuente oficial)."""
     ruta = config.DATOS_PROCESADO / "acevin" / "visitantes_rutas.csv"
@@ -516,6 +539,7 @@ gasto_cadiz = cargar_gasto_cadiz()
 satisf_cadiz = cargar_satisfaccion_cadiz()
 trends_temporal = cargar_trends_temporal()
 trends_regiones = cargar_trends_regiones()
+cruceros = cargar_cruceros()
 aereo_mercados = cargar_aereo("mercados")
 aereo_busquedas = cargar_aereo("busquedas")
 aereo_capacidad = cargar_aereo("capacidad")
@@ -570,6 +594,7 @@ if rol == "Gestor de destino":
         sostenibilidad=sostenibilidad, resumen_dipa=resumen_dipa(evolucion),
         tabla_ipa=tabla_ipa, respuestas=tabla_respuestas, anotadas=anotadas,
         aereo_mercados=aereo_mercados, aereo_capacidad=aereo_capacidad,
+        cruceros=cruceros,
     )
     with st.container(border=True):
         pintar_recomendaciones(
@@ -671,6 +696,80 @@ if rol == "Gestor de destino":
                    "del vino competidoras.")
         if gasto_anio.empty and satisf_cadiz.empty and trends_temporal.empty:
             st.info("Sin datos de mercado todavía.")
+
+        # --- 🚢 Cruceristas: el mercado cautivo a 40 minutos ---
+        if not cruceros.empty:
+            st.subheader("🚢 Cruceristas del puerto de Cádiz: el mercado cautivo")
+            fuente("oficial", "Dataestur — tráfico portuario de la **Bahía de Cádiz**. El "
+                              "crucerista atraca a **40 minutos de las bodegas de Jerez** y hace "
+                              "excursión de día (ACEVIN: ~30% de los enoturistas no pernocta).")
+
+            # Año de referencia: el último COMPLETO que además exista en ACEVIN, para poder
+            # comparar peras con peras (los cruceros van más adelantados que ACEVIN).
+            anios_ok = cruceros.groupby("AÑO")["MES"].nunique()
+            completos = set(int(a) for a in anios_ok[anios_ok >= 12].index)
+            anios_acevin = set(int(a) for a in acevin["anio"].unique()) if not acevin.empty else set()
+            comunes = completos & anios_acevin
+            anio_c = max(comunes) if comunes else (max(completos) if completos
+                                                   else int(cruceros["AÑO"].max()))
+
+            g = cruceros[cruceros["AÑO"] == anio_c]
+            n_cru = int(g["PASAJEROS_CRUCERO"].sum())
+            n_esc = int(g["CRUCEROS"].sum())
+
+            c1, c2, c3 = st.columns(3)
+            c1.metric(f"Cruceristas en Cádiz ({anio_c})", f"{n_cru:,}".replace(",", "."))
+            c2.metric("Escalas de crucero", f"{n_esc:,}".replace(",", "."))
+
+            # Comparación con los visitantes a bodegas del Marco (ACEVIN)
+            if not acevin.empty:
+                v = acevin[(acevin["anio"] == anio_c) & (acevin["ruta"] == "Marco de Jerez")]
+                if not v.empty:
+                    n_bod = int(v["visitantes"].iloc[0])
+                    c3.metric("Visitantes a bodegas del Marco", f"{n_bod:,}".replace(",", "."),
+                              f"{n_cru - n_bod:+,}".replace(",", ".") + " vs cruceristas")
+                    if n_cru > n_bod:
+                        st.error(
+                            f"🚨 **Llegan MÁS cruceristas al puerto de Cádiz "
+                            f"({n_cru:,}".replace(",", ".") +
+                            f") que visitantes reciben TODAS las bodegas del Marco juntas "
+                            f"({n_bod:,}".replace(",", ".") +
+                            f").** Es un **mercado cautivo** que desembarca a 40 minutos de Jerez. "
+                            f"Cada crucerista que no sube a una bodega es una oportunidad perdida."
+                        )
+
+            # --- El cruce de estacionalidades (la oportunidad) ---
+            est_res = estacionalidad_resenas(resenas)
+            if not est_res.empty:
+                cru_mes = cruceros.groupby("MES")["PASAJEROS_CRUCERO"].mean()
+                idx_cru = (cru_mes / cru_mes.max() * 100).round(0)
+                idx_eno = (est_res / est_res.max() * 100).round(0)
+                meses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun",
+                         "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
+                comp = pd.DataFrame({
+                    "Cruceros": [idx_cru.get(m, 0) for m in range(1, 13)],
+                    "Enoturismo": [idx_eno.get(m, 0) for m in range(1, 13)],
+                }, index=meses)
+
+                st.markdown("**Estacionalidad cruzada: ¿cuándo hay cruceristas y las bodegas están vacías?**")
+                fuente("estimado", "El índice de cruceros es dato oficial; el de enoturismo es un "
+                                   "**proxy**: el mes en que se escriben las reseñas (aproxima el "
+                                   "mes de visita). Ambos en escala 0-100 sobre su propio máximo.")
+                st.line_chart(comp)
+
+                # Meses con crucero alto y enoturismo bajo = oportunidad
+                oport = comp[(comp["Cruceros"] >= 70) & (comp["Enoturismo"] <= 65)]
+                if not oport.empty:
+                    lista = ", ".join(f"**{m}** (cruceros {int(r['Cruceros'])} / enoturismo "
+                                      f"{int(r['Enoturismo'])})" for m, r in oport.iterrows())
+                    st.warning(
+                        f"🎯 **Oportunidad de desestacionalización:** en {lista} el puerto está "
+                        f"cerca de su máximo mientras las bodegas caen. **Es la prioridad FEDER "
+                        f"P4A (reducir la estacionalidad) servida en bandeja:** hay miles de "
+                        f"visitantes potenciales a 40 minutos, justo en el mes en que el "
+                        f"enoturismo se vacía."
+                    )
+            st.divider()
 
         # --- ✈️ Conectividad aérea: el ÚNICO indicador que mira al futuro ---
         if not aereo_mercados.empty:

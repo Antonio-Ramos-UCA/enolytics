@@ -50,7 +50,7 @@ def recomendaciones_destino(
     acevin=None, acevin_oferta=None, acevin_ingresos=None, acevin_demanda=None,
     trends=None, accesibilidad=None, transporte=None, auditoria=None,
     sostenibilidad=None, resumen_dipa=None, tabla_ipa=None, respuestas=None,
-    anotadas=None, aereo_mercados=None, aereo_capacidad=None,
+    anotadas=None, aereo_mercados=None, aereo_capacidad=None, cruceros=None,
 ) -> list[Recomendacion]:
     """Genera las recomendaciones para el conjunto del Marco de Jerez."""
     recs: list[Recomendacion] = []
@@ -149,6 +149,33 @@ def recomendaciones_destino(
                             "en los mercados emisores y presencia en plataformas de reserva. "
                             "El potencial de crecimiento está en la fase de *descubrimiento*."),
                     fuente="Google Trends + ACEVIN"))
+
+    # --- 3-ter. Cruceristas: mercado cautivo a 40 minutos (Mercado) ---
+    if not _vacio(cruceros) and not _vacio(acevin):
+        anios_ok = cruceros.groupby("AÑO")["MES"].nunique()
+        # Último año COMPLETO de cruceros que además exista en ACEVIN (van desacompasados).
+        completos = {int(a) for a in anios_ok[anios_ok >= 12].index}
+        comunes = completos & {int(a) for a in acevin["anio"].unique()}
+        if comunes:
+            anio_c = max(comunes)
+            n_cru = int(cruceros[cruceros["AÑO"] == anio_c]["PASAJEROS_CRUCERO"].sum())
+            v = acevin[(acevin["anio"] == anio_c) & (acevin["ruta"] == FOCO)]
+            if not v.empty and n_cru > int(v["visitantes"].iloc[0]):
+                n_bod = int(v["visitantes"].iloc[0])
+                recs.append(Recomendacion(
+                    prioridad="alta", inteligencia="Mercado",
+                    titulo="Capturar al crucerista: un mercado cautivo a 40 minutos",
+                    diagnostico=(f"En {anio_c} desembarcaron **{n_cru:,}".replace(",", ".") +
+                                 f" cruceristas** en la Bahía de Cádiz, **más que los "
+                                 f"{n_bod:,}".replace(",", ".") +
+                                 f" visitantes que recibieron TODAS las bodegas del Marco "
+                                 f"juntas**. Y su temporada alta es **octubre-noviembre**, "
+                                 f"justo cuando el enoturismo cae."),
+                    accion=("Diseñar **excursiones de medio día** empaquetadas con las navieras "
+                            "y las agencias receptivas del puerto (visita + cata, 4-5 horas). "
+                            "Ataca a la vez dos objetivos: **captar demanda nueva** y **reducir "
+                            "la estacionalidad** (prioridad FEDER P4A)."),
+                    fuente="Dataestur — tráfico portuario + ACEVIN"))
 
     # --- 3-bis. Demanda aérea sin conectividad directa (Mercado) ---
     if not _vacio(aereo_mercados) and not _vacio(aereo_capacidad):
