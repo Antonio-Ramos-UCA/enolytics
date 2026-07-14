@@ -733,14 +733,9 @@ if rol == "Gestor de destino":
                     "estancia_prevista": "Estancia prevista (días)"}),
                 use_container_width=True, hide_index=True)
 
-            # --- Antelación de compra: cuándo lanzar las campañas ---
-            ant = top.dropna(subset=["antelacion_busqueda"]).head(8)
-            if not ant.empty:
-                st.markdown("**¿Con cuánta antelación planifica cada mercado?**")
-                st.caption("Dice **cuándo lanzar la campaña** en cada país: si el alemán busca "
-                           "con ~170 días de antelación, promocionar el otoño en septiembre "
-                           "llega tarde.")
-                st.bar_chart(ant.set_index("pais")["antelacion_busqueda"])
+            st.caption("👉 La **antelación de compra** y la **estancia prevista** de cada mercado "
+                       "están en la pestaña **😊 Clientes** (perfil y planificación del viaje). "
+                       "Los **asientos programados**, en **🏛️ Negocios** (infraestructura).")
             st.divider()
 
         # --- Interés de búsqueda (Google Trends) ---
@@ -992,6 +987,48 @@ if rol == "Gestor de destino":
                                  "⭐ Lo que dicen los visitantes del Marco de Jerez")
             st.divider()
 
+        # ----- Planificación del viaje: antelación y estancia por mercado -----
+        # Cubre el indicador de la Tabla 1 "Canales utilizados para la planificación y reserva",
+        # que estaba a cero.
+        if not aereo_mercados.empty:
+            with st.container(border=True):
+                st.markdown("### 🗓️ Cómo planifica el viaje cada mercado")
+                fuente("oficial", "Dataestur — conectividad aérea de Jerez. Antelación con la que "
+                                  "se busca el vuelo y estancia media prevista, por país emisor.")
+
+                mer_c = (aereo_mercados[aereo_mercados["pais"] != "Total"]
+                         .sort_values("busquedas", ascending=False).head(10))
+                mer_c = mer_c.dropna(subset=["antelacion_busqueda"])
+
+                if not mer_c.empty:
+                    p1, p2 = st.columns(2)
+                    p1.metric("Antelación media de búsqueda",
+                              f"{mer_c['antelacion_busqueda'].mean():.0f} días",
+                              help="Cuánto tiempo antes del viaje se busca el vuelo.")
+                    p2.metric("Estancia media prevista",
+                              f"{mer_c['estancia_prevista'].mean():.1f} días")
+
+                    st.markdown("**¿Con cuánta antelación planifica cada mercado?**")
+                    st.caption("Dice **cuándo lanzar la campaña** en cada país. Si el alemán "
+                               "busca con ~170 días de antelación, promocionar el otoño en "
+                               "septiembre **llega tarde**: ese viajero ya decidió en abril.")
+                    st.bar_chart(mer_c.set_index("pais")["antelacion_busqueda"])
+
+                    st.markdown("**¿Cuántos días se quedará cada mercado?**")
+                    st.caption("La estancia prevista indica **a quién merece la pena captar**: "
+                               "quien se queda más días, gasta más en el destino.")
+                    st.bar_chart(mer_c.set_index("pais")["estancia_prevista"])
+
+                    # El mercado que más se queda
+                    largo = mer_c.sort_values("estancia_prevista", ascending=False).iloc[0]
+                    st.info(
+                        f"💡 **{largo['pais']}** es el mercado de **estancia más larga** "
+                        f"(**{largo['estancia_prevista']:.1f} días**) y planifica con "
+                        f"**{largo['antelacion_busqueda']:.0f} días** de antelación. "
+                        f"Es el perfil de **mayor valor por visitante**."
+                    )
+            st.divider()
+
         # ----- Idioma de las reseñas (proxy de procedencia) -----
         if not resenas.empty and "segmento_idioma" in resenas.columns:
             with st.container(border=True):
@@ -1069,6 +1106,46 @@ if rol == "Gestor de destino":
                 conteo = oferta["categoria"].value_counts()
                 conteo.index = [c.replace("-", " ").capitalize() for c in conteo.index]
                 st.bar_chart(conteo)
+
+        # ----- Infraestructura de llegada: capacidad aérea del destino -----
+        if not aereo_capacidad.empty:
+            st.divider()
+            st.subheader("✈️ Capacidad aérea del destino")
+            fuente("oficial", "Dataestur — asientos programados con destino **Jerez de la "
+                              "Frontera**. Es la **infraestructura de llegada**: cuánta gente "
+                              "*puede* llegar en avión.")
+
+            cap = aereo_capacidad[aereo_capacidad["PAIS_ORIGEN"] != "Total"]
+            por_pais = cap.groupby("PAIS_ORIGEN")["ASIENTOS"].sum().sort_values(ascending=False)
+            por_pais = por_pais[por_pais > 0]
+
+            n1, n2 = st.columns(2)
+            n1.metric("Países con vuelo directo a Jerez", len(por_pais),
+                      help="Solo estos países tienen asientos programados hacia Jerez.")
+            n2.metric("Asientos programados (total del periodo)",
+                      f"{int(por_pais.sum()):,}".replace(",", "."))
+
+            st.markdown("**Asientos programados por país de origen**")
+            st.bar_chart(por_pais)
+
+            if len(por_pais) <= 12:
+                st.warning(
+                    f"⚠️ **La conectividad aérea es muy estrecha: solo {len(por_pais)} países "
+                    f"tienen vuelo directo a Jerez.** Es un cuello de botella de la "
+                    f"infraestructura del destino. En la pestaña **📈 Mercado** se ve la demanda "
+                    f"que queda desatendida por esta falta de conexiones."
+                )
+
+            # Evolución mensual de asientos (estacionalidad de la oferta aérea)
+            if "fecha" in aereo_capacidad.columns:
+                serie = (aereo_capacidad[aereo_capacidad["PAIS_ORIGEN"] != "Total"]
+                         .groupby("fecha")["ASIENTOS"].sum())
+                if len(serie) > 3:
+                    st.markdown("**Evolución de los asientos programados**")
+                    st.caption("Revela la **estacionalidad de la oferta aérea**: cuándo hay "
+                               "aviones y cuándo el destino se queda incomunicado.")
+                    st.line_chart(serie)
+            st.divider()
 
         st.subheader("Mapa de bodegas")
         mapa = df_f.dropna(subset=["gps_lat", "gps_lon"]).rename(

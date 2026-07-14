@@ -99,6 +99,7 @@ pero deben **documentarse y justificarse** en los informes, porque hay presupues
 | Infraestructura **Azure** (Data Factory, SQL, Blob, Analysis Services, AD, Key Vault, Monitor) — **3.500 €** presupuestados | Ficheros CSV + Streamlit Community Cloud (gratis) | Suficiente a escala piloto. **Ojo: hay 3.500 € de presupuesto Azure sin ejecutar.** |
 | "Acceso protegido mediante **sistema de seguridad y control de permisos**; solo personas autorizadas" | Dashboard **público y abierto** | ⚠️ **Contradice la memoria.** Decidido dejarlo abierto por comodidad. Reversible en 2 min. |
 | "Información en **tiempo real**" (repetido varias veces) | Fotos estáticas; sin actualización automática | ❌ Falta la automatización periódica (la memoria pide scraping periódico). |
+| "**Capacidad predictiva**" y "**proyecciones de escenarios**" | ✅ **RESUELTO (2026-07-14)** con la **conectividad aérea de Dataestur** | La memoria comprometía el QUÉ (capacidad predictiva) pero **no nombraba ninguna fuente**. Ni "aéreo", ni "vuelo", ni "conectividad" aparecen en la memoria: es una **aportación propia** del equipo. Presentarlo ante FEDER como **valor añadido**, no como desviación. |
 | "Simulaciones y proyecciones de escenarios turísticos" | No implementado | ❌ Comprometido en la memoria (p. 8). |
 
 ---
