@@ -161,6 +161,60 @@ streamlit, pandas, sklearn, plotly, matplotlib, requests, bs4.
 6. **En paralelo (no bloquea):** diseñar cuestionarios a partir de la Tabla 1 de la
    memoria; incorporar indicadores oficiales (INE, Dataestur, ACEVIN, Google Trends).
 
+## ═══ SESIÓN 2026-07-16 — REDISEÑO DEL DASHBOARD ═══
+### (A propuesta de Antonio: "abruma tanta información" y "el diseño es poco atractivo")
+
+### 1. 🧭 NUEVA ARQUITECTURA DE LA INFORMACIÓN (3 niveles)
+- **Diagnóstico medido:** el dashboard había crecido a **25 gráficos, 46 métricas, 12 tablas y
+  20 avisos** en una sola vista, **todo al mismo nivel de importancia**. Quien lo abría no sabía
+  por dónde empezar. La pestaña de Mercado sola tenía 205 líneas y 5 gráficos.
+- **Principio aplicado — el mantra de Shneiderman:** *"Primero la panorámica; luego acercarse y
+  filtrar; el detalle, solo cuando se pide."* Hacíamos justo lo contrario. Más la **regla de los
+  5 segundos** (un gestor debe entender cómo va el destino y qué hacer primero en 5 s).
+- **Tres vistas** (barra lateral):
+  1. **🏠 Resumen ejecutivo** (portada): 4 KPIs + **semáforo de las 7 inteligencias** + las
+     **3 recomendaciones más urgentes**. **De 67 métricas visibles a 11.**
+  2. **🧭 Las 7 inteligencias**: las 7 pestañas de siempre (se respeta el 7=7 de la memoria),
+     pero cada una **abre con lo esencial** y lo secundario (rankings, tablas, gráficos de
+     apoyo) **va plegado**.
+  3. **🏭 Bodega individual**: sin cambios.
+- 💡 **El semáforo NO se pinta a mano: lo deduce el motor de recomendaciones.** Si una
+  inteligencia acumula 2+ avisos urgentes se pone roja, sola. Cero curación manual.
+- **No se ha perdido ni un dato**: solo se ha dejado de enseñarlos todos a la vez.
+
+### 2. 🎨 DISEÑO PROFESIONAL (`enolytics/dashboard/estilo.py` + `.streamlit/config.toml`)
+- **Identidad del Marco:** superficie **albariza** (#FBFAF7, el blanco cálido de su tierra) y
+  **tinto de Jerez** (#8C2F39) como acento. Cabecera con degradado, tarjetas KPI blancas con
+  hairline y sombra, pestañas con subrayado del acento, tipografía jerarquizada.
+- ⚠️ **DECISIÓN IMPORTANTE — los datos NO se pintan "de color vino".** Sería bonito y sería
+  **inaccesible**. Las series usan una **paleta ya validada** (contraste comprobado y separación
+  para daltonismo, ΔE ≥ 12 entre series contiguas). **La identidad vive en el cromo, no en los
+  datos.** (No había `node` para validar una paleta nueva, así que se usa la de referencia tal
+  cual, sin tocarla. Si algún día se quiere una paleta propia: **hay que validarla con el
+  script, nunca a ojo**.)
+- **Los 24 `st.bar_chart`/`st.line_chart` planos** pasan a helpers propios con Plotly: marcas
+  finas (bargap .45), rejilla discreta, sin adornos, tooltips con la tipografía de la casa.
+- 🎯 **Patrón FOCO + CONTEXTO:** en los gráficos comparativos, **el Marco de Jerez va en color y
+  el resto en gris**. El ojo va solo. Antes todas las barras eran iguales y había que buscarnos.
+  El color sigue a la **entidad**, nunca a su puesto en el ranking.
+- **Semáforo accesible:** tarjetas con borde de color **+ icono + texto**. El color de estado
+  **nunca va solo**: quien no distingue colores lo lee igual.
+
+### 3. 🐛 CUATRO BUGS VISUALES CAZADOS AL MIRAR LAS CAPTURAS
+(La guía de diseño insiste: *"renderízalo y míralo — el validador comprueba el color, no la
+maquetación"*. Se hicieron capturas con Playwright y aparecieron:)
+1. 🔴 **EL MÁS GRAVE:** *"Servicios del Marco: 111"* mostraba el delta *"7º de 37"* con **flecha
+   VERDE hacia arriba**… ¡cuando ser 7º en oferta es **precisamente nuestra debilidad**!
+   Streamlit pinta de verde cualquier delta de texto. **El dashboard te felicitaba por tu peor
+   indicador.** → Los deltas descriptivos pasan a neutro (`delta_color="off"`); el verde/rojo
+   queda solo para **cambios reales**.
+2. El eje de años **interpolaba medios años inexistentes** ("2.022,5") al tratarlos como números
+   continuos. → `dtick=1, tickformat="d"`.
+3. **Decimales con punto** en vez de coma (4.56 → 4,56).
+4. El semáforo sacaba la fila de 3 tarjetas **más ancha** que la de 4. → Siempre 4 columnas.
+
+---
+
 ## ═══ SESIÓN 2026-07-15 ═══
 ### (Sesión de hallazgos grandes. Las dos ideas clave las puso Antonio.)
 
