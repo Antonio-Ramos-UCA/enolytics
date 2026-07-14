@@ -266,6 +266,25 @@ def leyenda_origenes() -> None:
                    "estadística oficial con estimaciones sin advertirlo.")
 
 
+@st.cache_data
+def tabla_respuestas_marco(res: pd.DataFrame, min_resenas: int = 30) -> pd.DataFrame:
+    """Tasa de respuesta a reseñas de cada bodega (solo las que tienen suficientes reseñas)."""
+    if res.empty or "respuesta_propietario" not in res.columns:
+        return pd.DataFrame()
+    filas = []
+    for bod, g in res.groupby("bodega"):
+        if len(g) < min_resenas:
+            continue
+        t = rep.tasa_respuesta(g)
+        filas.append({"Bodega": bod, "Reseñas": len(g),
+                      "% contestadas": t["pct_total"],
+                      "Críticas (1-2★)": t["n_negativas"],
+                      "% críticas contestadas": t["pct_negativas"]})
+    if not filas:
+        return pd.DataFrame()
+    return pd.DataFrame(filas).sort_values("% contestadas", ascending=False)
+
+
 def ficha_reputacion(res_bod: pd.DataFrame, an_bod: pd.DataFrame, titulo: str) -> None:
     """Ficha de reputación al estilo Booking/Amazon: estrellas, resumen y aspectos."""
     if res_bod.empty:
@@ -451,12 +470,13 @@ if rol == "Gestor de destino":
         h4.metric("Bodegas sostenibles", int(sostenibilidad["certificado_swfcp"].sum()))
 
     # ----- Recomendaciones accionables para el destino -----
+    tabla_respuestas = tabla_respuestas_marco(resenas)
     recs_destino = reco.recomendaciones_destino(
         acevin=acevin, acevin_oferta=acevin_oferta, acevin_ingresos=acevin_ingresos,
         acevin_demanda=acevin_demanda, trends=trends_temporal,
         accesibilidad=accesibilidad, transporte=transporte, auditoria=auditoria,
         sostenibilidad=sostenibilidad, resumen_dipa=resumen_dipa(evolucion),
-        tabla_ipa=tabla_ipa,
+        tabla_ipa=tabla_ipa, respuestas=tabla_respuestas,
     )
     with st.container(border=True):
         pintar_recomendaciones(
@@ -801,6 +821,43 @@ if rol == "Gestor de destino":
             st.divider()
         if tabla_ipa.empty and evolucion.empty:
             st.info("Sin datos de reseñas todavía.")
+        # ----- Ficha de reputación del Marco (estilo Booking/Amazon) -----
+        if not resenas.empty:
+            with st.container(border=True):
+                ficha_reputacion(resenas, anotadas,
+                                 "⭐ Lo que dicen los visitantes del Marco de Jerez")
+            st.divider()
+
+        # ----- Gestión de la reputación: quién responde y quién no -----
+        if not resenas.empty and "respuesta_propietario" in resenas.columns:
+            st.subheader("💬 Gestión de la reputación por bodega")
+            fuente("observado", "Respuestas del propietario en Google. **Ni Amazon ni Booking "
+                                "muestran esto**, pero responder es la acción de reputación más "
+                                "barata y visible que puede tomar una bodega.")
+            dfr = tabla_respuestas
+            if not dfr.empty:
+                mudas = dfr[dfr["% contestadas"] == 0]
+                g1, g2, g3 = st.columns(3)
+                g1.metric("Respuesta media del Marco", f"{dfr['% contestadas'].mean():.0f}%")
+                g2.metric("Bodegas que no responden nada", f"{len(mudas)} de {len(dfr)}",
+                          delta_color="inverse")
+                if not mudas.empty:
+                    g3.metric("Críticas sin contestar",
+                              int(mudas["Críticas (1-2★)"].sum()),
+                              "en las bodegas mudas", delta_color="inverse")
+
+                if not mudas.empty:
+                    peor = mudas.sort_values("Críticas (1-2★)", ascending=False).iloc[0]
+                    if peor["Críticas (1-2★)"] >= 20:
+                        st.warning(
+                            f"⚠️ **{len(mudas)} bodegas no responden a ninguna reseña.** La más "
+                            f"expuesta es **{peor['Bodega']}**, con **{int(peor['Críticas (1-2★)'])} "
+                            f"críticas de 1-2★ sin una sola respuesta**. Es la mejora de "
+                            f"reputación **más barata del destino**: no cuesta dinero, solo tiempo."
+                        )
+                st.dataframe(dfr, use_container_width=True, hide_index=True)
+            st.divider()
+
         if not tabla_ipa.empty:
             st.subheader("Análisis Importancia-Desempeño (IPA) del destino")
             fuente("estimado", "Calculado sobre 10.972 reseñas de Google. **Importancia** = nº de "

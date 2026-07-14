@@ -49,7 +49,7 @@ def ordenar(recs: list[Recomendacion]) -> list[Recomendacion]:
 def recomendaciones_destino(
     acevin=None, acevin_oferta=None, acevin_ingresos=None, acevin_demanda=None,
     trends=None, accesibilidad=None, transporte=None, auditoria=None,
-    sostenibilidad=None, resumen_dipa=None, tabla_ipa=None,
+    sostenibilidad=None, resumen_dipa=None, tabla_ipa=None, respuestas=None,
 ) -> list[Recomendacion]:
     """Genera las recomendaciones para el conjunto del Marco de Jerez."""
     recs: list[Recomendacion] = []
@@ -57,6 +57,24 @@ def recomendaciones_destino(
 
     def _vacio(df):
         return df is None or (hasattr(df, "empty") and df.empty)
+
+    # --- 0. Bodegas que no responden a ninguna reseña (Clientes) ---
+    if not _vacio(respuestas) and "% contestadas" in respuestas.columns:
+        mudas = respuestas[respuestas["% contestadas"] == 0]
+        criticas = int(mudas["Críticas (1-2★)"].sum()) if not mudas.empty else 0
+        if len(mudas) >= 3 and criticas >= 50:
+            peor = mudas.sort_values("Críticas (1-2★)", ascending=False).iloc[0]
+            recs.append(Recomendacion(
+                prioridad="alta", inteligencia="Clientes",
+                titulo="Plan de respuesta a reseñas en las bodegas del Marco",
+                diagnostico=(f"**{len(mudas)} de {len(respuestas)} bodegas no responden a "
+                             f"ninguna reseña**, acumulando **{criticas} críticas de 1-2★ sin una "
+                             f"sola respuesta**. La más expuesta: **{peor['Bodega']}** "
+                             f"({int(peor['Críticas (1-2★)'])} críticas mudas)."),
+                accion=("Formar a las bodegas en gestión de reputación online: responder es "
+                        "**gratis** y lo lee el futuro visitante que está decidiendo. Es la "
+                        "mejora de reputación de **menor coste y mayor visibilidad** del destino."),
+                fuente="Reseñas de Google"))
 
     # --- 1. Desequilibrio demanda-oferta (Competidores / Negocios) ---
     if not _vacio(acevin) and not _vacio(acevin_oferta):
