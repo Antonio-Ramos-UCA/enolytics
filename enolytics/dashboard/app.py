@@ -324,23 +324,42 @@ def panel_idiomas(res: pd.DataFrame, an: pd.DataFrame, ambito: str) -> None:
         st.caption("Idiomas detectados")
         st.bar_chart(top)
 
-    # Sesgo del léxico: solo entiende español → medimos cuánto se nos escapa
+    # --- ¿Valoran lo mismo el visitante hispanohablante y el internacional? ---
     if not an.empty and "atributos" in an.columns and "segmento_idioma" in an.columns:
         intl_an = an[an["segmento_idioma"] == INTL]
         hisp_an = an[an["segmento_idioma"] == HISPANO]
-        if len(intl_an) >= 30 and len(hisp_an) >= 30:
+        if len(intl_an) >= 50 and len(hisp_an) >= 50:
             ciego_i = (intl_an["atributos"].map(len) == 0).mean() * 100
-            ciego_h = (hisp_an["atributos"].map(len) == 0).mean() * 100
-            st.error(
-                f"🚨 **Limitación conocida — el análisis de atributos es sordo al visitante "
-                f"extranjero.** Nuestro léxico de atributos está **solo en español**: no reconoce "
-                f"*staff*, *service* ni *guide*. Resultado: **el {ciego_i:.0f}% de las reseñas "
-                f"internacionales no aporta ningún atributo**, frente al {ciego_h:.0f}% de las "
-                f"hispanohablantes.\n\n"
-                f"➡️ Por eso **NO se muestra aquí un IPA comparado por idioma**: la «importancia» "
-                f"del segmento internacional sería un **artefacto del léxico**, no una preferencia "
-                f"real del visitante. Hasta que el léxico sea multilingüe, ese análisis sería falso."
-            )
+
+            th = nlp.tabla_importancia_desempeno(hisp_an).set_index("atributo")
+            ti = nlp.tabla_importancia_desempeno(intl_an).set_index("atributo")
+            filas = []
+            for atr in nlp.ATRIBUTOS:
+                if atr not in th.index or atr not in ti.index:
+                    continue
+                filas.append({
+                    "Atributo": atr,
+                    "Menciona (hispano)": round(th.loc[atr, "importancia"] / len(hisp_an) * 100, 1),
+                    "Nota (hispano)": round(th.loc[atr, "desempeno"], 2),
+                    "Menciona (internac.)": round(ti.loc[atr, "importancia"] / len(intl_an) * 100, 1),
+                    "Nota (internac.)": round(ti.loc[atr, "desempeno"], 2),
+                    "Brecha": round(ti.loc[atr, "desempeno"] - th.loc[atr, "desempeno"], 2),
+                })
+            if filas:
+                comp = pd.DataFrame(filas)
+                st.markdown("**¿Valoran lo mismo el visitante hispanohablante y el internacional?**")
+                st.caption("«Menciona» = % de reseñas de ese segmento que hablan del atributo. "
+                           "«Brecha» = nota del internacional menos la del hispanohablante.")
+                st.dataframe(comp, use_container_width=True, hide_index=True)
+
+                st.caption(
+                    f"⚠️ **Cautela metodológica.** El léxico ya es multilingüe (ES/EN/DE/IT/FR) y "
+                    f"solo el **{ciego_i:.0f}%** de las reseñas internacionales queda sin analizar "
+                    f"(antes era el 36%), así que la comparación es válida. Aun así, **las palabras "
+                    f"clave de cada idioma pueden capturar matices distintos** (p. ej. el inglés "
+                    f"*booking* suele ser descriptivo, mientras el español *espera* o *cola* ya "
+                    f"arrastran queja). Interpretar las brechas con prudencia."
+                )
 
 
 def ficha_reputacion(res_bod: pd.DataFrame, an_bod: pd.DataFrame, titulo: str) -> None:

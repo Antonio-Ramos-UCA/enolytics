@@ -23,37 +23,122 @@ import unicodedata
 
 import pandas as pd
 
-# Léxico de atributos del enoturismo (palabras clave por atributo, en español)
+# Léxico de atributos del enoturismo, MULTILINGÜE.
+#
+# Motivo: con el léxico solo en español, el 35,8% de las reseñas internacionales no aportaba
+# ningún atributo (frente al 5,1% de las hispanohablantes) → el IPA se construía casi solo con la
+# voz del visitante hispanohablante. Se añaden EN/DE/IT/FR, que cubren ~90% del visitante
+# extranjero del Marco (inglés 905, alemán 290, italiano 180, francés 91 de 1.750 reseñas).
+#
+# Nota: el texto se normaliza (minúsculas, sin tildes) antes de casar, así que las claves van sin
+# acentos. Se evitan palabras demasiado genéricas (p. ej. el inglés "time") que dispararían
+# falsos positivos.
 ATRIBUTOS: dict[str, list[str]] = {
     "Vino y cata": [
+        # ES
         "vino", "vinos", "cata", "catas", "degustacion", "degustaciones", "sabor",
         "fino", "oloroso", "amontillado", "manzanilla", "brandy", "jerez", "copa",
         "maridaje", "probar", "catar",
+        # EN
+        "wine", "wines", "sherry", "tasting", "tastings", "taste", "flavour", "flavor",
+        "glass", "pairing", "sample", "vintage", "palomino",
+        # DE
+        "wein", "weine", "weinprobe", "verkostung", "geschmack", "glas",
+        # IT
+        "vini", "degustazione", "degustazioni", "assaggio", "sapore", "bicchiere",
+        # FR
+        "vin", "vins", "degustation", "gout", "verre",
     ],
     "Personal y trato": [
+        # ES
         "personal", "atencion", "trato", "amable", "amabilidad", "guia", "guias",
         "simpatico", "simpatica", "profesional", "cercano", "camarero", "staff",
         "atendieron", "atendio", "acompaño",
+        # EN
+        "guide", "guides", "service", "friendly", "welcoming", "host", "attentive",
+        "professional", "kind", "helpful", "knowledgeable", "hospitality",
+        # DE
+        "freundlich", "mitarbeiter", "betreuung", "gastfreundlich",
+        # IT
+        "personale", "guida", "servizio", "gentile", "cordiale", "accoglienza",
+        # FR
+        "personnel", "accueil", "aimable", "sympathique", "chaleureux",
     ],
     "Visita y experiencia": [
+        # ES
         "visita", "visitas", "tour", "recorrido", "experiencia", "guiada", "explicacion",
         "explicaciones", "aprender", "historia", "interesante", "educativa",
+        # EN
+        "visit", "tours", "experience", "guided", "explanation", "learn", "history",
+        "interesting", "informative", "educational",
+        # DE
+        "besuch", "fuhrung", "erlebnis", "erklarung", "lernen", "geschichte", "interessant",
+        # IT
+        "esperienza", "spiegazione", "storia", "interessante",
+        # FR
+        "visite", "experience", "guidee", "explication", "histoire", "interessant",
     ],
     "Instalaciones": [
+        # ES
         "bodega", "bodegas", "instalaciones", "edificio", "patio", "museo", "sala",
         "lugar", "sitio", "espacio", "tienda", "bonita", "bonito", "cuidado",
+        # EN
+        "winery", "wineries", "cellar", "cellars", "facilities", "building", "courtyard",
+        "museum", "shop", "venue", "beautiful", "impressive",
+        # DE
+        "weingut", "keller", "gebaude", "laden",
+        # IT
+        "cantina", "cantine", "edificio", "museo", "negozio",
+        # FR
+        "cave", "caves", "domaine", "batiment", "musee", "boutique",
     ],
     "Precio y valor": [
+        # ES
         "precio", "precios", "caro", "cara", "barato", "barata", "valor", "dinero",
         "coste", "economico", "vale la pena", "merece la pena",
+        # EN
+        "price", "prices", "expensive", "cheap", "value", "money", "cost", "worth",
+        "affordable", "overpriced", "pricey",
+        # DE
+        "preis", "preise", "teuer", "gunstig", "wert", "geld", "kosten", "preiswert",
+        # IT
+        "prezzo", "prezzi", "costoso", "valore", "denaro",
+        # FR
+        "prix", "cher", "chere", "bon marche", "valeur", "argent",
     ],
     "Entorno y viñedo": [
+        # ES
         "viñedo", "viñedos", "viña", "viñas", "paisaje", "entorno", "vistas",
         "campo", "naturaleza",
+        # EN
+        "vineyard", "vineyards", "landscape", "scenery", "views", "countryside",
+        "nature", "surroundings",
+        # DE
+        "weinberg", "weinberge", "landschaft", "aussicht", "natur", "umgebung",
+        # IT
+        "vigneto", "vigneti", "vigna", "paesaggio", "panorama", "natura", "campagna",
+        # FR
+        "vignoble", "vignobles", "vigne", "paysage", "vue", "campagne",
     ],
     "Organización y reserva": [
-        "reserva", "reservar", "organizacion", "puntual", "espera", "tiempo",
-        "horario", "idioma", "puntualidad", "cita",
+        # ES
+        # OJO: se eliminó la clave suelta "tiempo". Es polisémica en español (el clima, la
+        # duración, uso genérico) y generaba ruido: disparaba 118 reseñas, la mayoría sin
+        # relación con la reserva ("nada de las típicas turistadas", reseñas de logística de
+        # camiones...). Se sustituye por la locución "tiempo de espera", que sí es inequívoca.
+        "reserva", "reservar", "organizacion", "puntual", "espera", "tiempo de espera",
+        "horario", "idioma", "puntualidad", "cita", "cola",
+        # EN
+        "booking", "reservation", "reserve", "organisation", "organization", "punctual",
+        "waiting", "queue", "schedule", "appointment", "language", "english", "booked",
+        # DE
+        "reservierung", "buchung", "buchen", "punktlich", "warten", "wartezeit",
+        "termin", "sprache",
+        # IT
+        "prenotazione", "prenotare", "organizzazione", "puntuale", "attesa", "orario",
+        "appuntamento", "lingua",
+        # FR
+        "reservation", "reserver", "ponctuel", "attente", "horaire", "langue",
     ],
 }
 

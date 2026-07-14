@@ -53,7 +53,12 @@
   - ⚠️ **Por eso NO se muestra un IPA comparado por idioma:** la "importancia" del segmento internacional sería un **artefacto del léxico**, no una preferencia real. Requiere primero el léxico multilingüe.
   - **Cautelas declaradas en el dashboard:** idioma ≠ nacionalidad (un mexicano escribe en español y es internacional); 1/3 de reseñas no tienen texto.
 
-- [ ] 🔴 **LÉXICO MULTILINGÜE** (ahora **justificado con datos**: el 35,8% de las reseñas internacionales no aporta atributos). Traducir los 7 atributos a EN/DE/IT/FR cubre el 90% del visitante extranjero. Alternativa: BERT multilingüe. instalar `transformers` (BERT multilingüe) o ampliar el léxico a EN/DE/IT/FR. (Va de la mano de la tarea anterior.)
+- [x] ✅ **LÉXICO MULTILINGÜE** (ES/EN/DE/IT/FR) en `enolytics/nlp/analisis.py`. **Reseñas internacionales sin analizar: 35,8% → 11,4%** (analizables: 64% → 88,6%), sin regresión en las hispanohablantes (5,1%).
+  - 🐛 **BUG CORREGIDO de paso:** la clave suelta **"tiempo"** contaminaba «Organización y reserva» (disparaba 118 reseñas españolas, la mayoría sin relación: *"nada de las típicas turistadas"*, ¡reseñas de logística de camiones!). En español es polisémica (el clima, la duración). Sustituida por la locución "tiempo de espera".
+  - ⚠️ **CAMBIA UN NÚMERO PUBLICADO:** «Organización y reserva» pasa de **3,66★ a 4,00★** en el destino (al quitar el ruido y sumar el internacional). **Sigue siendo el peor atributo**, pero el dato anterior estaba inflado por ruido. Revisar cualquier borrador que citara 3,66.
+  - 🎯 **HALLAZGO nuevo (ya defendible):** el visitante **internacional menciona la reserva 4,6× más** (11,5% vs 2,5%) pero **la puntúa mejor** (4,29★ vs **3,56★** del hispanohablante). El problema de organización lo sufre sobre todo **el visitante nacional**.
+  - Cautela declarada en el dashboard: las palabras clave de cada idioma capturan matices distintos (el inglés *booking* es descriptivo; el español *espera*/*cola* ya arrastra queja).
+- [ ] **Sentimiento con modelo NLP real** (hoy se deriva de las estrellas) — BERT multilingüe. Validar contra el índice de sentimiento oficial de SEGITTUR. instalar `transformers` (BERT multilingüe) o ampliar el léxico a EN/DE/IT/FR. (Va de la mano de la tarea anterior.)
 - [ ] **Modelado de temas (LDA)** — descubrir atributos automáticamente, más allá del léxico fijo.
 - [ ] Validar/afinar el léxico de atributos con criterio experto (Paula / bodegas).
 

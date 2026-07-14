@@ -251,19 +251,18 @@ def recomendaciones_destino(
         intl = anotadas[anotadas["segmento_idioma"] == INTL]
         if len(intl) >= 100:
             ciego = (intl["atributos"].map(len) == 0).mean() * 100
+            # El léxico ya es multilingüe; esta regla queda como vigilancia de la cobertura.
             if ciego >= 20:
                 recs.append(Recomendacion(
                     prioridad="alta", inteligencia="Clientes",
-                    titulo="Ampliar el léxico de atributos a otros idiomas",
-                    diagnostico=(f"El léxico está **solo en español**: no reconoce *staff*, "
-                                 f"*service* ni *guide*. Por eso **el {ciego:.0f}% de las "
-                                 f"{len(intl)} reseñas internacionales no aporta ningún "
-                                 f"atributo**. El IPA del destino se está construyendo casi solo "
-                                 f"con la voz del visitante hispanohablante."),
-                    accion=("Traducir el léxico de los 7 atributos a inglés, alemán, italiano y "
-                            "francés (cubren el 90% del visitante extranjero). Hasta entonces, "
-                            "**no se puede comparar la importancia de los atributos entre "
-                            "idiomas**: sería un artefacto del léxico, no una preferencia real."),
+                    titulo="Ampliar el léxico de atributos a más idiomas",
+                    diagnostico=(f"**El {ciego:.0f}% de las {len(intl)} reseñas internacionales "
+                                 f"no aporta ningún atributo**: el léxico no cubre bien sus "
+                                 f"idiomas. El IPA se estaría construyendo sobre todo con la voz "
+                                 f"del visitante hispanohablante."),
+                    accion=("Ampliar el léxico de los 7 atributos a los idiomas que faltan. "
+                            "Mientras la cobertura sea desigual, comparar la importancia entre "
+                            "idiomas produce artefactos, no preferencias reales."),
                     fuente="Detección de idioma sobre las reseñas"))
 
     # --- 8. Reserva online insuficiente (Tecnológica) ---
