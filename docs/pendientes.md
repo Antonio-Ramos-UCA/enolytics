@@ -47,12 +47,13 @@
 - [ ] **Consejo Regulador de Jerez** — memorias anuales (producción, ventas, exportación).
 
 ## Calidad del análisis (NLP)
-- [ ] ⭐ **IDIOMA DE LAS RESEÑAS → procedencia del visitante** (interesa especialmente a Antonio; **la más barata: los datos ya los tenemos**).
-  - **Qué:** detectar el idioma de cada una de las 10.972 reseñas (`langdetect`/`langid`, o el campo de idioma si Outscraper lo trae) → nueva columna `idioma` en `resenas.csv` y segmento **nacional (ES) vs. internacional**.
-  - **Para qué:** (1) **IPA/IPCA por procedencia** — ¿valora lo mismo el enoturista internacional que el nacional? (2) medir el **peso real del visitante internacional** por bodega; (3) detectar bodegas con vocación exportadora vs. locales.
-  - **Por qué importa:** hoy el léxico de atributos es **solo español**, así que ~1/3 de las reseñas se analizan mal o no se analizan → el IPA actual está **sesgado hacia el visitante nacional**. Esto lo arregla y a la vez abre un eje de análisis nuevo.
-  - **Ojo:** el idioma de la reseña es un *proxy* de la procedencia, no la procedencia real (un español puede escribir en inglés). Etiquetar como 🟡 estimado.
-- [ ] **Sentimiento/atributos multilingües** — ~1/3 de reseñas no son en español; instalar `transformers` (BERT multilingüe) o ampliar el léxico a EN/DE/IT/FR. (Va de la mano de la tarea anterior.)
+- [x] ⭐ **IDIOMA DE LAS RESEÑAS → procedencia** (`enolytics/nlp/idioma.py`, langdetect con semilla fija para que sea reproducible). Columnas `idioma` y `segmento_idioma` en `resenas.csv`.
+  - **Resultado:** 62,3% de reseñas con idioma detectable. **Hispanohablante 5.090 (46,4%) · Internacional 1.750 (15,9%) · Sin determinar 4.132 (37,7%)**. Top idiomas: inglés (905), alemán (290), italiano (180), francés (91). El internacional puntúa **4,46★ frente a 4,58★** del hispanohablante.
+  - 🚨 **SESGO MEDIDO (hallazgo clave):** el léxico de atributos está **solo en español**, así que **el 35,8% de las reseñas internacionales no aporta ningún atributo**, frente al 5,1% de las hispanohablantes. **El IPA actual se construye casi solo con la voz del visitante hispanohablante.**
+  - ⚠️ **Por eso NO se muestra un IPA comparado por idioma:** la "importancia" del segmento internacional sería un **artefacto del léxico**, no una preferencia real. Requiere primero el léxico multilingüe.
+  - **Cautelas declaradas en el dashboard:** idioma ≠ nacionalidad (un mexicano escribe en español y es internacional); 1/3 de reseñas no tienen texto.
+
+- [ ] 🔴 **LÉXICO MULTILINGÜE** (ahora **justificado con datos**: el 35,8% de las reseñas internacionales no aporta atributos). Traducir los 7 atributos a EN/DE/IT/FR cubre el 90% del visitante extranjero. Alternativa: BERT multilingüe. instalar `transformers` (BERT multilingüe) o ampliar el léxico a EN/DE/IT/FR. (Va de la mano de la tarea anterior.)
 - [ ] **Modelado de temas (LDA)** — descubrir atributos automáticamente, más allá del léxico fijo.
 - [ ] Validar/afinar el léxico de atributos con criterio experto (Paula / bodegas).
 

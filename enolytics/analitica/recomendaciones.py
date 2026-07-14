@@ -50,6 +50,7 @@ def recomendaciones_destino(
     acevin=None, acevin_oferta=None, acevin_ingresos=None, acevin_demanda=None,
     trends=None, accesibilidad=None, transporte=None, auditoria=None,
     sostenibilidad=None, resumen_dipa=None, tabla_ipa=None, respuestas=None,
+    anotadas=None,
 ) -> list[Recomendacion]:
     """Genera las recomendaciones para el conjunto del Marco de Jerez."""
     recs: list[Recomendacion] = []
@@ -243,6 +244,27 @@ def recomendaciones_destino(
                         "punta (confirmaciones, puntualidad, tamaño de grupo, esperas). Es la "
                         "grieta más clara en una experiencia por lo demás muy bien valorada."),
                 fuente="IPA sobre 10.972 reseñas"))
+
+    # --- 7-bis. El análisis es sordo al visitante extranjero (Clientes / metodológica) ---
+    if not _vacio(anotadas) and "segmento_idioma" in getattr(anotadas, "columns", []):
+        INTL = "Internacional (no hispanohablante)"
+        intl = anotadas[anotadas["segmento_idioma"] == INTL]
+        if len(intl) >= 100:
+            ciego = (intl["atributos"].map(len) == 0).mean() * 100
+            if ciego >= 20:
+                recs.append(Recomendacion(
+                    prioridad="alta", inteligencia="Clientes",
+                    titulo="Ampliar el léxico de atributos a otros idiomas",
+                    diagnostico=(f"El léxico está **solo en español**: no reconoce *staff*, "
+                                 f"*service* ni *guide*. Por eso **el {ciego:.0f}% de las "
+                                 f"{len(intl)} reseñas internacionales no aporta ningún "
+                                 f"atributo**. El IPA del destino se está construyendo casi solo "
+                                 f"con la voz del visitante hispanohablante."),
+                    accion=("Traducir el léxico de los 7 atributos a inglés, alemán, italiano y "
+                            "francés (cubren el 90% del visitante extranjero). Hasta entonces, "
+                            "**no se puede comparar la importancia de los atributos entre "
+                            "idiomas**: sería un artefacto del léxico, no una preferencia real."),
+                    fuente="Detección de idioma sobre las reseñas"))
 
     # --- 8. Reserva online insuficiente (Tecnológica) ---
     if not _vacio(auditoria):

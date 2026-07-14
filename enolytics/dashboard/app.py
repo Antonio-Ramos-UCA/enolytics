@@ -22,6 +22,7 @@ import plotly.express as px  # noqa: E402
 from enolytics import config  # noqa: E402
 from enolytics.etl import resenas as etl_resenas  # noqa: E402
 from enolytics.nlp import analisis as nlp  # noqa: E402
+from enolytics.nlp import idioma as nlp_idioma  # noqa: E402 (solo nombres; no usa langdetect)
 from enolytics.analitica import ipa as modelo_ipa  # noqa: E402
 from enolytics.analitica import recomendaciones as reco  # noqa: E402
 from enolytics.analitica import reputacion as rep  # noqa: E402
@@ -285,6 +286,63 @@ def tabla_respuestas_marco(res: pd.DataFrame, min_resenas: int = 30) -> pd.DataF
     return pd.DataFrame(filas).sort_values("% contestadas", ascending=False)
 
 
+def panel_idiomas(res: pd.DataFrame, an: pd.DataFrame, ambito: str) -> None:
+    """Composición por idioma de las reseñas y sesgo del léxico (solo español)."""
+    if res.empty or "segmento_idioma" not in res.columns:
+        return
+
+    HISPANO = "Hispanohablante"
+    INTL = "Internacional (no hispanohablante)"
+    DESC = "Sin determinar"
+
+    st.markdown("**🌍 Idioma de las reseñas** *(proxy de procedencia)*")
+    fuente("estimado", "Idioma **inferido** del texto (langdetect). ⚠️ **Idioma ≠ nacionalidad**: "
+                       "un mexicano escribe en español y es turista internacional. Además, el "
+                       f"**{(res['segmento_idioma'] == DESC).mean() * 100:.0f}%** de las reseñas "
+                       "no tiene texto suficiente para determinarlo.")
+
+    det = res[res["segmento_idioma"] != DESC]
+    if det.empty:
+        st.info("No hay reseñas con texto suficiente para detectar el idioma.")
+        return
+
+    n_int = int((det["segmento_idioma"] == INTL).sum())
+    i1, i2, i3 = st.columns(3)
+    i1.metric("Reseñas en idioma extranjero", f"{n_int / len(det) * 100:.0f}%",
+              f"{n_int} de {len(det)} identificadas")
+    nota_h = det[det["segmento_idioma"] == HISPANO]["puntuacion"].mean()
+    nota_i = det[det["segmento_idioma"] == INTL]["puntuacion"].mean()
+    if pd.notna(nota_h):
+        i2.metric("Nota · hispanohablante", f"{nota_h:.2f} ★")
+    if pd.notna(nota_i):
+        i3.metric("Nota · internacional", f"{nota_i:.2f} ★",
+                  f"{nota_i - nota_h:+.2f} vs hispanohablante" if pd.notna(nota_h) else None)
+
+    if "idioma" in det.columns:
+        top = det["idioma"].value_counts().head(8)
+        top.index = [nlp_idioma.nombre_idioma(c) for c in top.index]
+        st.caption("Idiomas detectados")
+        st.bar_chart(top)
+
+    # Sesgo del léxico: solo entiende español → medimos cuánto se nos escapa
+    if not an.empty and "atributos" in an.columns and "segmento_idioma" in an.columns:
+        intl_an = an[an["segmento_idioma"] == INTL]
+        hisp_an = an[an["segmento_idioma"] == HISPANO]
+        if len(intl_an) >= 30 and len(hisp_an) >= 30:
+            ciego_i = (intl_an["atributos"].map(len) == 0).mean() * 100
+            ciego_h = (hisp_an["atributos"].map(len) == 0).mean() * 100
+            st.error(
+                f"🚨 **Limitación conocida — el análisis de atributos es sordo al visitante "
+                f"extranjero.** Nuestro léxico de atributos está **solo en español**: no reconoce "
+                f"*staff*, *service* ni *guide*. Resultado: **el {ciego_i:.0f}% de las reseñas "
+                f"internacionales no aporta ningún atributo**, frente al {ciego_h:.0f}% de las "
+                f"hispanohablantes.\n\n"
+                f"➡️ Por eso **NO se muestra aquí un IPA comparado por idioma**: la «importancia» "
+                f"del segmento internacional sería un **artefacto del léxico**, no una preferencia "
+                f"real del visitante. Hasta que el léxico sea multilingüe, ese análisis sería falso."
+            )
+
+
 def ficha_reputacion(res_bod: pd.DataFrame, an_bod: pd.DataFrame, titulo: str) -> None:
     """Ficha de reputación al estilo Booking/Amazon: estrellas, resumen y aspectos."""
     if res_bod.empty:
@@ -476,7 +534,7 @@ if rol == "Gestor de destino":
         acevin_demanda=acevin_demanda, trends=trends_temporal,
         accesibilidad=accesibilidad, transporte=transporte, auditoria=auditoria,
         sostenibilidad=sostenibilidad, resumen_dipa=resumen_dipa(evolucion),
-        tabla_ipa=tabla_ipa, respuestas=tabla_respuestas,
+        tabla_ipa=tabla_ipa, respuestas=tabla_respuestas, anotadas=anotadas,
     )
     with st.container(border=True):
         pintar_recomendaciones(
@@ -826,6 +884,12 @@ if rol == "Gestor de destino":
             with st.container(border=True):
                 ficha_reputacion(resenas, anotadas,
                                  "⭐ Lo que dicen los visitantes del Marco de Jerez")
+            st.divider()
+
+        # ----- Idioma de las reseñas (proxy de procedencia) -----
+        if not resenas.empty and "segmento_idioma" in resenas.columns:
+            with st.container(border=True):
+                panel_idiomas(resenas, anotadas, "Marco")
             st.divider()
 
         # ----- Gestión de la reputación: quién responde y quién no -----
@@ -1235,6 +1299,9 @@ else:
         if not res_bod.empty:
             with st.container(border=True):
                 ficha_reputacion(res_bod, an_bod, f"⭐ Reputación de {nombre}")
+            if "segmento_idioma" in res_bod.columns:
+                with st.container(border=True):
+                    panel_idiomas(res_bod, an_bod, nombre)
             st.divider()
 
         st.subheader("Análisis avanzado (IPA · IPCA · DIPCA)")

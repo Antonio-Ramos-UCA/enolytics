@@ -8,6 +8,7 @@ beautifulsoup4>=4.12
 lxml>=4.9              # parser rápido para BeautifulSoup
 python-dateutil>=2.8
 pytrends>=4.9          # interés de búsqueda de Google Trends (inteligencia de mercado)
+langdetect>=1.0.9    # idioma de las reseñas (proxy de procedencia)
 
 # --- Scraping robusto (reseñas dinámicas) ---
 playwright>=1.40       # tras instalar: python3 -m playwright install chromium
