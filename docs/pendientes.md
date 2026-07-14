@@ -74,6 +74,11 @@
 - [x] **Sostenibilidad** — certificación FEV (4) + índice de sostenibilidad comunicada (7 ejes) + **transporte sostenible** (`transporte_sostenible.csv`, OpenStreetMap): 88% de las bodegas accesibles en transporte público. Falta (opcional): consumos estimados (agua/energía/huella).
 
 ## Dashboard y producto
+- [x] ⭐ **REESTRUCTURACIÓN DE LA VISUALIZACIÓN** (a propuesta de Antonio: "abruma tanta información"). El dashboard había crecido a **25 gráficos, 46 métricas, 12 tablas y 20 avisos** en una sola vista. Aplicado el **mantra de Shneiderman** ("primero la panorámica; el detalle, a demanda") y la **regla de los 5 segundos**. Tres niveles:
+  1. **🏠 Resumen ejecutivo** (portada): 4 KPIs + **semáforo de las 7 inteligencias** + las **3 recomendaciones más urgentes**. De 67 métricas a **11**.
+  2. **🧭 Las 7 inteligencias**: las 7 pestañas de siempre, pero cada una abre con lo esencial y **lo secundario va plegado** (rankings, tablas, gráficos de apoyo).
+  3. **🏭 Bodega individual**: sin cambios.
+  - 💡 **El semáforo NO se pinta a mano: lo calcula el motor de recomendaciones** (🔴 2+ acciones urgentes · 🟠 1 · 🟡 mejoras · 🟢 sin avisos). Se actualiza solo al cambiar los datos.
 - [x] **Ficha de reputación estilo Booking/Amazon** por bodega (`enolytics/analitica/reputacion.py`, idea de Antonio): distribución de estrellas, "lo que dicen los visitantes", aspectos con signo (↗ ~ ↘) y nº de menciones, reseñas representativas y **tasa de respuesta del propietario**. El resumen es **determinista** (se compone de los datos agregados), no lo genera una IA → reproducible y auditable, a diferencia del de Amazon. **Hallazgo: 11 de 33 bodegas no responden a NINGUNA reseña; González Byass acumula 209 críticas sin contestar.**
 - [x] **Motor de recomendaciones accionables** (`enolytics/analitica/recomendaciones.py`) — el diferencial que promete la memoria. Reglas que cruzan las 7 inteligencias y generan recomendaciones priorizadas, cada una con su diagnóstico (dato que la justifica) y su fuente. Dos niveles: destino (8 recomendaciones, 5 de prioridad alta) y bodega individual.
 - [x] **Reorganizar en pestañas** por inteligencia (Gestor: Visión general · Clientes y experiencia · Económica y mercado. Bodega: Ficha · Reseñas y análisis). Añadir más pestañas al sumar inteligencias.

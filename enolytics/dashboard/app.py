@@ -465,8 +465,64 @@ def ficha_reputacion(res_bod: pd.DataFrame, an_bod: pd.DataFrame, titulo: str) -
                     st.markdown(f"> {'★' * int(x['puntuacion'])} — *{str(x['texto'])[:320]}*")
 
 
-def pintar_recomendaciones(recs: list, titulo: str, vacio: str) -> None:
-    """Muestra las recomendaciones accionables, ordenadas por prioridad."""
+# Estado de una inteligencia según las recomendaciones que genera.
+# No se pinta a mano: lo calcula el motor. Si una inteligencia acumula avisos, se enciende sola.
+ESTADOS = {
+    "critico": ("🔴", "Crítico"),
+    "atencion": ("🟠", "Atención"),
+    "mejorable": ("🟡", "Mejorable"),
+    "ok": ("🟢", "En orden"),
+}
+
+
+def semaforo_inteligencias(recs: list) -> dict:
+    """Estado de cada una de las 7 inteligencias, deducido de sus recomendaciones."""
+    estado = {}
+    for clave, info in config.OBJETIVOS_INTELIGENCIAS.items():
+        # El nombre corto que usa el motor ("Económica", "Mercado"...)
+        corto = info["titulo"].replace("Inteligencia en ", "").replace("Inteligencia de ", "")
+        corto = corto.replace("Inteligencia ", "")
+        propias = [r for r in recs if r.inteligencia == corto]
+        n_alta = sum(1 for r in propias if r.prioridad == "alta")
+        if n_alta >= 2:
+            clave_estado = "critico"
+        elif n_alta == 1:
+            clave_estado = "atencion"
+        elif propias:
+            clave_estado = "mejorable"
+        else:
+            clave_estado = "ok"
+        estado[clave] = {"titulo": info["titulo"], "corto": corto, "estado": clave_estado,
+                         "n_alta": n_alta, "n_total": len(propias)}
+    return estado
+
+
+def pintar_semaforo(estado: dict) -> None:
+    """Panel de estado de las 7 inteligencias, de un vistazo."""
+    st.markdown("#### ¿Cómo va el destino?")
+    st.caption("Estado de cada inteligencia según los avisos que genera el motor. "
+               "🔴 2+ acciones urgentes · 🟠 1 urgente · 🟡 mejoras pendientes · 🟢 sin avisos.")
+    orden = ["critico", "atencion", "mejorable", "ok"]
+    items = sorted(estado.values(), key=lambda e: orden.index(e["estado"]))
+    for fila in (items[:4], items[4:]):
+        if not fila:
+            continue
+        cols = st.columns(len(fila))
+        for col, e in zip(cols, fila):
+            emoji, etiqueta = ESTADOS[e["estado"]]
+            with col:
+                st.metric(f"{emoji} {e['corto']}", etiqueta,
+                          f"{e['n_alta']} urgente(s)" if e["n_alta"] else None,
+                          delta_color="inverse" if e["n_alta"] else "off")
+
+
+def pintar_recomendaciones(recs: list, titulo: str, vacio: str,
+                           limite: int | None = None, expandir: bool = True) -> None:
+    """Muestra las recomendaciones accionables, ordenadas por prioridad.
+
+    `limite`: si se indica, solo muestra las N primeras y el resto tras un desplegable
+    (evita volcar una pared de avisos en la portada).
+    """
     if not recs:
         st.success(f"✅ {vacio}")
         return
@@ -477,14 +533,23 @@ def pintar_recomendaciones(recs: list, titulo: str, vacio: str) -> None:
                "Generadas automáticamente cruzando las 7 inteligencias; cada una declara el dato "
                "que la justifica y su fuente.")
 
-    for r in recs:
+    def _tarjeta(r, abierta: bool) -> None:
         icono = reco.ICONO_PRIORIDAD.get(r.prioridad, "•")
-        with st.expander(f"{icono} **{r.titulo}** · _{r.inteligencia}_",
-                         expanded=(r.prioridad == "alta")):
+        with st.expander(f"{icono} **{r.titulo}** · _{r.inteligencia}_", expanded=abierta):
             st.markdown(f"**Diagnóstico.** {r.diagnostico}")
             st.markdown(f"**Acción propuesta.** {r.accion}")
             if r.fuente:
                 st.caption(f"Fuente: {r.fuente}")
+
+    principales = recs[:limite] if limite else recs
+    for r in principales:
+        _tarjeta(r, abierta=expandir and r.prioridad == "alta")
+
+    resto = recs[limite:] if limite else []
+    if resto:
+        with st.expander(f"Ver las otras {len(resto)} recomendaciones"):
+            for r in resto:
+                _tarjeta(r, abierta=False)
 
 
 def cabecera_inteligencia(clave: str) -> None:
@@ -557,35 +622,31 @@ if df.empty:
     )
     st.stop()
 
-# --- Barra lateral: rol y filtros ---
+# --- Barra lateral: navegación y filtros ---
+# Tres niveles, siguiendo el principio "primero la panorámica; el detalle, a demanda":
+#   1) Resumen ejecutivo → ¿cómo vamos y qué hago primero?  (5 segundos)
+#   2) Las 7 inteligencias → el análisis por fuente          (el analista)
+#   3) Bodega individual → la ficha de cada bodega
+VISTA_RESUMEN = "🏠 Resumen ejecutivo"
+VISTA_INTELIGENCIAS = "🧭 Las 7 inteligencias"
+VISTA_BODEGA = "🏭 Bodega individual"
+
 with st.sidebar:
-    st.header("Configuración")
-    rol = st.radio("Vista", ["Gestor de destino", "Bodega individual"])
+    st.header("Navegación")
+    rol = st.radio("Vista", [VISTA_RESUMEN, VISTA_INTELIGENCIAS, VISTA_BODEGA],
+                   captions=["Lo esencial, de un vistazo",
+                             "El análisis completo por inteligencia",
+                             "Ficha y recomendaciones de una bodega"])
+    st.divider()
     localidades = sorted(df["localidad"].dropna().unique())
     sel_local = st.multiselect("Localidad", localidades, default=localidades)
 
 df_f = df[df["localidad"].isin(sel_local)]
 
 # --------------------------------------------------------------------------- #
-# Vista GESTOR: panorámica del destino
+# Cálculos comunes al destino (resumen e inteligencias comparten motor)
 # --------------------------------------------------------------------------- #
-if rol == "Gestor de destino":
-    # Cabecera de indicadores (siempre visible sobre las pestañas)
-    h1, h2, h3, h4 = st.columns(4)
-    h1.metric("Bodegas", len(df_f))
-    h2.metric("Recursos enoturísticos", len(oferta) if not oferta.empty else "—")
-    if not acevin.empty:
-        _ult = int(acevin["anio"].max())
-        _vis = acevin[(acevin["anio"] == _ult) & (acevin["ruta"] == "Marco de Jerez")]["visitantes"]
-        if not _vis.empty:
-            h3.metric(f"Visitantes {_ult}", f"{int(_vis.iloc[0]):,}".replace(",", "."),
-                      help="Visitas a bodegas y museos del Marco (ACEVIN).")
-    elif not censo.empty:
-        h3.metric("Reseñas en Google", f"{int(censo['total_resenas'].fillna(0).sum()):,}")
-    if not sostenibilidad.empty:
-        h4.metric("Bodegas sostenibles", int(sostenibilidad["certificado_swfcp"].sum()))
-
-    # ----- Recomendaciones accionables para el destino -----
+if rol in (VISTA_RESUMEN, VISTA_INTELIGENCIAS):
     tabla_respuestas = tabla_respuestas_marco(resenas)
     recs_destino = reco.recomendaciones_destino(
         acevin=acevin, acevin_oferta=acevin_oferta, acevin_ingresos=acevin_ingresos,
@@ -596,14 +657,75 @@ if rol == "Gestor de destino":
         aereo_mercados=aereo_mercados, aereo_capacidad=aereo_capacidad,
         cruceros=cruceros,
     )
+
+# --------------------------------------------------------------------------- #
+# VISTA 1 — RESUMEN EJECUTIVO: ¿cómo vamos y qué hago primero? (5 segundos)
+# --------------------------------------------------------------------------- #
+if rol == VISTA_RESUMEN:
+    st.caption("Lo esencial del destino, de un vistazo. El análisis completo está en "
+               "**🧭 Las 7 inteligencias**.")
+
+    # --- Cifras clave ---
+    k1, k2, k3, k4 = st.columns(4)
+    if not acevin.empty:
+        _u = int(acevin["anio"].max())
+        _v = acevin[(acevin["anio"] == _u) & (acevin["ruta"] == "Marco de Jerez")]["visitantes"]
+        _rank = (acevin[acevin["anio"] == _u].sort_values("visitantes", ascending=False)
+                 .reset_index(drop=True))
+        _pos = int(_rank.index[_rank["ruta"] == "Marco de Jerez"][0]) + 1 \
+            if "Marco de Jerez" in set(_rank["ruta"]) else None
+        if not _v.empty:
+            k1.metric(f"Visitantes {_u}", f"{int(_v.iloc[0]):,}".replace(",", "."),
+                      f"{_pos}º de España" if _pos else None,
+                      help="Visitas a bodegas y museos del Marco (ACEVIN).")
+    k2.metric("Bodegas", len(df_f))
+    if not resenas.empty:
+        k3.metric("Valoración del destino", f"{resenas['puntuacion'].mean():.2f} / 5",
+                  f"{len(resenas):,} reseñas".replace(",", "."))
+    if not acevin_ingresos.empty and not acevin.empty:
+        _ing = acevin_ingresos[acevin_ingresos["ruta"] == "Marco de Jerez"]
+        if not _ing.empty:
+            k4.metric("Ingresos del enoturismo",
+                      f"{_ing['ingresos_eur'].iloc[0] / 1e6:.1f} M€",
+                      help="Visitas a bodegas y museos (ACEVIN). No incluye alojamiento "
+                           "ni restauración.")
+
+    st.divider()
+
+    # --- Semáforo: estado de las 7 inteligencias (lo calcula el motor) ---
+    with st.container(border=True):
+        pintar_semaforo(semaforo_inteligencias(recs_destino))
+
+    st.divider()
+
+    # --- Qué hacer primero: solo las 3 más urgentes ---
     with st.container(border=True):
         pintar_recomendaciones(
             recs_destino,
-            titulo="🎯 Recomendaciones accionables para el destino",
-            vacio="No hay recomendaciones pendientes con los datos actuales.")
+            titulo="🎯 ¿Qué hacer primero?",
+            vacio="No hay recomendaciones pendientes con los datos actuales.",
+            limite=3)
 
-    st.caption("Una pestaña por cada una de las **7 inteligencias competitivas** del modelo ENOLYTICS.")
+    st.caption("👉 El detalle de cada indicador, con sus fuentes y cautelas, está en "
+               "**🧭 Las 7 inteligencias** (barra lateral).")
+    st.stop()
+
+
+# --------------------------------------------------------------------------- #
+# VISTA 2 — LAS 7 INTELIGENCIAS: el análisis completo
+# --------------------------------------------------------------------------- #
+if rol == VISTA_INTELIGENCIAS:
+    st.caption("Una pestaña por cada una de las **7 inteligencias competitivas** del modelo "
+               "ENOLYTICS. Cada una abre con lo esencial; el detalle está en los desplegables.")
     leyenda_origenes()
+
+    with st.expander("🎯 Ver las 12 recomendaciones accionables del destino"):
+        pintar_recomendaciones(
+            recs_destino,
+            titulo="Recomendaciones para el destino",
+            vacio="No hay recomendaciones pendientes con los datos actuales.",
+            expandir=False)
+
     tab_eco, tab_mer, tab_comp, tab_cli, tab_neg, tab_tec, tab_sos = st.tabs(
         ["💶 Económica", "📈 Mercado", "🥊 Competidores", "😊 Clientes",
          "🏛️ Negocios", "🖥️ Tecnológica", "🌱 Sostenibilidad"])
@@ -817,81 +939,84 @@ if rol == "Gestor de destino":
                             "estancia_prevista": "Estancia prevista (días)"}),
                         use_container_width=True, hide_index=True)
 
-            # --- Ranking de mercados emisores ---
+            # --- Ranking de mercados emisores (detalle, plegado) ---
             top = mer.sort_values("busquedas", ascending=False).head(12)
-            st.markdown("**Mercados emisores: quién busca volar a Jerez**")
-            st.bar_chart(top.set_index("pais")["busquedas"])
-
-            st.caption("«Conversión» = qué porcentaje de las búsquedas acaba en reserva. Un "
-                       "mercado que busca mucho y reserva poco es **demanda no capturada**.")
-            st.dataframe(
-                top[["pais", "busquedas", "reservas", "conversion_pct",
-                     "antelacion_busqueda", "estancia_prevista"]].rename(columns={
-                    "pais": "País", "busquedas": "Búsquedas", "reservas": "Reservas",
-                    "conversion_pct": "Conversión %", "antelacion_busqueda": "Antelación (días)",
-                    "estancia_prevista": "Estancia prevista (días)"}),
-                use_container_width=True, hide_index=True)
+            with st.expander("📊 Ver el ranking completo de mercados emisores"):
+                st.markdown("**Quién busca volar a Jerez**")
+                st.bar_chart(top.set_index("pais")["busquedas"])
+                st.caption("«Conversión» = qué porcentaje de las búsquedas acaba en reserva. Un "
+                           "mercado que busca mucho y reserva poco es **demanda no capturada**.")
+                st.dataframe(
+                    top[["pais", "busquedas", "reservas", "conversion_pct",
+                         "antelacion_busqueda", "estancia_prevista"]].rename(columns={
+                        "pais": "País", "busquedas": "Búsquedas", "reservas": "Reservas",
+                        "conversion_pct": "Conversión %",
+                        "antelacion_busqueda": "Antelación (días)",
+                        "estancia_prevista": "Estancia prevista (días)"}),
+                    use_container_width=True, hide_index=True)
 
             st.caption("👉 La **antelación de compra** y la **estancia prevista** de cada mercado "
                        "están en la pestaña **😊 Clientes** (perfil y planificación del viaje). "
                        "Los **asientos programados**, en **🏛️ Negocios** (infraestructura).")
             st.divider()
 
-        # --- Interés de búsqueda (Google Trends) ---
+        # --- Interés de búsqueda (Google Trends) — apoyo, plegado ---
         if not trends_temporal.empty:
-            termcols = [c for c in trends_temporal.columns if c != "fecha"]
-            foco = next((c for c in termcols if "Jerez" in c), termcols[0])
-            # Google devuelve datos semanales en 5 años: remuestreamos a meses.
-            mensual = (trends_temporal.set_index("fecha")[termcols]
-                       .resample("MS").mean())
-            medias = mensual.mean().sort_values(ascending=False)
-            rank = list(medias.index).index(foco) + 1
+            with st.expander("🔍 Interés de búsqueda en Google frente a las rutas competidoras"):
+                termcols = [c for c in trends_temporal.columns if c != "fecha"]
+                foco = next((c for c in termcols if "Jerez" in c), termcols[0])
+                # Google devuelve datos semanales en 5 años: remuestreamos a meses.
+                mensual = (trends_temporal.set_index("fecha")[termcols]
+                           .resample("MS").mean())
+                medias = mensual.mean().sort_values(ascending=False)
+                rank = list(medias.index).index(foco) + 1
 
-            # Tendencia del foco: media de los primeros vs. los últimos 24 meses (2 años)
-            serie_foco = mensual[foco].dropna()
-            n = min(24, len(serie_foco) // 2)
-            ini, fin = serie_foco.head(n).mean(), serie_foco.tail(n).mean()
-            var = (fin - ini) / ini * 100 if ini else 0.0
+                # Tendencia del foco: primeros vs. últimos 24 meses (2 años)
+                serie_foco = mensual[foco].dropna()
+                n = min(24, len(serie_foco) // 2)
+                ini, fin = serie_foco.head(n).mean(), serie_foco.tail(n).mean()
+                var = (fin - ini) / ini * 100 if ini else 0.0
 
-            st.markdown("**Interés de búsqueda en Google (últimos 5 años, escala 0-100 comparativa)**")
-            fuente("observado", "Google Trends sobre el término «bodegas [zona]», usado como "
-                                "**proxy de intención de visita**. Escala relativa (0-100), no "
-                                "es volumen absoluto de búsquedas.")
-            c1, c2, c3 = st.columns(3)
-            etq_foco = foco.replace("bodegas ", "").strip()
-            c1.metric(f"Posición de {etq_foco}", f"{rank}º de {len(termcols)}",
-                      help="Ranking por interés medio de búsqueda frente a las rutas competidoras.")
-            c2.metric(f"Interés medio de {etq_foco}", f"{medias[foco]:.0f}",
-                      f"líder: {medias.index[0].replace('bodegas ', '')} ({medias.iloc[0]:.0f})")
-            c3.metric("Tendencia de la demanda", f"{var:+.0f}%",
-                      help="Variación del interés entre los primeros y los últimos 2 años.")
+                fuente("observado", "Google Trends sobre el término «bodegas [zona]», usado como "
+                                    "**proxy de intención de visita**. Escala relativa (0-100), "
+                                    "no es volumen absoluto de búsquedas.")
+                c1, c2, c3 = st.columns(3)
+                etq_foco = foco.replace("bodegas ", "").strip()
+                c1.metric(f"Posición de {etq_foco}", f"{rank}º de {len(termcols)}",
+                          help="Ranking por interés medio frente a las rutas competidoras.")
+                c2.metric(f"Interés medio de {etq_foco}", f"{medias[foco]:.0f}",
+                          f"líder: {medias.index[0].replace('bodegas ', '')} ({medias.iloc[0]:.0f})")
+                c3.metric("Tendencia de la demanda", f"{var:+.0f}%",
+                          help="Variación entre los primeros y los últimos 2 años.")
 
-            # Evolución suavizada (media móvil de 6 meses) para ver la tendencia sin ruido
-            suave = mensual.rolling(6, min_periods=2).mean()
-            suave.columns = [c.replace("bodegas ", "") for c in suave.columns]
-            st.caption("Evolución del interés (media móvil de 6 meses)")
-            st.line_chart(suave)
+                suave = mensual.rolling(6, min_periods=2).mean()
+                suave.columns = [c.replace("bodegas ", "") for c in suave.columns]
+                st.caption("Evolución del interés (media móvil de 6 meses)")
+                st.line_chart(suave)
 
-            if not trends_regiones.empty:
-                top = trends_regiones.head(8).set_index("comunidad")["interes"]
-                st.caption(f"Origen de la demanda: comunidades que más buscan «{foco}» (0-100)")
-                st.bar_chart(top)
-            st.divider()
+                if not trends_regiones.empty:
+                    top_r = trends_regiones.head(8).set_index("comunidad")["interes"]
+                    st.caption(f"Origen de la demanda: comunidades que más buscan «{foco}»")
+                    st.bar_chart(top_r)
 
-        if not gasto_anio.empty:
-            st.markdown(f"**Gasto por procedencia del turista ({anio_ref})**")
-            comp = (gasto_anio[gasto_anio["TIPO_ORIGEN"].isin(["Internacional", "Interregional", "Regional"])]
-                    .groupby("TIPO_ORIGEN")["GASTO"].sum() / 1e6)
-            st.bar_chart(comp)
-        if not satisf_cadiz.empty:
-            idx_cols = [c for c in satisf_cadiz.columns if c.startswith("IN")]
-            medias_p = satisf_cadiz[idx_cols].apply(pd.to_numeric, errors="coerce").mean()
-            st.markdown("**Índices de percepción del visitante en Cádiz (media, sobre 100)**")
-            s1, s2, s3, s4 = st.columns(4)
-            s1.metric("Percepción global", f"{medias_p.get('INIDICE_PERCEPCION_TURISTICA_GLOBAL', float('nan')):.0f}")
-            s2.metric("Satisf. productos", f"{medias_p.get('INDICE_SATISFACCION_PRODUCTOS_TURISTICOS', float('nan')):.0f}")
-            s3.metric("Seguridad", f"{medias_p.get('INDICE_PERCEPCION_SEGURIDAD', float('nan')):.0f}")
-            s4.metric("Clima", f"{medias_p.get('INDICE_PERCEPCION_CLIMATICA', float('nan')):.0f}")
+        # --- Gasto y percepción (Dataestur) — apoyo, plegado ---
+        if not gasto_anio.empty or not satisf_cadiz.empty:
+            with st.expander("💳 Gasto y percepción del visitante en Cádiz (Dataestur)"):
+                if not gasto_anio.empty:
+                    st.markdown(f"**Gasto por procedencia del turista ({anio_ref})**")
+                    comp = (gasto_anio[gasto_anio["TIPO_ORIGEN"].isin(
+                        ["Internacional", "Interregional", "Regional"])]
+                        .groupby("TIPO_ORIGEN")["GASTO"].sum() / 1e6)
+                    st.bar_chart(comp)
+                if not satisf_cadiz.empty:
+                    idx_cols = [c for c in satisf_cadiz.columns if c.startswith("IN")]
+                    medias_p = satisf_cadiz[idx_cols].apply(pd.to_numeric, errors="coerce").mean()
+                    st.markdown("**Índices de percepción del visitante (media, sobre 100)**")
+                    s1, s2, s3, s4 = st.columns(4)
+                    s1.metric("Percepción global", f"{medias_p.get('INIDICE_PERCEPCION_TURISTICA_GLOBAL', float('nan')):.0f}")
+                    s2.metric("Satisf. productos", f"{medias_p.get('INDICE_SATISFACCION_PRODUCTOS_TURISTICOS', float('nan')):.0f}")
+                    s3.metric("Seguridad", f"{medias_p.get('INDICE_PERCEPCION_SEGURIDAD', float('nan')):.0f}")
+                    s4.metric("Clima", f"{medias_p.get('INDICE_PERCEPCION_CLIMATICA', float('nan')):.0f}")
 
     # ----- 3. Inteligencia de Competidores -----
     with tab_comp:
@@ -932,20 +1057,23 @@ if rol == "Gestor de destino":
             piv = acevin.pivot_table(index="anio", columns="ruta", values="visitantes")
             st.line_chart(piv)
 
-            # Tabla-ranking con crecimiento interanual
+            # Tabla-ranking con crecimiento interanual (detalle, plegado)
             if prev:
+                _exp_rank = st.expander("📊 Ver la tabla completa de rutas del vino")
                 tab = rank_ult.merge(
                     acevin[acevin["anio"] == prev][["ruta", "visitantes"]],
                     on="ruta", how="left", suffixes=("", "_prev"))
                 tab["Crecimiento"] = ((tab["visitantes"] - tab["visitantes_prev"])
                                       / tab["visitantes_prev"] * 100).round(1)
                 tab.insert(0, "Pos.", range(1, len(tab) + 1))
-                st.dataframe(
-                    tab[["Pos.", "ruta", "visitantes", "visitantes_prev", "Crecimiento"]].rename(
+                with _exp_rank:
+                    st.dataframe(
+                        tab[["Pos.", "ruta", "visitantes", "visitantes_prev", "Crecimiento"]].rename(
                         columns={"ruta": "Ruta del vino", "visitantes": f"Visitantes {ult}",
-                                 "visitantes_prev": f"Visitantes {prev}", "Crecimiento": "Crec. %"}),
-                    use_container_width=True, hide_index=True,
-                )
+                                     "visitantes_prev": f"Visitantes {prev}",
+                                     "Crecimiento": "Crec. %"}),
+                        use_container_width=True, hide_index=True,
+                    )
 
             # --- A-bis. Comparación de la OFERTA entre rutas (indicador de la Tabla 1) ---
             if not acevin_oferta.empty:
@@ -1286,15 +1414,17 @@ if rol == "Gestor de destino":
             adopcion = pd.Series({k: aud_ok[v].mean() * 100 for k, v in feats.items()})
             st.bar_chart(adopcion)
 
-            st.markdown("**Ranking de madurez digital:**")
-            st.dataframe(
-                aud_ok.sort_values("madurez_digital", ascending=False)[
-                    ["bodega", "localidad", "madurez_digital", "reserva_online", "ingles", "inmersiva"]
-                ].rename(columns={"bodega": "Bodega", "localidad": "Localidad",
-                                  "madurez_digital": "Madurez /5", "reserva_online": "Reserva",
-                                  "ingles": "Inglés", "inmersiva": "Inmersiva"}),
-                use_container_width=True, hide_index=True,
-            )
+            with st.expander("📊 Ver el ranking de madurez digital por bodega"):
+                st.dataframe(
+                    aud_ok.sort_values("madurez_digital", ascending=False)[
+                        ["bodega", "localidad", "madurez_digital", "reserva_online",
+                         "ingles", "inmersiva"]
+                    ].rename(columns={"bodega": "Bodega", "localidad": "Localidad",
+                                      "madurez_digital": "Madurez /5",
+                                      "reserva_online": "Reserva",
+                                      "ingles": "Inglés", "inmersiva": "Inmersiva"}),
+                    use_container_width=True, hide_index=True,
+                )
             if n_no:
                 st.caption(f"⚠️ {n_no} bodegas no auditables automáticamente (sin web, verificación "
                            "de edad o protección anti-bot — frecuente en las webs más avanzadas). "
@@ -1411,13 +1541,13 @@ if rol == "Gestor de destino":
 
             # Ranking por índice de sostenibilidad comunicada
             if tiene_indice:
-                st.markdown("**Bodegas líderes en sostenibilidad comunicada**")
-                top = (sostenibilidad[sostenibilidad["indice_sostenibilidad"] > 0]
-                       .sort_values("indice_sostenibilidad", ascending=False)
-                       .head(10)[["bodega", "localidad", "indice_sostenibilidad"]]
-                       .rename(columns={"bodega": "Bodega", "localidad": "Localidad",
-                                        "indice_sostenibilidad": "Índice /7"}))
-                st.dataframe(top, hide_index=True, use_container_width=True)
+                with st.expander("📊 Ver el ranking de sostenibilidad comunicada"):
+                    top = (sostenibilidad[sostenibilidad["indice_sostenibilidad"] > 0]
+                           .sort_values("indice_sostenibilidad", ascending=False)
+                           .head(10)[["bodega", "localidad", "indice_sostenibilidad"]]
+                           .rename(columns={"bodega": "Bodega", "localidad": "Localidad",
+                                            "indice_sostenibilidad": "Índice /7"}))
+                    st.dataframe(top, hide_index=True, use_container_width=True)
 
             # ----- Transporte sostenible (indicador de la Tabla 1 de la memoria) -----
             if not transporte.empty:
