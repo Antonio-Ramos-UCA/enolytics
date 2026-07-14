@@ -161,6 +161,67 @@ streamlit, pandas, sklearn, plotly, matplotlib, requests, bs4.
 6. **En paralelo (no bloquea):** diseñar cuestionarios a partir de la Tabla 1 de la
    memoria; incorporar indicadores oficiales (INE, Dataestur, ACEVIN, Google Trends).
 
+## ═══ SESIÓN 2026-07-15 ═══
+### (Sesión de hallazgos grandes. Las dos ideas clave las puso Antonio.)
+
+### 1. ✈️ CONECTIVIDAD AÉREA — el primer indicador PREDICTIVO de ENOLYTICS
+- **`enolytics/ingesta/conectividad_aerea.py`** (Dataestur). **Jerez de la Frontera figura como
+  ciudad destino propia** (no hace falta aproximar con Sevilla).
+- 4 conjuntos en `datos/procesado/conectividad_aerea/`: **búsquedas y reservas por FECHA DE
+  INICIO DE VIAJE** (miran al futuro), capacidad (asientos programados) y tráfico real.
+  **Datos hasta agosto de 2026.** Vienen **por país emisor**, con **antelación de compra** y
+  **estancia media prevista**.
+- 🚨 **HALLAZGO: 2.631.321 búsquedas de vuelo a Jerez proceden de países SIN UN SOLO ASIENTO
+  DIRECTO** (Italia 634k, EE.UU. 621k, Francia 591k, Países Bajos 422k). **Solo 9 países** tienen
+  vuelo directo. **La demanda existe y está cuantificada; lo que falta es el avión.** Es el
+  argumento más fuerte para negociar rutas con aerolíneas y el Patronato.
+- Otros datos: Alemania es 2º mercado emisor (5,1M búsquedas) y planifica con **~167 días de
+  antelación** → **dice cuándo lanzar cada campaña**. EE.UU. es el que mejor convierte (5,87%) y
+  el de estancia más larga (12,6 días), **y ni siquiera tiene vuelo directo**.
+- ⚠️ **NO ESTABA EN LA MEMORIA.** Comprobado: ni "aéreo", ni "vuelo", ni "aeropuerto", ni
+  "conectividad", ni "pasajeros" aparecen en el documento. **Pero la memoria SÍ compromete
+  "capacidad predictiva" y "proyecciones de escenarios" sin nombrar ninguna fuente.**
+  👉 **Presentar ante FEDER como VALOR AÑADIDO, no como desviación.** Ya anotado en
+  `docs/auditoria_coherencia.md`, donde "capacidad predictiva" pasa a **RESUELTA**.
+- **Repartido entre 3 inteligencias** (decisión de Antonio, opción B):
+  · **Mercado** → demanda futura, mercados emisores, conversión y demanda desatendida.
+  · **Clientes** → antelación de compra y estancia prevista. **CUBRE el indicador de la Tabla 1
+    "Canales utilizados para la planificación y reserva", que estaba a CERO.**
+  · **Negocios** → asientos programados como *infraestructura de llegada* (solo 9 países).
+
+### 2. 🚢 CRUCEROS DEL PUERTO DE CÁDIZ — el mercado cautivo (¡idea de Antonio!)
+- **`enolytics/ingesta/cruceros.py`** (Dataestur, endpoint `PUERTOS_DL`, puerto **"BAHÍA DE
+  CÁDIZ"** — ojo, no se llama "Cádiz").
+- 🚨🚨 **HALLAZGO (el mejor del proyecto):**
+  **696.151 cruceristas llegaron a Cádiz en 2024. Las bodegas del Marco recibieron 425.652
+  visitantes en total. LLEGAN MÁS CRUCERISTAS AL PUERTO QUE VISITANTES A TODAS LAS BODEGAS
+  JUNTAS.** Es el **6º puerto de España** (por delante de Málaga) y atracan **a 40 minutos de
+  Jerez**. Encaja con ACEVIN: ~30% de los enoturistas son **excursionistas que no pernoctan**.
+- 🎯 **Y el cruce de estacionalidades es la joya:** el crucero **hace pico en octubre-noviembre**,
+  justo cuando el enoturismo cae. En **noviembre: cruceros al 85% de su máximo, enoturismo al
+  54%**. **Es la prioridad FEDER P4A (reducir la estacionalidad) servida en bandeja.**
+- Recomendación de prioridad alta: **excursiones de medio día empaquetadas con navieras y
+  agencias receptivas del puerto** (visita + cata, 4-5 h).
+- ⚠️ Detalle: cruceros y ACEVIN van **desacompasados** (cruceros llega a 2025, ACEVIN a 2024) →
+  la comparación usa el **último año COMÚN**.
+
+### 3. 🐛 BUG IMPORTANTE CORREGIDO en el cliente de Dataestur
+- **Algunos endpoints devuelven un fichero EXCEL, no CSV** (`PUERTOS_DL`,
+  `AFILIACION_TURISMO_DL`). El cliente solo leía CSV y fallaba con *"No se pudo decodificar"*.
+- Ahora detecta el formato por la **firma del contenido** (`PK` = cabecera zip de un .xlsx) y por
+  el content-type, no por el nombre del endpoint.
+- 🎁 **Esto DESBLOQUEA el empleo turístico (`AFILIACION_TURISMO_DL`)**, que llevaba semanas
+  atascado en el backlog y es **un indicador de la Tabla 1 que sigue a CERO** (Económica:
+  *"contribución al empleo"*; Negocios: *"nº de empleados en enoturismo"*).
+
+### 👉 PRÓXIMO PASO SUGERIDO
+**Rematar el EMPLEO TURÍSTICO**, ahora que ya se puede leer: tapa dos indicadores comprometidos
+(Económica y Negocios) de una sola vez. Después: el **blog de Dataestur** (rentabilidad, RRSS,
+eventos, índice de sentimiento oficial), la **afluencia** (Google Places) y el **sentimiento con
+modelo NLP real**.
+
+---
+
 ## ═══ SESIÓN 2026-07-14 ═══
 
 ### ⚠️ LO PRIMERO: UN NÚMERO YA REPORTADO HA CAMBIADO
