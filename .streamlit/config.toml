@@ -1,0 +1,13 @@
+[theme]
+# Identidad del Marco de Jerez en el CROMO de la interfaz.
+# Los colores de los DATOS no se tocan aquí: van en enolytics/dashboard/estilo.py,
+# tomados de una paleta ya validada (contraste y seguridad para daltonismo).
+base = "light"
+primaryColor = "#8C2F39"          # tinto de Jerez — acento de la interfaz
+backgroundColor = "#FBFAF7"       # albariza: blanco cálido, la tierra del Marco
+secondaryBackgroundColor = "#F3F0E9"
+textColor = "#1C1B19"
+font = "sans serif"
+
+[server]
+headless = true

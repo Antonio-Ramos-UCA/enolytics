@@ -26,6 +26,73 @@ from enolytics.nlp import idioma as nlp_idioma  # noqa: E402 (solo nombres; no u
 from enolytics.analitica import ipa as modelo_ipa  # noqa: E402
 from enolytics.analitica import recomendaciones as reco  # noqa: E402
 from enolytics.analitica import reputacion as rep  # noqa: E402
+from enolytics.dashboard import estilo  # noqa: E402
+
+
+# --------------------------------------------------------------------------- #
+# Gráficos con la identidad de ENOLYTICS (sustituyen a los st.*_chart planos)
+# --------------------------------------------------------------------------- #
+def barras(datos, titulo: str = "", horizontal: bool = False, color=None,
+           alto: int = 300, formato: str | None = None, destacar: str | None = None):
+    """Gráfico de barras con el estilo de la casa. `datos`: Series (índice = categoría).
+
+    `destacar`: categoría a resaltar (p. ej. "Marco de Jerez"). El resto queda en un tono
+    apagado — patrón *foco + contexto*: el ojo va solo a lo que importa. El color sigue a la
+    **entidad**, no a su puesto en el ranking.
+    """
+    if datos is None or len(datos) == 0:
+        return
+    d = datos.dropna()
+    if d.empty:
+        return
+
+    etiquetas = [str(i) for i in d.index]
+    if destacar is not None:
+        colores = [estilo.SERIES[0] if destacar.lower() in e.lower() else estilo.CONTEXTO
+                   for e in etiquetas]
+    elif color is not None:
+        colores = color
+    else:
+        colores = estilo.SERIES[0]
+
+    if horizontal:
+        orden = d.sort_values()
+        etiquetas = [str(i) for i in orden.index]
+        if destacar is not None:
+            colores = [estilo.SERIES[0] if destacar.lower() in e.lower() else estilo.CONTEXTO
+                       for e in etiquetas]
+        fig = px.bar(x=orden.values, y=etiquetas, orientation="h")
+        plantilla = "<b>%{y}</b><br>%{x:,.0f}<extra></extra>"
+    else:
+        fig = px.bar(x=etiquetas, y=d.values)
+        plantilla = "<b>%{x}</b><br>%{y:,.0f}<extra></extra>"
+
+    fig.update_traces(marker_color=colores, marker_line_width=0, hovertemplate=plantilla)
+    # Marcas finas: la barra no debe engordar hasta tocar a su vecina.
+    fig.update_layout(title=titulo, bargap=0.45)
+    if formato:
+        fig.update_traces(texttemplate=formato, textposition="outside",
+                          textfont=dict(size=11, color=estilo.INK_SUAVE))
+    st.plotly_chart(estilo.figura(fig, alto=alto, leyenda=False), use_container_width=True)
+
+
+def lineas(datos, titulo: str = "", alto: int = 320):
+    """Gráfico de líneas multi-serie. `datos`: DataFrame (índice = eje X, columnas = series)."""
+    if datos is None or len(datos) == 0:
+        return
+    fig = px.line(datos, color_discrete_sequence=estilo.SERIES)
+    fig.update_traces(line=dict(width=2), hovertemplate="%{y:,.0f}<extra>%{fullData.name}</extra>")
+    fig.update_layout(title=titulo, hovermode="x unified")
+
+    # Si el eje X son años enteros, forzar marcas de año en año: si no, Plotly los trata
+    # como números continuos e inventa medios años ("2.022,5"), que no existen.
+    idx = getattr(datos, "index", None)
+    if idx is not None and pd.api.types.is_integer_dtype(idx):
+        fig.update_xaxes(dtick=1, tickformat="d")
+
+    n_series = datos.shape[1] if hasattr(datos, "shape") and len(datos.shape) > 1 else 1
+    st.plotly_chart(estilo.figura(fig, alto=alto, leyenda=n_series > 1),
+                    use_container_width=True)
 
 
 st.set_page_config(page_title="ENOLYTICS — Marco de Jerez", page_icon="🍷", layout="wide")
@@ -357,7 +424,7 @@ def panel_idiomas(res: pd.DataFrame, an: pd.DataFrame, ambito: str) -> None:
         top = det["idioma"].value_counts().head(8)
         top.index = [nlp_idioma.nombre_idioma(c) for c in top.index]
         st.caption("Idiomas detectados")
-        st.bar_chart(top)
+        barras(top)
 
     # --- ¿Valoran lo mismo el visitante hispanohablante y el internacional? ---
     if not an.empty and "atributos" in an.columns and "segmento_idioma" in an.columns:
@@ -498,22 +565,45 @@ def semaforo_inteligencias(recs: list) -> dict:
 
 
 def pintar_semaforo(estado: dict) -> None:
-    """Panel de estado de las 7 inteligencias, de un vistazo."""
+    """Estado de las 7 inteligencias, de un vistazo.
+
+    El color de estado **nunca va solo**: cada tarjeta lleva icono y texto, para que se lea
+    igual sin distinguir colores.
+    """
     st.markdown("#### ¿Cómo va el destino?")
-    st.caption("Estado de cada inteligencia según los avisos que genera el motor. "
-               "🔴 2+ acciones urgentes · 🟠 1 urgente · 🟡 mejoras pendientes · 🟢 sin avisos.")
+    st.caption("Estado de cada inteligencia, deducido de los avisos que genera el motor.")
+
     orden = ["critico", "atencion", "mejorable", "ok"]
     items = sorted(estado.values(), key=lambda e: orden.index(e["estado"]))
-    for fila in (items[:4], items[4:]):
-        if not fila:
-            continue
-        cols = st.columns(len(fila))
+
+    def _tarjeta(e: dict) -> str:
+        color = estilo.ESTADO[e["estado"]]
+        icono, etiqueta = ESTADOS[e["estado"]]
+        detalle = (f"{e['n_alta']} acción urgente" if e["n_alta"] == 1
+                   else f"{e['n_alta']} acciones urgentes" if e["n_alta"] > 1
+                   else f"{e['n_total']} mejora(s)" if e["n_total"] else "sin avisos")
+        return (
+            f'<div style="background:#fff;border:1px solid {estilo.BORDE};'
+            f'border-left:4px solid {color};border-radius:11px;padding:.7rem .85rem;'
+            f'box-shadow:0 1px 2px rgba(28,27,25,.04);height:100%;">'
+            f'<div style="font-size:.72rem;font-weight:700;letter-spacing:.04em;'
+            f'text-transform:uppercase;color:{estilo.INK_TENUE};margin-bottom:.3rem;">'
+            f'{e["corto"]}</div>'
+            f'<div style="font-size:.95rem;font-weight:700;color:{estilo.INK};'
+            f'line-height:1.2;">{icono} {etiqueta}</div>'
+            f'<div style="font-size:.75rem;color:{estilo.INK_SUAVE};margin-top:.2rem;">'
+            f'{detalle}</div></div>'
+        )
+
+    # Siempre 4 columnas por fila, aunque la última quede incompleta: así todas las
+    # tarjetas tienen el mismo ancho (si no, la fila de 3 se ve desproporcionada).
+    for inicio in range(0, len(items), 4):
+        fila = items[inicio:inicio + 4]
+        cols = st.columns(4)
         for col, e in zip(cols, fila):
-            emoji, etiqueta = ESTADOS[e["estado"]]
-            with col:
-                st.metric(f"{emoji} {e['corto']}", etiqueta,
-                          f"{e['n_alta']} urgente(s)" if e["n_alta"] else None,
-                          delta_color="inverse" if e["n_alta"] else "off")
+            col.markdown(_tarjeta(e), unsafe_allow_html=True)
+
+    st.caption("🔴 2+ acciones urgentes · 🟠 1 urgente · 🟡 mejoras pendientes · 🟢 sin avisos")
 
 
 def pintar_recomendaciones(recs: list, titulo: str, vacio: str,
@@ -613,7 +703,11 @@ acevin_oferta = cargar_acevin_oferta()
 acevin_ingresos = cargar_acevin_ingresos()
 acevin_demanda = cargar_acevin_demanda()
 
-st.title("🍷 ENOLYTICS — Inteligencia enoturística del Marco de Jerez")
+st.markdown(estilo.css(), unsafe_allow_html=True)
+st.markdown(
+    estilo.hero("🍷 ENOLYTICS",
+                "Inteligencia competitiva integrada para el enoturismo del Marco de Jerez"),
+    unsafe_allow_html=True)
 
 if df.empty:
     st.warning(
@@ -639,7 +733,11 @@ with st.sidebar:
                              "Ficha y recomendaciones de una bodega"])
     st.divider()
     localidades = sorted(df["localidad"].dropna().unique())
-    sel_local = st.multiselect("Localidad", localidades, default=localidades)
+    with st.expander("Filtrar por localidad", expanded=False):
+        sel_local = st.multiselect("Localidad", localidades, default=localidades,
+                                   label_visibility="collapsed")
+    if len(sel_local) < len(localidades):
+        st.caption(f"Filtrando {len(sel_local)} de {len(localidades)} localidades")
 
 df_f = df[df["localidad"].isin(sel_local)]
 
@@ -676,17 +774,18 @@ if rol == VISTA_RESUMEN:
             if "Marco de Jerez" in set(_rank["ruta"]) else None
         if not _v.empty:
             k1.metric(f"Visitantes {_u}", f"{int(_v.iloc[0]):,}".replace(",", "."),
-                      f"{_pos}º de España" if _pos else None,
+                      f"{_pos}º de España" if _pos else None, delta_color="off",
                       help="Visitas a bodegas y museos del Marco (ACEVIN).")
     k2.metric("Bodegas", len(df_f))
     if not resenas.empty:
-        k3.metric("Valoración del destino", f"{resenas['puntuacion'].mean():.2f} / 5",
-                  f"{len(resenas):,} reseñas".replace(",", "."))
+        _nota = f"{resenas['puntuacion'].mean():.2f}".replace(".", ",")
+        k3.metric("Valoración del destino", f"{_nota} / 5",
+                  f"{len(resenas):,} reseñas".replace(",", "."), delta_color="off")
     if not acevin_ingresos.empty and not acevin.empty:
         _ing = acevin_ingresos[acevin_ingresos["ruta"] == "Marco de Jerez"]
         if not _ing.empty:
-            k4.metric("Ingresos del enoturismo",
-                      f"{_ing['ingresos_eur'].iloc[0] / 1e6:.1f} M€",
+            _me = f"{_ing['ingresos_eur'].iloc[0] / 1e6:.1f}".replace(".", ",")
+            k4.metric("Ingresos del enoturismo", f"{_me} M€",
                       help="Visitas a bodegas y museos (ACEVIN). No incluye alojamiento "
                            "ni restauración.")
 
@@ -776,7 +875,7 @@ if rol == VISTA_INTELIGENCIAS:
                                    "Vino de España.")
 
                 st.markdown("**Ingreso por visitante frente a las rutas líderes**")
-                st.bar_chart(mon.set_index("ruta")["eur_por_visitante"])
+                barras(mon.set_index("ruta")["eur_por_visitante"], destacar="Marco de Jerez")
 
                 mejor = mon.sort_values("eur_por_visitante", ascending=False).iloc[0]
                 if mejor["ruta"] != "Marco de Jerez":
@@ -808,7 +907,7 @@ if rol == VISTA_INTELIGENCIAS:
             st.caption("Evolución mensual del gasto con tarjeta (€)")
             serie = gasto_cadiz[gasto_cadiz["TIPO_ORIGEN"].isin(["Total Nacional", "Internacional"])]
             pivot = serie.pivot_table(index="fecha", columns="TIPO_ORIGEN", values="GASTO", aggfunc="sum")
-            st.line_chart(pivot)
+            lineas(pivot)
 
     # ----- 2. Inteligencia de Mercado -----
     with tab_mer:
@@ -877,7 +976,7 @@ if rol == VISTA_INTELIGENCIAS:
                 fuente("estimado", "El índice de cruceros es dato oficial; el de enoturismo es un "
                                    "**proxy**: el mes en que se escriben las reseñas (aproxima el "
                                    "mes de visita). Ambos en escala 0-100 sobre su propio máximo.")
-                st.line_chart(comp)
+                lineas(comp)
 
                 # Meses con crucero alto y enoturismo bajo = oportunidad
                 oport = comp[(comp["Cruceros"] >= 70) & (comp["Enoturismo"] <= 65)]
@@ -943,7 +1042,7 @@ if rol == VISTA_INTELIGENCIAS:
             top = mer.sort_values("busquedas", ascending=False).head(12)
             with st.expander("📊 Ver el ranking completo de mercados emisores"):
                 st.markdown("**Quién busca volar a Jerez**")
-                st.bar_chart(top.set_index("pais")["busquedas"])
+                barras(top.set_index("pais")["busquedas"])
                 st.caption("«Conversión» = qué porcentaje de las búsquedas acaba en reserva. Un "
                            "mercado que busca mucho y reserva poco es **demanda no capturada**.")
                 st.dataframe(
@@ -992,12 +1091,12 @@ if rol == VISTA_INTELIGENCIAS:
                 suave = mensual.rolling(6, min_periods=2).mean()
                 suave.columns = [c.replace("bodegas ", "") for c in suave.columns]
                 st.caption("Evolución del interés (media móvil de 6 meses)")
-                st.line_chart(suave)
+                lineas(suave)
 
                 if not trends_regiones.empty:
                     top_r = trends_regiones.head(8).set_index("comunidad")["interes"]
                     st.caption(f"Origen de la demanda: comunidades que más buscan «{foco}»")
-                    st.bar_chart(top_r)
+                    barras(top_r)
 
         # --- Gasto y percepción (Dataestur) — apoyo, plegado ---
         if not gasto_anio.empty or not satisf_cadiz.empty:
@@ -1007,7 +1106,7 @@ if rol == VISTA_INTELIGENCIAS:
                     comp = (gasto_anio[gasto_anio["TIPO_ORIGEN"].isin(
                         ["Internacional", "Interregional", "Regional"])]
                         .groupby("TIPO_ORIGEN")["GASTO"].sum() / 1e6)
-                    st.bar_chart(comp)
+                    barras(comp)
                 if not satisf_cadiz.empty:
                     idx_cols = [c for c in satisf_cadiz.columns if c.startswith("IN")]
                     medias_p = satisf_cadiz[idx_cols].apply(pd.to_numeric, errors="coerce").mean()
@@ -1048,14 +1147,14 @@ if rol == VISTA_INTELIGENCIAS:
                 vis_prev = acevin[(acevin["anio"] == prev) & (acevin["ruta"] == FOCO)]["visitantes"]
                 if not vis_prev.empty and int(vis_prev.iloc[0]):
                     var = (vis_ult - int(vis_prev.iloc[0])) / int(vis_prev.iloc[0]) * 100
-                    c3.metric(f"Crecimiento vs {prev}", f"{var:+.1f}%")
+                    c3.metric(f"Crecimiento vs {prev}", f"{var:+.1f}%".replace(".", ","))
 
             st.markdown(f"**Visitantes por ruta del vino ({ult})**")
-            st.bar_chart(rank_ult.set_index("ruta")["visitantes"])
+            barras(rank_ult.set_index("ruta")["visitantes"], destacar=FOCO)
 
             st.markdown("**Evolución de visitantes por ruta**")
             piv = acevin.pivot_table(index="anio", columns="ruta", values="visitantes")
-            st.line_chart(piv)
+            lineas(piv)
 
             # Tabla-ranking con crecimiento interanual (detalle, plegado)
             if prev:
@@ -1095,7 +1194,8 @@ if rol == VISTA_INTELIGENCIAS:
                 o1, o2 = st.columns(2)
                 if serv_foco:
                     o1.metric("Servicios del Marco", serv_foco,
-                              f"{pos_of}º de {len(of)} rutas en oferta")
+                              f"{pos_of}º de {len(of)} rutas en oferta",
+                              delta_color="off")
                 if not cruce.empty and FOCO in set(cruce["ruta"]):
                     vps = int(cruce.loc[cruce["ruta"] == FOCO, "vis_por_servicio"].iloc[0])
                     o2.metric("Visitantes por servicio", f"{vps:,}".replace(",", "."),
@@ -1104,7 +1204,7 @@ if rol == VISTA_INTELIGENCIAS:
                                    "de la demanda.")
 
                 st.caption("Top 12 rutas por tamaño de la oferta")
-                st.bar_chart(of.head(12).set_index("ruta")["servicios"])
+                barras(of.head(12).set_index("ruta")["servicios"], destacar=FOCO)
 
                 # Desequilibrio: lidera la demanda pero su oferta está muy por detrás
                 if pos and pos_of and pos_of > pos:
@@ -1116,7 +1216,7 @@ if rol == VISTA_INTELIGENCIAS:
                         f"**ampliar y diversificar la oferta** (prioridad FEDER P4A)."
                     )
                 st.caption("Visitantes por servicio (a más alto, más tensionada está la oferta)")
-                st.bar_chart(cruce.set_index("ruta")["vis_por_servicio"])
+                barras(cruce.set_index("ruta")["vis_por_servicio"], destacar=FOCO)
 
             # --- B. Demanda real vs. interés digital (el contraste estratégico) ---
             if not trends_temporal.empty:
@@ -1152,10 +1252,10 @@ if rol == VISTA_INTELIGENCIAS:
                 cola, colb = st.columns(2)
                 with cola:
                     st.caption("Nº de reseñas por bodega (Top 15)")
-                    st.bar_chart(cen.head(15).set_index("bodega")["total_resenas"])
+                    barras(cen.head(15).set_index("bodega")["total_resenas"])
                 with colb:
                     st.caption("Nota media por bodega (Top 15 por reseñas)")
-                    st.bar_chart(cen.head(15).set_index("bodega")["rating"])
+                    barras(cen.head(15).set_index("bodega")["rating"])
                 st.dataframe(
                     cen[["bodega", "nombre_google", "rating", "total_resenas"]].rename(
                         columns={"bodega": "Bodega", "nombre_google": "Nombre en Google",
@@ -1239,12 +1339,12 @@ if rol == VISTA_INTELIGENCIAS:
                     st.caption("Dice **cuándo lanzar la campaña** en cada país. Si el alemán "
                                "busca con ~170 días de antelación, promocionar el otoño en "
                                "septiembre **llega tarde**: ese viajero ya decidió en abril.")
-                    st.bar_chart(mer_c.set_index("pais")["antelacion_busqueda"])
+                    barras(mer_c.set_index("pais")["antelacion_busqueda"])
 
                     st.markdown("**¿Cuántos días se quedará cada mercado?**")
                     st.caption("La estancia prevista indica **a quién merece la pena captar**: "
                                "quien se queda más días, gasta más en el destino.")
-                    st.bar_chart(mer_c.set_index("pais")["estancia_prevista"])
+                    barras(mer_c.set_index("pais")["estancia_prevista"])
 
                     # El mercado que más se queda
                     largo = mer_c.sort_values("estancia_prevista", ascending=False).iloc[0]
@@ -1332,7 +1432,7 @@ if rol == VISTA_INTELIGENCIAS:
             with oc2:
                 conteo = oferta["categoria"].value_counts()
                 conteo.index = [c.replace("-", " ").capitalize() for c in conteo.index]
-                st.bar_chart(conteo)
+                barras(conteo)
 
         # ----- Infraestructura de llegada: capacidad aérea del destino -----
         if not aereo_capacidad.empty:
@@ -1353,7 +1453,7 @@ if rol == VISTA_INTELIGENCIAS:
                       f"{int(por_pais.sum()):,}".replace(",", "."))
 
             st.markdown("**Asientos programados por país de origen**")
-            st.bar_chart(por_pais)
+            barras(por_pais)
 
             if len(por_pais) <= 12:
                 st.warning(
@@ -1371,7 +1471,7 @@ if rol == VISTA_INTELIGENCIAS:
                     st.markdown("**Evolución de los asientos programados**")
                     st.caption("Revela la **estacionalidad de la oferta aérea**: cuándo hay "
                                "aviones y cuándo el destino se queda incomunicado.")
-                    st.line_chart(serie)
+                    lineas(serie)
             st.divider()
 
         st.subheader("Mapa de bodegas")
@@ -1412,7 +1512,7 @@ if rol == VISTA_INTELIGENCIAS:
             feats = {"HTTPS": "https", "Adaptación móvil": "movil", "Versión en inglés": "ingles",
                      "Reserva online": "reserva_online", "Tecnología inmersiva (360/virtual)": "inmersiva"}
             adopcion = pd.Series({k: aud_ok[v].mean() * 100 for k, v in feats.items()})
-            st.bar_chart(adopcion)
+            barras(adopcion)
 
             with st.expander("📊 Ver el ranking de madurez digital por bodega"):
                 st.dataframe(
@@ -1466,7 +1566,7 @@ if rol == VISTA_INTELIGENCIAS:
                 }
                 cumpl = pd.Series({k: acc_ok[v].mean() * 100
                                    for k, v in criterios.items() if v in acc_ok.columns})
-                st.bar_chart(cumpl.sort_values())
+                barras(cumpl.sort_values())
 
                 # Accesibilidad física/sensorial: solo lo que comunican (proxy)
                 st.markdown("**Accesibilidad física y sensorial comunicada**")
@@ -1537,7 +1637,7 @@ if rol == VISTA_INTELIGENCIAS:
                                    "certificación.")
                 adop = (sostenibilidad[ejes_cols].sum() / n_bod * 100).round(0)
                 adop.index = [c.replace("eje_", "").capitalize() for c in adop.index]
-                st.bar_chart(adop.sort_values(ascending=False))
+                barras(adop.sort_values(ascending=False))
 
             # Ranking por índice de sostenibilidad comunicada
             if tiene_indice:
@@ -1571,7 +1671,7 @@ if rol == VISTA_INTELIGENCIAS:
                           delta_color="inverse")
 
                 st.markdown("**Bodegas por accesibilidad en transporte público**")
-                st.bar_chart(transporte["categoria_transporte"].value_counts())
+                barras(transporte["categoria_transporte"].value_counts())
 
                 # Cruce con ACEVIN: ¿la infraestructura explica el uso del coche?
                 if not acevin_demanda.empty:
@@ -1722,7 +1822,7 @@ else:
             col1, col2 = st.columns([1, 2])
             with col1:
                 st.caption("Sentimiento (por estrellas)")
-                st.bar_chart(an_bod["sentimiento"].value_counts())
+                barras(an_bod["sentimiento"].value_counts())
             with col2:
                 tabla_ipa_bod = ipa_desde_anotadas(an_bod)
                 if len(tabla_ipa_bod) >= 3:
