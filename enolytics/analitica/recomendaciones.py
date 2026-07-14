@@ -252,13 +252,38 @@ def recomendaciones_destino(
 def recomendaciones_bodega(
     nombre: str, ipa=None, ipca=None, dipca=None, fila_auditoria=None,
     fila_accesibilidad=None, fila_sostenibilidad=None, fila_transporte=None,
-    rating=None, rating_marco=None,
+    rating=None, rating_marco=None, tasa_respuesta=None,
 ) -> list[Recomendacion]:
     """Genera las recomendaciones para una bodega concreta."""
     recs: list[Recomendacion] = []
 
     def _vacio(x):
         return x is None or (hasattr(x, "empty") and x.empty)
+
+    # --- 0. Gestión de la reputación: ¿contesta a sus visitantes? ---
+    # Es la acción más barata que existe: no cuesta dinero y la lee el futuro visitante.
+    if tasa_respuesta:
+        pct = tasa_respuesta.get("pct_total", 0)
+        n_neg = tasa_respuesta.get("n_negativas", 0)
+        if pct == 0 and n_neg >= 5:
+            recs.append(Recomendacion(
+                prioridad="alta", inteligencia="Clientes",
+                titulo="Empezar a responder las reseñas (hoy no se responde ninguna)",
+                diagnostico=(f"La bodega **no ha respondido a ninguna reseña**, ni siquiera a "
+                             f"las **{n_neg} críticas de 1-2 estrellas**. Cada una queda ahí, "
+                             f"sin réplica, para el próximo visitante que la lea."),
+                accion=("Responder es **gratis** y es lo primero que ve quien duda. Contestar "
+                        "las críticas con educación (reconocer, explicar, invitar a volver) "
+                        "mejora la percepción incluso de quien no escribió la reseña."),
+                fuente="Reseñas de Google"))
+        elif pct < 15 and n_neg >= 10:
+            recs.append(Recomendacion(
+                prioridad="media", inteligencia="Clientes",
+                titulo="Aumentar la respuesta a las reseñas",
+                diagnostico=(f"Solo se responde al **{pct:.0f}%** de las reseñas, con "
+                             f"{n_neg} críticas de 1-2★ acumuladas."),
+                accion="Priorizar la respuesta a las críticas: son las que más se leen.",
+                fuente="Reseñas de Google"))
 
     # --- 1. IPA: cuadrante "Concéntrese aquí" (mucha importancia, bajo desempeño) ---
     if not _vacio(ipa) and "cuadrante" in ipa.columns:

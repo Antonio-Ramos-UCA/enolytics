@@ -24,6 +24,7 @@ from enolytics.etl import resenas as etl_resenas  # noqa: E402
 from enolytics.nlp import analisis as nlp  # noqa: E402
 from enolytics.analitica import ipa as modelo_ipa  # noqa: E402
 from enolytics.analitica import recomendaciones as reco  # noqa: E402
+from enolytics.analitica import reputacion as rep  # noqa: E402
 
 
 st.set_page_config(page_title="ENOLYTICS — Marco de Jerez", page_icon="🍷", layout="wide")
@@ -263,6 +264,74 @@ def leyenda_origenes() -> None:
             st.markdown(f"{emoji} **{etiqueta}** — {desc}")
         st.caption("Todo indicador del cuadro de mando lleva su distintivo. Nunca se mezcla "
                    "estadística oficial con estimaciones sin advertirlo.")
+
+
+def ficha_reputacion(res_bod: pd.DataFrame, an_bod: pd.DataFrame, titulo: str) -> None:
+    """Ficha de reputación al estilo Booking/Amazon: estrellas, resumen y aspectos."""
+    if res_bod.empty:
+        st.info("No hay reseñas para mostrar.")
+        return
+
+    st.markdown(f"### {titulo}")
+    fuente("observado", "Reseñas de Google. El resumen **no lo genera una IA**: se compone a "
+                        "partir de las menciones y notas medias reales, así que es "
+                        "reproducible y no puede inventarse nada.")
+
+    col_nota, col_dist = st.columns([1, 2])
+    with col_nota:
+        st.metric("Valoración global", f"{res_bod['puntuacion'].mean():.2f} / 5",
+                  f"{len(res_bod)} reseñas")
+    with col_dist:
+        dist = rep.distribucion_estrellas(res_bod)
+        for _, d in dist.iterrows():
+            c1, c2, c3 = st.columns([1, 6, 1])
+            c1.caption(f"{int(d['estrellas'])} ★")
+            c2.progress(min(d["pct"] / 100, 1.0))
+            c3.caption(f"{d['pct']:.0f}%")
+
+    asp = rep.aspectos(an_bod) if not an_bod.empty else pd.DataFrame()
+
+    # "Lo que dicen los visitantes" (resumen determinista a partir de los datos)
+    st.markdown("**Lo que dicen los visitantes**")
+    st.info(rep.resumen_textual(asp))
+
+    if not asp.empty:
+        st.markdown("**Aspectos valorados** · ↗ lo destacan · ~ opiniones variadas · ↘ descontento")
+        for _, a in asp.iterrows():
+            ca, cb, cc = st.columns([3, 5, 2])
+            ca.markdown(f"{a['icono']} **{a['atributo']}** ({int(a['menciones'])})")
+            cb.progress(min(a["desempeno"] / 5, 1.0))
+            cc.markdown(f"**{a['desempeno']:.2f}**/5")
+
+    # Gestión de la reputación: ¿contesta la bodega a sus visitantes?
+    tr = rep.tasa_respuesta(res_bod)
+    if tr:
+        st.markdown("**Gestión de la reputación**")
+        r1, r2 = st.columns(2)
+        r1.metric("Reseñas contestadas", f"{tr['pct_total']:.0f}%",
+                  f"{tr['n_respondidas']} de {len(res_bod)}")
+        if tr.get("pct_negativas") is not None:
+            r2.metric("Críticas contestadas", f"{tr['pct_negativas']:.0f}%",
+                      f"de {tr['n_negativas']} reseñas de 1-2★")
+        if tr["pct_total"] == 0 and tr["n_negativas"] >= 5:
+            st.warning(
+                f"⚠️ Esta bodega **no ha respondido a ninguna reseña**, ni siquiera a las "
+                f"**{tr['n_negativas']} críticas** (1-2★). Responder es la acción de reputación "
+                f"**más barata y visible** que existe: no cuesta dinero y el futuro visitante lo lee."
+            )
+
+    # Reseñas representativas
+    dest = rep.resenas_destacadas(res_bod)
+    if not dest["positivas"].empty or not dest["negativas"].empty:
+        with st.expander("Reseñas representativas"):
+            for etiqueta, clave in [("👍 Lo mejor valorado", "positivas"),
+                                    ("👎 Las críticas más leídas", "negativas")]:
+                sub = dest[clave]
+                if sub.empty:
+                    continue
+                st.markdown(f"**{etiqueta}**")
+                for _, x in sub.iterrows():
+                    st.markdown(f"> {'★' * int(x['puntuacion'])} — *{str(x['texto'])[:320]}*")
 
 
 def pintar_recomendaciones(recs: list, titulo: str, vacio: str) -> None:
@@ -1048,6 +1117,7 @@ else:
         rating_marco = (censo["rating"].mean() if not censo.empty
                         and "rating" in censo.columns else None)
 
+        res_bod_r = resenas[resenas["bodega"] == nombre] if not resenas.empty else pd.DataFrame()
         recs_bod = reco.recomendaciones_bodega(
             nombre,
             ipa=ipa_bod, ipca=ipca_bod, dipca=dipca_bod,
@@ -1056,6 +1126,7 @@ else:
             fila_sostenibilidad=_fila(sostenibilidad),
             fila_transporte=_fila(transporte),
             rating=rating_bod, rating_marco=rating_marco,
+            tasa_respuesta=rep.tasa_respuesta(res_bod_r) if not res_bod_r.empty else None,
         )
         pintar_recomendaciones(
             recs_bod,
@@ -1102,16 +1173,14 @@ else:
 
     # ----- Pestaña: Reseñas y análisis -----
     with tab_res:
-        fila_censo = censo[censo["bodega"] == nombre] if not censo.empty else pd.DataFrame()
+        # ----- Ficha de reputación (estilo Booking/Amazon) -----
+        res_bod = resenas[resenas["bodega"] == nombre] if not resenas.empty else pd.DataFrame()
+        if not res_bod.empty:
+            with st.container(border=True):
+                ficha_reputacion(res_bod, an_bod, f"⭐ Reputación de {nombre}")
+            st.divider()
 
-        if not fila_censo.empty:
-            f = fila_censo.iloc[0]
-            m1, m2, m3 = st.columns(3)
-            m1.metric("Nota media", f"{f['rating']:.1f} ⭐" if pd.notna(f["rating"]) else "—")
-            m2.metric("Reseñas totales", f"{int(f['total_resenas']):,}" if pd.notna(f["total_resenas"]) else "0")
-            con_texto_n = int((an_bod["texto"].astype(str).str.len() > 5).sum()) if not an_bod.empty else 0
-            m3.metric("Reseñas con texto", con_texto_n)
-
+        st.subheader("Análisis avanzado (IPA · IPCA · DIPCA)")
         if not an_bod.empty:
             # Sentimiento y cuadrantes IPA de ESTA bodega
             col1, col2 = st.columns([1, 2])
@@ -1160,6 +1229,7 @@ else:
                 )
 
             # Muestra de reseñas con texto (máx. 15)
+            con_texto_n = int((an_bod["texto"].astype(str).str.len() > 5).sum())
             with st.expander(f"Ver reseñas con texto ({con_texto_n})"):
                 muestra = an_bod[an_bod["texto"].astype(str).str.len() > 5].head(15)
                 for _, rv in muestra.iterrows():
