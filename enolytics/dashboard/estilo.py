@@ -19,10 +19,21 @@ Reglas que se siguen (estándar de visualización de datos):
 """
 from __future__ import annotations
 
+# --- Escala de color del vino de Jerez (crianza: de lo pálido a lo oscuro) ---
+# Es la gama de la INTERFAZ, no de los datos. Reproduce la escala real de color de los
+# vinos del Marco, del fino pajizo al Pedro Ximénez casi ébano.
+FINO = "#EBD98A"             # Fino / Manzanilla — amarillo pajizo pálido
+AMONTILLADO = "#C6902F"      # Amontillado — ámbar / oro viejo (uso muy puntual: ver nota)
+PALO_CORTADO = "#A45E2A"     # Palo Cortado — ámbar tostado
+OLOROSO = "#7A3B1E"          # Oloroso — caoba
+PX = "#3B1E12"               # Pedro Ximénez — caoba muy oscuro, casi ébano
+# El ORO amontillado se reserva para adornos aislados y NUNCA junto a los colores de estado:
+# está demasiado cerca del amarillo "mejorable" del semáforo y se confundiría.
+
 # --- Superficies e ink (identidad del Marco) ---
-SUPERFICIE = "#FBFAF7"       # albariza: blanco cálido
+SUPERFICIE = "#FBFAF7"       # albariza: blanco cálido, la tierra del Marco
 PLANO = "#F3F0E9"            # fondo de tarjetas
-TINTO = "#8C2F39"            # acento de la interfaz (NO se usa para datos)
+TINTO = OLOROSO              # acento de la interfaz = caoba de oloroso (NO se usa para datos)
 INK = "#1C1B19"              # texto principal
 INK_SUAVE = "#57544E"        # texto secundario
 INK_TENUE = "#8B877E"        # ejes y etiquetas
@@ -79,9 +90,10 @@ def css() -> str:
 
   /* ---------- Cabecera de marca ---------- */
   .eno-hero {{
-    background: linear-gradient(100deg, #6E2029 0%, {TINTO} 55%, #A8474F 100%);
+    background: linear-gradient(100deg, {PX} 0%, {OLOROSO} 52%, {PALO_CORTADO} 100%);
     color: #fff; border-radius: 14px; padding: 1.25rem 1.5rem; margin-bottom: 1.4rem;
-    box-shadow: 0 1px 2px rgba(28,27,25,.08), 0 8px 24px -12px rgba(140,47,57,.45);
+    box-shadow: 0 1px 2px rgba(28,27,25,.08), 0 10px 26px -12px rgba(59,30,18,.55);
+    border-top: 2px solid rgba(198,144,47,.55);  /* filo de oro amontillado */
   }}
   .eno-hero h1 {{ color: #fff !important; margin: 0 0 .15rem 0; font-size: 1.75rem !important; }}
   .eno-hero p {{ margin: 0; opacity: .88; font-size: .92rem; }}
