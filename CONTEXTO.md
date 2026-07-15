@@ -4,7 +4,7 @@
 > poder continuar desde cualquier ordenador (este proyecto está en Dropbox y se
 > sincroniza). Si retomas con Claude en otro equipo, pásale este archivo primero.
 >
-> **Última actualización:** 2026-07-01
+> **Última actualización:** 2026-07-16 (gama de color: escala del vino de Jerez)
 
 ---
 
@@ -160,6 +160,39 @@ streamlit, pandas, sklearn, plotly, matplotlib, requests, bs4.
 5. **Integrar todo en el dashboard** (pestañas de reseñas, sentimiento, cuadrantes IPA).
 6. **En paralelo (no bloquea):** diseñar cuestionarios a partir de la Tabla 1 de la
    memoria; incorporar indicadores oficiales (INE, Dataestur, ACEVIN, Google Trends).
+
+## ═══ SESIÓN 2026-07-16 (cont.) — GAMA DE COLOR: LA ESCALA DEL VINO DE JEREZ ═══
+### (A propuesta de Antonio: "vamos a darle una vuelta a la gama de colores")
+
+- **Encargo de Antonio:** aplicar al dashboard la **escala de color real de los vinos de
+  Jerez** (la que va del fino pajizo al Pedro Ximénez casi ébano). Se acordó tocar solo el
+  **cromo de la interfaz**, dejando **intactos los colores de los datos** (siguen validados
+  para daltonismo, ΔE ≥ 12).
+- **Escala aplicada** (nuevas constantes en `enolytics/dashboard/estilo.py`):
+  Fino/Manzanilla `#EBD98A` · Amontillado `#C6902F` · Palo Cortado `#A45E2A` ·
+  Oloroso `#7A3B1E` · Pedro Ximénez `#3B1E12`.
+- **Cambios concretos:**
+  1. **Acento principal**: pasa del tinto rojo `#8C2F39` al **caoba de oloroso `#7A3B1E`**
+     (botones, pestaña activa, enlaces, foco). `TINTO = OLOROSO` para no romper referencias.
+  2. **Cabecera (`.eno-hero`)**: degradado de la escala de crianza (PX → Oloroso → Palo
+     Cortado) con un **filo de oro amontillado** arriba.
+  3. **`.streamlit/config.toml`**: `primaryColor` = `#7A3B1E` (acento nativo de Streamlit).
+  4. **Albariza** (fondo `#FBFAF7`) y **colores de datos**: sin tocar.
+- **Criterio declarado:** el **oro amontillado** se reserva para adornos aislados y **nunca
+  junto a los colores de estado** del semáforo (está demasiado cerca del amarillo
+  "mejorable" y se confundiría).
+- **Verificado**: el módulo carga limpio, no queda ningún resto del rojo antiguo, y se le
+  enseñó a Antonio una **vista previa** antes de desplegar. Da el visto bueno →
+  **committeado y desplegado** (recordar: *Reboot* en Streamlit porque `estilo.py` es un
+  módulo importado y se cachea).
+
+### 👉 PRÓXIMOS PASOS SUGERIDOS (revisados con Antonio al cierre)
+1. **Empleo turístico** (Dataestur `AFILIACION_TURISMO_DL`, ya desbloqueado) — victoria
+   rápida que cierra indicadores a cero de Económica y Negocios.
+2. **Sentimiento con modelo NLP real** (hoy derivado de estrellas) + **estacionalidad
+   mensual de ACEVIN** — los dos que hacen el análisis publicable en JCR.
+3. **Redactar hallazgos**, empezando por el ángulo de **desestacionalización**
+   (cruceros oct-nov × conectividad aérea × meses valle del enoturismo).
 
 ## ═══ SESIÓN 2026-07-16 — REDISEÑO DEL DASHBOARD ═══
 ### (A propuesta de Antonio: "abruma tanta información" y "el diseño es poco atractivo")
