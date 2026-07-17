@@ -11,6 +11,12 @@ datos/crudo/
 .env
 *.local
 
+# Bibliografía: PDFs de artículos con COPYRIGHT (Emerald, Elsevier...) descargados con la
+# suscripción institucional de la UCA. El repo es PÚBLICO: republicarlos incumpliría la
+# licencia del editor, y además los PDF llevan incrustado un token de acceso institucional
+# (getftrtoken=...) en el pie. Se quedan en Dropbox; en docs/ solo va la CITA.
+BIBLIOGRAFIA/
+
 # SO / editores
 .DS_Store
 .vscode/

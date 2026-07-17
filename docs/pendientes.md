@@ -1,7 +1,7 @@
 # ENOLYTICS — Tareas pendientes (backlog)
 
 > Lista viva de todo lo que queda por hacer, para no perder el hilo entre sesiones.
-> Marca con [x] lo completado. Última actualización: 2026-07-16.
+> Marca con [x] lo completado. Última actualización: 2026-07-17 (modelo Kano + PRCA).
 
 ## Datos y fuentes
 - [ ] **SABI** — confirmar acceso de la UCA (biblioteca) para facturación/empleo por bodega (inteligencia económica y de negocios). Alternativa: Registro Mercantil/BORME.
@@ -63,6 +63,41 @@
 - [x] DIPA (evolución temporal del destino)
 - [x] DIPCA (evolución de la brecha competitiva por bodega)
 - [ ] IPA/IPCA por **atributo cruzado con procedencia** (nacional vs internacional).
+- [ ] ⭐ **MODELO KANO + PRCA** (a propuesta de Antonio, 17/07). Fuente: **Han, W., Zhang, C.,
+  Zhang, Y.C., Raab, C. y Chen, Z. (2026), "How do robots reshape restaurant service attributes?
+  – Evidence from online reviews", *IJCHM*, DOI 10.1108/IJCHM-01-2026-0071** →
+  `BIBLIOGRAFIA/ijchm-01-2026-0071en.pdf`. Su pipeline **es el nuestro** (reseñas → NLP →
+  atributos → sentimiento → IPA), pero con dos mejoras que nos convienen:
+  - 🚨 **ARREGLA NUESTRO TALÓN DE AQUILES — la "importancia".** Hoy usamos
+    *importancia = nº de menciones*, que es discutible (que se hable mucho del vino no prueba
+    que el vino determine la satisfacción). **Es la crítica más probable de un revisor JCR.**
+    Ellos la derivan de una **regresión penalty–reward (PRCA, Brandt 1987)**: cuánto sube la
+    nota global cuando el sentimiento hacia el atributo es alto (β_reward) y cuánto baja cuando
+    es bajo (β_penalty). Importancia_i = √(β_penalty² + β_reward²) normalizada sobre el
+    sumatorio. **Se puede calcular YA con lo que tenemos** (sentimiento por atributo + nota de
+    la reseña); no exige datos nuevos.
+  - 🎁 **AÑADE EL MODELO KANO** (lo que el IPA solo no dice: no solo *dónde* actuar, sino *qué
+    retorno esperar*). De la misma regresión sale λ = (|β_reward| − |β_penalty|) /
+    (|β_reward| + |β_penalty|), con λ ∈ [−1, 1]. Umbrales del paper (Pratt et al., 2020):
+    **λ > 0,20 = entusiasmo** (deleita si está, no penaliza si falta) · **λ ∈ [−0,20, 0,20] =
+    desempeño** (lineal) · **λ < −0,20 = básico** (se da por supuesto; si falla, cabrea; si va
+    bien, no suma).
+  - 💡 **Por qué importa para Jerez:** si «Organización y reserva» (nuestro peor atributo, 4,00★)
+    resultara **básico**, arreglarlo **no subiría la nota** — solo está restando. Cambia la
+    recomendación de gestión que damos a las bodegas.
+  - ⚠️ **Requisito previo:** ellos miden sentimiento con **RNTN** (Socher et al., 2013) y
+    justifican explícitamente por qué es superior a los métodos léxicos. Nosotros lo derivamos
+    de las estrellas → **va de la mano de la tarea "Sentimiento con modelo NLP real"**. Ojo: la
+    PRCA regresa el sentimiento del atributo contra la nota de la reseña; si el sentimiento SALE
+    de la nota, la regresión es circular. **Hay que resolver el sentimiento real ANTES o a la vez.**
+  - 🚀 **HUECO DE LITERATURA CON NUESTRO NOMBRE:** en sus limitaciones (pág. 15) piden
+    literalmente *"cross-cultural comparisons should be encouraged"*. Ellos son **monolingües,
+    un país, una sola cadena**. Nosotros tenemos **corpus multilingüe (ES/EN/DE/IT/FR)** con
+    segmentación hispanohablante vs. internacional. **Kano comparado por segmento cultural es
+    publicable y ellos no pueden hacerlo.** Enlaza con la tarea de IPA/IPCA por procedencia.
+  - Otras ideas suyas aprovechables: **anclar el análisis temporal a un EVENTO** (ellos: antes/
+    después de los robots; nosotros podríamos: antes/después de la pandemia, de una reforma,
+    de la llegada de cruceros) → daría sentido causal a nuestro DIPA, que hoy es solo evolución.
 
 ## Las 7 inteligencias (estado)
 - [x] **Clientes** — reseñas (satisfacción, atributos) + índices Dataestur + **perfil del enoturista (ACEVIN, 16 indicadores)** y **volumen de visitas**. ⚠️ El perfil de ACEVIN es NACIONAL (no por ruta): sirve de benchmark y de plantilla de cuestionario.
@@ -97,4 +132,9 @@
 
 ## Salidas académicas (memoria)
 - [ ] Redactar hallazgos para publicación JCR (el problema de "organización/reserva" que empeora es un buen ángulo).
+- [ ] **Ángulo cross-cultural con Kano** (ver "MODELO KANO + PRCA" en Modelos analíticos): Han
+  et al. (2026, IJCHM) piden expresamente comparaciones interculturales y no pueden hacerlas
+  (corpus monolingüe). Nuestro corpus multilingüe sí. Candidato fuerte a paper.
+- [ ] **Revista objetivo:** IJCHM (Emerald, Q1) acepta exactamente este método (reseñas + Kano +
+  IPA). Ver el paper de `BIBLIOGRAFIA/` como plantilla de estructura y de nivel exigido.
 - [ ] Definir TFM/TFG asociados.
