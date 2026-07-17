@@ -12,9 +12,15 @@ Enfoque (aspect-based, alineado con Shin & Nicolau 2022 y Wu et al. 2024):
                                     mencionan.
   4. Esas dos medidas se pasan al módulo IPA para clasificar cada atributo en cuadrantes.
 
-Nota: para la muestra usamos sentimiento por estrellas (fiable e inmediato) y un
-léxico en español. Con el corpus completo se sustituirá por sentimiento BERT
-multilingüe y extracción de aspectos por modelo. La forma del pipeline es la misma.
+⚠️ ESTADO: PRUEBA DE CONCEPTO, NO MÉTRICA DEFINITIVA. El sentimiento se deriva de las
+estrellas, que son de la VISITA ENTERA y no del atributo → el desempeño está comprimido
+en torno a la nota global y no mide lo que su nombre sugiere. La cautela completa, con las
+pruebas medidas en nuestro corpus, está en el docstring de `tabla_importancia_desempeno()`.
+Léela antes de citar estos números fuera del prototipo.
+
+El arreglo (sentimiento por atributo con BERT + importancia por regresión penalty–reward,
+que además habilita el modelo Kano) es la PRIORIDAD 1 del proyecto: ver docs/pendientes.md.
+La forma del pipeline no cambia; cambia cómo se calculan los dos números.
 """
 from __future__ import annotations
 
@@ -94,8 +100,17 @@ ATRIBUTOS: dict[str, list[str]] = {
     ],
     "Precio y valor": [
         # ES
-        "precio", "precios", "caro", "cara", "barato", "barata", "valor", "dinero",
+        # OJO: "cara" suelta NO se usa (es polisémica, como lo era "tiempo"): en español es
+        # "costosa" pero también "rostro" ("se les ilumina la cara") y el modismo "de cara al
+        # público". Disparaba 11 falsos positivos de 29. Se sustituye por locuciones, que además
+        # rescatan el portugués ("mais/embora cara"), idioma que no está en el léxico. Se pierde
+        # 1 acierto ("se hace corta o cara"), asumible. "caro" en masculino NO es ambigua.
+        "precio", "precios", "caro", "barato", "barata", "valor", "dinero",
         "coste", "economico", "vale la pena", "merece la pena",
+        "muy cara", "mas cara", "mais cara", "un poco cara", "algo cara", "pelin cara",
+        "demasiado cara", "bastante cara", "aunque cara", "embora cara", "es cara",
+        "tienda cara", "comida cara", "entrada cara", "visita cara", "cara para",
+        "resulta cara", "parece cara",
         # EN
         "price", "prices", "expensive", "cheap", "value", "money", "cost", "worth",
         "affordable", "overpriced", "pricey",
@@ -215,6 +230,24 @@ def tabla_importancia_desempeno(resenas_anotadas: pd.DataFrame) -> pd.DataFrame:
 
     IMPORTANCIA = nº de reseñas que mencionan el atributo (derived importance).
     DESEMPEÑO   = puntuación media (estrellas) de esas reseñas.
+
+    ⚠️ CAUTELA METODOLÓGICA (auditoría 17/07) — LEER ANTES DE CITAR ESTOS NÚMEROS:
+
+    El DESEMPEÑO **no mide el atributo, mide la visita entera**. Las estrellas son de la
+    experiencia completa, así que a una reseña que dice "es caro, pero el sitio es especial"
+    con 5★ le asignamos desempeño del Precio = 5,0. Medido en nuestro corpus: el 44% de las
+    96 reseñas que se quejan explícitamente del precio tienen 4-5★; y los 7 atributos se
+    apiñan entre 4,00 y 4,71 en torno a la nota global (4,573), con σ = 0,288 — esa compresión
+    es la huella del sesgo. El ORDEN entre atributos probablemente aguante, pero el valor NO
+    es "qué tal funciona el atributo": es "la satisfacción global de quien lo mencionó".
+
+    La IMPORTANCIA por frecuencia es una debilidad conceptual (que se hable mucho de algo no
+    prueba que determine la satisfacción), aunque es coherente internamente: el DIPA solo usa
+    desempeño y el IPCA compara importancia dentro de la misma bodega.
+
+    Ambas se arreglan con sentimiento por atributo (BERT) + regresión penalty–reward (PRCA),
+    que además habilita el modelo Kano. Ver docs/pendientes.md → "PRIORIDAD 1" y
+    "MODELO KANO + PRCA" (Han et al., 2026, IJCHM, DOI 10.1108/IJCHM-01-2026-0071).
     """
     con_texto = resenas_anotadas[resenas_anotadas["atributos"].map(len) > 0]
     filas = []

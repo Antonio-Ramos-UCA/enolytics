@@ -53,7 +53,52 @@
   - ⚠️ **CAMBIA UN NÚMERO PUBLICADO:** «Organización y reserva» pasa de **3,66★ a 4,00★** en el destino (al quitar el ruido y sumar el internacional). **Sigue siendo el peor atributo**, pero el dato anterior estaba inflado por ruido. Revisar cualquier borrador que citara 3,66.
   - 🎯 **HALLAZGO nuevo (ya defendible):** el visitante **internacional menciona la reserva 4,6× más** (11,5% vs 2,5%) pero **la puntúa mejor** (4,29★ vs **3,56★** del hispanohablante). El problema de organización lo sufre sobre todo **el visitante nacional**.
   - Cautela declarada en el dashboard: las palabras clave de cada idioma capturan matices distintos (el inglés *booking* es descriptivo; el español *espera*/*cola* ya arrastra queja).
-- [ ] **Sentimiento con modelo NLP real** (hoy se deriva de las estrellas) — BERT multilingüe. Validar contra el índice de sentimiento oficial de SEGITTUR. instalar `transformers` (BERT multilingüe) o ampliar el léxico a EN/DE/IT/FR. (Va de la mano de la tarea anterior.)
+- [ ] 🔴🔴 **PRIORIDAD 1 — SENTIMIENTO POR ATRIBUTO CON NLP REAL** (hoy se deriva de las
+  estrellas) — BERT multilingüe. Validar contra el índice de sentimiento oficial de SEGITTUR.
+  Instalar `transformers`. **NO es una mejora opcional: es el CIMIENTO del núcleo científico.**
+  Motivo (auditoría del 17/07, a raíz de la preocupación de Antonio sobre cómo medimos):
+
+  🚨 **EL DESEMPEÑO NO MIDE EL ATRIBUTO, MIDE LA VISITA ENTERA.** `tabla_importancia_desempeno()`
+  define *desempeño = nota media (estrellas) de las reseñas que mencionan el atributo*. Pero las
+  estrellas son de la experiencia **completa**, no del atributo. Si alguien escribe *"it is
+  expensive but a special place"* y pone 5★, registramos **desempeño del Precio = 5,0**.
+  - **PRUEBAS EN NUESTROS DATOS:** (1) de las **96 reseñas que se quejan explícitamente del
+    precio, el 44% tiene 4-5 estrellas** — y a todas les asignamos su nota global como desempeño
+    del precio; (2) **todos los atributos se apiñan entre 4,00 y 4,71** alrededor de la nota
+    global (4,573), desviación típica **0,288**. Esa compresión es la huella del sesgo: no
+    medimos 7 atributos distintos, medimos 7 veces casi la misma nota global.
+  - **QUÉ IMPLICA PARA LO PUBLICADO:** «Organización y reserva = 4,00★» **no significa "qué tal
+    funciona la organización"**, sino *"la satisfacción global media de quienes la mencionaron"*.
+    El **orden probablemente aguante** (quejarse arrastra la nota global), pero **el número no
+    mide lo que decimos que mide**. Es lo que tumbaría el artículo en revisión.
+  - ✅ **VERIFICADO QUE NO HAY ERROR NUMÉRICO ADEMÁS:** el DIPA solo usa desempeño, y el IPCA
+    compara la importancia solo *dentro* de la misma bodega (umbral = media de sus propios
+    atributos). No se comparan recuentos en bruto entre corpus de distinto tamaño.
+  - 🎯 **UN SOLO ARREGLO RESUELVE TODO:** con sentimiento por atributo → *desempeño = sentimiento
+    hacia ESE atributo* (arregla lo anterior) + *importancia = regresión penalty–reward* (arregla
+    la crítica de la frecuencia) + **Kano** de regalo. Ver "MODELO KANO + PRCA" en Modelos
+    analíticos. **Sin esto, Kano es imposible** (la PRCA sería circular: explicaría la nota con
+    la propia nota).
+
+- [x] 🐛 **BUG DE POLISEMIA CORREGIDO: "cara"** (17/07, hermano del bug de "tiempo"). La clave
+  suelta `'cara'` estaba en el léxico de Precio: en español es "costosa" pero también **el
+  rostro** (*"se les ilumina la cara"*, *"las explicaciones como la cara han sido magníficas"*) y
+  el modismo **"de cara al público/cliente"**. Disparaba **11 falsos positivos de 29** reseñas.
+  Sustituida por locuciones ("muy cara", "un poco cara", "algo cara", "cara para"…), que además
+  **rescatan el portugués** ("mais cara", "embora cara"). Se pierde 1 acierto ("se hace corta o
+  cara"), asumible. `'caro'` en masculino no es ambigua y se mantiene.
+  - **Impacto medido: PEQUEÑO.** Precio pasa de 783 menciones / 4,074★ a **771 / 4,088★**
+    (+0,014). **No cambia ningún ranking** (Precio sigue 2º peor; Organización sigue la peor).
+    A diferencia del bug de "tiempo" (3,66 → 4,00), este era ruido menor. No hay que revisar
+    borradores.
+  - 💡 Curiosidad detectada: *"con su **cara** de vino"* y *"con **cara** de 4 vinos"* son
+    **erratas de "cata"** → el léxico de "Vino y cata" pierde esas menciones. Menor.
+
+- [ ] **Ampliar el léxico a PORTUGUÉS y NEERLANDÉS** (detectado el 17/07 al arreglar "cara").
+  Recuento real de idiomas en el corpus: es 5.090 · en 905 · de 290 · it 180 · **fr 91** ·
+  **nl 63** · **pt 60** · ca 39 · ru 30 · pl 15. **El neerlandés (63) y el portugués (60) tienen
+  ya el mismo orden de magnitud que el francés (91), que sí está en el léxico.** Son ~123 reseñas
+  hoy analizadas a medias. El catalán (39) probablemente cae en parte por parecido con el español.
 - [ ] **Modelado de temas (LDA)** — descubrir atributos automáticamente, más allá del léxico fijo.
 - [ ] Validar/afinar el léxico de atributos con criterio experto (Paula / bodegas).
 

@@ -4,7 +4,8 @@
 > poder continuar desde cualquier ordenador (este proyecto está en Dropbox y se
 > sincroniza). Si retomas con Claude en otro equipo, pásale este archivo primero.
 >
-> **Última actualización:** 2026-07-16 (gama de color: escala del vino de Jerez)
+> **Última actualización:** 2026-07-17 (auditoría metodológica: cómo medimos importancia y
+> desempeño — sesión clave, leer la primera sección)
 
 ---
 
@@ -161,6 +162,70 @@ streamlit, pandas, sklearn, plotly, matplotlib, requests, bs4.
 6. **En paralelo (no bloquea):** diseñar cuestionarios a partir de la Tabla 1 de la
    memoria; incorporar indicadores oficiales (INE, Dataestur, ACEVIN, Google Trends).
 
+## ═══ SESIÓN 2026-07-17 — AUDITORÍA METODOLÓGICA (la sesión más importante hasta la fecha) ═══
+### (Antonio: "me preocupa cómo hemos medido nosotros la importancia y el rendimiento")
+
+### 0. 📄 EL PAPER DE LA CARPETA BIBLIOGRAFIA
+**Han, W., Zhang, C., Zhang, Y.C., Raab, C. y Chen, Z. (2026), "How do robots reshape restaurant
+service attributes? – Evidence from online reviews", *IJCHM*, DOI 10.1108/IJCHM-01-2026-0071.**
+38.736 reseñas de Yelp, 76 locales, antes/después de robots. **Su pipeline ES el nuestro**
+(reseñas → NLP → atributos → sentimiento → IPA), pero mejor en dos puntos. Nos da: plantilla
+metodológica publicable, arreglo de nuestro talón de Aquiles y un hueco de literatura.
+- ⚠️ El PDF **NO se sube a GitHub** (repo público, copyright de Emerald, y el pie lleva
+  incrustado un token de la suscripción de la UCA). `BIBLIOGRAFIA/` está en `.gitignore`.
+
+### 1. 🚨 EL HALLAZGO INCÓMODO: NUESTRO DESEMPEÑO NO MIDE EL ATRIBUTO
+Antonio preguntó y tenía razón. `tabla_importancia_desempeno()` define *desempeño = nota media
+de las reseñas que mencionan el atributo*. **Pero las estrellas son de la VISITA ENTERA.**
+- **Pruebas medidas en nuestro corpus:**
+  - De las **96 reseñas que se quejan explícitamente del precio, el 44% tiene 4-5★** — y a todas
+    les asignamos su nota global como "desempeño del precio". Ejemplo real: *"it is expensive but
+    a special place"* con 5★ → desempeño del Precio = **5,0**.
+  - **Los 7 atributos se apiñan entre 4,00 y 4,71** en torno a la nota global (4,573), σ = **0,288**.
+    **Esa compresión es la huella del sesgo:** no medimos 7 atributos, medimos 7 veces casi la
+    misma nota global.
+- **Qué implica:** «Organización y reserva = 4,00★» no es "qué tal funciona la organización",
+  sino "la satisfacción global media de quien la mencionó". El **orden probablemente aguante**,
+  pero **el número no mide lo que decimos**. Es lo que tumbaría el paper en revisión.
+- ✅ **Verificado que NO hay además un error numérico:** el DIPA solo usa desempeño y el IPCA
+  compara importancia solo dentro de la misma bodega. No se comparan recuentos entre corpus de
+  distinto tamaño. La debilidad es conceptual, no un fallo de cálculo.
+- ✍️ **Cautela escrita en el propio código** (docstring de `tabla_importancia_desempeno()` y
+  cabecera de `analisis.py`), para que nadie del equipo cite esos números sin saberlo.
+
+### 2. 🎯 UN SOLO ARREGLO RESUELVE TODO → NUEVA PRIORIDAD 1
+Con **sentimiento por atributo** (BERT multilingüe): *desempeño = sentimiento hacia ESE atributo*
+(arregla lo anterior) + *importancia = regresión penalty–reward (PRCA)* (arregla la crítica de la
+frecuencia) + **modelo Kano** de regalo (básico / desempeño / entusiasmo, umbrales λ ±0,20).
+- **Sin sentimiento real, Kano es IMPOSIBLE:** la PRCA regresa el sentimiento del atributo contra
+  la nota; si el sentimiento SALE de la nota, es circular.
+- 💡 **Por qué Kano importa para Jerez:** si «Organización y reserva» fuera un atributo **básico**,
+  arreglarlo **no subiría la nota** — solo está restando. Cambia la recomendación a las bodegas.
+- 🚀 **HUECO DE LITERATURA CON NUESTRO NOMBRE:** Han et al. piden en sus limitaciones (pág. 15)
+  *"cross-cultural comparisons should be encouraged"*. Ellos: monolingües, un país, una cadena.
+  **Nosotros: corpus multilingüe con segmentación hispanohablante vs internacional.** Kano
+  comparado por segmento cultural es publicable y ellos no pueden hacerlo.
+
+### 3. 🐛 BUG DE POLISEMIA CORREGIDO: "cara" (hermano del de "tiempo")
+`'cara'` estaba suelta en el léxico de Precio: en español es "costosa" pero también **el rostro**
+y el modismo **"de cara al público"**. **11 falsos positivos de 29.** Sustituida por locuciones,
+que además **rescatan el portugués** ("mais/embora cara"). `'caro'` en masculino no es ambigua.
+- **Impacto medido: PEQUEÑO y honesto.** Precio: 783 menciones / 4,074★ → **771 / 4,088★**
+  (+0,014). **No cambia ningún ranking.** A diferencia del bug de "tiempo" (3,66 → 4,00), este
+  era ruido menor. **No hay que revisar borradores.**
+- 💡 Curiosidad: *"con su cara de vino"* y *"con cara de 4 vinos"* son **erratas de "cata"**.
+
+### 4. 🌍 HALLAZGO NUEVO: FALTAN IDIOMAS EN EL LÉXICO
+Recuento real: es 5.090 · en 905 · de 290 · it 180 · **fr 91** · **nl 63** · **pt 60** · ca 39 ·
+ru 30 · pl 15. **El neerlandés (63) y el portugués (60) están en el mismo orden que el francés
+(91), que sí tenemos.** ~123 reseñas analizadas a medias. Anotado en pendientes.
+
+### 👉 PRÓXIMOS PASOS (reordenados en esta sesión)
+1. 🔴 **Sentimiento por atributo con NLP real** — PRIORIDAD 1. Cimiento, no mejora.
+2. **Modelo Kano + PRCA** encima de lo anterior.
+3. **Redactar**, con el ángulo cross-cultural que Han et al. dejan abierto.
+4. Empleo turístico y demás fuentes: siguen, pero **ya no van primero**.
+
 ## ═══ SESIÓN 2026-07-16 (cont.) — GAMA DE COLOR: LA ESCALA DEL VINO DE JEREZ ═══
 ### (A propuesta de Antonio: "vamos a darle una vuelta a la gama de colores")
 
@@ -186,13 +251,14 @@ streamlit, pandas, sklearn, plotly, matplotlib, requests, bs4.
   **committeado y desplegado** (recordar: *Reboot* en Streamlit porque `estilo.py` es un
   módulo importado y se cachea).
 
-### 👉 PRÓXIMOS PASOS SUGERIDOS (revisados con Antonio al cierre)
-1. **Empleo turístico** (Dataestur `AFILIACION_TURISMO_DL`, ya desbloqueado) — victoria
-   rápida que cierra indicadores a cero de Económica y Negocios.
-2. **Sentimiento con modelo NLP real** (hoy derivado de estrellas) + **estacionalidad
-   mensual de ACEVIN** — los dos que hacen el análisis publicable en JCR.
-3. **Redactar hallazgos**, empezando por el ángulo de **desestacionalización**
-   (cruceros oct-nov × conectividad aérea × meses valle del enoturismo).
+### 👉 PRÓXIMOS PASOS ~~SUGERIDOS~~ → **REORDENADOS EL 17/07** (ver sesión de abajo)
+⚠️ El orden de abajo quedó **obsoleto** tras la auditoría metodológica del 17/07: el
+**sentimiento por atributo pasa a ser la PRIORIDAD 1**, por delante del empleo turístico.
+No es una mejora, es el cimiento del núcleo científico. Ver la sesión del 17/07.
+
+~~1. Empleo turístico — victoria rápida.~~
+~~2. Sentimiento NLP real + estacionalidad ACEVIN.~~
+~~3. Redactar hallazgos (desestacionalización).~~
 
 ## ═══ SESIÓN 2026-07-16 — REDISEÑO DEL DASHBOARD ═══
 ### (A propuesta de Antonio: "abruma tanta información" y "el diseño es poco atractivo")
