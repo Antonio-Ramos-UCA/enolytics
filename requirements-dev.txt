@@ -19,6 +19,12 @@ transformers>=4.35     # modelos BERT (análisis de sentimiento)
 torch>=2.0             # backend de transformers
 nltk>=3.8              # tokenización, stopwords en español
 
+# --- Modelos analíticos ---
+statsmodels>=0.14      # regresión PRCA (importancia por impacto) + p-valores
+# OJO: nada de esto entra en requirements.txt. El NLP y la PRCA se ejecutan EN LOCAL y
+# dejan CSV en datos/procesado/; el dashboard SOLO lee esos CSV. Streamlit Cloud tiene
+# ~1 GB de RAM y no aguantaría torch.
+
 # --- Analítica (IPA / IPCA / DIPA / DIPCA) ---
 numpy>=1.24
 scipy>=1.11

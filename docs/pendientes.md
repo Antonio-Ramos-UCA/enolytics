@@ -53,8 +53,55 @@
   - ⚠️ **CAMBIA UN NÚMERO PUBLICADO:** «Organización y reserva» pasa de **3,66★ a 4,00★** en el destino (al quitar el ruido y sumar el internacional). **Sigue siendo el peor atributo**, pero el dato anterior estaba inflado por ruido. Revisar cualquier borrador que citara 3,66.
   - 🎯 **HALLAZGO nuevo (ya defendible):** el visitante **internacional menciona la reserva 4,6× más** (11,5% vs 2,5%) pero **la puntúa mejor** (4,29★ vs **3,56★** del hispanohablante). El problema de organización lo sufre sobre todo **el visitante nacional**.
   - Cautela declarada en el dashboard: las palabras clave de cada idioma capturan matices distintos (el inglés *booking* es descriptivo; el español *espera*/*cola* ya arrastra queja).
-- [ ] 🔴🔴 **PRIORIDAD 1 — SENTIMIENTO POR ATRIBUTO CON NLP REAL** (hoy se deriva de las
-  estrellas) — BERT multilingüe. Validar contra el índice de sentimiento oficial de SEGITTUR.
+- [x] ✅⭐ **HECHO (17/07) — SENTIMIENTO POR ATRIBUTO CON BERT** (`enolytics/nlp/sentimiento.py`).
+  Modelo `nlptown/bert-base-multilingual-uncased-sentiment`: entrenado sobre RESEÑAS en EN/NL/DE/
+  FR/ES/IT (incluye el **neerlandés**, que ni está en el léxico) y devuelve **5 clases con
+  probabilidades** — justo lo que piden las ec. 2-3 de Zhang. Va **frase a frase**: 7.277 reseñas
+  → **14.041 frases** → **16.499 filas reseña-atributo**, en ~3 min con MPS.
+  - 🎯 **LA PRUEBA DE QUE FUNCIONA:** con estrellas, la desviación DENTRO de una reseña era
+    **0,000 siempre** (todos los atributos recibían la misma nota). Ahora es **0,280**, y en el
+    **21%** de las reseñas dos atributos difieren en más de 1 punto. Ejemplo real (reseña de 4★):
+    *"Estupenda bodega, visita guiada espectacular. Mi gran decepción fue…"* → **Visita 4,67 ·
+    Instalaciones 3,22 · Precio 1,26**. Antes los tres eran 4,0.
+  - **No es circular:** correlación sentimiento-del-atributo vs estrellas-de-la-reseña = **0,677**
+    (fuerte pero no copia). A nivel de reseña completa es 0,837, que sólo valida el modelo.
+  - Arquitectura: se ejecuta EN LOCAL y deja CSV; el dashboard sólo lee. `torch` NO entra en
+    `requirements.txt` (Streamlit Cloud tiene ~1 GB de RAM).
+
+- [x] ✅⭐ **HECHO (17/07) — PRCA: IMPORTANCIA POR IMPACTO** (`enolytics/analitica/prca.py`).
+  Ecuaciones de Zhang et al. (2021). Precalcula a `datos/procesado/prca_kano.csv` (destino + 16
+  bodegas con muestra suficiente); `statsmodels` tampoco entra en producción.
+  - 🚨 **ARREGLA EL CONSEJO INVERTIDO, que era el objetivo:** «Precio» (771 men.) y
+    «Organización» (331) —los dos PEORES atributos— pasan de ***"Baja prioridad"*** a
+    **"CONCÉNTRESE AQUÍ"** (16,9% y 16,1% de importancia). El dashboard dejará de decir "lo que
+    peor haces, no lo toques".
+  - 💡 **HALLAZGO NUEVO:** «Vino y cata» es lo MÁS mencionado (4.232) pero sólo el **11,1%** de
+    importancia → **"Posible exceso"**. Se habla del vino sin parar y no mueve la nota, porque
+    siempre es bueno. Es esfuerzo mal repartido.
+  - Modelo sano: **R² = 0,55**, F significativa, 465 obs/variable.
+  - 🐛 **Bug cazado al vuelo:** sin mínimo de menciones, Barbadillo daba «Entorno y viñedo» con
+    **52,6% de importancia sobre 6 menciones** (coeficiente inestable que, al normalizar, se
+    comía el reparto). Añadido `MIN_MENCIONES_ATRIBUTO = 8`. Efecto secundario bueno: al haber
+    menos variables, **16 bodegas** aguantan la PRCA en vez de 12.
+
+- [ ] 🚨 **KANO NO SALE: EFECTO TECHO (decisión pendiente).** Los 7 atributos dan **"Básico"**.
+  No es un hallazgo, es aritmética: con **78,7% de cincos**, la nota de referencia ya es 4,61/5,
+  así que hablar bien de un atributo sube **+0,23** y hablar mal hunde **−2,56** — **11× de
+  asimetría mecánica**. β_penalty >> β_reward para CUALQUIER atributo → λ siempre muy negativo
+  (−0,39 a −0,96). **λ absoluto NO es interpretable; su orden relativo quizá sí.**
+  - ⚡ **Es la objeción (1) de Bi et al. (2019) CONFIRMADA con nuestros datos**: la nota es una J,
+    no una Gaussiana. Zhang y Han nunca la comprobaron (Yelp está más repartido que Google Maps).
+  - **Vías:** (a) **regresión ordinal** (ordered logit: modela la satisfacción latente y trata el
+    techo como umbral — es el arreglo estándar para variables dependientes acotadas); (b) usar
+    sólo el orden relativo de λ; (c) aceptar el resultado negativo y no publicar Kano.
+  - 📄 Para el futuro paper esto es material: **nadie ha documentado que el método de Zhang/Han
+    se rompe en corpus con techo**, que es el caso normal en enoturismo.
+
+- [ ] **Enchufar la PRCA al dashboard y al motor de recomendaciones** — el CSV ya está; falta que
+  el IPA use `importancia` de la PRCA en vez de la frecuencia, y que las recomendaciones lo lean.
+
+- [ ] ~~PRIORIDAD 1 — SENTIMIENTO POR ATRIBUTO~~ (hecho arriba). Queda: validar contra el índice
+  de sentimiento oficial de SEGITTUR. Validar contra el índice de sentimiento oficial de SEGITTUR.
   Instalar `transformers`. **NO es una mejora opcional: es el CIMIENTO del núcleo científico.**
   Motivo (auditoría del 17/07, a raíz de la preocupación de Antonio sobre cómo medimos):
 
