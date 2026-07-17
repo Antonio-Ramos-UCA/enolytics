@@ -79,7 +79,17 @@ CUADRANTES_IPCA = {
     2: "Fortaleza competitiva",          # alta importancia, brecha positiva
     3: "Ventaja menor",                  # baja importancia, brecha positiva
     4: "Debilidad menor",                # baja importancia, brecha negativa
+    5: "En línea con el Marco",          # brecha dentro de la banda de indiferencia
 }
+
+# Banda de indiferencia de la brecha, en estrellas. Sin ella, `brecha >= 0` convertía el
+# ruido en diagnóstico: en Barbadillo, "Vino y cata" con brecha −0,004 salía como "Actuar:
+# por detrás del Marco" y "Instalaciones" con +0,001 como "Fortaleza competitiva" —
+# etiquetas opuestas para diferencias inexistentes.
+# El valor sale de la distribución real de las 162 brechas bodega-atributo del Marco:
+# percentil 25 = 0,093 y mediana = 0,202. Con ±0,10 se declara "sin diferencia" el 26,5%
+# de los casos (el cuartil inferior, donde vive el ruido) y se mantiene lo que sí separa.
+BANDA_INDIFERENCIA = 0.10
 
 
 @dataclass
@@ -93,10 +103,17 @@ class PuntoIPCA:
     etiqueta: str = ""
 
 
-def clasificar_cuadrante_ipca(importancia: float, brecha: float, umbral_imp: float) -> int:
-    """Cuadrante IPCA según importancia y brecha (focal - competencia)."""
+def clasificar_cuadrante_ipca(importancia: float, brecha: float, umbral_imp: float,
+                              banda: float = BANDA_INDIFERENCIA) -> int:
+    """Cuadrante IPCA según importancia y brecha (focal - competencia).
+
+    Las brechas dentro de ±`banda` se declaran "En línea con el Marco": son diferencias
+    demasiado pequeñas para sostener un diagnóstico (ver BANDA_INDIFERENCIA).
+    """
+    if abs(brecha) < banda:
+        return 5  # En línea con el Marco: la diferencia no es interpretable
     alta = importancia >= umbral_imp
-    ventaja = brecha >= 0
+    ventaja = brecha > 0
     if alta and not ventaja:
         return 1  # Actuar: importante y por detrás
     if alta and ventaja:
@@ -108,13 +125,15 @@ def clasificar_cuadrante_ipca(importancia: float, brecha: float, umbral_imp: flo
 
 def calcular_ipca(atributos_focal: list[dict],
                   desempeno_competencia: dict[str, float],
-                  umbral_imp: float | None = None) -> list[PuntoIPCA]:
+                  umbral_imp: float | None = None,
+                  banda: float = BANDA_INDIFERENCIA) -> list[PuntoIPCA]:
     """IPA competitivo: compara el desempeño de una bodega con el de la competencia.
 
     Args:
         atributos_focal: lista de dicts {atributo, importancia, desempeno} de la bodega.
         desempeno_competencia: {atributo: desempeño medio} del resto del Marco.
         umbral_imp: umbral del eje de importancia (por defecto, la media).
+        banda: brechas dentro de ±banda se declaran "En línea con el Marco".
     """
     if not atributos_focal:
         return []
@@ -126,7 +145,7 @@ def calcular_ipca(atributos_focal: list[dict],
         if comp is None:
             continue
         brecha = round(a["desempeno"] - comp, 3)
-        c = clasificar_cuadrante_ipca(a["importancia"], brecha, ui)
+        c = clasificar_cuadrante_ipca(a["importancia"], brecha, ui, banda)
         puntos.append(PuntoIPCA(a["atributo"], a["importancia"], a["desempeno"],
                                 round(comp, 3), brecha, c, CUADRANTES_IPCA[c]))
     return puntos

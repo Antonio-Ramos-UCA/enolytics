@@ -139,6 +139,28 @@ def ipa_desde_anotadas(an: pd.DataFrame) -> pd.DataFrame:
     } for p in puntos])
 
 
+def atributos_omitidos(an: pd.DataFrame) -> list[tuple[str, int]]:
+    """Atributos descartados por muestra insuficiente, para poder DECIRLO en pantalla.
+
+    Descartar en silencio es lo que hacía que "Entorno y viñedo" apareciera con 5,000★
+    calculados sobre 6 reseñas. Se omite, pero se avisa de qué se ha omitido.
+    """
+    completa = nlp.tabla_importancia_desempeno(an, min_menciones=1)
+    if completa.empty:
+        return []
+    pocos = completa[completa["importancia"] < nlp.MIN_MENCIONES]
+    return [(r["atributo"], int(r["importancia"])) for _, r in pocos.iterrows()]
+
+
+def aviso_omitidos(an: pd.DataFrame) -> None:
+    """Pinta el aviso de atributos omitidos por muestra insuficiente."""
+    om = atributos_omitidos(an)
+    if om:
+        detalle = " · ".join(f"{a} ({n})" for a, n in om)
+        st.caption(f"⚠️ Omitidos por muestra insuficiente (menos de {nlp.MIN_MENCIONES} "
+                   f"reseñas, su media no sería fiable): {detalle}")
+
+
 def ipca_desde_anotadas(focal_an: pd.DataFrame, comp_an: pd.DataFrame) -> pd.DataFrame:
     """IPCA de una bodega (focal) frente a la competencia (resto del Marco)."""
     if focal_an.empty or comp_an.empty:
@@ -1828,16 +1850,22 @@ else:
                 if len(tabla_ipa_bod) >= 3:
                     st.caption("Importancia-Desempeño (IPA) de esta bodega")
                     st.plotly_chart(figura_ipa(tabla_ipa_bod), use_container_width=True)
+                    aviso_omitidos(an_bod)
                 else:
                     st.caption("Pocas reseñas con atributos para un IPA fiable de esta bodega.")
+                    aviso_omitidos(an_bod)
 
             # IPCA: esta bodega frente al resto del Marco
             comp_an = anotadas[anotadas["bodega"] != nombre]
             tabla_ipca = ipca_desde_anotadas(an_bod, comp_an)
             if len(tabla_ipca) >= 3:
                 st.markdown("**Análisis competitivo (IPCA): esta bodega vs. el Marco de Jerez**")
-                st.caption("Brecha positiva = la bodega supera la media del Marco en ese atributo; "
-                           "negativa = va por detrás.")
+                st.caption(
+                    f"Brecha positiva = la bodega supera la media del Marco en ese atributo; "
+                    f"negativa = va por detrás. Las diferencias menores de "
+                    f"{modelo_ipa.BANDA_INDIFERENCIA:.2f}★ se marcan **En línea con el Marco**: "
+                    f"son demasiado pequeñas para sostener un diagnóstico."
+                )
                 cg, ct = st.columns([2, 1])
                 with cg:
                     st.plotly_chart(figura_ipca(tabla_ipca), use_container_width=True)

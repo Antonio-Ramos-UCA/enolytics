@@ -225,11 +225,24 @@ def evolucion_atributos(resenas_anotadas: pd.DataFrame, freq: str = "Y",
     return g.sort_values(["atributo", "periodo"])
 
 
-def tabla_importancia_desempeno(resenas_anotadas: pd.DataFrame) -> pd.DataFrame:
+COLUMNAS_IMP_DES = ["atributo", "importancia", "desempeno", "menciones"]
+
+# Mínimo de reseñas para que un atributo tenga una media publicable. Por debajo, el
+# desempeño es ruido: en Barbadillo, "Entorno y viñedo" salía 5,000★ con 6 reseñas — una
+# sola de 3★ lo habría dejado en 4,71. Se alinea con `evolucion_atributos` (8), que ya
+# filtraba, mientras que esta función no filtraba nada.
+MIN_MENCIONES = 8
+
+
+def tabla_importancia_desempeno(resenas_anotadas: pd.DataFrame,
+                                min_menciones: int = MIN_MENCIONES) -> pd.DataFrame:
     """Calcula importancia y desempeño por atributo (base para el IPA).
 
     IMPORTANCIA = nº de reseñas que mencionan el atributo (derived importance).
     DESEMPEÑO   = puntuación media (estrellas) de esas reseñas.
+
+    Los atributos con menos de `min_menciones` reseñas se DESCARTAN: su media no es
+    publicable. A nivel de destino no afecta (el menor tiene 208); a nivel de bodega sí.
 
     ⚠️ CAUTELA METODOLÓGICA (auditoría 17/07) — LEER ANTES DE CITAR ESTOS NÚMEROS:
 
@@ -249,12 +262,16 @@ def tabla_importancia_desempeno(resenas_anotadas: pd.DataFrame) -> pd.DataFrame:
     que además habilita el modelo Kano. Ver docs/pendientes.md → "PRIORIDAD 1" y
     "MODELO KANO + PRCA" (Han et al., 2026, IJCHM, DOI 10.1108/IJCHM-01-2026-0071).
     """
+    if resenas_anotadas.empty or "atributos" not in resenas_anotadas.columns:
+        return pd.DataFrame(columns=COLUMNAS_IMP_DES)
     con_texto = resenas_anotadas[resenas_anotadas["atributos"].map(len) > 0]
+    if con_texto.empty:  # p. ej. Viñedos Bodega El Piraña: 1 reseña, sin texto
+        return pd.DataFrame(columns=COLUMNAS_IMP_DES)
     filas = []
     for atributo in ATRIBUTOS:
         mask = con_texto["atributos"].map(lambda a: atributo in a)
         sub = con_texto[mask]
-        if len(sub) == 0:
+        if len(sub) < max(min_menciones, 1):  # nunca una fila sin reseñas detrás
             continue
         filas.append({
             "atributo": atributo,
@@ -262,4 +279,6 @@ def tabla_importancia_desempeno(resenas_anotadas: pd.DataFrame) -> pd.DataFrame:
             "desempeno": round(sub["puntuacion"].mean(), 3),  # nota media
             "menciones": len(sub),
         })
+    if not filas:  # ninguna reseña con atributo (p. ej. una bodega sin textos)
+        return pd.DataFrame(columns=COLUMNAS_IMP_DES)
     return pd.DataFrame(filas).sort_values("importancia", ascending=False)

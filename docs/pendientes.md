@@ -103,6 +103,36 @@
 - [ ] Validar/afinar el léxico de atributos con criterio experto (Paula / bodegas).
 
 ## Modelos analíticos
+- [x] 🐛 **TRES ARREGLOS DE PRODUCTO** (17/07, a petición de Antonio: "estoy pensando en mejorar
+  ENOLYTICS, no en hacer un paper"). Los tres a nivel de BODEGA; el destino no cambia.
+  1. 🚨 **CRASH EN VIVO CORREGIDO:** `tabla_importancia_desempeno()` **petaba con KeyError** si
+     ninguna reseña tenía atributos: `pd.DataFrame([])` no tiene columnas y `.sort_values
+     ("importancia")` reventaba. **Lo disparaba `Viñedos Bodega El Piraña`** (1 reseña, sin
+     texto): seleccionarla en la vista "Bodega individual" **tumbaba el dashboard**.
+     `ipa_desde_anotadas()` no lo cazaba porque comprobaba `an.empty` y la bodega SÍ tenía
+     reseñas. Ahora devuelve tabla vacía con columnas.
+  2. **MÍNIMO DE MUESTRA** (`nlp.MIN_MENCIONES = 8`): un atributo con menos de 8 reseñas no
+     tiene media publicable. Lo disparó Barbadillo: *"Entorno y viñedo" = **5,000★ con 6
+     reseñas*** (una sola de 3★ lo habría dejado en 4,71). El criterio ya existía disperso e
+     inconsistente (`evolucion_atributos` filtraba a 8, el DIPCA a 10, esta función a NADA);
+     ahora está unificado en la función base. **Medido:** con 8 se caen 73 de 235 filas
+     bodega-atributo y 9 de 41 bodegas quedan con <3 atributos; con 30 se caerían 148 y 23
+     bodegas quedarían vacías (inviable). **El destino no se toca** (su atributo menor tiene 208).
+     **No se descarta en silencio:** `aviso_omitidos()` dice en pantalla qué se omitió y por qué.
+  3. **BANDA DE INDIFERENCIA EN EL IPCA** (`ipa.BANDA_INDIFERENCIA = 0.10`): antes
+     `ventaja = brecha >= 0` convertía el ruido en diagnóstico. En Barbadillo: *"Vino y cata"
+     con brecha **−0,004** → "Actuar: por detrás del Marco"* y *"Instalaciones" con **+0,001**
+     → "Fortaleza competitiva"* — **etiquetas opuestas para diferencias inexistentes**. Nuevo
+     cuadrante 5 = **"En línea con el Marco"**. El valor sale de la distribución real de las 162
+     brechas bodega-atributo (percentil 25 = 0,093; mediana = 0,202): ±0,10 declara "sin
+     diferencia" el 26,5% de los casos, justo el cuartil donde vive el ruido.
+  - **Resultado en Barbadillo:** de 4 "fortalezas competitivas" (3 de ellas ruido) a **1
+    fortaleza real** (Personal, +0,116), **1 debilidad real** (Organización, −0,532) y el resto
+    en línea. Verificado: las 41 bodegas procesan sin fallos y el dashboard arranca limpio.
+  - ⚠️ **LO QUE ESTO NO ARREGLA:** «Organización y reserva» sigue saliendo como *"Debilidad
+    **menor**"* pese a tener la mayor brecha (−0,532), porque con 18 menciones cae en "baja
+    importancia". **El consejo invertido solo lo arregla la importancia por PRCA.**
+
 - [x] IPA (destino + por bodega)
 - [x] IPCA (competitivo, por bodega vs. Marco)
 - [x] DIPA (evolución temporal del destino)
