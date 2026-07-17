@@ -162,8 +162,10 @@ streamlit, pandas, sklearn, plotly, matplotlib, requests, bs4.
 6. **En paralelo (no bloquea):** diseñar cuestionarios a partir de la Tabla 1 de la
    memoria; incorporar indicadores oficiales (INE, Dataestur, ACEVIN, Google Trends).
 
-## ═══ SESIÓN 2026-07-17 — AUDITORÍA METODOLÓGICA (la sesión más importante hasta la fecha) ═══
+## ═══ SESIÓN 2026-07-17 — AUDITORÍA METODOLÓGICA + ARREGLOS DE PRODUCTO ═══
 ### (Antonio: "me preocupa cómo hemos medido nosotros la importancia y el rendimiento")
+> **Sesión clave.** Se auditó cómo medimos, se leyeron los 3 papers de `BIBLIOGRAFIA/`, se
+> eligió método (Zhang 2021) y se corrigieron 3 defectos del producto, uno de ellos un crash.
 
 ### 0. 📄 EL PAPER DE LA CARPETA BIBLIOGRAFIA
 **Han, W., Zhang, C., Zhang, Y.C., Raab, C. y Chen, Z. (2026), "How do robots reshape restaurant
@@ -206,6 +208,59 @@ frecuencia) + **modelo Kano** de regalo (básico / desempeño / entusiasmo, umbr
   **Nosotros: corpus multilingüe con segmentación hispanohablante vs internacional.** Kano
   comparado por segmento cultural es publicable y ellos no pueden hacerlo.
 
+### 2bis. 📚 LA GENEALOGÍA DEL MÉTODO (los 3 papers de `BIBLIOGRAFIA/`)
+Renombrados a `Autor_Año_REVISTA.pdf`. **No es una lista de citas: es una escuela con
+continuidad institucional.** Chenxi Zhang hizo el máster en Northeastern University (Shenyang)
+— **la misma escuela de Bi et al.** — y firma tanto `Zhang_2021` como `Han_2026`.
+*(Que la Chenxi Zhang de Macau sea la misma que la de Sichuan es MUY probable —trayectoria,
+área, correo `cxzhang@cityu`— pero **no confirmado**: no hay ORCID en los PDFs.)*
+
+| Fichero | Qué aporta | Cómo mide |
+|---|---|---|
+| **`Bi_2019_TM.pdf`** *(Tourism Management)* | **Funda el método.** Es el único que DISCUTE cómo medir (secc. 2.1) | Desempeño = **media del sentimiento hacia el atributo** (VPos=5…VNeg=1, Mv=0). Importancia = **ENNM** (ensemble de redes neuronales) |
+| **`Zhang_2021_TM.pdf`** *(Tourism Management)* | Añade **PRCA + Kano** | Importancia = √(β_pen² + β_rew²) normalizada |
+| **`Han_2026_IJCHM.pdf`** | **Solo aplica** a Zhang. Sirve de plantilla y de prueba de que IJCHM lo acepta hoy | — |
+
+- 🔍 **La discusión que Han NO da, la da Bi (secc. 2.1):** dos familias — **self-stated**
+  (encuesta; criticada porque la importancia declarada se contamina del desempeño) e
+  **implicit** (deducirla estadísticamente o con IA). ⚠️ **La frecuencia de mención NO aparece
+  en esa taxonomía.** Lo nuestro no es una tercera vía: responde a otra pregunta.
+- ⚡ **TENSIÓN EN LA GENEALOGÍA:** **Bi (2019) RECHAZA la regresión** porque asume Gaussiana,
+  linealidad y poca multicolinealidad, y en reseñas reales la nota es **una J**. Pero **Zhang y
+  Han vuelven a la regresión** (la PRCA lo es) **sin mencionarlo**.
+- 📊 **Medido en NUESTROS datos** — de las 3 objeciones de Bi solo nos aplica una:
+  - (1) **Forma de J: SÍ nos aplica.** 75,9% de cincos, asimetría **−2,547**, con repunte
+    bimodal en 1★ (4,1% > 3,9% de los 3★). Somos el caso difícil que Bi describe.
+  - (2) No linealidad: **parcial** — la PRCA lo aborda al partir en `d_low`/`d_high`.
+  - (3) **Multicolinealidad: NO nos aplica.** Máxima 0,103, media 0,043.
+- 🎯 **DECISIÓN (con Antonio, enfoque PRODUCTO):** **Zhang (2021)**, y **olvidar el ENNM de Bi**
+  (un ensemble de redes con inicialización aleatoria contradice la identidad auditable del
+  proyecto — elegimos Streamlit por reproducibilidad y la ficha de reputación es determinista
+  a propósito). **Kano ES el entregable:** Bi da un número, Zhang da una prescripción de gestión.
+  La comparación ENNM vs PRCA se guarda para el futuro paper, no para el producto.
+  - **Ojo:** la fórmula del desempeño de Bi (ec. 2) es **idéntica en forma a la nuestra** — un
+    promedio sobre las reseñas que mencionan el atributo. **Lo que cambia es QUÉ se promedia:**
+    ellos el sentimiento hacia el atributo, nosotros la nota global. Ese es todo nuestro fallo.
+
+### 2ter. 🐛 TRES ARREGLOS DE PRODUCTO (Antonio: "estoy pensando en mejorar ENOLYTICS, no en
+### hacer un paper. Eso lo podemos plantear en el futuro")
+Todos a nivel de BODEGA; el destino no cambia. Detalle completo en `docs/pendientes.md`.
+1. 🚨 **CRASH EN VIVO:** `tabla_importancia_desempeno()` petaba con **KeyError** si ninguna
+   reseña tenía atributos. **Lo disparaba `Viñedos Bodega El Piraña`** (1 reseña, sin texto):
+   **seleccionarla en el dashboard lo tumbaba**. La guarda existente miraba `an.empty` y la
+   bodega SÍ tenía reseñas. Corregido.
+2. **MÍNIMO DE MUESTRA** (`nlp.MIN_MENCIONES = 8`): se acabó *"Entorno y viñedo = 5,000★"* con
+   **6 reseñas** (Barbadillo). El criterio ya existía **en 3 sitios con 3 valores distintos**
+   (8 / 10 / ninguno); ahora unificado. **Se avisa en pantalla de lo omitido**, no se esconde.
+3. **BANDA DE INDIFERENCIA IPCA** (0,10★): antes `brecha >= 0` hacía que **−0,004 → "Actuar"** y
+   **+0,001 → "Fortaleza competitiva"**. Nuevo estado **"En línea con el Marco"**. Umbral sacado
+   de la distribución real de las 162 brechas (percentil 25 = 0,093; mediana = 0,202).
+- **Barbadillo:** de 4 "fortalezas" (3 ruido) a **1 fortaleza real** (Personal +0,116) y **1
+  debilidad real** (Organización −0,532). Verificado: 41 bodegas sin fallos, dashboard arranca limpio.
+- ⚠️ **SIGUE ROTO:** «Organización y reserva» tiene la **mayor brecha (−0,532)** y el dashboard
+  la llama **"Debilidad MENOR"**, porque con 18 menciones cae en "baja importancia".
+  **El consejo invertido solo lo arregla la importancia por PRCA.**
+
 ### 3. 🐛 BUG DE POLISEMIA CORREGIDO: "cara" (hermano del de "tiempo")
 `'cara'` estaba suelta en el léxico de Precio: en español es "costosa" pero también **el rostro**
 y el modismo **"de cara al público"**. **11 falsos positivos de 29.** Sustituida por locuciones,
@@ -221,10 +276,19 @@ ru 30 · pl 15. **El neerlandés (63) y el portugués (60) están en el mismo or
 (91), que sí tenemos.** ~123 reseñas analizadas a medias. Anotado en pendientes.
 
 ### 👉 PRÓXIMOS PASOS (reordenados en esta sesión)
+Antonio marcó el rumbo: **mejorar ENOLYTICS como producto; el paper, más adelante.**
 1. 🔴 **Sentimiento por atributo con NLP real** — PRIORIDAD 1. Cimiento, no mejora.
-2. **Modelo Kano + PRCA** encima de lo anterior.
-3. **Redactar**, con el ángulo cross-cultural que Han et al. dejan abierto.
-4. Empleo turístico y demás fuentes: siguen, pero **ya no van primero**.
+   Método elegido: **el desempeño de Bi (ec. 1-2)** — media del sentimiento HACIA el atributo.
+2. **Importancia por PRCA + Kano** (Zhang 2021) encima de lo anterior. **Es lo único que
+   arregla el consejo invertido** («lo que peor haces, no lo toques»).
+3. Empleo turístico y demás fuentes: siguen, pero **ya no van primero**.
+4. **Futuro, no ahora:** el paper (ángulo cross-cultural de Han) y la comparación ENNM vs PRCA.
+
+### ✅ ESTADO AL CIERRE DEL 17/07
+- Todo committeado y subido (`88f72e5`). **Pendiente que Antonio haga *Reboot* en Streamlit**
+  (hemos tocado `analisis.py` e `ipa.py`, que son módulos importados y se cachean).
+- `BIBLIOGRAFIA/` está en `.gitignore`: PDFs con copyright de Emerald/Elsevier bajados con la
+  suscripción de la UCA, y el de Han lleva un token institucional incrustado en el pie.
 
 ## ═══ SESIÓN 2026-07-16 (cont.) — GAMA DE COLOR: LA ESCALA DEL VINO DE JEREZ ═══
 ### (A propuesta de Antonio: "vamos a darle una vuelta a la gama de colores")
