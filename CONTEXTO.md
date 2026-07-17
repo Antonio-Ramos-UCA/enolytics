@@ -162,10 +162,12 @@ streamlit, pandas, sklearn, plotly, matplotlib, requests, bs4.
 6. **En paralelo (no bloquea):** diseñar cuestionarios a partir de la Tabla 1 de la
    memoria; incorporar indicadores oficiales (INE, Dataestur, ACEVIN, Google Trends).
 
-## ═══ SESIÓN 2026-07-17 — AUDITORÍA METODOLÓGICA + ARREGLOS DE PRODUCTO ═══
+## ═══ SESIÓN 2026-07-17 — AUDITORÍA METODOLÓGICA, ARREGLOS Y **PRCA MONTADA** ═══
 ### (Antonio: "me preocupa cómo hemos medido nosotros la importancia y el rendimiento")
-> **Sesión clave.** Se auditó cómo medimos, se leyeron los 3 papers de `BIBLIOGRAFIA/`, se
-> eligió método (Zhang 2021) y se corrigieron 3 defectos del producto, uno de ellos un crash.
+> **La sesión más importante del proyecto hasta la fecha.** Se auditó cómo medimos, se leyeron
+> los 3 papers de `BIBLIOGRAFIA/`, se eligió método (Zhang 2021), se corrigieron 3 defectos del
+> producto (uno era un **crash en vivo**) y **se montó el sentimiento por atributo + la PRCA**.
+> **El consejo invertido está resuelto en el código; falta conectarlo al dashboard (paso 1).**
 
 ### 0. 📄 EL PAPER DE LA CARPETA BIBLIOGRAFIA
 **Han, W., Zhang, C., Zhang, Y.C., Raab, C. y Chen, Z. (2026), "How do robots reshape restaurant
@@ -275,18 +277,65 @@ Recuento real: es 5.090 · en 905 · de 290 · it 180 · **fr 91** · **nl 63** 
 ru 30 · pl 15. **El neerlandés (63) y el portugués (60) están en el mismo orden que el francés
 (91), que sí tenemos.** ~123 reseñas analizadas a medias. Anotado en pendientes.
 
-### 👉 PRÓXIMOS PASOS (reordenados en esta sesión)
+### 4. ⭐⭐ SE MONTÓ EL SENTIMIENTO POR ATRIBUTO Y LA PRCA (Antonio: "vamos a hacerlo todo")
+Lo que era la PRIORIDAD 1 **ya está hecho**. Dos módulos nuevos, ambos se ejecutan **en LOCAL**
+y dejan CSV; el dashboard sólo lee. `torch`/`statsmodels` **NO entran en `requirements.txt`**
+(Streamlit Cloud tiene ~1 GB de RAM). Detalle completo en `docs/pendientes.md`.
+
+**`enolytics/nlp/sentimiento.py`** — BERT `nlptown/bert-base-multilingual-uncased-sentiment`,
+entrenado sobre RESEÑAS en EN/NL/DE/FR/ES/IT (incluye el **neerlandés**, que ni está en el
+léxico) y devuelve **5 clases con probabilidades** = exactamente lo que piden las ec. 2-3 de
+Zhang. Va **frase a frase**: 7.277 reseñas → **14.041 frases** → **16.499 filas reseña-atributo**,
+~3 min con MPS.
+- 🎯 **LA PRUEBA:** con estrellas, la desviación DENTRO de una reseña era **0,000 siempre**
+  (por construcción). Ahora **0,280**, y en el **21%** de las reseñas dos atributos difieren en
+  >1 punto. Ejemplo real (reseña de **4★**): *"Estupenda bodega, visita guiada espectacular. Mi
+  gran decepción fue…"* → **Visita 4,67 · Instalaciones 3,22 · Precio 1,26**. Antes: los tres 4,0.
+- **No es circular:** correlación sentimiento-del-atributo vs estrellas = **0,677**.
+
+**`enolytics/analitica/prca.py`** — ecuaciones de Zhang (2021). Precalcula
+`datos/procesado/prca_kano.csv` (destino + **16 bodegas** con muestra suficiente).
+- 🚨 **ARREGLA EL CONSEJO INVERTIDO:** «Precio» (771 men.) y «Organización» (331) pasan de
+  ***"Baja prioridad"*** a **"CONCÉNTRESE AQUÍ"** (16,9% y 16,1%).
+- 💡 **HALLAZGO:** «Vino y cata» es lo MÁS mencionado (4.232) pero sólo **11,1%** de importancia
+  → *"Posible exceso"*. **Se habla del vino sin parar y no mueve la nota, porque siempre es
+  bueno.** Ningún método anterior podía ver esto.
+- Modelo sano: **R² = 0,55**, F significativa, 465 obs/variable.
+- 🐛 Bug cazado: sin mínimo de menciones, Barbadillo daba «Entorno y viñedo» con **52,6% de
+  importancia sobre 6 menciones**. Añadido `MIN_MENCIONES_ATRIBUTO = 8`.
+
+### 5. 🚨 KANO NO SALE: EFECTO TECHO — **LA DECISIÓN QUE ABRE MAÑANA**
+Los 7 atributos dan **"Básico"**. **No es un hallazgo, es aritmética.** Con **78,7% de cincos**,
+la nota de referencia ya es **4,61/5**: hablar bien de un atributo sube **+0,23**, hablar mal
+hunde **−2,56**. **11× de asimetría mecánica** — no hay margen donde premiar. Por eso β_penalty
+>> β_reward para CUALQUIER atributo y λ sale siempre muy negativo (−0,39 a −0,96).
+- ⚡ **Es la objeción (1) de Bi et al. (2019) CONFIRMADA con nuestros datos.** Zhang y Han nunca
+  la comprobaron: Yelp está más repartido que Google Maps. **λ absoluto NO es interpretable
+  aquí; su orden relativo quizá sí.**
+- **Tres vías:** (a) **regresión ordinal** (*ordered logit*: modela la satisfacción latente y
+  trata el techo como umbral — el arreglo estándar para variables acotadas); (b) usar sólo el
+  orden relativo de λ; (c) aceptar el resultado negativo y no publicar Kano.
+- 📄 Para el futuro paper: **nadie ha documentado que el método de Zhang/Han se rompe en corpus
+  con techo**, que es el caso normal en enoturismo.
+
+### 👉 PRÓXIMOS PASOS — POR AQUÍ SE RETOMA EL 18/07
 Antonio marcó el rumbo: **mejorar ENOLYTICS como producto; el paper, más adelante.**
-1. 🔴 **Sentimiento por atributo con NLP real** — PRIORIDAD 1. Cimiento, no mejora.
-   Método elegido: **el desempeño de Bi (ec. 1-2)** — media del sentimiento HACIA el atributo.
-2. **Importancia por PRCA + Kano** (Zhang 2021) encima de lo anterior. **Es lo único que
-   arregla el consejo invertido** («lo que peor haces, no lo toques»).
-3. Empleo turístico y demás fuentes: siguen, pero **ya no van primero**.
-4. **Futuro, no ahora:** el paper (ángulo cross-cultural de Han) y la comparación ENNM vs PRCA.
+1. 🔴 **ENCHUFAR LA PRCA AL DASHBOARD.** El CSV ya está calculado, pero **NO está conectado**:
+   el IPA sigue usando la frecuencia, así que **el dashboard sigue dando el consejo invertido**.
+   El arreglo existe y no llega al usuario. Es lo primero.
+2. **Decidir qué hacer con Kano** (ver punto 5: ordinal / orden relativo / resultado negativo).
+3. **Motor de recomendaciones**: que lea la importancia de la PRCA.
+4. Empleo turístico y demás fuentes: siguen, pero **ya no van primero**.
+5. **Futuro, no ahora:** el paper (ángulo cross-cultural de Han) y ENNM vs PRCA.
 
 ### ✅ ESTADO AL CIERRE DEL 17/07
-- Todo committeado y subido (`88f72e5`). **Pendiente que Antonio haga *Reboot* en Streamlit**
-  (hemos tocado `analisis.py` e `ipa.py`, que son módulos importados y se cachean).
+- Todo committeado y subido (`334bc99`). **Pendiente que Antonio haga *Reboot* en Streamlit**
+  (tocamos `analisis.py` e `ipa.py`, módulos importados que se cachean).
+- ⚠️ **El Reboot NO traerá la PRCA** — eso aún no está conectado (paso 1 de mañana). Lo que sí
+  se verá: el estado "En línea con el Marco", el aviso de atributos omitidos y que El Piraña
+  ya no tumba la app.
+- **Para regenerar los datos** (si cambian las reseñas o el léxico), en local y en este orden:
+  `python -m enolytics.nlp.sentimiento` → `python -m enolytics.analitica.prca`.
 - `BIBLIOGRAFIA/` está en `.gitignore`: PDFs con copyright de Emerald/Elsevier bajados con la
   suscripción de la UCA, y el de Han lleva un token institucional incrustado en el pie.
 
