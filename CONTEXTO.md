@@ -4,8 +4,8 @@
 > poder continuar desde cualquier ordenador (este proyecto está en Dropbox y se
 > sincroniza). Si retomas con Claude en otro equipo, pásale este archivo primero.
 >
-> **Última actualización:** 2026-07-17 (auditoría metodológica: cómo medimos importancia y
-> desempeño — sesión clave, leer la primera sección)
+> **Última actualización:** 2026-07-18 (PRCA conectada, espectro Kano y los 5 modelos con su
+> cobertura por nivel — leer la sesión del 18/07)
 
 ---
 
@@ -161,6 +161,41 @@ streamlit, pandas, sklearn, plotly, matplotlib, requests, bs4.
 5. **Integrar todo en el dashboard** (pestañas de reseñas, sentimiento, cuadrantes IPA).
 6. **En paralelo (no bloquea):** diseñar cuestionarios a partir de la Tabla 1 de la
    memoria; incorporar indicadores oficiales (INE, Dataestur, ACEVIN, Google Trends).
+
+## ═══ SESIÓN 2026-07-18 — PRCA AL DASHBOARD, ESPECTRO KANO Y COBERTURA DE MODELOS ═══
+### (Antonio: "vamos a conectar la PRCA", "abordamos Kano", "confirma qué modelos hace y a qué nivel")
+
+**1. PRCA CONECTADA AL DASHBOARD.** El IPA del destino y el de las 16 bodegas con muestra usan ya
+la importancia por IMPACTO (no la frecuencia). **El consejo invertido dejó de llegar al usuario:**
+«Precio» y «Organización» aparecen en *«Concéntrese aquí»*. Respaldo al IPA clásico donde no hay
+muestra, con aviso. `ipa_desde_prca()` en app.py; recomendaciones adaptadas (`_menciones()`,
+`_por_impacto()`) para no mostrar "0 menciones" al ser la importancia una fracción.
+
+**2. KANO → ESPECTRO HIGIENE↔DELEITE.** La clasificación absoluta de Kano NO es rescatable (efecto
+techo: 78,7% de cincos → todo "Básico"). Probada la **regresión ordinal** (arreglo estándar):
+mueve solo 1 de 7. Pero el **orden relativo de λ es robusto** (Spearman 0,79 entre OLS y ordinal),
+así que se muestra un **espectro relativo higiene↔deleite**, no las 3 cajas. `figura_perfil()` +
+columnas `perfil`/`perfil_pos`/`lambda_ordinal` en `prca_kano.csv`. Destino: Precio = higiénico,
+Entorno = deleitador. **Cruce potente:** alto impacto + higiénico (Precio) = arréglalo pero no
+diferencia; deleitador = palanca de diferenciación. Se muestra en destino Y en bodega.
+
+**3. DIPA POR BODEGA** (`dipa_bodega`, min 8 reseñas/año/atributo, ≥2 años): útil en 18 bodegas.
+
+**4. 📋 COBERTURA DE MODELOS VERIFICADA EN CÓDIGO (para la memoria):**
+
+| Modelo | Destino | Bodega |
+|---|:---:|:---:|
+| **IPA** | ✅ | ✅ |
+| **DIPA** | ✅ | ✅ (18 bodegas con historia) |
+| **IPCA** | ➖ no aplica (es bodega-vs-Marco) | ✅ |
+| **DIPCA** | ➖ no aplica | ✅ |
+| **Kano/perfil** | ✅ | ✅ (16 bodegas con muestra) |
+
+- **IPCA/DIPCA a nivel de destino NO existen y NO es un fallo:** son competitivos por definición
+  (una bodega contra el resto del Marco). Comparar el Marco con OTRAS rutas (Rioja, Ribera) exige
+  el corpus de reseñas de esas rutas → backlog (Outscraper de pago).
+- Todo se ejecuta EN LOCAL y deja CSV; el dashboard solo lee. Estado: subido, `cb87ffa` y
+  siguientes. **Pendiente Reboot en Streamlit.**
 
 ## ═══ SESIÓN 2026-07-17 — AUDITORÍA METODOLÓGICA, ARREGLOS Y **PRCA MONTADA** ═══
 ### (Antonio: "me preocupa cómo hemos medido nosotros la importancia y el rendimiento")

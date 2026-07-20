@@ -209,10 +209,13 @@
   las 16 bodegas con muestra; ahora `figura_perfil()` se pinta también en la vista de bodega
   individual (antes solo en el destino). Barbadillo, p.ej., tiene «Visita» como deleitador e
   «Instalaciones/Precio» como higiénicos — perfil propio, distinto del destino.
-- [ ] **DIPA por bodega** (evolución temporal de los atributos de UNA bodega). Hoy el DIPA solo
-  existe a nivel de destino. Pendiente de decidir: la mayoría de bodegas no tiene reseñas
-  suficientes repartidas en el tiempo para que sea fiable (habría que fijar un mínimo por
-  periodo, como en el destino). Conversación abierta con Antonio.
+- [x] ✅ **DIPA por bodega HECHO (18/07)** con mínimo de muestra. `dipa_bodega(an_bod,
+  min_menciones=8)`: nota media anual de los atributos de la bodega, solo los presentes en ≥2
+  años con ≥8 reseñas cada año. **Da DIPA útil en 18 de 40 bodegas** (las de más historia; entra
+  Barbadillo, González Byass, Tradición…). Leyenda que lo enmarca como *señal de tendencia sobre
+  pocas reseñas, no veredicto*. Reutiliza `evolucion_atributos` + `resumen_dipa` del destino.
+  - ⚠️ Como el DIPA del destino, se basa en la **nota media (estrellas)**, no en el sentimiento
+    por atributo. Coherente entre niveles; mejorarlo a sentimiento es tarea futura.
 - [ ] IPA/IPCA por **atributo cruzado con procedencia** (nacional vs internacional).
 - [ ] ⭐ **MODELO KANO + PRCA** (a propuesta de Antonio, 17/07). Fuente: **Han, W., Zhang, C.,
   Zhang, Y.C., Raab, C. y Chen, Z. (2026), "How do robots reshape restaurant service attributes?

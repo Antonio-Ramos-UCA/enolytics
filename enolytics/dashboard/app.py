@@ -253,6 +253,28 @@ def dipca_bodega(an_bod: pd.DataFrame, comp_an: pd.DataFrame,
     return df_out
 
 
+# Nº mínimo de reseñas por (año, atributo) para que la evolución de UNA bodega no sea ruido.
+# Mismo criterio (8) que MIN_MENCIONES en el resto del análisis. Da DIPA útil en 16 bodegas.
+MIN_MENCIONES_DIPA_BOD = 8
+
+
+def dipa_bodega(an_bod: pd.DataFrame, min_menciones: int = MIN_MENCIONES_DIPA_BOD) -> pd.DataFrame:
+    """DIPA de una bodega: evolución anual del desempeño de SUS atributos.
+
+    Reutiliza `evolucion_atributos` (mismo método que el DIPA del destino, basado en la nota
+    media). Solo devuelve atributos presentes en **≥2 años** con muestra suficiente cada uno;
+    si no hay ninguno, devuelve vacío (la mayoría de bodegas no tiene historia bastante).
+    """
+    if an_bod.empty:
+        return pd.DataFrame()
+    ev = nlp.evolucion_atributos(an_bod, freq="Y", min_menciones=min_menciones)
+    if ev.empty:
+        return pd.DataFrame()
+    con_2 = ev.groupby("atributo")["periodo"].nunique()
+    validos = con_2[con_2 >= 2].index
+    return ev[ev["atributo"].isin(validos)]
+
+
 def figura_ipca(tabla: pd.DataFrame):
     """Gráfico IPCA: importancia (x) vs brecha frente al Marco (y)."""
     umbral_imp = tabla["importancia"].mean()
@@ -1957,7 +1979,7 @@ else:
                     panel_idiomas(res_bod, an_bod, nombre)
             st.divider()
 
-        st.subheader("Análisis avanzado (IPA · perfil higiene↔deleite · IPCA · DIPCA)")
+        st.subheader("Análisis avanzado (IPA · perfil higiene↔deleite · DIPA · IPCA · DIPCA)")
         if not an_bod.empty:
             # Sentimiento y cuadrantes IPA de ESTA bodega
             col1, col2 = st.columns([1, 2])
@@ -1994,6 +2016,25 @@ else:
                     "muy bien apenas la sube); derecha, **deleitadores** (crean satisfacción de "
                     "verdad). Tamaño del punto = importancia. Posición **relativa a esta bodega**.")
                 st.plotly_chart(figura_perfil(tabla_ipa_bod), use_container_width=True)
+
+            # DIPA: evolución anual de los atributos de ESTA bodega (si tiene historia bastante)
+            ev_bod = dipa_bodega(an_bod)
+            if not ev_bod.empty:
+                st.markdown("**Evolución temporal (DIPA): ¿mejora o empeora con el tiempo?**")
+                st.caption(
+                    "Nota media por año de cada atributo con suficientes reseñas "
+                    f"(≥{MIN_MENCIONES_DIPA_BOD} al año). Solo aparecen los atributos con al menos "
+                    "dos años de datos. Es una **señal de tendencia sobre pocas reseñas**, no un "
+                    "veredicto: léela como indicio.")
+                fig_dipa_bod = px.line(
+                    ev_bod, x="periodo", y="desempeno", color="atributo", markers=True,
+                    labels={"periodo": "Año", "desempeno": "Desempeño (nota media)",
+                            "atributo": "Atributo"})
+                st.plotly_chart(estilo.figura(fig_dipa_bod, alto=360), use_container_width=True)
+                resu = resumen_dipa(ev_bod)
+                if not resu.empty:
+                    st.caption("Cambio del primer al último periodo con datos:")
+                    st.dataframe(resu, use_container_width=True, hide_index=True)
 
             # IPCA: esta bodega frente al resto del Marco
             comp_an = anotadas[anotadas["bodega"] != nombre]
