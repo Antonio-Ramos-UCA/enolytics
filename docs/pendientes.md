@@ -111,6 +111,17 @@
   - 📄 Para el futuro paper esto es material: **nadie ha documentado que el método de Zhang/Han
     se rompe en corpus con techo**, que es el caso normal en enoturismo.
 
+- [x] ✅ **SOLO MÉTODO BUENO (18/07, decisión de Antonio).** Se elimina el respaldo por frecuencia:
+  el IPA/perfil/IPCA/DIPCA de una bodega **solo se muestran si tiene muestra para la PRCA** (16
+  bodegas); las **24 sin muestra reciben un mensaje honesto** ("N reseñas con atributo; el método
+  por impacto necesita ~140; con menos daría un resultado engañoso, se omite") y conservan
+  reputación y reseñas. Motivo medido: las 24 tienen **mediana de 26 reseñas** (la mayor, 80),
+  ninguna cerca del umbral → el método clásico sobre esas muestras era ruido con pinta de gráfico.
+  Función `ipa_desde_anotadas` (clásico) eliminada del dashboard; las recomendaciones tampoco se
+  alimentan de atributos si no hay PRCA.
+  - ⚠️ Deuda declarada: el IPCA/DIPCA de las 16 bodegas CON PRCA sigue siendo por estrellas (no
+    sentimiento); migrarlo es tarea futura.
+
 - [x] ✅⭐ **HECHO (18/07) — PRCA ENCHUFADA AL DASHBOARD Y A LAS RECOMENDACIONES.**
   - `ipa_desde_prca(ambito)` lee `prca_kano.csv`; el destino y las 16 bodegas con muestra usan la
     importancia por impacto. Las 24 bodegas sin muestra caen al IPA clásico (con aviso en pantalla).

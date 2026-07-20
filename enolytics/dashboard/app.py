@@ -125,24 +125,6 @@ def cargar_resenas_anotadas() -> pd.DataFrame:
     return nlp.anotar_resenas(r) if not r.empty else pd.DataFrame()
 
 
-def ipa_desde_anotadas(an: pd.DataFrame) -> pd.DataFrame:
-    """De un conjunto de reseñas anotadas -> tabla IPA (importancia = nº menciones).
-
-    Método CLÁSICO (frecuencia). Se usa como respaldo cuando una bodega no tiene muestra
-    suficiente para la PRCA. El método bueno es `ipa_desde_prca`.
-    """
-    if an.empty:
-        return pd.DataFrame()
-    tab = nlp.tabla_importancia_desempeno(an)
-    if tab.empty:
-        return pd.DataFrame()
-    puntos = modelo_ipa.calcular_ipa(tab.to_dict("records"))
-    return pd.DataFrame([{
-        "atributo": p.atributo, "importancia": p.importancia,
-        "desempeno": p.desempeno, "cuadrante": p.etiqueta,
-    } for p in puntos])
-
-
 @st.cache_data
 def cargar_prca() -> pd.DataFrame:
     """Importancia por IMPACTO (regresión PRCA) + Kano, precalculada en local.
@@ -808,11 +790,11 @@ df = cargar_bodegas()
 resenas = cargar_resenas()
 censo = cargar_censo()
 anotadas = cargar_resenas_anotadas()
-# IPA del destino: la importancia REAL (PRCA) si está precalculada; si no, la clásica.
+# IPA del destino: SIEMPRE la importancia por impacto (PRCA). No hay respaldo por frecuencia:
+# se decidió (18/07) usar solo el método bueno y, donde no haya muestra, informar en vez de
+# mostrar un análisis engañoso. El destino tiene datos de sobra; el CSV está versionado.
 tabla_ipa = ipa_desde_prca("Marco de Jerez")
 ipa_es_prca = not tabla_ipa.empty
-if not ipa_es_prca:
-    tabla_ipa = ipa_desde_anotadas(anotadas)
 evolucion = cargar_evolucion()
 oferta = cargar_oferta()
 sostenibilidad = cargar_sostenibilidad()
@@ -1900,13 +1882,15 @@ else:
             return sel.iloc[0].to_dict() if not sel.empty else None
 
         comp_an = anotadas[anotadas["bodega"] != nombre] if not anotadas.empty else pd.DataFrame()
+        # Solo el método bueno (PRCA). Si la bodega no tiene muestra, NO se alimenta el análisis
+        # de atributos a las recomendaciones (ni IPA ni IPCA ni DIPCA): daría consejos sobre
+        # ruido. Las recomendaciones de reputación, web, etc. no dependen de esto y siguen.
         ipa_bod = ipa_desde_prca(nombre)
-        if ipa_bod.empty and not an_bod.empty:
-            ipa_bod = ipa_desde_anotadas(an_bod)
-        ipca_bod = (ipca_desde_anotadas(an_bod, comp_an)
-                    if not an_bod.empty and not comp_an.empty else pd.DataFrame())
-        dipca_bod = (dipca_bodega(an_bod, comp_an)
-                     if not an_bod.empty and not comp_an.empty else pd.DataFrame())
+        if not ipa_bod.empty and not comp_an.empty:
+            ipca_bod = ipca_desde_anotadas(an_bod, comp_an)
+            dipca_bod = dipca_bodega(an_bod, comp_an)
+        else:
+            ipca_bod = dipca_bod = pd.DataFrame()
 
         fila_cen = _fila(censo)
         rating_bod = fila_cen.get("rating") if fila_cen else None
@@ -1987,25 +1971,25 @@ else:
                 st.caption("Sentimiento (por estrellas)")
                 barras(an_bod["sentimiento"].value_counts())
             with col2:
-                # Importancia por impacto (PRCA) si esta bodega tiene muestra; si no, la clásica.
+                # Solo el método bueno (PRCA). Si no hay muestra, se informa y se omite todo el
+                # análisis de atributos (IPA, perfil, IPCA, DIPCA), en vez de mostrar algo engañoso.
                 tabla_ipa_bod = ipa_desde_prca(nombre)
-                bod_es_prca = not tabla_ipa_bod.empty
-                if not bod_es_prca:
-                    tabla_ipa_bod = ipa_desde_anotadas(an_bod)
-                if len(tabla_ipa_bod) >= 3:
-                    if bod_es_prca:
-                        st.caption("Importancia-Desempeño (IPA) de esta bodega · importancia por "
-                                   "impacto en la satisfacción (PRCA)")
-                    else:
-                        st.caption("Importancia-Desempeño (IPA) de esta bodega · método clásico "
-                                   "(muestra insuficiente para la importancia por impacto)")
-                    st.plotly_chart(
-                        figura_ipa(tabla_ipa_bod, metodo="prca" if bod_es_prca else "frecuencia"),
-                        use_container_width=True)
+                bod_es_prca = not tabla_ipa_bod.empty and len(tabla_ipa_bod) >= 3
+                if bod_es_prca:
+                    st.caption("Importancia-Desempeño (IPA) de esta bodega · importancia por "
+                               "impacto en la satisfacción (PRCA)")
+                    st.plotly_chart(figura_ipa(tabla_ipa_bod, metodo="prca"),
+                                    use_container_width=True)
                     aviso_omitidos(an_bod)
                 else:
-                    st.caption("Pocas reseñas con atributos para un IPA fiable de esta bodega.")
-                    aviso_omitidos(an_bod)
+                    n_atr = int((an_bod["atributos"].map(len) > 0).sum())
+                    st.info(
+                        f"**Muestra insuficiente para el análisis de atributos.** Esta bodega "
+                        f"tiene **{n_atr} reseñas** con opinión sobre atributos; el método por "
+                        f"impacto (PRCA) necesita del orden de **140** para ser fiable. Con menos, "
+                        f"mostrarlo daría un resultado engañoso, así que se omiten el IPA, el "
+                        f"perfil higiene↔deleite, el IPCA y el DIPCA. La **reputación** y las "
+                        f"**reseñas** de esta bodega sí están disponibles, arriba y abajo.")
 
             # Perfil higiene ↔ deleite de ESTA bodega (mismo análisis que el destino, si hay muestra)
             if bod_es_prca and "perfil" in tabla_ipa_bod.columns \
@@ -2017,8 +2001,8 @@ else:
                     "verdad). Tamaño del punto = importancia. Posición **relativa a esta bodega**.")
                 st.plotly_chart(figura_perfil(tabla_ipa_bod), use_container_width=True)
 
-            # DIPA: evolución anual de los atributos de ESTA bodega (si tiene historia bastante)
-            ev_bod = dipa_bodega(an_bod)
+            # DIPA: evolución anual de los atributos de ESTA bodega (solo si hay muestra PRCA)
+            ev_bod = dipa_bodega(an_bod) if bod_es_prca else pd.DataFrame()
             if not ev_bod.empty:
                 st.markdown("**Evolución temporal (DIPA): ¿mejora o empeora con el tiempo?**")
                 st.caption(
@@ -2036,9 +2020,9 @@ else:
                     st.caption("Cambio del primer al último periodo con datos:")
                     st.dataframe(resu, use_container_width=True, hide_index=True)
 
-            # IPCA: esta bodega frente al resto del Marco
+            # IPCA: esta bodega frente al resto del Marco (solo si hay muestra PRCA)
             comp_an = anotadas[anotadas["bodega"] != nombre]
-            tabla_ipca = ipca_desde_anotadas(an_bod, comp_an)
+            tabla_ipca = ipca_desde_anotadas(an_bod, comp_an) if bod_es_prca else pd.DataFrame()
             if len(tabla_ipca) >= 3:
                 st.markdown("**Análisis competitivo (IPCA): esta bodega vs. el Marco de Jerez**")
                 st.caption(
@@ -2058,8 +2042,8 @@ else:
                         use_container_width=True, hide_index=True,
                     )
 
-            # DIPCA: evolución de la brecha competitiva en el tiempo
-            tabla_dipca = dipca_bodega(an_bod, comp_an)
+            # DIPCA: evolución de la brecha competitiva en el tiempo (solo si hay muestra PRCA)
+            tabla_dipca = dipca_bodega(an_bod, comp_an) if bod_es_prca else pd.DataFrame()
             if not tabla_dipca.empty:
                 corte = tabla_dipca.attrs.get("corte", "")
                 st.markdown("**Evolución competitiva (DIPCA): ¿gana o pierde terreno con el tiempo?**")
