@@ -1579,7 +1579,7 @@ if rol == VISTA_INTELIGENCIAS:
             st.divider()
 
         if not tabla_ipa.empty:
-            st.subheader("Análisis Importancia-Desempeño (IPA) del destino")
+            st.subheader("¿Dónde debe actuar el Marco? _(Importancia-Desempeño · IPA)_")
             if ipa_es_prca:
                 fuente("estimado", "Calculado sobre 10.972 reseñas de Google. **Importancia** = "
                                    "*impacto en la satisfacción* (regresión PRCA: cuánto mueve la "
@@ -1623,7 +1623,7 @@ if rol == VISTA_INTELIGENCIAS:
                        "ordinal, correlación 0,79). Interpretación coherente con un destino de "
                        "prestigio, donde el visitante llega con expectativas muy altas.")
         if not evolucion.empty:
-            st.subheader("Evolución temporal (DIPA)")
+            st.subheader("¿La satisfacción mejora o empeora con el tiempo? _(DIPA)_")
             st.caption("Sentimiento medio hacia cada atributo por año (modelo BERT, no estrellas). "
                        "Revela si la satisfacción con cada aspecto mejora o empeora.")
             fig_dipa = px.line(
@@ -2039,7 +2039,9 @@ else:
                     panel_idiomas(res_bod, an_bod, nombre)
             st.divider()
 
-        st.subheader("Análisis avanzado (IPA · perfil higiene↔deleite · DIPA · IPCA · DIPCA)")
+        st.subheader("Fortalezas y debilidades según los visitantes")
+        st.caption("Qué valoran y qué no, cómo evoluciona y cómo se compara con el resto del "
+                   "Marco. _(Modelos IPA · perfil higiene↔deleite · DIPA · IPCA · DIPCA)_")
         if not an_bod.empty:
             # Sentimiento y cuadrantes IPA de ESTA bodega
             col1, col2 = st.columns([1, 2])
@@ -2052,8 +2054,8 @@ else:
                 tabla_ipa_bod = ipa_desde_prca(nombre)
                 bod_es_prca = not tabla_ipa_bod.empty and len(tabla_ipa_bod) >= 3
                 if bod_es_prca:
-                    st.caption("Importancia-Desempeño (IPA) de esta bodega · importancia por "
-                               "impacto en la satisfacción (PRCA)")
+                    st.caption("¿Qué es urgente mejorar y qué no? Abajo a la derecha = mucho "
+                               "impacto y poca nota: ahí es donde actuar. _(Importancia-Desempeño · IPA)_")
                     st.plotly_chart(figura_ipa(tabla_ipa_bod, metodo="prca"),
                                     use_container_width=True)
                     aviso_omitidos(an_bod)
@@ -2080,7 +2082,7 @@ else:
             # DIPA: evolución anual del sentimiento por atributo de ESTA bodega (solo si hay PRCA)
             ev_bod = dipa_bodega(nombre) if bod_es_prca else pd.DataFrame()
             if not ev_bod.empty:
-                st.markdown("**Evolución temporal (DIPA): ¿mejora o empeora con el tiempo?**")
+                st.markdown("**¿Mejora o empeora con el tiempo?** _(evolución temporal · DIPA)_")
                 st.caption(
                     "Sentimiento medio por año hacia cada atributo con suficientes reseñas "
                     f"(≥{MIN_MENCIONES_DIPA_BOD} al año). Solo aparecen los atributos con al menos "
@@ -2099,7 +2101,7 @@ else:
             # IPCA por SENTIMIENTO: esta bodega frente al RESTO del Marco (solo si hay muestra PRCA)
             tabla_ipca = ipca_desde_sentimiento(nombre) if bod_es_prca else pd.DataFrame()
             if len(tabla_ipca) >= 3:
-                st.markdown("**Análisis competitivo (IPCA): esta bodega vs. el resto del Marco**")
+                st.markdown("**¿Cómo va frente al resto del Marco?** _(análisis competitivo · IPCA)_")
                 st.caption(
                     f"Compara el **sentimiento** hacia cada atributo (no las estrellas) con el del "
                     f"resto de bodegas del Marco. Brecha positiva = la bodega va por delante; "
@@ -2122,7 +2124,8 @@ else:
             tabla_dipca = dipca_desde_sentimiento(nombre) if bod_es_prca else pd.DataFrame()
             if not tabla_dipca.empty:
                 corte = tabla_dipca.attrs.get("corte", "")
-                st.markdown("**Evolución competitiva (DIPCA): ¿gana o pierde terreno con el tiempo?**")
+                st.markdown("**¿Gana o pierde terreno frente al Marco?** "
+                            "_(evolución competitiva · DIPCA)_")
                 st.caption(f"Brecha de **sentimiento** vs. el resto del Marco, antes y después de "
                            f"{corte}. Cambio positivo = la bodega gana terreno frente a la competencia.")
                 st.dataframe(

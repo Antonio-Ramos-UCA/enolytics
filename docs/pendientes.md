@@ -324,6 +324,12 @@
     **deleitador** — dónde se PUEDE destacar, no solo dónde se falla. La cara positiva del perfil.
   - La regla 1 de bodega ahora usa el **perfil** (higiénico → "no diferencia"; deleitador →
     "doble motivo") y acción específica. Fuentes actualizadas (sentimiento/PRCA, no estrellas).
+- [x] ✅ **Jerga de siglas fuera de los títulos (18/07, mejora UX).** Los títulos de sección
+  hablaban en siglas (*"Análisis avanzado (IPA · perfil · DIPA · IPCA · DIPCA)"*, *"Análisis
+  competitivo (IPCA)"*), que el bodeguero no entiende. Ahora son **preguntas en lenguaje llano**
+  con la sigla como apunte secundario en cursiva: *"Fortalezas y debilidades según los visitantes"*,
+  *"¿Cómo va frente al resto del Marco? (IPCA)"*, *"¿Gana o pierde terreno frente al Marco? (DIPCA)"*,
+  *"¿Mejora o empeora con el tiempo? (DIPA)"*. En destino y en bodega.
 - [x] ✅ **Recomendaciones de bodega CONSOLIDADAS por atributo (18/07, mejora UX).** Antes IPA,
   IPCA y DIPCA generaban cada uno su tarjeta, así que un mismo atributo débil aparecía **hasta 3
   veces** (peor nota + por detrás del Marco + empeorando). Ahora se tejen en **una sola tarjeta**
