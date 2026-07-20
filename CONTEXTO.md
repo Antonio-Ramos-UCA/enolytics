@@ -181,6 +181,18 @@ diferencia; deleitador = palanca de diferenciación. Se muestra en destino Y en 
 
 **3. DIPA POR BODEGA** (`dipa_bodega`, min 8 reseñas/año/atributo, ≥2 años): útil en 18 bodegas.
 
+**5. ✅ SOLO MÉTODO BUENO + COHERENCIA AL 100% (cierre del 18/07):**
+- Se elimina el respaldo por frecuencia: el análisis de atributos de bodega (IPA/perfil/IPCA/
+  DIPCA) solo se muestra si hay muestra PRCA (16 bodegas); las 24 sin muestra reciben un mensaje
+  honesto y conservan reputación y reseñas. Motivo: mediana de 26 reseñas, ninguna cerca de 140.
+- **IPCA y DIPCA migrados al SENTIMIENTO** (antes estrellas), comparando contra el RESTO del Marco
+  (no el todo, que incluía a la bodega). Banda recalibrada a 0,07. Brecha de «Organización» en
+  Barbadillo: −0,66 → *«Actuar»*.
+- **DIPA migrado al sentimiento** (`evolucion_sentimiento`) en destino y bodega.
+- **Panel hispanohablante vs internacional**: la nota pasó de estrellas a sentimiento.
+- 📋 **Auditoría final:** ningún rendimiento POR ATRIBUTO usa ya estrellas. Las estrellas que
+  quedan son notas GLOBALES (satisfacción general) y recuentos de mención — legítimas.
+
 **4. 📋 COBERTURA DE MODELOS VERIFICADA EN CÓDIGO (para la memoria):**
 
 | Modelo | Destino | Bodega |

@@ -131,9 +131,13 @@
     era por estrellas). Hallazgo coherente: el internacional puntúa «Organización» **+0,46** mejor
     que el hispanohablante (ya lo veíamos: la menciona más pero la sufre menos). «Menciona %» sigue
     siendo frecuencia de mención (descriptivo, correcto).
-  - 📋 **Auditoría de coherencia (18/07):** TODO el rendimiento POR ATRIBUTO usa ya el sentimiento,
-    **excepto el DIPA** (evolución temporal), que sigue por estrellas en destino y bodega. Las
-    estrellas que quedan son legítimas: notas GLOBALES (satisfacción general) y recuentos de mención.
+  - [x] ✅ **DIPA migrado al sentimiento (18/07): COHERENCIA AL 100%.** `evolucion_sentimiento()`
+    (mismas columnas que `evolucion_atributos` pero con sentimiento) alimenta el DIPA del destino
+    y el de bodega. **Ya NINGÚN rendimiento por atributo usa estrellas.**
+  - 📋 **Auditoría de coherencia FINAL (18/07):** verificado en código que las únicas estrellas que
+    quedan son legítimas — **notas GLOBALES** (satisfacción general de bodega/segmento) y
+    **recuentos de mención** (frecuencia). Todo el rendimiento POR ATRIBUTO (IPA, DIPA, IPCA,
+    DIPCA, panel de idiomas) usa el sentimiento BERT. Importancia = impacto (PRCA) en todo.
 
 - [x] ✅⭐ **HECHO (18/07) — PRCA ENCHUFADA AL DASHBOARD Y A LAS RECOMENDACIONES.**
   - `ipa_desde_prca(ambito)` lee `prca_kano.csv`; el destino y las 16 bodegas con muestra usan la

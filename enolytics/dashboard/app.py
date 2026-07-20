@@ -216,6 +216,36 @@ def _perf_sent(sub: pd.DataFrame, min_menciones: int = MIN_MENCIONES_IPCA) -> pd
     return g[g["size"] >= min_menciones]["mean"]
 
 
+_COLS_EVOL = ["periodo", "atributo", "menciones", "desempeno"]
+
+
+def evolucion_sentimiento(nombre: str | None = None, freq: str = "Y",
+                          min_menciones: int = 8) -> pd.DataFrame:
+    """Evolución temporal del SENTIMIENTO por atributo (base del DIPA por sentimiento).
+
+    Mismas columnas que `nlp.evolucion_atributos` (periodo, atributo, menciones, desempeno),
+    pero `desempeno` es el sentimiento medio (1-5), no la nota media. Si se pasa `nombre`, se
+    limita a esa bodega. Se descartan las celdas periodo-atributo con muy pocas reseñas.
+    """
+    sent = cargar_sentimiento()
+    if sent.empty or "fecha" not in sent.columns:
+        return pd.DataFrame(columns=_COLS_EVOL)
+    s = sent[sent["fecha"].notna()].copy()
+    if nombre is not None:
+        s = s[s["bodega"] == nombre]
+    if s.empty:
+        return pd.DataFrame(columns=_COLS_EVOL)
+    fechas = pd.to_datetime(s["fecha"], errors="coerce").dt.tz_localize(None)
+    s = s.assign(periodo=fechas.dt.to_period(freq).dt.to_timestamp())
+    s = s[s["periodo"].notna()]
+    g = (s.groupby(["periodo", "atributo"])
+           .agg(menciones=("resena_id", "count"), desempeno=("sentimiento", "mean"))
+           .reset_index())
+    g = g[g["menciones"] >= min_menciones]
+    g["desempeno"] = g["desempeno"].round(3)
+    return g.sort_values(["atributo", "periodo"])
+
+
 def ipca_desde_sentimiento(nombre: str) -> pd.DataFrame:
     """IPCA por SENTIMIENTO: la bodega frente al RESTO del Marco (excluyéndola).
 
@@ -279,16 +309,14 @@ def dipca_desde_sentimiento(nombre: str, min_resenas: int = 60) -> pd.DataFrame:
 MIN_MENCIONES_DIPA_BOD = 8
 
 
-def dipa_bodega(an_bod: pd.DataFrame, min_menciones: int = MIN_MENCIONES_DIPA_BOD) -> pd.DataFrame:
-    """DIPA de una bodega: evolución anual del desempeño de SUS atributos.
+def dipa_bodega(nombre: str, min_menciones: int = MIN_MENCIONES_DIPA_BOD) -> pd.DataFrame:
+    """DIPA de una bodega: evolución anual del SENTIMIENTO de sus atributos.
 
-    Reutiliza `evolucion_atributos` (mismo método que el DIPA del destino, basado en la nota
-    media). Solo devuelve atributos presentes en **≥2 años** con muestra suficiente cada uno;
-    si no hay ninguno, devuelve vacío (la mayoría de bodegas no tiene historia bastante).
+    Usa `evolucion_sentimiento` (sentimiento por atributo, no estrellas). Solo devuelve
+    atributos presentes en **≥2 años** con muestra suficiente cada uno; si no hay ninguno,
+    devuelve vacío (la mayoría de bodegas no tiene historia bastante).
     """
-    if an_bod.empty:
-        return pd.DataFrame()
-    ev = nlp.evolucion_atributos(an_bod, freq="Y", min_menciones=min_menciones)
+    ev = evolucion_sentimiento(nombre, freq="Y", min_menciones=min_menciones)
     if ev.empty:
         return pd.DataFrame()
     con_2 = ev.groupby("atributo")["periodo"].nunique()
@@ -302,8 +330,8 @@ def figura_ipca(tabla: pd.DataFrame):
     fig = px.scatter(
         tabla, x="importancia", y="brecha", text="atributo",
         color="cuadrante", size="importancia", size_max=40,
-        labels={"importancia": "Importancia (nº menciones)",
-                "brecha": "Brecha vs Marco (+ mejor / − peor)"},
+        labels={"importancia": "Importancia (impacto en la satisfacción)",
+                "brecha": "Brecha de sentimiento vs Marco (+ mejor / − peor)"},
     )
     fig.add_hline(y=0, line_color="gray")
     fig.add_vline(x=umbral_imp, line_dash="dash", line_color="gray")
@@ -494,10 +522,8 @@ def cargar_satisfaccion_cadiz() -> pd.DataFrame:
 
 @st.cache_data
 def cargar_evolucion() -> pd.DataFrame:
-    an = cargar_resenas_anotadas()
-    if an.empty:
-        return pd.DataFrame()
-    return nlp.evolucion_atributos(an, freq="Y", min_menciones=15)
+    # DIPA del destino por SENTIMIENTO (no estrellas), coherente con el resto del análisis.
+    return evolucion_sentimiento(None, freq="Y", min_menciones=15)
 
 
 def fuente(origen: str, detalle: str) -> None:
@@ -1598,10 +1624,11 @@ if rol == VISTA_INTELIGENCIAS:
                        "prestigio, donde el visitante llega con expectativas muy altas.")
         if not evolucion.empty:
             st.subheader("Evolución temporal (DIPA)")
-            st.caption("Desempeño medio de cada atributo por año. Revela si la satisfacción mejora o empeora.")
+            st.caption("Sentimiento medio hacia cada atributo por año (modelo BERT, no estrellas). "
+                       "Revela si la satisfacción con cada aspecto mejora o empeora.")
             fig_dipa = px.line(
                 evolucion, x="periodo", y="desempeno", color="atributo", markers=True,
-                labels={"periodo": "Año", "desempeno": "Desempeño (nota media)", "atributo": "Atributo"},
+                labels={"periodo": "Año", "desempeno": "Sentimiento (1-5)", "atributo": "Atributo"},
             )
             fig_dipa.update_layout(height=460, legend_title_text="Atributo")
             st.plotly_chart(fig_dipa, use_container_width=True)
@@ -2050,18 +2077,18 @@ else:
                     "verdad). Tamaño del punto = importancia. Posición **relativa a esta bodega**.")
                 st.plotly_chart(figura_perfil(tabla_ipa_bod), use_container_width=True)
 
-            # DIPA: evolución anual de los atributos de ESTA bodega (solo si hay muestra PRCA)
-            ev_bod = dipa_bodega(an_bod) if bod_es_prca else pd.DataFrame()
+            # DIPA: evolución anual del sentimiento por atributo de ESTA bodega (solo si hay PRCA)
+            ev_bod = dipa_bodega(nombre) if bod_es_prca else pd.DataFrame()
             if not ev_bod.empty:
                 st.markdown("**Evolución temporal (DIPA): ¿mejora o empeora con el tiempo?**")
                 st.caption(
-                    "Nota media por año de cada atributo con suficientes reseñas "
+                    "Sentimiento medio por año hacia cada atributo con suficientes reseñas "
                     f"(≥{MIN_MENCIONES_DIPA_BOD} al año). Solo aparecen los atributos con al menos "
                     "dos años de datos. Es una **señal de tendencia sobre pocas reseñas**, no un "
                     "veredicto: léela como indicio.")
                 fig_dipa_bod = px.line(
                     ev_bod, x="periodo", y="desempeno", color="atributo", markers=True,
-                    labels={"periodo": "Año", "desempeno": "Desempeño (nota media)",
+                    labels={"periodo": "Año", "desempeno": "Sentimiento (1-5)",
                             "atributo": "Atributo"})
                 st.plotly_chart(estilo.figura(fig_dipa_bod, alto=360), use_container_width=True)
                 resu = resumen_dipa(ev_bod)
