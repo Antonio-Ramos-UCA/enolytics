@@ -447,37 +447,60 @@ def recomendaciones_bodega(
                 accion="Priorizar la respuesta a las críticas: son las que más se leen.",
                 fuente="Reseñas de Google"))
 
-    # --- 1. IPA: cuadrante "Concéntrese aquí" (mucha importancia, bajo desempeño) ---
+    # --- 1. PUNTOS DÉBILES CONSOLIDADOS por atributo (IPA + IPCA + DIPCA en UNA tarjeta) ---
+    # Antes cada modelo generaba su propia recomendación, así que un mismo atributo débil aparecía
+    # hasta 3 veces (peor nota, por detrás del Marco, y empeorando). Aquí se tejen en una sola,
+    # que es más clara y con más fuerza para el bodeguero.
+    señales: dict[str, dict] = {}
     if not _vacio(ipa) and "cuadrante" in ipa.columns:
-        criticos = ipa[ipa["cuadrante"].str.contains("Concéntrese", case=False, na=False)]
-        for _, r in criticos.iterrows():
-            if _por_impacto(r):
-                diag = (f"Es de los atributos que **más mueven la satisfacción** en esta bodega "
-                        f"(importancia por impacto, {_menciones(r)} menciones) pero con "
-                        f"**desempeño bajo** ({r['desempeno']:.2f}/5). Cuadrante IPA: "
-                        f"*Concéntrese aquí*.")
-            else:
-                diag = (f"Es de los atributos **más mencionados** por los visitantes "
-                        f"({_menciones(r)} menciones) pero con **desempeño bajo** "
-                        f"({r['desempeno']:.2f}/5). Cuadrante IPA: *Concéntrese aquí*.")
-            # Matiz según el perfil: ¿arreglarlo diferencia o solo evita quejas?
-            perfil = str(r.get("perfil", ""))
-            if perfil == "Higiénico":
-                diag += (" Es un atributo **higiénico**: arreglarlo evita quejas, pero no esperes "
-                         "que por sí solo te diferencie.")
-            elif perfil == "Deleitador":
-                diag += (" Y es un atributo **deleitador**: mejorarlo no solo quita quejas, "
-                         "**sube de verdad la satisfacción**. Doble motivo para priorizarlo.")
-            recs.append(Recomendacion(
-                prioridad="alta", inteligencia="Clientes",
-                titulo=f"Prioridad de mejora: «{r['atributo']}»",
-                diagnostico=diag,
-                accion=_accion_atributo(r["atributo"]),
-                fuente="IPA por impacto (PRCA) sobre las reseñas de la bodega"))
+        for _, r in ipa[ipa["cuadrante"].str.contains("Concéntrese", case=False, na=False)].iterrows():
+            señales.setdefault(r["atributo"], {})["ipa"] = r
+    if not _vacio(ipca) and "cuadrante" in ipca.columns:
+        for _, r in ipca[ipca["cuadrante"].str.contains("por detrás", case=False, na=False)].iterrows():
+            señales.setdefault(r["atributo"], {})["ipca"] = r
+    if not _vacio(dipca) and "tendencia" in dipca.columns:
+        for _, r in dipca[dipca["tendencia"].str.contains("Pierde", case=False, na=False)].iterrows():
+            señales.setdefault(r["atributo"], {})["dipca"] = r
 
-    # --- 1-bis. Palanca de diferenciación de la bodega: atributo DELEITADOR ---
+    for atr, sig in señales.items():
+        ipa_r, ipca_r, dipca_r = sig.get("ipa"), sig.get("ipca"), sig.get("dipca")
+        partes = []
+        if ipa_r is not None:
+            partes.append(f"**Mueve mucho la satisfacción** del visitante y hoy puntúa "
+                          f"**{ipa_r['desempeno']:.2f}/5**, de lo más flojo de la bodega "
+                          f"({_menciones(ipa_r)} menciones).")
+            perfil = str(ipa_r.get("perfil", ""))
+            if perfil == "Higiénico":
+                partes.append("Es *higiénico*: arreglarlo evita quejas, aunque por sí solo no "
+                              "te diferencie.")
+            elif perfil == "Deleitador":
+                partes.append("Es *deleitador*: mejorarlo **sube de verdad la satisfacción**, no "
+                              "solo evita quejas.")
+        if ipca_r is not None:
+            partes.append(f"Va **por detrás del resto del Marco** ({ipca_r['Esta bodega']:.2f} "
+                          f"frente a {ipca_r['Media del Marco']:.2f}, brecha {ipca_r['brecha']:+.2f}).")
+        if dipca_r is not None:
+            pre = "Y **pierde terreno**" if partes else "**Pierde terreno**"
+            partes.append(f"{pre} frente al resto del Marco con el tiempo (la brecha va de "
+                          f"{dipca_r['brecha_inicial']:+.2f} a {dipca_r['brecha_final']:+.2f}).")
+
+        es_alta = ipa_r is not None or (ipca_r is not None and dipca_r is not None)
+        titulo = (f"Prioridad de mejora: «{atr}»" if ipa_r is not None else
+                  f"Por detrás del Marco en «{atr}»" if ipca_r is not None else
+                  f"Pierde terreno en «{atr}»")
+        modelos = " · ".join(n for n, k in [("IPA", "ipa"), ("IPCA", "ipca"), ("DIPCA", "dipca")]
+                             if k in sig)
+        recs.append(Recomendacion(
+            prioridad="alta" if es_alta else "media",
+            inteligencia="Clientes" if ipa_r is not None else "Competidores",
+            titulo=titulo,
+            diagnostico=" ".join(partes),
+            accion=_accion_atributo(atr),
+            fuente=f"Reseñas de la bodega ({modelos})"))
+
+    # --- 1-bis. Palanca de diferenciación: atributo DELEITADOR (que no sea ya un problema) ---
     if not _vacio(ipa) and "perfil" in getattr(ipa, "columns", []):
-        delei = ipa[ipa["perfil"] == "Deleitador"]
+        delei = ipa[(ipa["perfil"] == "Deleitador") & (~ipa["atributo"].isin(señales.keys()))]
         if not delei.empty:
             r = delei.sort_values("desempeno", ascending=False).iloc[0]
             recs.append(Recomendacion(
@@ -489,35 +512,6 @@ def recomendaciones_bodega(
                 accion=(_accion_atributo(r["atributo"]) + " Y usarlo como gancho en la web y en "
                         "la comunicación de la bodega."),
                 fuente="Perfil higiene↔deleite (PRCA)"))
-
-    # --- 2. IPCA: por detrás del Marco en un atributo importante ---
-    # (cuadrante 1 = "Actuar: por detrás del Marco")
-    if not _vacio(ipca) and "cuadrante" in ipca.columns:
-        detras = ipca[ipca["cuadrante"].str.contains("por detrás", case=False, na=False)]
-        for _, p in detras.iterrows():
-            recs.append(Recomendacion(
-                prioridad="alta", inteligencia="Competidores",
-                titulo=f"Recortar distancia con el Marco en «{p['atributo']}»",
-                diagnostico=(f"En **{p['atributo']}** la bodega puntúa "
-                             f"**{p['Esta bodega']:.2f}** frente a **{p['Media del Marco']:.2f}** "
-                             f"de la media del Marco (brecha **{p['brecha']:+.2f}**), y es un "
-                             f"atributo importante para los visitantes."),
-                accion=("Observar cómo lo resuelven las bodegas mejor valoradas del Marco en "
-                        "este atributo concreto y adaptar el proceso."),
-                fuente="Análisis IPCA (competitivo)"))
-
-    # --- 3. DIPCA: la brecha competitiva se amplía ---
-    if not _vacio(dipca) and "tendencia" in dipca.columns:
-        pierde = dipca[dipca["tendencia"].str.contains("Pierde", case=False, na=False)]
-        for _, p in pierde.iterrows():
-            recs.append(Recomendacion(
-                prioridad="alta", inteligencia="Competidores",
-                titulo=f"Alerta: se pierde terreno en «{p['atributo']}»",
-                diagnostico=(f"La brecha frente al Marco en **{p['atributo']}** **se está "
-                             f"ampliando**: pasó de {p['brecha_inicial']:+.2f} a "
-                             f"{p['brecha_final']:+.2f}. No es un bache puntual, va a peor."),
-                accion="Actuar ya: cuanto más se amplíe la brecha, más costará cerrarla.",
-                fuente="Análisis DIPCA (competitivo dinámico)"))
 
     # --- 4. Reputación por debajo de la media del Marco ---
     if rating is not None and rating_marco is not None and rating < rating_marco - 0.15:

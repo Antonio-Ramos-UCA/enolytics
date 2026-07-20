@@ -324,6 +324,13 @@
     **deleitador** — dónde se PUEDE destacar, no solo dónde se falla. La cara positiva del perfil.
   - La regla 1 de bodega ahora usa el **perfil** (higiénico → "no diferencia"; deleitador →
     "doble motivo") y acción específica. Fuentes actualizadas (sentimiento/PRCA, no estrellas).
+- [x] ✅ **Recomendaciones de bodega CONSOLIDADAS por atributo (18/07, mejora UX).** Antes IPA,
+  IPCA y DIPCA generaban cada uno su tarjeta, así que un mismo atributo débil aparecía **hasta 3
+  veces** (peor nota + por detrás del Marco + empeorando). Ahora se tejen en **una sola tarjeta**
+  por atributo que combina las señales: *"Precio: mueve mucho la satisfacción, 3,66/5, higiénico;
+  va por detrás del Marco (3,66 vs 3,79); y pierde terreno (de +0,07 a −0,34)"*. Barbadillo pasa
+  de 7 tarjetas de atributo repetidas a **4 limpias**, sin repetir ninguno. La palanca deleitadora
+  ya no repite un atributo que salga como problema.
 - [x] **Reorganizar en pestañas** por inteligencia (Gestor: Visión general · Clientes y experiencia · Económica y mercado. Bodega: Ficha · Reseñas y análisis). Añadir más pestañas al sumar inteligencias.
 - [x] **Etiquetado del origen de cada indicador** (🟢 oficial · 🔵 observado · 🟡 estimado) con leyenda en el dashboard. 13 etiquetas en las 7 inteligencias. `config.ORIGENES_DATO` + helper `fuente()`.
 - [x] **Enlace permanente** — PUBLICADO en **https://enolytics-feder-uca.streamlit.app** (Streamlit Community Cloud, repo público `Antonio-Ramos-UCA/enolytics`). Redespliega solo al hacer `git push`. Falta (opcional): restringir vista por correo desde Settings → Sharing.
