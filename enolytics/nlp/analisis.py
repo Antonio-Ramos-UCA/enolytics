@@ -155,6 +155,26 @@ ATRIBUTOS: dict[str, list[str]] = {
         # FR
         "reservation", "reserver", "ponctuel", "attente", "horaire", "langue",
     ],
+    "Gastronomía y restauración": [
+        # Añadido tras un LDA exploratorio (18/07): la comida emergía como tema propio en el
+        # 11% de las reseñas —más que Precio, Organización o Entorno— y no estaba cubierta. En
+        # el enoturismo del Marco el "vino + tapeo/restaurante" es central. Validado el léxico
+        # (751 reseñas, 11%) y descartada "menu" por polisémica ("four-glass set menu" es de
+        # vinos, no de comida; menús de hotel).
+        # ES
+        "comida", "comidas", "restaurante", "restaurantes", "tapa", "tapas", "tapeo",
+        "almuerzo", "almorzar", "cena", "cenar", "gastronomia", "gastronomico", "gastronomica",
+        "plato", "platos", "cocina", "raciones", "aperitivo", "picoteo", "comer",
+        # EN
+        "food", "restaurant", "lunch", "dinner", "dining", "meal", "meals", "dish", "dishes",
+        "cuisine", "snack",
+        # DE
+        "essen", "mittagessen", "abendessen", "gericht", "kueche",
+        # IT
+        "cibo", "ristorante", "pranzo", "cucina", "piatto", "piatti", "mangiare",
+        # FR
+        "nourriture", "dejeuner", "diner", "plat", "plats", "repas", "manger",
+    ],
 }
 
 

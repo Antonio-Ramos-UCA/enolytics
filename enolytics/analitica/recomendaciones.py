@@ -336,7 +336,7 @@ def recomendaciones_destino(
                                  f"no aporta ningún atributo**: el léxico no cubre bien sus "
                                  f"idiomas. El IPA se estaría construyendo sobre todo con la voz "
                                  f"del visitante hispanohablante."),
-                    accion=("Ampliar el léxico de los 7 atributos a los idiomas que faltan. "
+                    accion=("Ampliar el léxico de atributos a los idiomas que faltan. "
                             "Mientras la cobertura sea desigual, comparar la importancia entre "
                             "idiomas produce artefactos, no preferencias reales."),
                     fuente="Detección de idioma sobre las reseñas"))

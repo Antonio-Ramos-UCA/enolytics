@@ -195,7 +195,18 @@
   **nl 63** · **pt 60** · ca 39 · ru 30 · pl 15. **El neerlandés (63) y el portugués (60) tienen
   ya el mismo orden de magnitud que el francés (91), que sí está en el léxico.** Son ~123 reseñas
   hoy analizadas a medias. El catalán (39) probablemente cae en parte por parecido con el español.
-- [ ] **Modelado de temas (LDA)** — descubrir atributos automáticamente, más allá del léxico fijo.
+- [~] **Modelado de temas (LDA)** — descubrir atributos automáticamente, más allá del léxico fijo.
+  - [x] ✅ **LDA exploratorio hecho (18/07)** sobre las 4.882 reseñas en español (sklearn). Confirmó
+    que los 7 atributos existentes mapean bien los temas, pero **destapó un hueco: la gastronomía**
+    emergía como tema propio en el **11%** de las reseñas y no estaba cubierta. También asomaron
+    "tienda/compra" (3,8%) y "arte/colección" (1,8%), menores. Método: como Zhang et al. (2021),
+    LDA propone + criterio humano depura (híbrido supervisado, no automático puro).
+  - [x] ✅ **Añadido «Gastronomía y restauración» como 8.º atributo** (léxico multilingüe validado,
+    751 reseñas / 11%; descartada "menu" por polisémica). Pipeline regenerado (sentimiento + PRCA).
+    **Hallazgo:** 747 menciones en el destino (más que Precio), desempeño **3,88** (3.º peor),
+    perfil **higiénico**. Diferencia bien las bodegas (Fundador deleitador 4,23; González Byass 3,29).
+  - [ ] Falta (opcional): LDA sobre el inglés/otros idiomas por si emergen temas distintos; y el
+    flujo Zhang completo (rederivar TODOS los atributos desde LDA), que es rehacer el cimiento.
 - [ ] Validar/afinar el léxico de atributos con criterio experto (Paula / bodegas).
 
 ## Modelos analíticos
