@@ -43,6 +43,25 @@ def ordenar(recs: list[Recomendacion]) -> list[Recomendacion]:
     return sorted(recs, key=lambda r: PRIORIDADES.get(r.prioridad, 9))
 
 
+def _menciones(fila) -> int:
+    """Nº de reseñas que mencionan el atributo.
+
+    Con la PRCA, la columna `importancia` es el impacto (una fracción), y el recuento vive en
+    `menciones`. Con el IPA clásico, `importancia` ES el nº de menciones. Este helper sirve a
+    los dos, para que el texto de las recomendaciones nunca muestre "0 menciones".
+    """
+    m = fila.get("menciones") if hasattr(fila, "get") else None
+    if m is not None and m == m:  # no NaN
+        return int(m)
+    return int(fila["importancia"])
+
+
+def _por_impacto(fila) -> bool:
+    """True si esta fila trae la importancia por impacto (PRCA), no la frecuencia."""
+    m = fila.get("menciones") if hasattr(fila, "get") else None
+    return m is not None and m == m
+
+
 # --------------------------------------------------------------------------- #
 # Recomendaciones para el GESTOR DEL DESTINO
 # --------------------------------------------------------------------------- #
@@ -279,9 +298,13 @@ def recomendaciones_destino(
         criticos = tabla_ipa[tabla_ipa["desempeno"] < media - 0.5]
         for _, r in criticos.sort_values("desempeno").iterrows():
             nota = ""
-            if "cuadrante" in tabla_ipa.columns and "Baja prioridad" in str(r.get("cuadrante", "")):
-                nota = (" ⚠️ El IPA clásico lo sitúa en *«Baja prioridad»* porque se menciona "
-                        "poco, pero eso es engañoso: **de la organización y la reserva el "
+            if _por_impacto(r) and "Concéntrese" in str(r.get("cuadrante", "")):
+                nota = (" La importancia por **impacto** (PRCA) lo sitúa en *«Concéntrese aquí»*: "
+                        "aunque se mencione poco, **cuando el visitante habla de ello suele ser "
+                        "porque ha fallado, y eso arrastra la nota de toda la visita**.")
+            elif "cuadrante" in tabla_ipa.columns and "Baja prioridad" in str(r.get("cuadrante", "")):
+                nota = (" ⚠️ El IPA por frecuencia lo sitúa en *«Baja prioridad»* porque se "
+                        "menciona poco, pero eso es engañoso: **de la organización y la reserva el "
                         "visitante solo habla cuando falla**. El nº de menciones infravalora su "
                         "importancia real.")
             recs.append(Recomendacion(
@@ -289,7 +312,7 @@ def recomendaciones_destino(
                 titulo=f"Punto débil del destino: «{r['atributo']}»",
                 diagnostico=(f"Es el atributo **peor valorado** del Marco: **{r['desempeno']:.2f}/5**, "
                              f"frente a una media de {media:.2f} en el resto de atributos "
-                             f"({int(r['importancia'])} menciones).{nota}"),
+                             f"({_menciones(r)} menciones).{nota}"),
                 accion=("Revisar el proceso de reserva y la organización de la visita de punta a "
                         "punta (confirmaciones, puntualidad, tamaño de grupo, esperas). Es la "
                         "grieta más clara en una experiencia por lo demás muy bien valorada."),
@@ -378,12 +401,19 @@ def recomendaciones_bodega(
     if not _vacio(ipa) and "cuadrante" in ipa.columns:
         criticos = ipa[ipa["cuadrante"].str.contains("Concéntrese", case=False, na=False)]
         for _, r in criticos.iterrows():
+            if _por_impacto(r):
+                diag = (f"Es de los atributos que **más mueven la satisfacción** en esta bodega "
+                        f"(importancia por impacto, {_menciones(r)} menciones) pero con "
+                        f"**desempeño bajo** ({r['desempeno']:.2f}/5). Cuadrante IPA: "
+                        f"*Concéntrese aquí*.")
+            else:
+                diag = (f"Es de los atributos **más mencionados** por los visitantes "
+                        f"({_menciones(r)} menciones) pero con **desempeño bajo** "
+                        f"({r['desempeno']:.2f}/5). Cuadrante IPA: *Concéntrese aquí*.")
             recs.append(Recomendacion(
                 prioridad="alta", inteligencia="Clientes",
                 titulo=f"Prioridad de mejora: «{r['atributo']}»",
-                diagnostico=(f"Es de los atributos **más mencionados** por los visitantes "
-                             f"({int(r['importancia'])} menciones) pero con **desempeño bajo** "
-                             f"({r['desempeno']:.2f}/5). Cuadrante IPA: *Concéntrese aquí*."),
+                diagnostico=diag,
                 accion=("Es donde cada euro invertido más impacta en la satisfacción: mucha "
                         "gente lo valora y hoy no está a la altura."),
                 fuente="IPA sobre las reseñas de la bodega"))

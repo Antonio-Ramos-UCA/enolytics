@@ -126,7 +126,11 @@ def cargar_resenas_anotadas() -> pd.DataFrame:
 
 
 def ipa_desde_anotadas(an: pd.DataFrame) -> pd.DataFrame:
-    """De un conjunto de reseñas anotadas -> tabla IPA (importancia, desempeño, cuadrante)."""
+    """De un conjunto de reseñas anotadas -> tabla IPA (importancia = nº menciones).
+
+    Método CLÁSICO (frecuencia). Se usa como respaldo cuando una bodega no tiene muestra
+    suficiente para la PRCA. El método bueno es `ipa_desde_prca`.
+    """
     if an.empty:
         return pd.DataFrame()
     tab = nlp.tabla_importancia_desempeno(an)
@@ -136,6 +140,46 @@ def ipa_desde_anotadas(an: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame([{
         "atributo": p.atributo, "importancia": p.importancia,
         "desempeno": p.desempeno, "cuadrante": p.etiqueta,
+    } for p in puntos])
+
+
+@st.cache_data
+def cargar_prca() -> pd.DataFrame:
+    """Importancia por IMPACTO (regresión PRCA) + Kano, precalculada en local.
+
+    Ver enolytics/analitica/prca.py. Columnas: ambito, atributo, importancia, desempeno,
+    kano, lambda_kano, beta_penalty, beta_reward, menciones. El dashboard SOLO lee este CSV.
+    """
+    ruta = config.DATOS_PROCESADO / "prca_kano.csv"
+    return pd.read_csv(ruta) if ruta.exists() else pd.DataFrame()
+
+
+def ipa_desde_prca(ambito: str) -> pd.DataFrame:
+    """Tabla IPA con la importancia REAL (impacto en la satisfacción), no la frecuencia.
+
+    La importancia sale de la regresión PRCA —cuánto mueve la nota global el sentimiento
+    hacia el atributo— y el desempeño, del sentimiento por atributo (BERT), no de las
+    estrellas de la visita entera. Es lo que corrige el "consejo invertido": «Organización»
+    y «Precio», poco mencionados pero de gran impacto, dejan de caer en "Baja prioridad".
+
+    `ambito` = "Marco de Jerez" (destino) o el nombre exacto de una bodega. Devuelve vacío
+    si esa bodega no tenía muestra suficiente para una regresión (se usa el IPA clásico).
+    """
+    prca = cargar_prca()
+    if prca.empty:
+        return pd.DataFrame()
+    sub = prca[prca["ambito"] == ambito]
+    if len(sub) < 3:
+        return pd.DataFrame()
+    registros = [{"atributo": r["atributo"], "importancia": r["importancia"],
+                  "desempeno": r["desempeno"]} for _, r in sub.iterrows()]
+    puntos = modelo_ipa.calcular_ipa(registros)
+    extra = sub.set_index("atributo")
+    return pd.DataFrame([{
+        "atributo": p.atributo, "importancia": p.importancia,
+        "desempeno": p.desempeno, "cuadrante": p.etiqueta,
+        "menciones": int(extra.loc[p.atributo, "menciones"]),
+        "kano": extra.loc[p.atributo, "kano"],
     } for p in puntos])
 
 
@@ -223,15 +267,25 @@ def figura_ipca(tabla: pd.DataFrame):
     return fig
 
 
-def figura_ipa(tabla: pd.DataFrame):
-    """Construye el gráfico de cuadrantes IPA (scatter con líneas de umbral)."""
+def figura_ipa(tabla: pd.DataFrame, metodo: str = "prca"):
+    """Construye el gráfico de cuadrantes IPA (scatter con líneas de umbral).
+
+    `metodo`: "prca" (importancia = impacto en la satisfacción, desempeño = sentimiento por
+    atributo) o "frecuencia" (importancia = nº menciones, desempeño = nota media) para el
+    respaldo de bodegas sin muestra suficiente.
+    """
+    if metodo == "prca":
+        lab_imp = "Importancia (impacto en la satisfacción)"
+        lab_des = "Desempeño (sentimiento hacia el atributo, 1-5)"
+    else:
+        lab_imp = "Importancia (nº menciones)"
+        lab_des = "Desempeño (nota media, 1-5)"
     umbral_imp = tabla["importancia"].mean()
     umbral_des = tabla["desempeno"].mean()
     fig = px.scatter(
         tabla, x="importancia", y="desempeno", text="atributo",
         color="cuadrante", size="importancia", size_max=40,
-        labels={"importancia": "Importancia (nº menciones)",
-                "desempeno": "Desempeño (nota media)"},
+        labels={"importancia": lab_imp, "desempeno": lab_des},
     )
     fig.add_hline(y=umbral_des, line_dash="dash", line_color="gray")
     fig.add_vline(x=umbral_imp, line_dash="dash", line_color="gray")
@@ -705,7 +759,11 @@ df = cargar_bodegas()
 resenas = cargar_resenas()
 censo = cargar_censo()
 anotadas = cargar_resenas_anotadas()
-tabla_ipa = ipa_desde_anotadas(anotadas)
+# IPA del destino: la importancia REAL (PRCA) si está precalculada; si no, la clásica.
+tabla_ipa = ipa_desde_prca("Marco de Jerez")
+ipa_es_prca = not tabla_ipa.empty
+if not ipa_es_prca:
+    tabla_ipa = ipa_desde_anotadas(anotadas)
 evolucion = cargar_evolucion()
 oferta = cargar_oferta()
 sostenibilidad = cargar_sostenibilidad()
@@ -1416,16 +1474,30 @@ if rol == VISTA_INTELIGENCIAS:
 
         if not tabla_ipa.empty:
             st.subheader("Análisis Importancia-Desempeño (IPA) del destino")
-            fuente("estimado", "Calculado sobre 10.972 reseñas de Google. **Importancia** = nº de "
-                               "menciones del atributo; **desempeño** = nota media de las reseñas "
-                               "que lo mencionan. Son *proxies*: la importancia no se pregunta al "
-                               "visitante, se infiere de cuánto habla de cada atributo.")
-            st.plotly_chart(figura_ipa(tabla_ipa), use_container_width=True)
-            st.dataframe(
-                tabla_ipa.rename(columns={"atributo": "Atributo", "importancia": "Importancia",
-                                          "desempeno": "Desempeño", "cuadrante": "Cuadrante IPA"}),
-                use_container_width=True, hide_index=True,
-            )
+            if ipa_es_prca:
+                fuente("estimado", "Calculado sobre 10.972 reseñas de Google. **Importancia** = "
+                                   "*impacto en la satisfacción* (regresión PRCA: cuánto mueve la "
+                                   "nota global el sentimiento hacia cada atributo), **no** el nº de "
+                                   "menciones. **Desempeño** = sentimiento hacia el atributo (BERT "
+                                   "multilingüe, frase a frase), no la nota de la visita entera. "
+                                   "Así, «Organización» y «Precio» —poco mencionados pero de gran "
+                                   "impacto— aparecen en *«Concéntrese aquí»* y no en *«Baja "
+                                   "prioridad»*, como ocurría con el método por frecuencia.")
+                # La columna Kano NO se muestra aún: por el efecto techo (78,7% de cincos) los
+                # 7 atributos salen "Básico", que sin explicación confunde. Decisión pendiente.
+                cols = {"atributo": "Atributo", "importancia": "Importancia (impacto)",
+                        "desempeno": "Desempeño (sentimiento)", "cuadrante": "Cuadrante IPA",
+                        "menciones": "Menciones"}
+            else:
+                fuente("estimado", "Muestra insuficiente para la importancia por impacto; se usa el "
+                                   "método clásico. **Importancia** = nº de menciones; **desempeño** "
+                                   "= nota media de las reseñas que lo mencionan.")
+                cols = {"atributo": "Atributo", "importancia": "Importancia",
+                        "desempeno": "Desempeño", "cuadrante": "Cuadrante IPA"}
+            st.plotly_chart(figura_ipa(tabla_ipa, metodo="prca" if ipa_es_prca else "frecuencia"),
+                            use_container_width=True)
+            st.dataframe(tabla_ipa.rename(columns=cols)[list(cols.values())],
+                         use_container_width=True, hide_index=True)
         if not evolucion.empty:
             st.subheader("Evolución temporal (DIPA)")
             st.caption("Desempeño medio de cada atributo por año. Revela si la satisfacción mejora o empeora.")
@@ -1761,7 +1833,9 @@ else:
             return sel.iloc[0].to_dict() if not sel.empty else None
 
         comp_an = anotadas[anotadas["bodega"] != nombre] if not anotadas.empty else pd.DataFrame()
-        ipa_bod = ipa_desde_anotadas(an_bod) if not an_bod.empty else pd.DataFrame()
+        ipa_bod = ipa_desde_prca(nombre)
+        if ipa_bod.empty and not an_bod.empty:
+            ipa_bod = ipa_desde_anotadas(an_bod)
         ipca_bod = (ipca_desde_anotadas(an_bod, comp_an)
                     if not an_bod.empty and not comp_an.empty else pd.DataFrame())
         dipca_bod = (dipca_bodega(an_bod, comp_an)
@@ -1846,10 +1920,21 @@ else:
                 st.caption("Sentimiento (por estrellas)")
                 barras(an_bod["sentimiento"].value_counts())
             with col2:
-                tabla_ipa_bod = ipa_desde_anotadas(an_bod)
+                # Importancia por impacto (PRCA) si esta bodega tiene muestra; si no, la clásica.
+                tabla_ipa_bod = ipa_desde_prca(nombre)
+                bod_es_prca = not tabla_ipa_bod.empty
+                if not bod_es_prca:
+                    tabla_ipa_bod = ipa_desde_anotadas(an_bod)
                 if len(tabla_ipa_bod) >= 3:
-                    st.caption("Importancia-Desempeño (IPA) de esta bodega")
-                    st.plotly_chart(figura_ipa(tabla_ipa_bod), use_container_width=True)
+                    if bod_es_prca:
+                        st.caption("Importancia-Desempeño (IPA) de esta bodega · importancia por "
+                                   "impacto en la satisfacción (PRCA)")
+                    else:
+                        st.caption("Importancia-Desempeño (IPA) de esta bodega · método clásico "
+                                   "(muestra insuficiente para la importancia por impacto)")
+                    st.plotly_chart(
+                        figura_ipa(tabla_ipa_bod, metodo="prca" if bod_es_prca else "frecuencia"),
+                        use_container_width=True)
                     aviso_omitidos(an_bod)
                 else:
                     st.caption("Pocas reseñas con atributos para un IPA fiable de esta bodega.")

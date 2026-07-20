@@ -97,8 +97,15 @@
   - 📄 Para el futuro paper esto es material: **nadie ha documentado que el método de Zhang/Han
     se rompe en corpus con techo**, que es el caso normal en enoturismo.
 
-- [ ] **Enchufar la PRCA al dashboard y al motor de recomendaciones** — el CSV ya está; falta que
-  el IPA use `importancia` de la PRCA en vez de la frecuencia, y que las recomendaciones lo lean.
+- [x] ✅⭐ **HECHO (18/07) — PRCA ENCHUFADA AL DASHBOARD Y A LAS RECOMENDACIONES.**
+  - `ipa_desde_prca(ambito)` lee `prca_kano.csv`; el destino y las 16 bodegas con muestra usan la
+    importancia por impacto. Las 24 bodegas sin muestra caen al IPA clásico (con aviso en pantalla).
+  - `figura_ipa(tabla, metodo=)` rotula bien cada eje ("impacto en la satisfacción" vs "nº menciones").
+  - **El consejo invertido ya NO llega al usuario:** «Precio» y «Organización» aparecen en
+    *«Concéntrese aquí»* en el gráfico del destino. Verificado en el dashboard (HTTP 200, sin errores).
+  - Recomendaciones: `_menciones()` y `_por_impacto()` evitan el "0 menciones" que habría salido al
+    ser la importancia una fracción; el texto explica que es impacto, no frecuencia.
+  - ⚠️ La columna **Kano** se calcula pero **NO se muestra** aún (todo "Básico" por efecto techo).
 
 - [ ] ~~PRIORIDAD 1 — SENTIMIENTO POR ATRIBUTO~~ (hecho arriba). Queda: validar contra el índice
   de sentimiento oficial de SEGITTUR. Validar contra el índice de sentimiento oficial de SEGITTUR.
