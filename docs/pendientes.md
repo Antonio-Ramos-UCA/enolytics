@@ -302,6 +302,11 @@
 - [x] **Sostenibilidad** — certificación FEV (4) + índice de sostenibilidad comunicada (7 ejes) + **transporte sostenible** (`transporte_sostenible.csv`, OpenStreetMap): 88% de las bodegas accesibles en transporte público. Falta (opcional): consumos estimados (agua/energía/huella).
 
 ## Dashboard y producto
+- [x] ✅ **Versiones fijadas en `requirements.txt`** (18/07): `streamlit==1.52.2` (antes `>=1.30`,
+  abierto). Motivo: `use_container_width` (usado 25 veces) está deprecado y Streamlit Cloud podía
+  romper el dashboard al actualizar solo. Ahora el despliegue es reproducible.
+  - [ ] Deuda menor: cuando se suba la versión de Streamlit, migrar `use_container_width=True` →
+    `width="stretch"` (25 sitios) y quitar el pin exacto.
 - [x] ⭐ **REESTRUCTURACIÓN DE LA VISUALIZACIÓN** (a propuesta de Antonio: "abruma tanta información"). El dashboard había crecido a **25 gráficos, 46 métricas, 12 tablas y 20 avisos** en una sola vista. Aplicado el **mantra de Shneiderman** ("primero la panorámica; el detalle, a demanda") y la **regla de los 5 segundos**. Tres niveles:
   1. **🏠 Resumen ejecutivo** (portada): 4 KPIs + **semáforo de las 7 inteligencias** + las **3 recomendaciones más urgentes**. De 67 métricas a **11**.
   2. **🧭 Las 7 inteligencias**: las 7 pestañas de siempre, pero cada una abre con lo esencial y **lo secundario va plegado** (rankings, tablas, gráficos de apoyo).

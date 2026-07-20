@@ -1,6 +1,11 @@
 # ENOLYTICS — dependencias del DASHBOARD (para desplegar en Streamlit Cloud).
 # Ligero a propósito: solo lo que el cuadro de mando necesita para ejecutarse.
 # Las dependencias de scraping y NLP están en requirements-dev.txt.
-streamlit>=1.30
-pandas>=2.0
-plotly>=5.18
+#
+# VERSIONES FIJADAS (18/07): antes ponía ">=1.30" y Streamlit Cloud podía instalar CUALQUIER
+# versión futura. Streamlit avisó de que `use_container_width` (que usamos 25 veces) se
+# retirará; si Cloud actualizaba a esa versión, el dashboard se rompía solo. Fijando la versión
+# probada, el despliegue es reproducible y no depende de cuándo actualice Cloud.
+streamlit==1.52.2      # versión probada; soporta use_container_width. Al subirla, migrar a width=
+pandas>=2.0,<3.0       # permite parches, bloquea un salto de versión mayor
+plotly>=5.18,<7.0
