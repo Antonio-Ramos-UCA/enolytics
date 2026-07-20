@@ -2039,102 +2039,102 @@ else:
                     panel_idiomas(res_bod, an_bod, nombre)
             st.divider()
 
-        st.subheader("Fortalezas y debilidades según los visitantes")
-        st.caption("Qué valoran y qué no, cómo evoluciona y cómo se compara con el resto del "
-                   "Marco. _(Modelos IPA · perfil higiene↔deleite · DIPA · IPCA · DIPCA)_")
         if not an_bod.empty:
-            # Sentimiento y cuadrantes IPA de ESTA bodega
-            col1, col2 = st.columns([1, 2])
-            with col1:
-                st.caption("Sentimiento (por estrellas)")
-                barras(an_bod["sentimiento"].value_counts())
-            with col2:
-                # Solo el método bueno (PRCA). Si no hay muestra, se informa y se omite todo el
-                # análisis de atributos (IPA, perfil, IPCA, DIPCA), en vez de mostrar algo engañoso.
-                tabla_ipa_bod = ipa_desde_prca(nombre)
-                bod_es_prca = not tabla_ipa_bod.empty and len(tabla_ipa_bod) >= 3
-                if bod_es_prca:
-                    st.caption("¿Qué es urgente mejorar y qué no? Abajo a la derecha = mucho "
-                               "impacto y poca nota: ahí es donde actuar. _(Importancia-Desempeño · IPA)_")
-                    st.plotly_chart(figura_ipa(tabla_ipa_bod, metodo="prca"),
-                                    use_container_width=True)
-                    aviso_omitidos(an_bod)
-                else:
-                    n_atr = int((an_bod["atributos"].map(len) > 0).sum())
-                    st.info(
-                        f"**Muestra insuficiente para el análisis de atributos.** Esta bodega "
-                        f"tiene **{n_atr} reseñas** con opinión sobre atributos; el método por "
-                        f"impacto (PRCA) necesita del orden de **140** para ser fiable. Con menos, "
-                        f"mostrarlo daría un resultado engañoso, así que se omiten el IPA, el "
-                        f"perfil higiene↔deleite, el IPCA y el DIPCA. La **reputación** y las "
-                        f"**reseñas** de esta bodega sí están disponibles, arriba y abajo.")
+            with st.expander("🔬 Ver el análisis por atributos "
+                             "(fortalezas, debilidades y su evolución en el tiempo)",
+                             expanded=False):
+                # Sentimiento y cuadrantes IPA de ESTA bodega
+                col1, col2 = st.columns([1, 2])
+                with col1:
+                    st.caption("Sentimiento (por estrellas)")
+                    barras(an_bod["sentimiento"].value_counts())
+                with col2:
+                    # Solo el método bueno (PRCA). Si no hay muestra, se informa y se omite todo el
+                    # análisis de atributos (IPA, perfil, IPCA, DIPCA), en vez de mostrar algo engañoso.
+                    tabla_ipa_bod = ipa_desde_prca(nombre)
+                    bod_es_prca = not tabla_ipa_bod.empty and len(tabla_ipa_bod) >= 3
+                    if bod_es_prca:
+                        st.caption("¿Qué es urgente mejorar y qué no? Abajo a la derecha = mucho "
+                                   "impacto y poca nota: ahí es donde actuar. _(Importancia-Desempeño · IPA)_")
+                        st.plotly_chart(figura_ipa(tabla_ipa_bod, metodo="prca"),
+                                        use_container_width=True)
+                        aviso_omitidos(an_bod)
+                    else:
+                        n_atr = int((an_bod["atributos"].map(len) > 0).sum())
+                        st.info(
+                            f"**Muestra insuficiente para el análisis de atributos.** Esta bodega "
+                            f"tiene **{n_atr} reseñas** con opinión sobre atributos; el método por "
+                            f"impacto (PRCA) necesita del orden de **140** para ser fiable. Con menos, "
+                            f"mostrarlo daría un resultado engañoso, así que se omiten el IPA, el "
+                            f"perfil higiene↔deleite, el IPCA y el DIPCA. La **reputación** y las "
+                            f"**reseñas** de esta bodega sí están disponibles, arriba y abajo.")
 
-            # Perfil higiene ↔ deleite de ESTA bodega (mismo análisis que el destino, si hay muestra)
-            if bod_es_prca and "perfil" in tabla_ipa_bod.columns \
-                    and tabla_ipa_bod["perfil"].notna().any():
-                st.markdown("##### Perfil de los atributos de esta bodega: ¿higiénico o deleitador?")
-                st.caption(
-                    "Izquierda, atributos **higiénicos** (si fallan hunden la nota, pero hacerlos "
-                    "muy bien apenas la sube); derecha, **deleitadores** (crean satisfacción de "
-                    "verdad). Tamaño del punto = importancia. Posición **relativa a esta bodega**.")
-                st.plotly_chart(figura_perfil(tabla_ipa_bod), use_container_width=True)
+                # Perfil higiene ↔ deleite de ESTA bodega (mismo análisis que el destino, si hay muestra)
+                if bod_es_prca and "perfil" in tabla_ipa_bod.columns \
+                        and tabla_ipa_bod["perfil"].notna().any():
+                    st.markdown("##### Perfil de los atributos de esta bodega: ¿higiénico o deleitador?")
+                    st.caption(
+                        "Izquierda, atributos **higiénicos** (si fallan hunden la nota, pero hacerlos "
+                        "muy bien apenas la sube); derecha, **deleitadores** (crean satisfacción de "
+                        "verdad). Tamaño del punto = importancia. Posición **relativa a esta bodega**.")
+                    st.plotly_chart(figura_perfil(tabla_ipa_bod), use_container_width=True)
 
-            # DIPA: evolución anual del sentimiento por atributo de ESTA bodega (solo si hay PRCA)
-            ev_bod = dipa_bodega(nombre) if bod_es_prca else pd.DataFrame()
-            if not ev_bod.empty:
-                st.markdown("**¿Mejora o empeora con el tiempo?** _(evolución temporal · DIPA)_")
-                st.caption(
-                    "Sentimiento medio por año hacia cada atributo con suficientes reseñas "
-                    f"(≥{MIN_MENCIONES_DIPA_BOD} al año). Solo aparecen los atributos con al menos "
-                    "dos años de datos. Es una **señal de tendencia sobre pocas reseñas**, no un "
-                    "veredicto: léela como indicio.")
-                fig_dipa_bod = px.line(
-                    ev_bod, x="periodo", y="desempeno", color="atributo", markers=True,
-                    labels={"periodo": "Año", "desempeno": "Sentimiento (1-5)",
-                            "atributo": "Atributo"})
-                st.plotly_chart(estilo.figura(fig_dipa_bod, alto=360), use_container_width=True)
-                resu = resumen_dipa(ev_bod)
-                if not resu.empty:
-                    st.caption("Cambio del primer al último periodo con datos:")
-                    st.dataframe(resu, use_container_width=True, hide_index=True)
+                # DIPA: evolución anual del sentimiento por atributo de ESTA bodega (solo si hay PRCA)
+                ev_bod = dipa_bodega(nombre) if bod_es_prca else pd.DataFrame()
+                if not ev_bod.empty:
+                    st.markdown("**¿Mejora o empeora con el tiempo?** _(evolución temporal · DIPA)_")
+                    st.caption(
+                        "Sentimiento medio por año hacia cada atributo con suficientes reseñas "
+                        f"(≥{MIN_MENCIONES_DIPA_BOD} al año). Solo aparecen los atributos con al menos "
+                        "dos años de datos. Es una **señal de tendencia sobre pocas reseñas**, no un "
+                        "veredicto: léela como indicio.")
+                    fig_dipa_bod = px.line(
+                        ev_bod, x="periodo", y="desempeno", color="atributo", markers=True,
+                        labels={"periodo": "Año", "desempeno": "Sentimiento (1-5)",
+                                "atributo": "Atributo"})
+                    st.plotly_chart(estilo.figura(fig_dipa_bod, alto=360), use_container_width=True)
+                    resu = resumen_dipa(ev_bod)
+                    if not resu.empty:
+                        st.caption("Cambio del primer al último periodo con datos:")
+                        st.dataframe(resu, use_container_width=True, hide_index=True)
 
-            # IPCA por SENTIMIENTO: esta bodega frente al RESTO del Marco (solo si hay muestra PRCA)
-            tabla_ipca = ipca_desde_sentimiento(nombre) if bod_es_prca else pd.DataFrame()
-            if len(tabla_ipca) >= 3:
-                st.markdown("**¿Cómo va frente al resto del Marco?** _(análisis competitivo · IPCA)_")
-                st.caption(
-                    f"Compara el **sentimiento** hacia cada atributo (no las estrellas) con el del "
-                    f"resto de bodegas del Marco. Brecha positiva = la bodega va por delante; "
-                    f"negativa = por detrás. Diferencias menores de "
-                    f"{modelo_ipa.BANDA_INDIFERENCIA_SENT:.2f} se marcan **En línea con el Marco**: "
-                    f"demasiado pequeñas para sostener un diagnóstico."
-                )
-                cg, ct = st.columns([2, 1])
-                with cg:
-                    st.plotly_chart(figura_ipca(tabla_ipca), use_container_width=True)
-                with ct:
+                # IPCA por SENTIMIENTO: esta bodega frente al RESTO del Marco (solo si hay muestra PRCA)
+                tabla_ipca = ipca_desde_sentimiento(nombre) if bod_es_prca else pd.DataFrame()
+                if len(tabla_ipca) >= 3:
+                    st.markdown("**¿Cómo va frente al resto del Marco?** _(análisis competitivo · IPCA)_")
+                    st.caption(
+                        f"Compara el **sentimiento** hacia cada atributo (no las estrellas) con el del "
+                        f"resto de bodegas del Marco. Brecha positiva = la bodega va por delante; "
+                        f"negativa = por detrás. Diferencias menores de "
+                        f"{modelo_ipa.BANDA_INDIFERENCIA_SENT:.2f} se marcan **En línea con el Marco**: "
+                        f"demasiado pequeñas para sostener un diagnóstico."
+                    )
+                    cg, ct = st.columns([2, 1])
+                    with cg:
+                        st.plotly_chart(figura_ipca(tabla_ipca), use_container_width=True)
+                    with ct:
+                        st.dataframe(
+                            tabla_ipca[["atributo", "Esta bodega", "Media del Marco", "brecha"]]
+                            .rename(columns={"atributo": "Atributo", "brecha": "Brecha"})
+                            .sort_values("Brecha"),
+                            use_container_width=True, hide_index=True,
+                        )
+
+                # DIPCA por SENTIMIENTO: evolución de la brecha competitiva (solo si hay muestra PRCA)
+                tabla_dipca = dipca_desde_sentimiento(nombre) if bod_es_prca else pd.DataFrame()
+                if not tabla_dipca.empty:
+                    corte = tabla_dipca.attrs.get("corte", "")
+                    st.markdown("**¿Gana o pierde terreno frente al Marco?** "
+                                "_(evolución competitiva · DIPCA)_")
+                    st.caption(f"Brecha de **sentimiento** vs. el resto del Marco, antes y después de "
+                               f"{corte}. Cambio positivo = la bodega gana terreno frente a la competencia.")
                     st.dataframe(
-                        tabla_ipca[["atributo", "Esta bodega", "Media del Marco", "brecha"]]
-                        .rename(columns={"atributo": "Atributo", "brecha": "Brecha"})
-                        .sort_values("Brecha"),
+                        tabla_dipca.rename(columns={
+                            "atributo": "Atributo", "brecha_inicial": "Brecha antes",
+                            "brecha_final": "Brecha después", "cambio_brecha": "Cambio",
+                            "tendencia": "Tendencia"}),
                         use_container_width=True, hide_index=True,
                     )
-
-            # DIPCA por SENTIMIENTO: evolución de la brecha competitiva (solo si hay muestra PRCA)
-            tabla_dipca = dipca_desde_sentimiento(nombre) if bod_es_prca else pd.DataFrame()
-            if not tabla_dipca.empty:
-                corte = tabla_dipca.attrs.get("corte", "")
-                st.markdown("**¿Gana o pierde terreno frente al Marco?** "
-                            "_(evolución competitiva · DIPCA)_")
-                st.caption(f"Brecha de **sentimiento** vs. el resto del Marco, antes y después de "
-                           f"{corte}. Cambio positivo = la bodega gana terreno frente a la competencia.")
-                st.dataframe(
-                    tabla_dipca.rename(columns={
-                        "atributo": "Atributo", "brecha_inicial": "Brecha antes",
-                        "brecha_final": "Brecha después", "cambio_brecha": "Cambio",
-                        "tendencia": "Tendencia"}),
-                    use_container_width=True, hide_index=True,
-                )
 
             # Muestra de reseñas con texto (máx. 15)
             con_texto_n = int((an_bod["texto"].astype(str).str.len() > 5).sum())

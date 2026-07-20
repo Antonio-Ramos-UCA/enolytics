@@ -324,6 +324,12 @@
     **deleitador** — dónde se PUEDE destacar, no solo dónde se falla. La cara positiva del perfil.
   - La regla 1 de bodega ahora usa el **perfil** (higiénico → "no diferencia"; deleitador →
     "doble motivo") y acción específica. Fuentes actualizadas (sentimiento/PRCA, no estrellas).
+- [x] ✅ **Ficha de bodega más corta: análisis profundo plegado (18/07, mejora UX).** Antes la
+  ficha mostraba de golpe recomendaciones + reputación + 5 gráficos (IPA, perfil, DIPA, IPCA,
+  DIPCA) + reseñas: mucho scroll. Ahora los **5 gráficos van en un desplegable** *"🔬 Ver el
+  análisis por atributos"* (plegado por defecto). Arriba queda lo esencial —**qué hacer** y
+  **reputación**—; el detalle, a demanda (mantra de Shneiderman, aplicado también dentro de la
+  ficha). `with` no crea ámbito, así que no hubo que extraer función ni tocar variables.
 - [x] ✅ **Jerga de siglas fuera de los títulos (18/07, mejora UX).** Los títulos de sección
   hablaban en siglas (*"Análisis avanzado (IPA · perfil · DIPA · IPCA · DIPCA)"*, *"Análisis
   competitivo (IPCA)"*), que el bodeguero no entiende. Ahora son **preguntas en lenguaje llano**
