@@ -23,6 +23,7 @@ from enolytics import config  # noqa: E402
 from enolytics.etl import resenas as etl_resenas  # noqa: E402
 from enolytics.nlp import analisis as nlp  # noqa: E402
 from enolytics.nlp import idioma as nlp_idioma  # noqa: E402 (solo nombres; no usa langdetect)
+from enolytics.nlp import sentimiento as sentimiento_nlp  # noqa: E402 (solo lee el CSV)
 from enolytics.analitica import ipa as modelo_ipa  # noqa: E402
 from enolytics.analitica import recomendaciones as reco  # noqa: E402
 from enolytics.analitica import reputacion as rep  # noqa: E402
@@ -189,16 +190,54 @@ def aviso_omitidos(an: pd.DataFrame) -> None:
                    f"reseñas, su media no sería fiable): {detalle}")
 
 
-def ipca_desde_anotadas(focal_an: pd.DataFrame, comp_an: pd.DataFrame) -> pd.DataFrame:
-    """IPCA de una bodega (focal) frente a la competencia (resto del Marco)."""
-    if focal_an.empty or comp_an.empty:
+@st.cache_data
+def cargar_sentimiento() -> pd.DataFrame:
+    """Sentimiento por (reseña, atributo) con la fecha añadida. Base del IPCA/DIPCA por sentimiento.
+
+    `sentimiento_atributos.csv` no trae fecha; se une por `resena_id` con las reseñas. Así el
+    IPCA compara el sentimiento de la bodega con el del RESTO del Marco (no el todo, que la
+    incluiría), y el DIPCA puede partir por periodos.
+    """
+    s = sentimiento_nlp.cargar()
+    if s.empty:
+        return s
+    res = etl_resenas.cargar_resenas()
+    cols = ["resena_id", "fecha"] + [c for c in ("segmento_idioma",) if c in res.columns]
+    return s.merge(res[cols], on="resena_id", how="left")
+
+
+# Reseñas mínimas por atributo para comparar sin ruido (mismo criterio, 8, que el resto).
+MIN_MENCIONES_IPCA = 8
+
+
+def _perf_sent(sub: pd.DataFrame, min_menciones: int = MIN_MENCIONES_IPCA) -> pd.Series:
+    """Sentimiento medio por atributo de un subconjunto, exigiendo un mínimo de reseñas."""
+    g = sub.groupby("atributo")["sentimiento"].agg(["mean", "size"])
+    return g[g["size"] >= min_menciones]["mean"]
+
+
+def ipca_desde_sentimiento(nombre: str) -> pd.DataFrame:
+    """IPCA por SENTIMIENTO: la bodega frente al RESTO del Marco (excluyéndola).
+
+    Rendimiento = sentimiento hacia el atributo (no estrellas). Importancia = impacto (PRCA).
+    La banda de indiferencia se recalibra para la escala del sentimiento.
+    """
+    sent = cargar_sentimiento()
+    prca = cargar_prca()
+    if sent.empty or prca.empty:
         return pd.DataFrame()
-    focal = nlp.tabla_importancia_desempeno(focal_an)
-    comp = nlp.tabla_importancia_desempeno(comp_an)
-    if focal.empty or comp.empty:
+    imp = prca[prca["ambito"] == nombre].set_index("atributo")["importancia"]
+    if imp.empty:  # bodega sin PRCA: no se compara (coherente con solo-método-bueno)
         return pd.DataFrame()
-    comp_perf = dict(zip(comp["atributo"], comp["desempeno"]))
-    puntos = modelo_ipa.calcular_ipca(focal.to_dict("records"), comp_perf)
+    foc = _perf_sent(sent[sent["bodega"] == nombre])
+    resto = _perf_sent(sent[sent["bodega"] != nombre])
+    registros = [{"atributo": a, "importancia": float(imp.get(a, 0.0)), "desempeno": float(foc[a])}
+                 for a in foc.index if a in resto.index and a in imp.index]
+    if len(registros) < 3:
+        return pd.DataFrame()
+    comp_perf = {a: float(resto[a]) for a in resto.index}
+    puntos = modelo_ipa.calcular_ipca(registros, comp_perf,
+                                      banda=modelo_ipa.BANDA_INDIFERENCIA_SENT)
     return pd.DataFrame([{
         "atributo": p.atributo, "importancia": p.importancia,
         "Esta bodega": p.desempeno_focal, "Media del Marco": p.desempeno_competencia,
@@ -206,27 +245,27 @@ def ipca_desde_anotadas(focal_an: pd.DataFrame, comp_an: pd.DataFrame) -> pd.Dat
     } for p in puntos])
 
 
-def dipca_bodega(an_bod: pd.DataFrame, comp_an: pd.DataFrame,
-                 min_resenas: int = 60, min_menciones: int = 10) -> pd.DataFrame:
-    """DIPCA de una bodega: evolución de su brecha vs. el Marco entre dos periodos."""
-    f = an_bod[an_bod["fecha"].notna()].copy()
-    if len(f) < min_resenas:
+def dipca_desde_sentimiento(nombre: str, min_resenas: int = 60) -> pd.DataFrame:
+    """DIPCA por SENTIMIENTO: evolución de la brecha de la bodega vs. el RESTO del Marco."""
+    sent = cargar_sentimiento()
+    if sent.empty:
         return pd.DataFrame()
-    f["fecha"] = pd.to_datetime(f["fecha"]).dt.tz_localize(None)
-    c = comp_an[comp_an["fecha"].notna()].copy()
-    c["fecha"] = pd.to_datetime(c["fecha"]).dt.tz_localize(None)
-    corte = f["fecha"].median()
+    sent = sent[sent["fecha"].notna()].copy()
+    sent["fecha"] = pd.to_datetime(sent["fecha"], errors="coerce").dt.tz_localize(None)
+    foc = sent[sent["bodega"] == nombre]
+    if foc["resena_id"].nunique() < min_resenas:
+        return pd.DataFrame()
+    corte = foc["fecha"].median()
 
-    def _brechas(focal, comp):
-        tf = nlp.tabla_importancia_desempeno(focal)
-        tc = nlp.tabla_importancia_desempeno(comp)
-        cf = dict(zip(tc["atributo"], tc["desempeno"]))
-        tf = tf[tf["importancia"] >= min_menciones]
-        return {r["atributo"]: round(r["desempeno"] - cf[r["atributo"]], 3)
-                for _, r in tf.iterrows() if r["atributo"] in cf}
+    def _brechas(hasta_corte: bool):
+        cond = (sent["fecha"] <= corte) if hasta_corte else (sent["fecha"] > corte)
+        periodo = sent[cond]
+        fp = _perf_sent(periodo[periodo["bodega"] == nombre])
+        rp = _perf_sent(periodo[periodo["bodega"] != nombre])
+        return {a: round(float(fp[a] - rp[a]), 3) for a in fp.index if a in rp.index}
 
-    bi = _brechas(f[f["fecha"] <= corte], c[c["fecha"] <= corte])
-    bf = _brechas(f[f["fecha"] > corte], c[c["fecha"] > corte])
+    bi = _brechas(True)
+    bf = _brechas(False)
     filas = modelo_ipa.calcular_dipca(bi, bf)
     if not filas:
         return pd.DataFrame()
@@ -540,25 +579,35 @@ def panel_idiomas(res: pd.DataFrame, an: pd.DataFrame, ambito: str) -> None:
         if len(intl_an) >= 50 and len(hisp_an) >= 50:
             ciego_i = (intl_an["atributos"].map(len) == 0).mean() * 100
 
+            # «Menciona %» = frecuencia de mención (descriptivo). El desempeño ya NO es por
+            # estrellas: es el SENTIMIENTO por atributo, coherente con el resto del análisis.
             th = nlp.tabla_importancia_desempeno(hisp_an).set_index("atributo")
             ti = nlp.tabla_importancia_desempeno(intl_an).set_index("atributo")
+            sent_seg = cargar_sentimiento()
+            sh = si = pd.Series(dtype=float)
+            if not sent_seg.empty and "segmento_idioma" in sent_seg.columns:
+                sh = _perf_sent(sent_seg[sent_seg["segmento_idioma"] == HISPANO])
+                si = _perf_sent(sent_seg[sent_seg["segmento_idioma"] == INTL])
             filas = []
             for atr in nlp.ATRIBUTOS:
                 if atr not in th.index or atr not in ti.index:
                     continue
+                if atr not in sh.index or atr not in si.index:
+                    continue  # sin sentimiento fiable en algún segmento: no se compara
                 filas.append({
                     "Atributo": atr,
                     "Menciona (hispano)": round(th.loc[atr, "importancia"] / len(hisp_an) * 100, 1),
-                    "Nota (hispano)": round(th.loc[atr, "desempeno"], 2),
+                    "Sentim. (hispano)": round(float(sh[atr]), 2),
                     "Menciona (internac.)": round(ti.loc[atr, "importancia"] / len(intl_an) * 100, 1),
-                    "Nota (internac.)": round(ti.loc[atr, "desempeno"], 2),
-                    "Brecha": round(ti.loc[atr, "desempeno"] - th.loc[atr, "desempeno"], 2),
+                    "Sentim. (internac.)": round(float(si[atr]), 2),
+                    "Brecha": round(float(si[atr] - sh[atr]), 2),
                 })
             if filas:
                 comp = pd.DataFrame(filas)
                 st.markdown("**¿Valoran lo mismo el visitante hispanohablante y el internacional?**")
                 st.caption("«Menciona» = % de reseñas de ese segmento que hablan del atributo. "
-                           "«Brecha» = nota del internacional menos la del hispanohablante.")
+                           "«Sentim.» = sentimiento medio hacia el atributo (1-5, modelo BERT). "
+                           "«Brecha» = sentimiento del internacional menos el del hispanohablante.")
                 st.dataframe(comp, use_container_width=True, hide_index=True)
 
                 st.caption(
@@ -1887,8 +1936,8 @@ else:
         # ruido. Las recomendaciones de reputación, web, etc. no dependen de esto y siguen.
         ipa_bod = ipa_desde_prca(nombre)
         if not ipa_bod.empty and not comp_an.empty:
-            ipca_bod = ipca_desde_anotadas(an_bod, comp_an)
-            dipca_bod = dipca_bodega(an_bod, comp_an)
+            ipca_bod = ipca_desde_sentimiento(nombre)
+            dipca_bod = dipca_desde_sentimiento(nombre)
         else:
             ipca_bod = dipca_bod = pd.DataFrame()
 
@@ -2020,16 +2069,16 @@ else:
                     st.caption("Cambio del primer al último periodo con datos:")
                     st.dataframe(resu, use_container_width=True, hide_index=True)
 
-            # IPCA: esta bodega frente al resto del Marco (solo si hay muestra PRCA)
-            comp_an = anotadas[anotadas["bodega"] != nombre]
-            tabla_ipca = ipca_desde_anotadas(an_bod, comp_an) if bod_es_prca else pd.DataFrame()
+            # IPCA por SENTIMIENTO: esta bodega frente al RESTO del Marco (solo si hay muestra PRCA)
+            tabla_ipca = ipca_desde_sentimiento(nombre) if bod_es_prca else pd.DataFrame()
             if len(tabla_ipca) >= 3:
-                st.markdown("**Análisis competitivo (IPCA): esta bodega vs. el Marco de Jerez**")
+                st.markdown("**Análisis competitivo (IPCA): esta bodega vs. el resto del Marco**")
                 st.caption(
-                    f"Brecha positiva = la bodega supera la media del Marco en ese atributo; "
-                    f"negativa = va por detrás. Las diferencias menores de "
-                    f"{modelo_ipa.BANDA_INDIFERENCIA:.2f}★ se marcan **En línea con el Marco**: "
-                    f"son demasiado pequeñas para sostener un diagnóstico."
+                    f"Compara el **sentimiento** hacia cada atributo (no las estrellas) con el del "
+                    f"resto de bodegas del Marco. Brecha positiva = la bodega va por delante; "
+                    f"negativa = por detrás. Diferencias menores de "
+                    f"{modelo_ipa.BANDA_INDIFERENCIA_SENT:.2f} se marcan **En línea con el Marco**: "
+                    f"demasiado pequeñas para sostener un diagnóstico."
                 )
                 cg, ct = st.columns([2, 1])
                 with cg:
@@ -2042,13 +2091,13 @@ else:
                         use_container_width=True, hide_index=True,
                     )
 
-            # DIPCA: evolución de la brecha competitiva en el tiempo (solo si hay muestra PRCA)
-            tabla_dipca = dipca_bodega(an_bod, comp_an) if bod_es_prca else pd.DataFrame()
+            # DIPCA por SENTIMIENTO: evolución de la brecha competitiva (solo si hay muestra PRCA)
+            tabla_dipca = dipca_desde_sentimiento(nombre) if bod_es_prca else pd.DataFrame()
             if not tabla_dipca.empty:
                 corte = tabla_dipca.attrs.get("corte", "")
                 st.markdown("**Evolución competitiva (DIPCA): ¿gana o pierde terreno con el tiempo?**")
-                st.caption(f"Compara la brecha vs. el Marco antes y después de {corte}. "
-                           "Cambio positivo = la bodega gana terreno frente a la competencia.")
+                st.caption(f"Brecha de **sentimiento** vs. el resto del Marco, antes y después de "
+                           f"{corte}. Cambio positivo = la bodega gana terreno frente a la competencia.")
                 st.dataframe(
                     tabla_dipca.rename(columns={
                         "atributo": "Atributo", "brecha_inicial": "Brecha antes",

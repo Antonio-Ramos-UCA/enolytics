@@ -91,6 +91,11 @@ CUADRANTES_IPCA = {
 # de los casos (el cuartil inferior, donde vive el ruido) y se mantiene lo que sí separa.
 BANDA_INDIFERENCIA = 0.10
 
+# Banda para el IPCA por SENTIMIENTO (no estrellas). El sentimiento tiene otra escala de
+# dispersión, así que su banda se recalibra sobre la distribución real de brechas
+# |bodega − resto del Marco| en sentimiento: percentil 25 = 0,070 (94 pares, 16 bodegas).
+BANDA_INDIFERENCIA_SENT = 0.07
+
 
 @dataclass
 class PuntoIPCA:

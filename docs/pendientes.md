@@ -119,8 +119,21 @@
   ninguna cerca del umbral → el método clásico sobre esas muestras era ruido con pinta de gráfico.
   Función `ipa_desde_anotadas` (clásico) eliminada del dashboard; las recomendaciones tampoco se
   alimentan de atributos si no hay PRCA.
-  - ⚠️ Deuda declarada: el IPCA/DIPCA de las 16 bodegas CON PRCA sigue siendo por estrellas (no
-    sentimiento); migrarlo es tarea futura.
+  - [x] ✅ **DEUDA SALDADA (18/07): IPCA y DIPCA migrados al SENTIMIENTO.** `ipca_desde_sentimiento`
+    y `dipca_desde_sentimiento`: comparan el **sentimiento** hacia cada atributo (no estrellas) de
+    la bodega contra el **RESTO** del Marco (excluyéndola — antes se comparaba contra el todo, que
+    la incluía; para González Byass eso era el 14%). Banda de indiferencia recalibrada para la
+    escala del sentimiento: **0,07** (percentil 25 de las brechas reales). Resultado más nítido:
+    la brecha de «Organización» en Barbadillo pasa de −0,53 (estrellas) a **−0,66** y cae en
+    *«Actuar: por detrás del Marco»*. El sentimiento por (reseña, atributo) se une con la fecha
+    (de `resenas.csv`) para poder partir el DIPCA por periodos.
+  - [x] ✅ **Panel hispanohablante vs internacional migrado** al sentimiento (la columna «Nota»
+    era por estrellas). Hallazgo coherente: el internacional puntúa «Organización» **+0,46** mejor
+    que el hispanohablante (ya lo veíamos: la menciona más pero la sufre menos). «Menciona %» sigue
+    siendo frecuencia de mención (descriptivo, correcto).
+  - 📋 **Auditoría de coherencia (18/07):** TODO el rendimiento POR ATRIBUTO usa ya el sentimiento,
+    **excepto el DIPA** (evolución temporal), que sigue por estrellas en destino y bodega. Las
+    estrellas que quedan son legítimas: notas GLOBALES (satisfacción general) y recuentos de mención.
 
 - [x] ✅⭐ **HECHO (18/07) — PRCA ENCHUFADA AL DASHBOARD Y A LAS RECOMENDACIONES.**
   - `ipa_desde_prca(ambito)` lee `prca_kano.csv`; el destino y las 16 bodegas con muestra usan la
