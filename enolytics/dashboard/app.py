@@ -1957,7 +1957,7 @@ else:
                     panel_idiomas(res_bod, an_bod, nombre)
             st.divider()
 
-        st.subheader("Análisis avanzado (IPA · IPCA · DIPCA)")
+        st.subheader("Análisis avanzado (IPA · perfil higiene↔deleite · IPCA · DIPCA)")
         if not an_bod.empty:
             # Sentimiento y cuadrantes IPA de ESTA bodega
             col1, col2 = st.columns([1, 2])
@@ -1984,6 +1984,16 @@ else:
                 else:
                     st.caption("Pocas reseñas con atributos para un IPA fiable de esta bodega.")
                     aviso_omitidos(an_bod)
+
+            # Perfil higiene ↔ deleite de ESTA bodega (mismo análisis que el destino, si hay muestra)
+            if bod_es_prca and "perfil" in tabla_ipa_bod.columns \
+                    and tabla_ipa_bod["perfil"].notna().any():
+                st.markdown("##### Perfil de los atributos de esta bodega: ¿higiénico o deleitador?")
+                st.caption(
+                    "Izquierda, atributos **higiénicos** (si fallan hunden la nota, pero hacerlos "
+                    "muy bien apenas la sube); derecha, **deleitadores** (crean satisfacción de "
+                    "verdad). Tamaño del punto = importancia. Posición **relativa a esta bodega**.")
+                st.plotly_chart(figura_perfil(tabla_ipa_bod), use_container_width=True)
 
             # IPCA: esta bodega frente al resto del Marco
             comp_an = anotadas[anotadas["bodega"] != nombre]

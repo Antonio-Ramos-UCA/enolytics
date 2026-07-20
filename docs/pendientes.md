@@ -205,6 +205,14 @@
 - [x] IPCA (competitivo, por bodega vs. Marco)
 - [x] DIPA (evolución temporal del destino)
 - [x] DIPCA (evolución de la brecha competitiva por bodega)
+- [x] **Perfil Kano (higiene↔deleite) TAMBIÉN por bodega** (18/07). El dato ya se calculaba para
+  las 16 bodegas con muestra; ahora `figura_perfil()` se pinta también en la vista de bodega
+  individual (antes solo en el destino). Barbadillo, p.ej., tiene «Visita» como deleitador e
+  «Instalaciones/Precio» como higiénicos — perfil propio, distinto del destino.
+- [ ] **DIPA por bodega** (evolución temporal de los atributos de UNA bodega). Hoy el DIPA solo
+  existe a nivel de destino. Pendiente de decidir: la mayoría de bodegas no tiene reseñas
+  suficientes repartidas en el tiempo para que sea fiable (habría que fijar un mínimo por
+  periodo, como en el destino). Conversación abierta con Antonio.
 - [ ] IPA/IPCA por **atributo cruzado con procedencia** (nacional vs internacional).
 - [ ] ⭐ **MODELO KANO + PRCA** (a propuesta de Antonio, 17/07). Fuente: **Han, W., Zhang, C.,
   Zhang, Y.C., Raab, C. y Chen, Z. (2026), "How do robots reshape restaurant service attributes?
