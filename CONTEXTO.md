@@ -4,8 +4,8 @@
 > poder continuar desde cualquier ordenador (este proyecto está en Dropbox y se
 > sincroniza). Si retomas con Claude en otro equipo, pásale este archivo primero.
 >
-> **Última actualización:** 2026-07-18 (PRCA conectada, espectro Kano y los 5 modelos con su
-> cobertura por nivel — leer la sesión del 18/07)
+> **Última actualización:** 2026-07-18 (PRCA conectada, Kano→espectro, Gastronomía vía LDA como
+> 8.º atributo, y 4 mejoras de UX — leer la sesión del 18/07)
 
 ---
 
@@ -162,8 +162,10 @@ streamlit, pandas, sklearn, plotly, matplotlib, requests, bs4.
 6. **En paralelo (no bloquea):** diseñar cuestionarios a partir de la Tabla 1 de la
    memoria; incorporar indicadores oficiales (INE, Dataestur, ACEVIN, Google Trends).
 
-## ═══ SESIÓN 2026-07-18 — PRCA AL DASHBOARD, ESPECTRO KANO Y COBERTURA DE MODELOS ═══
-### (Antonio: "vamos a conectar la PRCA", "abordamos Kano", "confirma qué modelos hace y a qué nivel")
+## ═══ SESIÓN 2026-07-18 — PRCA AL DASHBOARD, KANO, GASTRONOMÍA (LDA) Y MEJORAS DE UX ═══
+### (Antonio: conectar PRCA, abordar Kano, cobertura de modelos, LDA→Gastronomía, y repaso de UX)
+> **Sesión larga y muy productiva.** El dashboard pasó de *potente pero abrumador* a *potente y
+> usable*, con el análisis por fin coherente (todo por sentimiento + importancia por impacto).
 
 **1. PRCA CONECTADA AL DASHBOARD.** El IPA del destino y el de las 16 bodegas con muestra usan ya
 la importancia por IMPACTO (no la frecuencia). **El consejo invertido dejó de llegar al usuario:**
@@ -208,6 +210,41 @@ diferencia; deleitador = palanca de diferenciación. Se muestra en destino Y en 
   el corpus de reseñas de esas rutas → backlog (Outscraper de pago).
 - Todo se ejecuta EN LOCAL y deja CSV; el dashboard solo lee. Estado: subido, `cb87ffa` y
   siguientes. **Pendiente Reboot en Streamlit.**
+
+**6. 🍽️ GASTRONOMÍA = 8.º ATRIBUTO, descubierto con LDA.** Corrimos un **LDA exploratorio**
+(sklearn, sobre las 4.882 reseñas en español) para ver qué temas emergen. Confirmó los 7 atributos
+y **destapó la gastronomía**: aparece en el **11%** de las reseñas (más que Precio, Organización o
+Entorno) y no la medíamos. Como Zhang et al. (2021): LDA propone, el humano depura. Añadido
+«Gastronomía y restauración» con léxico multilingüe validado (descartada "menu" por polisémica).
+Pipeline regenerado (sentimiento + PRCA). Hallazgo: 747 menciones, desempeño 3,88 (3.º peor),
+higiénico. Bodegas con PRCA: 16 → 14 (al subir a 8 atributos sube el mínimo de muestra).
+
+**7. 🔒 VERSIONES FIJADAS** en `requirements.txt` (`streamlit==1.52.2`, pandas/plotly acotados):
+`use_container_width` (25 usos) está deprecado y Streamlit Cloud podía romper el dashboard al
+actualizar solo. Deuda anotada: al subir Streamlit, migrar a `width="stretch"`.
+
+**8. 🎯 MOTOR DE RECOMENDACIONES AL DÍA** (usa ya PRCA/perfil/sentimiento/Gastronomía):
+- 🐛 Bug: la acción del "peor atributo" estaba hardcodeada a "revisar la reserva"; ahora
+  `ACCIONES_ATRIBUTO` da acción **específica por atributo** (verificado con Gastronomía).
+- Nueva regla **palanca de diferenciación** (deleitador): dónde se PUEDE destacar, no solo dónde
+  se falla. La regla de bodega usa el perfil (higiénico/deleitador).
+
+**9. 🎨 CUATRO MEJORAS DE UX** (a raíz de un repaso "en la piel del usuario"):
+1. **Recomendaciones de bodega CONSOLIDADAS por atributo**: antes un mismo problema salía hasta 3
+   veces (IPA + IPCA + DIPCA); ahora **una sola tarjeta** que teje las señales. Barbadillo: de 7 a 4.
+2. **Jerga fuera**: títulos en lenguaje llano (*"¿Cómo va frente al resto del Marco?"*), sigla en
+   cursiva secundaria.
+3. **Ficha de bodega más corta**: los 5 gráficos van en un desplegable *"🔬 Ver el análisis por
+   atributos"*; arriba queda lo esencial (qué hacer + reputación).
+4. (La consolidación también alivia el exceso de recomendaciones.)
+
+### ✅ ESTADO AL CIERRE (último commit `fb2a9db`)
+- Todo subido y verificado (compila + AppTest ejecuta las 3 vistas sin excepciones + datos íntegros).
+- **8 atributos** recorren los 5 modelos; ningún rendimiento por atributo usa estrellas.
+- **Pendiente Reboot en Streamlit** para ver lo último en vivo.
+- Próximos pasos abiertos (producto): empleo turístico (Dataestur, victoria rápida); LDA sobre
+  inglés/otros idiomas; y las mejoras que surjan de seguir usándolo. **El norte es la plataforma,
+  no el paper** (ver memoria [[enolytics-objetivo-producto]]).
 
 ## ═══ SESIÓN 2026-07-17 — AUDITORÍA METODOLÓGICA, ARREGLOS Y **PRCA MONTADA** ═══
 ### (Antonio: "me preocupa cómo hemos medido nosotros la importancia y el rendimiento")
