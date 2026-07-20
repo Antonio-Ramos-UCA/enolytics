@@ -302,6 +302,9 @@ def recomendaciones_destino(
                 nota = (" La importancia por **impacto** (PRCA) lo sitúa en *«Concéntrese aquí»*: "
                         "aunque se mencione poco, **cuando el visitante habla de ello suele ser "
                         "porque ha fallado, y eso arrastra la nota de toda la visita**.")
+                if str(r.get("perfil", "")) == "Higiénico":
+                    nota += (" Es además un atributo **higiénico**: arreglarlo **evita quejas**, "
+                             "pero no esperes que por sí solo suba la nota ni te diferencie.")
             elif "cuadrante" in tabla_ipa.columns and "Baja prioridad" in str(r.get("cuadrante", "")):
                 nota = (" ⚠️ El IPA por frecuencia lo sitúa en *«Baja prioridad»* porque se "
                         "menciona poco, pero eso es engañoso: **de la organización y la reserva el "

@@ -175,11 +175,13 @@ def ipa_desde_prca(ambito: str) -> pd.DataFrame:
                   "desempeno": r["desempeno"]} for _, r in sub.iterrows()]
     puntos = modelo_ipa.calcular_ipa(registros)
     extra = sub.set_index("atributo")
+    tiene_perfil = "perfil" in sub.columns
     return pd.DataFrame([{
         "atributo": p.atributo, "importancia": p.importancia,
         "desempeno": p.desempeno, "cuadrante": p.etiqueta,
         "menciones": int(extra.loc[p.atributo, "menciones"]),
-        "kano": extra.loc[p.atributo, "kano"],
+        "perfil": extra.loc[p.atributo, "perfil"] if tiene_perfil else None,
+        "perfil_pos": extra.loc[p.atributo, "perfil_pos"] if tiene_perfil else None,
     } for p in puntos])
 
 
@@ -292,6 +294,31 @@ def figura_ipa(tabla: pd.DataFrame, metodo: str = "prca"):
     fig.update_traces(textposition="top center")
     fig.update_layout(height=480, legend_title_text="Cuadrante")
     return fig
+
+
+def figura_perfil(tabla: pd.DataFrame):
+    """Espectro higiene ↔ deleite de los atributos (posición RELATIVA dentro del ámbito).
+
+    No es la clasificación absoluta de Kano (que el efecto techo hace inservible), sino el
+    orden robusto: a la izquierda, atributos que sólo evitan quejas; a la derecha, los que
+    de verdad crean satisfacción. El tamaño del punto es la importancia (impacto).
+    """
+    t = tabla.sort_values("perfil_pos")
+    fig = px.scatter(
+        t, x="perfil_pos", y="atributo", size="importancia", size_max=30,
+        color="perfil_pos", color_continuous_scale=estilo.SECUENCIAL,
+        labels={"perfil_pos": "", "atributo": ""},
+    )
+    fig.update_traces(marker=dict(line=dict(width=1, color="#fff")))
+    fig.update_yaxes(categoryorder="array", categoryarray=list(t["atributo"]))
+    fig.update_xaxes(range=[-0.08, 1.08], showticklabels=False)
+    fig.update_coloraxes(showscale=False)
+    fig.add_annotation(x=0, y=1.12, yref="paper", text="◀ Higiénico<br><sub>evita quejas</sub>",
+                       showarrow=False, font=dict(size=11, color=estilo.INK_TENUE), align="left")
+    fig.add_annotation(x=1, y=1.12, yref="paper",
+                       text="Deleitador ▶<br><sub>crea satisfacción</sub>",
+                       showarrow=False, font=dict(size=11, color=estilo.INK_TENUE), align="right")
+    return estilo.figura(fig, alto=290, leyenda=False)
 
 
 @st.cache_data
@@ -1498,6 +1525,24 @@ if rol == VISTA_INTELIGENCIAS:
                             use_container_width=True)
             st.dataframe(tabla_ipa.rename(columns=cols)[list(cols.values())],
                          use_container_width=True, hide_index=True)
+
+            # Perfil higiene ↔ deleite (sólo con PRCA: necesita los coeficientes de la regresión)
+            if ipa_es_prca and "perfil" in tabla_ipa.columns and tabla_ipa["perfil"].notna().any():
+                st.markdown("##### Perfil de los atributos: ¿higiénico o deleitador?")
+                st.caption(
+                    "De la misma regresión sale, además del impacto, **cómo** mueve cada atributo "
+                    "la satisfacción. A la izquierda, los **higiénicos**: cuando fallan hunden la "
+                    "nota, pero hacerlos muy bien apenas la sube (arréglalos y pasa página). A la "
+                    "derecha, los **deleitadores**: crean satisfacción de verdad (palanca para "
+                    "diferenciarse). El tamaño del punto es la importancia.")
+                st.plotly_chart(figura_perfil(tabla_ipa), use_container_width=True)
+                fuente("estimado", "Posición **relativa** dentro del Marco, no una etiqueta "
+                       "absoluta. En un destino con el 79% de reseñas de 5★ el *deleite* casi no "
+                       "se puede observar (no hay margen por encima de la nota media), así que "
+                       "**todos** los atributos tienden a higiénicos; lo fiable es el orden entre "
+                       "ellos, que se mantiene con dos métodos de regresión distintos (OLS y "
+                       "ordinal, correlación 0,79). Interpretación coherente con un destino de "
+                       "prestigio, donde el visitante llega con expectativas muy altas.")
         if not evolucion.empty:
             st.subheader("Evolución temporal (DIPA)")
             st.caption("Desempeño medio de cada atributo por año. Revela si la satisfacción mejora o empeora.")

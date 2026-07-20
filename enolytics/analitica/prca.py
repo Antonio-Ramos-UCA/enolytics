@@ -76,11 +76,22 @@ import pandas as pd
 
 CLASES = ["s0", "s1", "s2", "s3", "s4"]
 
-# Umbrales de Kano (Pratt et al., 2020).
+# Umbrales de Kano (Pratt et al., 2020). OJO: la clasificación ABSOLUTA (básico/desempeño/
+# entusiasmo) NO es fiable en nuestro corpus por el efecto techo (78,7% de cincos → el deleite
+# es inobservable, todo tiende a "básico"). Se conserva como dato interno, pero el producto NO
+# la muestra. Ver PERFIL de abajo.
 UMBRAL_KANO = 0.20
 KANO_ENTUSIASMO = "Entusiasmo"
 KANO_DESEMPENO = "Desempeño"
 KANO_BASICO = "Básico"
+
+# PERFIL relativo higiene ↔ deleite. Lo que SÍ es robusto (el orden de λ correlaciona 0,79
+# entre OLS y regresión ordinal, dos estimadores muy distintos) es la POSICIÓN RELATIVA de
+# cada atributo dentro de su ámbito: cuáles castigan mucho y premian poco ("higiénicos": solo
+# evitan quejas) frente a los que sí crean satisfacción ("deleitadores"). Es lo que se muestra.
+PERFIL_HIGIENICO = "Higiénico"      # castiga si falla, no premia si va bien → arreglar y pasar
+PERFIL_MIXTO = "Mixto"
+PERFIL_DELEITADOR = "Deleitador"    # crea satisfacción real → palanca de diferenciación
 
 # Mínimo de observaciones por variable de la regresión, para no sobreajustar.
 MIN_OBS_POR_VARIABLE = 10
@@ -101,8 +112,11 @@ class ResultadoPRCA:
     p_penalty: float
     p_reward: float
     importancia: float      # normalizada: las de todos los atributos suman 1
-    lambda_kano: float
-    kano: str
+    lambda_kano: float      # λ por OLS (interno; etiqueta absoluta no fiable por el techo)
+    kano: str               # etiqueta absoluta (interna, NO se muestra)
+    lambda_ordinal: float   # λ por regresión ordinal (respaldo); NaN si no convergió
+    perfil: str             # posición RELATIVA: Higiénico / Mixto / Deleitador (esto SÍ se muestra)
+    perfil_pos: float       # 0 (más higiénico del ámbito) .. 1 (más deleitador)
     desempeno: float        # sentimiento medio hacia el atributo (1-5)
     menciones: int
 
@@ -144,8 +158,32 @@ def matriz(sent: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series, list[str]]:
     return X[ok], y[ok], atributos
 
 
+def _lambda_ordinal(X: pd.DataFrame, y: pd.Series, atributos: list[str]) -> dict[str, float]:
+    """λ por regresión ordinal (logit), el estimador que trata el techo como umbral latente.
+
+    Es el respaldo de robustez del perfil: si el orden de λ coincide con el de OLS, la posición
+    relativa no es un artefacto del método. Puede no converger con muestras pequeñas → {} y se
+    tira sólo de OLS. Sólo se intenta con muestra amplia (es lento y necesita datos).
+    """
+    if len(X) < 400:
+        return {}
+    try:
+        from statsmodels.miscmodels.ordinal_model import OrderedModel
+        res = OrderedModel(y.values.astype(int), X.values, distr="logit").fit(
+            method="bfgs", maxiter=200, disp=False)
+        coef = pd.Series(res.params[:len(X.columns)], index=X.columns)
+        out = {}
+        for a in atributos:
+            bp, br = coef[f"{a}__low"], coef[f"{a}__high"]
+            denom = abs(br) + abs(bp)
+            out[a] = round((abs(br) - abs(bp)) / denom, 4) if denom else 0.0
+        return out
+    except Exception:
+        return {}
+
+
 def calcular(sent: pd.DataFrame) -> list[ResultadoPRCA]:
-    """Ejecuta la PRCA y devuelve importancia + Kano por atributo.
+    """Ejecuta la PRCA y devuelve importancia + perfil higiene↔deleite por atributo.
 
     Args:
         sent: salida de `nlp.sentimiento` (resena_id, atributo, s0..s4, puntuacion).
@@ -160,6 +198,7 @@ def calcular(sent: pd.DataFrame) -> list[ResultadoPRCA]:
     modelo = sm.OLS(y.values, sm.add_constant(X.values)).fit()
     coef = pd.Series(modelo.params[1:], index=X.columns)
     pval = pd.Series(modelo.pvalues[1:], index=X.columns)
+    lam_ord = _lambda_ordinal(X, y, atributos)
 
     desemp = sent.groupby("atributo")["sentimiento"].mean()
     menc = sent.groupby("atributo").size()
@@ -167,20 +206,35 @@ def calcular(sent: pd.DataFrame) -> list[ResultadoPRCA]:
     magnitudes = {a: float(np.hypot(coef[f"{a}__low"], coef[f"{a}__high"])) for a in atributos}
     suma = sum(magnitudes.values()) or 1.0
 
-    salida = []
+    # λ (OLS) por atributo, para situar el PERFIL relativo dentro de este ámbito.
+    lambdas = {}
     for a in atributos:
         bp, br = float(coef[f"{a}__low"]), float(coef[f"{a}__high"])
         denom = abs(br) + abs(bp)
-        lam = (abs(br) - abs(bp)) / denom if denom else 0.0
+        lambdas[a] = (abs(br) - abs(bp)) / denom if denom else 0.0
+    lmin, lmax = min(lambdas.values()), max(lambdas.values())
+    rango = (lmax - lmin) or 1.0
+
+    salida = []
+    for a in atributos:
+        bp, br = float(coef[f"{a}__low"]), float(coef[f"{a}__high"])
+        lam = lambdas[a]
         kano = (KANO_ENTUSIASMO if lam > UMBRAL_KANO
                 else KANO_BASICO if lam < -UMBRAL_KANO
                 else KANO_DESEMPENO)
+        # Posición RELATIVA dentro del ámbito: 0 = el más higiénico, 1 = el más deleitador.
+        pos = (lam - lmin) / rango
+        perfil = (PERFIL_DELEITADOR if pos > 0.66
+                  else PERFIL_HIGIENICO if pos < 0.34
+                  else PERFIL_MIXTO)
         salida.append(ResultadoPRCA(
             atributo=a, beta_penalty=round(bp, 4), beta_reward=round(br, 4),
             p_penalty=round(float(pval[f"{a}__low"]), 4),
             p_reward=round(float(pval[f"{a}__high"]), 4),
             importancia=round(magnitudes[a] / suma, 4),
             lambda_kano=round(lam, 4), kano=kano,
+            lambda_ordinal=lam_ord.get(a, float("nan")),
+            perfil=perfil, perfil_pos=round(pos, 4),
             desempeno=round(float(desemp.get(a, np.nan)), 3),
             menciones=int(menc.get(a, 0)),
         ))
@@ -191,8 +245,9 @@ def tabla(sent: pd.DataFrame) -> pd.DataFrame:
     """`calcular()` como DataFrame, listo para el dashboard."""
     r = calcular(sent)
     if not r:
-        return pd.DataFrame(columns=["atributo", "importancia", "desempeno", "kano",
-                                     "lambda_kano", "beta_penalty", "beta_reward", "menciones"])
+        return pd.DataFrame(columns=["atributo", "importancia", "desempeno", "perfil",
+                                     "perfil_pos", "lambda_kano", "lambda_ordinal", "kano",
+                                     "beta_penalty", "beta_reward", "menciones"])
     return pd.DataFrame([vars(x) for x in r])
 
 

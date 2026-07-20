@@ -84,7 +84,21 @@
     comía el reparto). Añadido `MIN_MENCIONES_ATRIBUTO = 8`. Efecto secundario bueno: al haber
     menos variables, **16 bodegas** aguantan la PRCA en vez de 12.
 
-- [ ] 🚨 **KANO NO SALE: EFECTO TECHO (decisión pendiente).** Los 7 atributos dan **"Básico"**.
+- [x] ✅⭐ **RESUELTO (18/07) — KANO REENFOCADO COMO ESPECTRO HIGIENE↔DELEITE.** La clasificación
+  ABSOLUTA de Kano no es rescatable con estos datos (efecto techo, ver abajo), pero **el orden
+  relativo de λ sí es robusto**: correlaciona **0,79 (Spearman)** entre OLS y regresión ordinal,
+  dos estimadores muy distintos. Se muestra el **espectro relativo** en vez de las 3 cajas.
+  - **`prca.py`**: nuevo `_lambda_ordinal()` (respaldo, sólo si n≥400) + `perfil`
+    (Higiénico/Mixto/Deleitador) y `perfil_pos` (0-1) por atributo, relativo a su ámbito.
+  - **Dashboard**: `figura_perfil()` — espectro horizontal, tamaño = importancia. Con leyenda
+    honesta del efecto techo. NO se muestran las etiquetas absolutas de Kano.
+  - **Recomendaciones**: si un atributo urgente es *higiénico*, avisa de que arreglarlo evita
+    quejas pero no diferencia.
+  - **Resultado destino:** Precio = Higiénico (sólo evita dolor); Entorno = Deleitador (crea
+    satisfacción); resto Mixto. Cruzado con impacto: Precio y Organización son urgentes PERO con
+    techo de recompensa; Personal y Entorno son las palancas de diferenciación.
+
+- [x] 📌 **EFECTO TECHO — documentado (era la decisión pendiente).** Los 7 atributos dan "Básico".
   No es un hallazgo, es aritmética: con **78,7% de cincos**, la nota de referencia ya es 4,61/5,
   así que hablar bien de un atributo sube **+0,23** y hablar mal hunde **−2,56** — **11× de
   asimetría mecánica**. β_penalty >> β_reward para CUALQUIER atributo → λ siempre muy negativo
