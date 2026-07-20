@@ -62,6 +62,38 @@ def _por_impacto(fila) -> bool:
     return m is not None and m == m
 
 
+# Acción concreta según el atributo. Antes la recomendación del "peor atributo" tenía la acción
+# fija en "revisar la reserva y la organización", lo que dejó de tener sentido al añadir
+# Gastronomía y al medir la importancia por impacto: el peor atributo ya no es siempre la reserva.
+ACCIONES_ATRIBUTO = {
+    "Organización y reserva": ("Revisar el proceso de reserva y la organización de la visita de "
+                               "punta a punta: confirmaciones, puntualidad, tamaño del grupo y "
+                               "tiempos de espera."),
+    "Precio y valor": ("Revisar la relación calidad-precio percibida. A menudo el problema no es "
+                       "el precio sino que no se comunica bien qué incluye la visita o la cata."),
+    "Gastronomía y restauración": ("Revisar la oferta gastronómica (tapeo, maridaje, "
+                                   "restaurante): calidad, variedad y encaje con la visita. En el "
+                                   "Marco el 'vino + comida' es cada vez más parte de la experiencia."),
+    "Vino y cata": ("Revisar la cata en sí: número y variedad de vinos, explicación y ritmo. Es "
+                    "el corazón del producto enoturístico."),
+    "Personal y trato": ("Reforzar la formación del personal de sala y de los guías: es lo que "
+                         "más deleita al visitante cuando va bien."),
+    "Instalaciones": ("Revisar el estado, la comodidad y la señalización de las instalaciones "
+                      "(salas, patios, accesibilidad, limpieza)."),
+    "Visita y experiencia": ("Revisar el guion de la visita: contenido, duración y dinamismo, "
+                             "para que se perciba como una experiencia y no como un trámite."),
+    "Entorno y viñedo": ("Poner en valor el entorno y el viñedo (paisaje, vistas, paseos entre "
+                         "cepas): suele ser un deleitador infrautilizado."),
+}
+
+
+def _accion_atributo(atributo: str, por_defecto: str = "") -> str:
+    """Acción recomendada para un atributo concreto (o una genérica si no está mapeado)."""
+    return ACCIONES_ATRIBUTO.get(atributo, por_defecto or
+                                 "Analizar las reseñas negativas de este atributo para aislar la "
+                                 "causa raíz y actuar sobre el proceso, no sobre el síntoma.")
+
+
 # --------------------------------------------------------------------------- #
 # Recomendaciones para el GESTOR DEL DESTINO
 # --------------------------------------------------------------------------- #
@@ -282,12 +314,11 @@ def recomendaciones_destino(
                 recs.append(Recomendacion(
                     prioridad="alta", inteligencia="Clientes",
                     titulo=f"Frenar el deterioro de «{r['Atributo']}»",
-                    diagnostico=(f"El atributo **{r['Atributo']}** **empeora** con el tiempo "
-                                 f"(variación {var:+.2f} puntos entre el primer y el último "
+                    diagnostico=(f"El **sentimiento** hacia **{r['Atributo']}** **empeora** con el "
+                                 f"tiempo (variación {var:+.2f} puntos entre el primer y el último "
                                  f"periodo). Es un problema estructural, no un mal año."),
-                    accion=("Analizar las reseñas negativas de este atributo para aislar la "
-                            "causa raíz y actuar sobre el proceso (no sobre el síntoma)."),
-                    fuente="Análisis DIPA de 10.972 reseñas"))
+                    accion=_accion_atributo(r["Atributo"]),
+                    fuente="Análisis DIPA (evolución del sentimiento por atributo)"))
 
     # --- 7. Atributo con desempeño crítico (Clientes) ---
     # Complementa al IPA: el cuadrante usa el nº de menciones como "importancia", lo que
@@ -313,13 +344,11 @@ def recomendaciones_destino(
             recs.append(Recomendacion(
                 prioridad="alta", inteligencia="Clientes",
                 titulo=f"Punto débil del destino: «{r['atributo']}»",
-                diagnostico=(f"Es el atributo **peor valorado** del Marco: **{r['desempeno']:.2f}/5**, "
-                             f"frente a una media de {media:.2f} en el resto de atributos "
-                             f"({_menciones(r)} menciones).{nota}"),
-                accion=("Revisar el proceso de reserva y la organización de la visita de punta a "
-                        "punta (confirmaciones, puntualidad, tamaño de grupo, esperas). Es la "
-                        "grieta más clara en una experiencia por lo demás muy bien valorada."),
-                fuente="IPA sobre 10.972 reseñas"))
+                diagnostico=(f"Es de los atributos **peor valorados** del Marco: "
+                             f"**{r['desempeno']:.2f}/5**, frente a una media de {media:.2f} en el "
+                             f"resto ({_menciones(r)} menciones).{nota}"),
+                accion=_accion_atributo(r["atributo"]),
+                fuente="Sentimiento por atributo + importancia por impacto (PRCA)"))
 
     # --- 7-bis. El análisis es sordo al visitante extranjero (Clientes / metodológica) ---
     if not _vacio(anotadas) and "segmento_idioma" in getattr(anotadas, "columns", []):
@@ -340,6 +369,24 @@ def recomendaciones_destino(
                             "Mientras la cobertura sea desigual, comparar la importancia entre "
                             "idiomas produce artefactos, no preferencias reales."),
                     fuente="Detección de idioma sobre las reseñas"))
+
+    # --- 7-ter. Palanca de diferenciación: atributo DELEITADOR (Clientes) ---
+    # La cara positiva del perfil higiene↔deleite: no solo dónde falla el destino, sino dónde
+    # PUEDE destacar. Un deleitador crea satisfacción de verdad; conviene apoyarse en él.
+    if not _vacio(tabla_ipa) and "perfil" in getattr(tabla_ipa, "columns", []):
+        delei = tabla_ipa[tabla_ipa["perfil"] == "Deleitador"]
+        if not delei.empty:
+            r = delei.sort_values("desempeno", ascending=False).iloc[0]
+            recs.append(Recomendacion(
+                prioridad="media", inteligencia="Clientes",
+                titulo=f"Palanca de diferenciación: «{r['atributo']}»",
+                diagnostico=(f"**{r['atributo']}** es un atributo **deleitador**: cuando va bien "
+                             f"**sube de verdad la satisfacción**, no solo evita quejas. Hoy "
+                             f"puntúa **{r['desempeno']:.2f}/5**. Es donde el Marco puede destacar "
+                             f"frente a otras rutas, más que en los atributos que se dan por supuestos."),
+                accion=(_accion_atributo(r["atributo"]) + " Y **comunicarlo en la promoción** del "
+                        "destino: es un motivo de visita, no un simple 'está bien'."),
+                fuente="Perfil higiene↔deleite (PRCA)"))
 
     # --- 8. Reserva online insuficiente (Tecnológica) ---
     if not _vacio(auditoria):
@@ -413,13 +460,35 @@ def recomendaciones_bodega(
                 diag = (f"Es de los atributos **más mencionados** por los visitantes "
                         f"({_menciones(r)} menciones) pero con **desempeño bajo** "
                         f"({r['desempeno']:.2f}/5). Cuadrante IPA: *Concéntrese aquí*.")
+            # Matiz según el perfil: ¿arreglarlo diferencia o solo evita quejas?
+            perfil = str(r.get("perfil", ""))
+            if perfil == "Higiénico":
+                diag += (" Es un atributo **higiénico**: arreglarlo evita quejas, pero no esperes "
+                         "que por sí solo te diferencie.")
+            elif perfil == "Deleitador":
+                diag += (" Y es un atributo **deleitador**: mejorarlo no solo quita quejas, "
+                         "**sube de verdad la satisfacción**. Doble motivo para priorizarlo.")
             recs.append(Recomendacion(
                 prioridad="alta", inteligencia="Clientes",
                 titulo=f"Prioridad de mejora: «{r['atributo']}»",
                 diagnostico=diag,
-                accion=("Es donde cada euro invertido más impacta en la satisfacción: mucha "
-                        "gente lo valora y hoy no está a la altura."),
-                fuente="IPA sobre las reseñas de la bodega"))
+                accion=_accion_atributo(r["atributo"]),
+                fuente="IPA por impacto (PRCA) sobre las reseñas de la bodega"))
+
+    # --- 1-bis. Palanca de diferenciación de la bodega: atributo DELEITADOR ---
+    if not _vacio(ipa) and "perfil" in getattr(ipa, "columns", []):
+        delei = ipa[ipa["perfil"] == "Deleitador"]
+        if not delei.empty:
+            r = delei.sort_values("desempeno", ascending=False).iloc[0]
+            recs.append(Recomendacion(
+                prioridad="media", inteligencia="Clientes",
+                titulo=f"Dónde puede destacar: «{r['atributo']}»",
+                diagnostico=(f"**{r['atributo']}** es un **deleitador** para los visitantes de "
+                             f"esta bodega (crea satisfacción de verdad) y hoy puntúa "
+                             f"**{r['desempeno']:.2f}/5**. Es su palanca para diferenciarse."),
+                accion=(_accion_atributo(r["atributo"]) + " Y usarlo como gancho en la web y en "
+                        "la comunicación de la bodega."),
+                fuente="Perfil higiene↔deleite (PRCA)"))
 
     # --- 2. IPCA: por detrás del Marco en un atributo importante ---
     # (cuadrante 1 = "Actuar: por detrás del Marco")

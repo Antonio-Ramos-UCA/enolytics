@@ -314,6 +314,16 @@
   - 💡 **El semáforo NO se pinta a mano: lo calcula el motor de recomendaciones** (🔴 2+ acciones urgentes · 🟠 1 · 🟡 mejoras · 🟢 sin avisos). Se actualiza solo al cambiar los datos.
 - [x] **Ficha de reputación estilo Booking/Amazon** por bodega (`enolytics/analitica/reputacion.py`, idea de Antonio): distribución de estrellas, "lo que dicen los visitantes", aspectos con signo (↗ ~ ↘) y nº de menciones, reseñas representativas y **tasa de respuesta del propietario**. El resumen es **determinista** (se compone de los datos agregados), no lo genera una IA → reproducible y auditable, a diferencia del de Amazon. **Hallazgo: 11 de 33 bodegas no responden a NINGUNA reseña; González Byass acumula 209 críticas sin contestar.**
 - [x] **Motor de recomendaciones accionables** (`enolytics/analitica/recomendaciones.py`) — el diferencial que promete la memoria. Reglas que cruzan las 7 inteligencias y generan recomendaciones priorizadas, cada una con su diagnóstico (dato que la justifica) y su fuente. Dos niveles: destino (8 recomendaciones, 5 de prioridad alta) y bodega individual.
+- [x] ✅ **Motor de recomendaciones puesto al día (18/07)** para explotar los datos nuevos (PRCA,
+  perfil, sentimiento, Gastronomía):
+  - 🐛 **Bug arreglado:** la acción del "peor atributo del destino" estaba **hardcodeada a
+    'revisar la reserva y la organización'** — sin sentido si el peor era Gastronomía o Precio.
+    Ahora `ACCIONES_ATRIBUTO` da una acción **específica por atributo** (verificado: en Hidalgo –
+    La Gitana, con Gastronomía crítica, aconseja sobre la oferta gastronómica, no la reserva).
+  - ➕ **Palanca de diferenciación** (nueva regla, destino y bodega): surface del atributo
+    **deleitador** — dónde se PUEDE destacar, no solo dónde se falla. La cara positiva del perfil.
+  - La regla 1 de bodega ahora usa el **perfil** (higiénico → "no diferencia"; deleitador →
+    "doble motivo") y acción específica. Fuentes actualizadas (sentimiento/PRCA, no estrellas).
 - [x] **Reorganizar en pestañas** por inteligencia (Gestor: Visión general · Clientes y experiencia · Económica y mercado. Bodega: Ficha · Reseñas y análisis). Añadir más pestañas al sumar inteligencias.
 - [x] **Etiquetado del origen de cada indicador** (🟢 oficial · 🔵 observado · 🟡 estimado) con leyenda en el dashboard. 13 etiquetas en las 7 inteligencias. `config.ORIGENES_DATO` + helper `fuente()`.
 - [x] **Enlace permanente** — PUBLICADO en **https://enolytics-feder-uca.streamlit.app** (Streamlit Community Cloud, repo público `Antonio-Ramos-UCA/enolytics`). Redespliega solo al hacer `git push`. Falta (opcional): restringir vista por correo desde Settings → Sharing.
