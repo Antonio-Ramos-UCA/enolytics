@@ -18,6 +18,7 @@ import streamlit as st
 # Permite ejecutar con `streamlit run` resolviendo el paquete enolytics
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 import plotly.express as px  # noqa: E402
+import plotly.graph_objects as go  # noqa: E402 (grafo de co-ocurrencias)
 
 from enolytics import config  # noqa: E402
 from enolytics.etl import resenas as etl_resenas  # noqa: E402
@@ -27,6 +28,7 @@ from enolytics.nlp import sentimiento as sentimiento_nlp  # noqa: E402 (solo lee
 from enolytics.analitica import ipa as modelo_ipa  # noqa: E402
 from enolytics.analitica import recomendaciones as reco  # noqa: E402
 from enolytics.analitica import reputacion as rep  # noqa: E402
+from enolytics.analitica import coocurrencia as cooc  # noqa: E402
 from enolytics.dashboard import estilo  # noqa: E402
 
 
@@ -390,6 +392,60 @@ def figura_perfil(tabla: pd.DataFrame):
                        text="Deleitador ▶<br><sub>crea satisfacción</sub>",
                        showarrow=False, font=dict(size=11, color=estilo.INK_TENUE), align="right")
     return estilo.figura(fig, alto=290, leyenda=False)
+
+
+def figura_red_coocurrencia(pares: pd.DataFrame, marginales: dict, atributos: list,
+                            valor: str = "coocurrencias"):
+    """Grafo de red de co-ocurrencias de atributos (método co-word).
+
+    Nodos = atributos (tamaño = cuánto se mencionan). Aristas = vínculo entre dos atributos
+    (grosor/opacidad = fuerza). Layout circular, determinista y sin dependencias de servidor.
+    `valor`: 'coocurrencias' (bruto) o 'equivalencia' (Callon, normalizado).
+    """
+    import math
+    n = len(atributos)
+    pos = {a: (math.cos(2 * math.pi * i / n - math.pi / 2),
+               math.sin(2 * math.pi * i / n - math.pi / 2)) for i, a in enumerate(atributos)}
+    fig = go.Figure()
+    vmax = float(pares[valor].max()) if not pares.empty else 1.0
+    fmt = (lambda v: f"{int(v)} reseñas") if valor == "coocurrencias" else (lambda v: f"{v:.3f}")
+    # Aristas (una traza por par, para poder variar el grosor)
+    for _, r in pares.iterrows():
+        a, b, v = r["atributo_a"], r["atributo_b"], r[valor]
+        if v <= 0 or a not in pos or b not in pos:
+            continue
+        frac = v / vmax if vmax else 0
+        if frac < 0.05:            # oculta vínculos casi nulos para no saturar
+            continue
+        (x0, y0), (x1, y1) = pos[a], pos[b]
+        fig.add_trace(go.Scatter(
+            x=[x0, x1], y=[y0, y1], mode="lines",
+            line=dict(width=1 + 11 * frac, color=f"rgba(140,47,57,{0.12 + 0.55 * frac:.3f})"),
+            hoverinfo="text", text=f"{a} ↔ {b}<br>{fmt(v)}", showlegend=False))
+    # Nodos (marcadores en el círculo; tamaño = cuánto se menciona el atributo)
+    mmax = max(marginales.values()) if marginales else 1
+    fig.add_trace(go.Scatter(
+        x=[pos[a][0] for a in atributos], y=[pos[a][1] for a in atributos],
+        mode="markers",
+        marker=dict(size=[18 + 34 * (marginales.get(a, 0) / mmax) for a in atributos],
+                    color=estilo.TINTO, line=dict(width=2, color="#fff"), opacity=0.92),
+        hovertext=[f"{a}<br>{marginales.get(a, 0)} reseñas" for a in atributos],
+        hoverinfo="text", showlegend=False))
+    # Etiquetas FUERA del nodo (en un anillo un poco mayor), para que siempre se lean
+    fig.add_trace(go.Scatter(
+        x=[pos[a][0] * 1.28 for a in atributos], y=[pos[a][1] * 1.28 for a in atributos],
+        mode="text", text=[a.replace(" y ", "<br>y ") for a in atributos],
+        textfont=dict(size=11, color=estilo.INK), hoverinfo="skip", showlegend=False))
+    fig.update_xaxes(visible=False, range=[-1.75, 1.75])
+    fig.update_yaxes(visible=False, range=[-1.55, 1.55], scaleanchor="x", scaleratio=1)
+    return estilo.figura(fig, alto=500, leyenda=False)
+
+
+@st.cache_data
+def cargar_coocurrencia() -> dict:
+    """Co-ocurrencias de atributos (todas / positivas / negativas). Ver analitica/coocurrencia."""
+    an = cargar_resenas_anotadas()
+    return cooc.por_sentimiento(an) if not an.empty else {}
 
 
 @st.cache_data
@@ -1636,6 +1692,55 @@ if rol == VISTA_INTELIGENCIAS:
             if not tabla_dipa.empty:
                 st.caption("Cambio del primer al último periodo con datos:")
                 st.dataframe(tabla_dipa, use_container_width=True, hide_index=True)
+
+        # ----- Co-ocurrencias de atributos (método co-word de la bibliometría) -----
+        st.divider()
+        st.subheader("¿De qué habla junto el visitante? _(co-ocurrencias · método co-word)_")
+        st.caption(
+            "Qué atributos se **mencionan juntos** en una misma reseña. Nodos = atributos "
+            "(tamaño = cuánto se mencionan); líneas = fuerza del vínculo. Es el análisis de "
+            "co-palabras de la bibliometría, aplicado a la experiencia enoturística.")
+        segs = cargar_coocurrencia()
+        if segs:
+            cc1, cc2 = st.columns(2)
+            seg = cc1.radio("Reseñas", ["Todas", "Positivas (≥4★)", "Negativas (≤2★)"],
+                            horizontal=True, key="cooc_seg")
+            med = cc2.radio("Fuerza del vínculo",
+                            ["Co-ocurrencias (bruto)", "Asociación (normalizado)"],
+                            horizontal=True, key="cooc_med")
+            clave = {"Todas": "todas", "Positivas (≥4★)": "positivas",
+                     "Negativas (≤2★)": "negativas"}[seg]
+            valor = "coocurrencias" if med.startswith("Co-") else "equivalencia"
+            bloque = segs.get(clave, {})
+            pares = bloque.get("pares", pd.DataFrame())
+            atributos = list(nlp.ATRIBUTOS.keys())
+            if not pares.empty:
+                st.plotly_chart(
+                    figura_red_coocurrencia(pares, bloque.get("marginales", {}), atributos, valor),
+                    use_container_width=True)
+                if valor == "equivalencia":
+                    st.caption("**Asociación normalizada (índice de equivalencia de Callon):** "
+                               "corrige que los atributos grandes se junten con todo por ser "
+                               "frecuentes, y resalta los vínculos *genuinos*.")
+                else:
+                    st.caption("**Recuento bruto:** nº de reseñas que mencionan los dos atributos. "
+                               "Los muy mencionados dominan; para el vínculo real, mira la vista "
+                               "*normalizada*.")
+                if clave == "negativas":
+                    st.caption(f"⚠️ Solo **{bloque.get('n', 0)} reseñas negativas** con atributo: "
+                               "léelo como señal, no como veredicto.")
+                with st.expander("Ver la matriz y la tabla de pares"):
+                    m = cooc.matriz(pares, atributos, valor)
+                    fig_m = px.imshow(m, color_continuous_scale=estilo.SECUENCIAL, aspect="auto",
+                                      labels=dict(color="Vínculo"))
+                    st.plotly_chart(estilo.figura(fig_m, alto=400, leyenda=False),
+                                    use_container_width=True)
+                    st.dataframe(pares.rename(columns={
+                        "atributo_a": "Atributo A", "atributo_b": "Atributo B",
+                        "coocurrencias": "Co-ocurrencias", "equivalencia": "Asociación (Callon)"}),
+                        use_container_width=True, hide_index=True)
+            else:
+                st.caption("No hay suficientes reseñas en este segmento para el grafo.")
 
     # ----- 5. Inteligencia de Negocios -----
     with tab_neg:

@@ -214,7 +214,18 @@
   - [ ] Falta (opcional): LDA sobre el inglés/otros idiomas por si emergen temas distintos; y el
     flujo Zhang completo (rederivar TODOS los atributos desde LDA), que es rehacer el cimiento.
 - [ ] Validar/afinar el léxico de atributos con criterio experto (Paula / bodegas).
-- [ ] 💡 **GRAFO DE CO-OCURRENCIAS DE ATRIBUTOS (análisis co-word)** (idea de Antonio, 21/07).
+- [x] ✅ **GRAFO DE CO-OCURRENCIAS DE ATRIBUTOS (método co-word) HECHO (22/07)**, idea de Antonio.
+  `enolytics/analitica/coocurrencia.py` + grafo de red en el dashboard (pestaña Clientes, "¿De qué
+  habla junto el visitante?"). **Dos medidas:** recuento bruto y **equivalencia de Callon**
+  (c_ij²/(c_i·c_j), normalizada, para que los atributos grandes no dominen). **Capa de sentimiento:**
+  todas / positivas (≥4★) / negativas (≤2★). Grafo Plotly con layout circular (sin dependencias de
+  servidor; networkx no está en requirements). Nodos = atributos (tamaño = menciones), aristas =
+  vínculo. Expander con matriz (heatmap) + tabla de pares. **Hallazgo:** el núcleo de la experiencia
+  (Vino·Visita·Instalaciones·Personal) está muy conectado; Precio/Organización/Gastronomía/Entorno
+  quedan en la periferia (se mencionan más sueltos). Verificado: renderiza sin excepciones en los
+  3 segmentos × 2 medidas.
+  - [ ] Posible v2: llevarlo también a nivel de bodega; detección de comunidades (con 8 nodos es
+    limitado); y cruzarlo con el resto del análisis.
   Representar qué atributos se **mencionan juntos** dentro de una misma reseña, con el método
   **co-word** de la bibliometría: matriz de co-ocurrencias + **grafo de red** (nodos = atributos,
   aristas = nº de reseñas que los mencionan a la vez; grosor = frecuencia). Revela la **estructura
