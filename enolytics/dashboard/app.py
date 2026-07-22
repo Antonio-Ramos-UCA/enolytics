@@ -1124,6 +1124,7 @@ if rol == VISTA_GUIA:
     st.caption("Algunos indicadores de la memoria (empleo por bodega, consumos ambientales, "
                "precios de experiencias) se completarán con cuestionarios y fuentes adicionales, "
                "porque no existen en abierto.")
+    st.stop()
 
 # --------------------------------------------------------------------------- #
 # VISTA — SIMULADOR «¿y si…?» (Pieza 3 de Paula): mueve una palanca, proyecta el efecto
