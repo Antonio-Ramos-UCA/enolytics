@@ -4,8 +4,9 @@
 > poder continuar desde cualquier ordenador (este proyecto está en Dropbox y se
 > sincroniza). Si retomas con Claude en otro equipo, pásale este archivo primero.
 >
-> **Última actualización:** 2026-07-18 (PRCA conectada, Kano→espectro, Gastronomía vía LDA como
-> 8.º atributo, y 4 mejoras de UX — leer la sesión del 18/07)
+> **Última actualización:** 2026-07-22 (Simulador «¿y si…?» = Pieza 3 de Paula; cabecera «filo de
+> vino» = Opción A de Paula; **precios de las visitas** obtenidos vía extractor híbrido — leer la
+> sesión del 22/07. Pendiente: decidir cómo cablear el precio al dashboard)
 
 ---
 
@@ -161,6 +162,54 @@ streamlit, pandas, sklearn, plotly, matplotlib, requests, bs4.
 5. **Integrar todo en el dashboard** (pestañas de reseñas, sentimiento, cuadrantes IPA).
 6. **En paralelo (no bloquea):** diseñar cuestionarios a partir de la Tabla 1 de la
    memoria; incorporar indicadores oficiales (INE, Dataestur, ACEVIN, Google Trends).
+
+## ═══ SESIÓN 2026-07-22 — SIMULADOR (Pieza 3), CABECERA «FILO DE VINO» Y PRECIOS DE VISITA ═══
+> Se cerró la 3.ª pieza de Paula, se aligeró la cabecera (Opción A de Paula) y se abrió una
+> **vía de datos nueva: el precio de las visitas** (el hueco que el motor de competidores esperaba).
+
+**1. ✅ PIEZA 3 — SIMULADOR «¿y si…?»** 5.ª vista **🎛️ Simulador** con banner fijo *"proyecta un
+escenario, no predice el futuro"*. Cuatro palancas con cifra base **real** y cálculo explícito:
+💶 Monetización (ingreso/visitante → ingresos; 40,4→55 € = +6,2 M€), 🚢 Cruceros (% de 624.540
+cruceristas → visitantes+€; 5% = +31.227), ⭐ Respuesta a críticos (contestar de las 590 ≤2★ sin
+respuesta → tasa; **KPI de gestión, NO predicción de estrellas**), 🎯 Calidad percibida (subir un
+atributo recoloca en el mapa IPA con umbrales fijos; «Organización» +0,6 cambia de cuadrante).
+**Las 3 piezas de Paula quedan COMPLETADAS.**
+
+**2. ✅ FIX — La vista Guía arrastraba la ficha de bodega** (le faltaba `st.stop()`; la sección de
+Bodega es el `else` final del árbol de vistas). Añadido `st.stop()` al final de la Guía.
+
+**3. ✅ CABECERA «FILO DE VINO» (Opción A de Paula).** Los dos bloques marrones oscuros apilados
+(marca global + título de sección) pesaban demasiado. Ahora **una sola cabecera clara por página**:
+fondo albariza, filo degradado de la escala del vino (fino→PX) de 6 px arriba, marca ENOLYTICS
+discreta + título de sección con barra oloroso. En `estilo.py` (`.eno-hero` + `hero()` reescrito,
+constantes MARCA/TAGLINE) y `app.py` (cabecera única tras conocer `rol`, dict `_CABECERAS`; se
+quitó la cabecera global oscura y los `hero()` duplicados de Guía y Simulador).
+
+**4. ⏳ PRECIOS DE LAS VISITAS (dato nuevo, a raíz de una pregunta de Antonio).** Enfoque **híbrido
+con humano en el bucle**, NO scraper a ciegas. Módulo `enolytics/ingesta/precios.py`: recorre la web
+propia de la bodega, localiza páginas de visitas/reservas y extrae importes en € **con su contexto**
+y nivel de confianza (alta si hay palabra visita/cata cerca), con filtro de ruido de tienda; marca
+las webs SPA que no puede leer. Reutiliza `navegador.obtener_html`.
+- Lote sobre 38 webs → `datos/procesado/precios_experiencias_candidatos.csv` (148 candidatos, 85
+  confianza alta, **19 bodegas `ok`**; estados: 19 ok / 14 sin_precio / 4 spa / 1 fetch_error).
+- SPA y sin-precio-en-HTML (W&H, Osborne, Argüeso, Díez Mérito, Álvaro Domecq, Gutiérrez Colosía,
+  Luis Pérez) resueltas por **WebFetch/WebSearch** de su página oficial → seed curado
+  `datos/procesado/precios_experiencias.csv` (13 experiencias con precio + fuente/método/confianza;
+  4 «a consultar»: Rey Fernando, Coop. Albarizas, Halcón, Viña El Carmen). **Antonio validó W&H.**
+- **Precios de referencia:** entrada ~15 €, estándar 20-35 €, premium 50-98 €, alta gama hasta 315 €
+  (Tradición, candidato a confirmar). W&H 25-80 €, Osborne 25/70 €, Barbadillo 5-120 €.
+- **Informe visual** publicado como artefacto (identidad «filo de vino»): cobertura, mapa de precios,
+  tabla verificada, candidatos, método. Hallazgo con valor de producto: **entrada barata (~15 €) ↔
+  baja monetización (40,4 €/visitante)** = el margen que dibuja el simulador.
+- **NO cableado al dashboard todavía** (decisión pendiente de Antonio). Los precios «media» y los
+  candidatos del scraper están **sin verificar por el equipo**; principio de la casa: no publicar
+  dato no confirmado. Opciones planteadas: **A)** cablear solo la ficha de bodega con lo de
+  confianza «alta»; **B)** esperar a que el equipo verifique y cablear las 4 integraciones (ficha,
+  «Precio y valor» real, dimensión precio del motor de competidores, palanca del simulador).
+
+**PENDIENTE al retomar:** decidir A/B sobre el cableado del precio; verificación del CSV curado por
+el equipo; cuestionario para las «a consultar». Todo lo demás subido y verificado (AppTest + captura
+del diseño). Propuestas de Fernando aún por llegar.
 
 ## ═══ SESIÓN 2026-07-21/22 — CO-OCURRENCIAS + PROPUESTAS DE PAULA (Piezas 1 y 2) ═══
 > Sesión centrada en la **propuesta de mejora de Paula (IP)** para convertir el dashboard en producto.
