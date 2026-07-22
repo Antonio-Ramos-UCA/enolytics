@@ -2166,6 +2166,13 @@ else:
                    "(recursos); perfil de sentimiento por atributo, nota, ubicación e idioma "
                    "(mercado). **v1 sin el precio de la visita** (pendiente): el eje de mercado se "
                    "calcula sin él y se refinará cuando lo tengamos.")
+            st.caption(
+                "📖 **Metodología:** Zhou, R., Song, B., Li, G. y Law, R. (2026), *«A data-driven "
+                "approach to competitor identification and categorization in the hotel industry»*, "
+                "**International Journal of Hospitality Management**, 133, 104503. Identificación de "
+                "competidores por *clustering* **K-prototypes** (Ji et al., 2012); categorización "
+                "según la **teoría de Kamensky** (2000) con **distancia de Gower**. Adaptado del "
+                "hotel a la bodega enoturística.")
 
     # ----- Pestaña: Ficha -----
     with tab_ficha:
