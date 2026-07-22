@@ -365,6 +365,63 @@
 - [x] **Enlace permanente** — PUBLICADO en **https://enolytics-feder-uca.streamlit.app** (Streamlit Community Cloud, repo público `Antonio-Ramos-UCA/enolytics`). Redespliega solo al hacer `git push`. Falta (opcional): restringir vista por correo desde Settings → Sharing.
 - [ ] **Automatización incremental** de reseñas (API Outscraper + programación) — la parte "periódica" de la memoria.
 
+## ⭐ PROPUESTAS DE PAULA (IP) — convertir el dashboard en PRODUCTO (21/07)
+> Paula mandó 3 "piezas" + datos + temas de memoria (artefacto revisado el 21/07). Idea de fondo:
+> el análisis ya está y es potente; lo que falta no es más análisis, es **empaquetarlo en
+> entregables** y **dejar que el usuario proyecte escenarios**. Ninguna empieza de cero. Alineado
+> 100% con el norte (producto que las bodegas quieran usar), ver [[enolytics-objetivo-producto]].
+
+- [ ] ⭐⭐ **PIEZA 1 — INFORME DESCARGABLE POR BODEGA (PDF)**, desde su ficha. Estructura del ejemplo
+  de Paula (diseño definitivo): **Parte A «Quién eres»** (reputación: valoración, vs media Marco,
+  % contestadas; procedencia por idioma) + **Parte B «Cómo compites y qué hacer»** (competidores
+  directos; fortalezas/debilidades por atributo; presencia digital y sostenibilidad;
+  recomendaciones; contexto del Marco). Ella dice **7 de 11 secciones ya existen** → volcarlas al PDF.
+  - 🎯 **EL CORAZÓN Y LO GENUINAMENTE NUEVO: competidores DIRECTOS de cada bodega** con metodología
+    **ACEDE (Market Commonality + Resource Similarity, Chen 1996)**. ≠ del IPCA (que compara contra
+    la MEDIA del Marco): esto son sus **3-5 rivales concretos**. Pasos de Paula: (1) ficha de rasgos
+    por bodega (perfil de atributos del sentimiento BERT + idioma nal/intl + servicios + tamaño +
+    madurez digital + certificación — **todo existe ya**; solo falta el **precio de la visita**,
+    ya en backlog); (2) similitud entre pares → matriz "quién se parece a quién"; (3) 3-5 más
+    parecidas = competidores directos.
+  - 💻 **Lectura técnica (ARRR+Claude):** la parte A es directa (ya tenemos reputación, perfil,
+    recomendaciones). El motor MC+RS es asequible (matriz de similitud + vecinos cercanos sobre
+    datos que ya están). Añadido técnico: **generar el PDF** (librería nueva: reportlab/weasyprint;
+    o `st.download_button`). Valor: **es lo que hará que las bodegas quieran usar la plataforma y
+    rellenen las encuestas**; cuenta como entregable/transferencia FEDER.
+
+- [ ] ⭐ **PIEZA 2 — GUÍA DE USO / METODOLOGÍA** (documento + página de ayuda en el dashboard).
+  Explica qué contiene cada apartado y de dónde sale cada dato. 5 secciones del ejemplo: (1) origen
+  de cada indicador (🟢 oficial/🔵 observado/🟡 estimado), (2) las 3 vistas, (3) las 7 inteligencias
+  (pregunta + fuente), (4) los análisis sin jerga (IPA/PRCA/Kano/IPCA/DIPA/DIPCA en una frase),
+  (5) fuentes. Doble uso: el bodeguero confía + **anexo de metodología para FEDER ya escrito**.
+  - 💻 **Casi se genera sola:** ya tenemos `config.ORIGENES_DATO`, `OBJETIVOS_INTELIGENCIAS`, la
+    leyenda de orígenes y los títulos en lenguaje llano. Es ensamblar contenido existente.
+
+- [ ] ⭐ **PIEZA 3 — SIMULADOR "¿QUÉ PASARÍA SI…?"**. Mueves una palanca y ves el efecto estimado
+  (responder las 209 críticas; subir ingreso/visitante a 55€ → +6,2 M€; captar 5% de cruceristas →
+  +34.808 visitantes; subir «Organización» medio punto → cambia de cuadrante IPA). Cierra una
+  promesa literal de la memoria ("simulaciones y proyecciones de escenarios") y es el efecto "wow".
+  - ⚠️ **Honestidad (Paula insiste):** son **proyecciones lineales, no predicciones**. El simulador
+    debe dejar claro que proyecta un escenario. Lo de "cambiar de cuadrante" hay que calcularlo con
+    el PRCA real. Usa modelos que ya tenemos (PRCA, reputación, ingreso/visitante).
+  - **Orden sugerido por Paula:** informe (lo más vendible) → simulador (el wow) → guía (cierre).
+
+- [ ] **Datos nuevos que prioriza Paula** (algunos ya en "Datos y fuentes"/"NLP"): **índice de
+  presencia digital / redes** (Instagram/Facebook + seguidores, estar en TripAdvisor/Vivino,
+  canales de reserva → índice por bodega, destapa las invisibles online) [NUEVO]; **Google Routes /
+  Distance Matrix** (tiempos REALES coche y transporte público, arregla la limitación de línea
+  recta de transporte sostenible; da rigor al "a 40 min de Jerez") [NUEVO]; **YouTube Data API**
+  (nº vídeos/visualizaciones por bodega → alcance de marca, cuota gratuita) [NUEVO]; y ya en lista:
+  TripAdvisor+Vivino, precios de experiencias (Civitatis/GetYourGuide), afluencia Google Places,
+  atributos de Google Places (accesibilidad física real). ⚠️ Aviso de Paula: scraping tiene
+  términos de uso y las APIs de Google Maps tienen coste por consulta (capa gratuita holgada para 42).
+
+- [ ] **Temas de MEMORIA/FEDER que Paula deja para hablar en equipo** (no son producto): justificar
+  por escrito el cambio **Power BI → Streamlit**; decidir qué hacer con los **3.500 € de Azure sin
+  ejecutar**; decidir si se **restringe el acceso** (la memoria dice "solo autorizados", hoy es
+  público); **cuestionarios** (hito Fase 1, sin diseñar); recoger datos del piloto **Emilio Hidalgo**
+  con Fernando y Águeda.
+
 ## Pendientes menores de datos
 - [x] **Superar el bloqueo anti-bot** (`enolytics/ingesta/navegador.py`, Playwright): las webs con verificación de edad se leen abriendo un Chromium real. **29 → 38 webs auditadas** en las 3 auditorías (madurez, accesibilidad, sostenibilidad); 15 rescatadas. **Bodegas Tradición (piloto) recuperada: 5/5 madurez, 7/8 accesibilidad.** Siguen sin web accesible: Emilio Hidalgo (piloto), Yuste, Caydsa, El Piraña.
 - [ ] Resolver identidad de **AC Wines** en Google (excluida del corpus).
