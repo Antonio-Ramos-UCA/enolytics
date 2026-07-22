@@ -2130,6 +2130,20 @@ else:
             vacio="Sin recomendaciones pendientes: esta bodega no presenta puntos críticos "
                   "con los datos disponibles.")
 
+        # Informe PDF descargable (Pieza 1 de Paula): todo lo de la ficha en un documento.
+        st.divider()
+        st.markdown("#### 📄 Informe de la bodega")
+        st.caption("Un PDF de una página con la reputación, los competidores directos, las "
+                   "fortalezas/debilidades y qué hacer. Pensado para entregar a la bodega.")
+        try:
+            from enolytics.dashboard import informe as _informe
+            pdf_bytes = _informe.generar_pdf_bodega(nombre, recs_bod, res_bod_r, rating_marco)
+            st.download_button("⬇️  Descargar informe (PDF)", data=pdf_bytes,
+                               file_name=f"ENOLYTICS_{nombre.replace(' ', '_')}.pdf",
+                               mime="application/pdf")
+        except Exception as e:  # el PDF nunca debe tumbar la ficha
+            st.caption(f"(No se pudo generar el informe PDF: {e})")
+
     # ----- Pestaña: Competidores directos (Zhou et al., 2026) -----
     with tab_comp:
         df_comp, viables_comp = cargar_competidores()

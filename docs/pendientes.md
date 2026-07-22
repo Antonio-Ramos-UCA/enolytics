@@ -398,9 +398,14 @@
   - En el dashboard: pestaña **🥊 Competidores** de la ficha de bodega, con lista + **mapa de
     terreno competitivo** (cuadrantes de Kamensky). Precalculado a `competidores.csv` (el servidor
     solo lee; `kmodes` no entra en requirements). Verificado (HTTP/AppTest + imagen del mapa).
-- [ ] **Falta de la Pieza 1: volcar el informe a PDF.** El contenido (reputación, competidores,
-  fortalezas/debilidades, presencia digital, recomendaciones) ya existe; falta generarlo como PDF
-  descargable (librería tipo reportlab/weasyprint) con el diseño del ejemplo de Paula.
+- [x] ✅⭐ **HECHO (22/07) — INFORME PDF DESCARGABLE POR BODEGA** (completa la Pieza 1).
+  `enolytics/dashboard/informe.py` genera el PDF **en vivo con `fpdf2`** (puro Python; weasyprint
+  no vale en Streamlit Cloud por sus dependencias de sistema). Una página con la identidad caoba de
+  Jerez y la estructura del ejemplo de Paula: Parte A (reputación + KPIs) y Parte B (competidores
+  directos, fortalezas/debilidades, presencia digital y sostenibilidad, qué hacer, contexto del
+  Marco). Botón **⬇️ Descargar informe (PDF)** en la ficha (pestaña Recomendaciones). Verificado:
+  se genera sin errores incluso en bodegas sin datos (Emilio Hidalgo, Díez Mérito) y revisado en
+  imagen (diseño limpio, cabe en 1 página). `fpdf2` sí entra en `requirements.txt` (es puro Python).
   - Estructura del PDF (ejemplo de Paula, diseño definitivo): **Parte A «Quién eres»** (reputación
     + procedencia por idioma) + **Parte B «Cómo compites»** (competidores directos —ya calculados—,
     fortalezas/debilidades por atributo, presencia digital y sostenibilidad, recomendaciones,

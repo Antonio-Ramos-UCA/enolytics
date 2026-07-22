@@ -9,3 +9,6 @@
 streamlit==1.52.2      # versión probada; soporta use_container_width. Al subirla, migrar a width=
 pandas>=2.0,<3.0       # permite parches, bloquea un salto de versión mayor
 plotly>=5.18,<7.0
+
+# Generación del informe PDF por bodega (puro Python, sin dependencias de sistema).
+fpdf2==2.8.7
