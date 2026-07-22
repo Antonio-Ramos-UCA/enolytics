@@ -382,23 +382,31 @@
 > entregables** y **dejar que el usuario proyecte escenarios**. Ninguna empieza de cero. Alineado
 > 100% con el norte (producto que las bodegas quieran usar), ver [[enolytics-objetivo-producto]].
 
-- [ ] ⭐⭐ **PIEZA 1 — INFORME DESCARGABLE POR BODEGA (PDF)**, desde su ficha. Estructura del ejemplo
-  de Paula (diseño definitivo): **Parte A «Quién eres»** (reputación: valoración, vs media Marco,
-  % contestadas; procedencia por idioma) + **Parte B «Cómo compites y qué hacer»** (competidores
-  directos; fortalezas/debilidades por atributo; presencia digital y sostenibilidad;
-  recomendaciones; contexto del Marco). Ella dice **7 de 11 secciones ya existen** → volcarlas al PDF.
-  - 🎯 **EL CORAZÓN Y LO GENUINAMENTE NUEVO: competidores DIRECTOS de cada bodega** con metodología
-    **ACEDE (Market Commonality + Resource Similarity, Chen 1996)**. ≠ del IPCA (que compara contra
-    la MEDIA del Marco): esto son sus **3-5 rivales concretos**. Pasos de Paula: (1) ficha de rasgos
-    por bodega (perfil de atributos del sentimiento BERT + idioma nal/intl + servicios + tamaño +
-    madurez digital + certificación — **todo existe ya**; solo falta el **precio de la visita**,
-    ya en backlog); (2) similitud entre pares → matriz "quién se parece a quién"; (3) 3-5 más
-    parecidas = competidores directos.
-  - 💻 **Lectura técnica (ARRR+Claude):** la parte A es directa (ya tenemos reputación, perfil,
-    recomendaciones). El motor MC+RS es asequible (matriz de similitud + vecinos cercanos sobre
-    datos que ya están). Añadido técnico: **generar el PDF** (librería nueva: reportlab/weasyprint;
-    o `st.download_button`). Valor: **es lo que hará que las bodegas quieran usar la plataforma y
-    rellenen las encuestas**; cuenta como entregable/transferencia FEDER.
+- [x] ✅⭐⭐ **HECHO (22/07) — MOTOR DE COMPETIDORES DIRECTOS** (el corazón de la Pieza 1).
+  `enolytics/analitica/competidores.py`, fiel a **Zhou et al. (2026)**, *"A data-driven approach to
+  competitor identification and categorization in the hotel industry"*, IJHM 133 (`BIBLIOGRAFIA/
+  Zhou_2026_IJHM.pdf`). 3 etapas: (1) rasgos por bodega; (2) **K-prototypes** (librería `kmodes`,
+  maneja numérico+categórico) → mismo clúster = competidores; (3) **Kamensky** (core/sustituto/
+  marginal/potencial) con **distancia de Gower** en dos ejes: **Mercado (MC)** = perfil de
+  sentimiento por atributo + nota + ubicación (haversine) + % internacional; **Recursos (RS)** =
+  servicios (one-hot) + certificación FEV + madurez digital + tamaño.
+  - **Decisiones (con Antonio):** v1 **sin precio** (Gower degrada, se añade luego); solo bodegas
+    con perfil mínimo (≥4 atributos + GPS + servicios) → **37 de 42**; a las 5 pobres, mensaje honesto.
+  - k=3 por silueta sobre Gower combinada; umbrales por mediana. **Cara validada:** Barbadillo →
+    Osborne (Core), Lustau, González Byass; Tradición → Álvaro Domecq, Cayetano del Pino, Mar 7
+    (grupo premium). Reparto de tipos: 121 Core · 30 Marginal · 22 Sustituto · 12 Potencial.
+  - En el dashboard: pestaña **🥊 Competidores** de la ficha de bodega, con lista + **mapa de
+    terreno competitivo** (cuadrantes de Kamensky). Precalculado a `competidores.csv` (el servidor
+    solo lee; `kmodes` no entra en requirements). Verificado (HTTP/AppTest + imagen del mapa).
+- [ ] **Falta de la Pieza 1: volcar el informe a PDF.** El contenido (reputación, competidores,
+  fortalezas/debilidades, presencia digital, recomendaciones) ya existe; falta generarlo como PDF
+  descargable (librería tipo reportlab/weasyprint) con el diseño del ejemplo de Paula.
+  - Estructura del PDF (ejemplo de Paula, diseño definitivo): **Parte A «Quién eres»** (reputación
+    + procedencia por idioma) + **Parte B «Cómo compites»** (competidores directos —ya calculados—,
+    fortalezas/debilidades por atributo, presencia digital y sostenibilidad, recomendaciones,
+    contexto del Marco). 7 de 11 secciones ya existen; el motor de competidores, también. Falta el
+    volcado a PDF. NOTA: la metodología de competidores NO es el Chen 1996 clásico que se supuso al
+    principio, sino **Zhou et al. 2026** (K-prototypes + Kamensky), ya implementado.
 
 - [ ] ⭐ **PIEZA 2 — GUÍA DE USO / METODOLOGÍA** (documento + página de ayuda en el dashboard).
   Explica qué contiene cada apartado y de dónde sale cada dato. 5 secciones del ejemplo: (1) origen

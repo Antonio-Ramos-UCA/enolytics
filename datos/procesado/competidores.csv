@@ -1,0 +1,186 @@
+bodega,competidor,rango,tipo,dist_mercado,dist_recursos,dist_combinada,localidad_comp,rating_comp,umbral_mc,umbral_rs
+Bodega Cooperativa Albarizas,Bodegas Rey Fernando De Castilla,1,Core,0.169,0.159,0.164,Jerez de la Frontera,4.6,0.232,0.311
+Bodega Cooperativa Albarizas,Bodegas Barón,2,Core,0.194,0.136,0.165,Sanlúcar de Barrameda,4.9,0.232,0.311
+Bodega Cooperativa Albarizas,Bodegas Álvaro Domecq,3,Core,0.209,0.141,0.175,Jerez de la Frontera,4.8,0.232,0.311
+Bodega Cooperativa Albarizas,Bodegas Cayetano Del Pino,4,Marginal,0.291,0.061,0.176,Jerez de la Frontera,4.7,0.232,0.311
+Bodega Cooperativa Albarizas,Bodegas Forlong,5,Core,0.177,0.178,0.177,El Puerto de Santa María,4.9,0.232,0.311
+Bodega Gago & Co. Barrels – Wines,Bodegas Rey Fernando De Castilla,1,Core,0.187,0.176,0.182,Jerez de la Frontera,4.6,0.232,0.311
+Bodega Gago & Co. Barrels – Wines,Bodegas Barón,2,Marginal,0.233,0.153,0.193,Sanlúcar de Barrameda,4.9,0.232,0.311
+Bodega Gago & Co. Barrels – Wines,Viña La Torre,3,Sustituto,0.11,0.316,0.213,El Puerto de Santa María / Jerez de la Frontera,4.9,0.232,0.311
+Bodega Gago & Co. Barrels – Wines,Bodega Cooperativa Albarizas,4,Core,0.161,0.269,0.215,Trebujena,4.9,0.232,0.311
+Bodega Gago & Co. Barrels – Wines,Bodegas Tradición,5,Core,0.158,0.294,0.226,Jerez de la Frontera,4.7,0.232,0.311
+Bodega Mar 7,Bodegas Forlong,1,Core,0.141,0.051,0.096,El Puerto de Santa María,4.9,0.232,0.311
+Bodega Mar 7,Bodegas Espinosa De Los Monteros,2,Core,0.09,0.127,0.109,Jerez de la Frontera,5.0,0.232,0.311
+Bodega Mar 7,Bodegas Manuel Aragón,3,Core,0.208,0.052,0.13,Chiclana de la Frontera,4.7,0.232,0.311
+Bodega Mar 7,Bodegas Álvaro Domecq,4,Core,0.188,0.077,0.133,Jerez de la Frontera,4.8,0.232,0.311
+Bodega Mar 7,Viña La Torre,5,Core,0.119,0.146,0.133,El Puerto de Santa María / Jerez de la Frontera,4.9,0.232,0.311
+"Bodega, Viña Y Casa Rural Santa Petronila",Cooperativa De Viticultores Chiclaneros,1,Core,0.201,0.253,0.227,Chiclana de la Frontera,4.3,0.232,0.311
+"Bodega, Viña Y Casa Rural Santa Petronila",Bodegas Dios Baco,2,Marginal,0.236,0.286,0.261,Jerez de la Frontera,4.4,0.232,0.311
+"Bodega, Viña Y Casa Rural Santa Petronila",Bodegas Lustau,3,Sustituto,0.225,0.486,0.355,Jerez de la Frontera,4.5,0.232,0.311
+"Bodega, Viña Y Casa Rural Santa Petronila",Bodegas Osborne,4,Sustituto,0.225,0.593,0.409,El Puerto de Santa María,4.5,0.232,0.311
+"Bodega, Viña Y Casa Rural Santa Petronila",Bodegas Barbadillo,5,Sustituto,0.231,0.626,0.428,Sanlúcar de Barrameda,4.5,0.232,0.311
+Bodegas Altanza,Bodegas Luis Pérez,1,Core,0.155,0.015,0.085,Jerez de la Frontera,4.7,0.232,0.311
+Bodegas Altanza,Bodegas Díez Mérito,2,Core,0.124,0.068,0.096,Jerez de la Frontera,4.7,0.232,0.311
+Bodegas Altanza,Bodegas Hidalgo – La Gitana,3,Core,0.139,0.123,0.131,Sanlúcar de Barrameda,4.8,0.232,0.311
+Bodegas Altanza,Bodegas Herederos De Argüeso,4,Core,0.196,0.073,0.134,Sanlúcar de Barrameda,4.5,0.232,0.311
+Bodegas Altanza,Cooperativa Agrícola Virgen De Palomares,5,Core,0.226,0.051,0.138,Trebujena,4.6,0.232,0.311
+Bodegas Barbadillo,Bodegas Osborne,1,Core,0.178,0.217,0.197,El Puerto de Santa María,4.5,0.232,0.311
+Bodegas Barbadillo,Bodegas Lustau,2,Sustituto,0.202,0.396,0.299,Jerez de la Frontera,4.5,0.232,0.311
+Bodegas Barbadillo,Bodegas Dios Baco,3,Potencial,0.233,0.377,0.305,Jerez de la Frontera,4.4,0.232,0.311
+Bodegas Barbadillo,Bodegas González Byass – Tío Pepe,4,Potencial,0.405,0.388,0.396,Jerez de la Frontera,4.2,0.232,0.311
+Bodegas Barbadillo,"Bodega, Viña Y Casa Rural Santa Petronila",5,Sustituto,0.231,0.626,0.428,Jerez de la Frontera,4.4,0.232,0.311
+Bodegas Barón,Bodegas Rey Fernando De Castilla,1,Marginal,0.249,0.04,0.144,Jerez de la Frontera,4.6,0.232,0.311
+Bodegas Barón,Bodega Cooperativa Albarizas,2,Core,0.194,0.136,0.165,Trebujena,4.9,0.232,0.311
+Bodegas Barón,Viña La Torre,3,Core,0.169,0.212,0.19,El Puerto de Santa María / Jerez de la Frontera,4.9,0.232,0.311
+Bodegas Barón,Bodega Gago & Co. Barrels – Wines,4,Marginal,0.233,0.153,0.193,Jerez de la Frontera,4.9,0.232,0.311
+Bodegas Barón,Bodegas Espinosa De Los Monteros,5,Core,0.204,0.199,0.202,Jerez de la Frontera,5.0,0.232,0.311
+Bodegas Caydsa,Bodegas Herederos De Argüeso,1,Marginal,0.271,0.134,0.203,Sanlúcar de Barrameda,4.5,0.232,0.311
+Bodegas Caydsa,Bodegas Real Tesoro & Valdespino,2,Marginal,0.348,0.06,0.204,Jerez de la Frontera,4.6,0.232,0.311
+Bodegas Caydsa,Bodegas Díez Mérito,3,Marginal,0.321,0.129,0.225,Jerez de la Frontera,4.7,0.232,0.311
+Bodegas Caydsa,Cooperativa Agrícola Virgen De Palomares,4,Marginal,0.319,0.174,0.247,Trebujena,4.6,0.232,0.311
+Bodegas Caydsa,Bodegas Páez Morilla,5,Marginal,0.342,0.161,0.251,Jerez de la Frontera,4.6,0.232,0.311
+Bodegas Cayetano Del Pino,Bodegas Álvaro Domecq,1,Core,0.143,0.178,0.161,Jerez de la Frontera,4.8,0.232,0.311
+Bodegas Cayetano Del Pino,Bodegas Rey Fernando De Castilla,2,Core,0.196,0.152,0.174,Jerez de la Frontera,4.6,0.232,0.311
+Bodegas Cayetano Del Pino,Bodega Cooperativa Albarizas,3,Marginal,0.291,0.061,0.176,Trebujena,4.9,0.232,0.311
+Bodegas Cayetano Del Pino,Bodegas Manuel Aragón,4,Marginal,0.243,0.154,0.198,Chiclana de la Frontera,4.7,0.232,0.311
+Bodegas Cayetano Del Pino,Bodegas Tradición,5,Sustituto,0.117,0.314,0.216,Jerez de la Frontera,4.7,0.232,0.311
+Bodegas Cortijo De Jara,Covisan – Cooperativa Vitivinícola Sanluqueña,1,Core,0.128,0.301,0.215,Sanlúcar de Barrameda,4.6,0.232,0.311
+Bodegas Cortijo De Jara,Finca La Pintora,2,Core,0.204,0.254,0.229,Rota,5.0,0.232,0.311
+Bodegas Cortijo De Jara,Cooperativa Agrícola Virgen De Palomares,3,Sustituto,0.15,0.376,0.263,Trebujena,4.6,0.232,0.311
+Bodegas Cortijo De Jara,Bodegas Real Tesoro & Valdespino,4,Sustituto,0.21,0.323,0.267,Jerez de la Frontera,4.6,0.232,0.311
+Bodegas Cortijo De Jara,Bodegas Hidalgo – La Gitana,5,Sustituto,0.134,0.446,0.29,Sanlúcar de Barrameda,4.8,0.232,0.311
+Bodegas Delgado Zuleta,Covisan – Cooperativa Vitivinícola Sanluqueña,1,Core,0.224,0.047,0.136,Sanlúcar de Barrameda,4.6,0.232,0.311
+Bodegas Delgado Zuleta,Bodegas Herederos De Argüeso,2,Core,0.131,0.229,0.18,Sanlúcar de Barrameda,4.5,0.232,0.311
+Bodegas Delgado Zuleta,Bodegas Altanza,3,Marginal,0.233,0.177,0.205,Jerez de la Frontera,4.7,0.232,0.311
+Bodegas Delgado Zuleta,Bodegas Díez Mérito,4,Core,0.186,0.234,0.21,Jerez de la Frontera,4.7,0.232,0.311
+Bodegas Delgado Zuleta,Bodegas Hidalgo – La Gitana,5,Core,0.187,0.258,0.222,Sanlúcar de Barrameda,4.8,0.232,0.311
+Bodegas Dios Baco,"Bodega, Viña Y Casa Rural Santa Petronila",1,Marginal,0.236,0.286,0.261,Jerez de la Frontera,4.4,0.232,0.311
+Bodegas Dios Baco,Bodegas Barbadillo,2,Potencial,0.233,0.377,0.305,Sanlúcar de Barrameda,4.5,0.232,0.311
+Bodegas Dios Baco,Bodegas González Byass – Tío Pepe,3,Potencial,0.246,0.389,0.318,Jerez de la Frontera,4.2,0.232,0.311
+Bodegas Dios Baco,Bodegas Lustau,4,Sustituto,0.174,0.522,0.348,Jerez de la Frontera,4.5,0.232,0.311
+Bodegas Dios Baco,Cooperativa De Viticultores Chiclaneros,5,Sustituto,0.196,0.539,0.368,Chiclana de la Frontera,4.3,0.232,0.311
+Bodegas Díez Mérito,Bodegas Páez Morilla,1,Core,0.112,0.032,0.072,Jerez de la Frontera,4.6,0.232,0.311
+Bodegas Díez Mérito,Bodegas Herederos De Argüeso,2,Core,0.154,0.005,0.08,Sanlúcar de Barrameda,4.5,0.232,0.311
+Bodegas Díez Mérito,Bodegas Altanza,3,Core,0.124,0.068,0.096,Jerez de la Frontera,4.7,0.232,0.311
+Bodegas Díez Mérito,Cooperativa Agrícola Virgen De Palomares,4,Core,0.188,0.053,0.121,Trebujena,4.6,0.232,0.311
+Bodegas Díez Mérito,Bodegas Hidalgo – La Gitana,5,Core,0.13,0.117,0.124,Sanlúcar de Barrameda,4.8,0.232,0.311
+Bodegas Espinosa De Los Monteros,Viña La Torre,1,Core,0.164,0.023,0.093,El Puerto de Santa María / Jerez de la Frontera,4.9,0.232,0.311
+Bodegas Espinosa De Los Monteros,Bodega Mar 7,2,Core,0.09,0.127,0.109,Sanlúcar de Barrameda,4.9,0.232,0.311
+Bodegas Espinosa De Los Monteros,Bodegas Forlong,3,Core,0.177,0.178,0.178,El Puerto de Santa María,4.9,0.232,0.311
+Bodegas Espinosa De Los Monteros,Bodegas Manuel Aragón,4,Core,0.223,0.179,0.201,Chiclana de la Frontera,4.7,0.232,0.311
+Bodegas Espinosa De Los Monteros,Bodegas Barón,5,Core,0.204,0.199,0.202,Sanlúcar de Barrameda,4.9,0.232,0.311
+Bodegas Forlong,Bodega Mar 7,1,Core,0.141,0.051,0.096,Sanlúcar de Barrameda,4.9,0.232,0.311
+Bodegas Forlong,Bodegas Manuel Aragón,2,Core,0.188,0.037,0.113,Chiclana de la Frontera,4.7,0.232,0.311
+Bodegas Forlong,Bodegas Álvaro Domecq,3,Core,0.215,0.061,0.138,Jerez de la Frontera,4.8,0.232,0.311
+Bodegas Forlong,Viña La Torre,4,Core,0.132,0.157,0.145,El Puerto de Santa María / Jerez de la Frontera,4.9,0.232,0.311
+Bodegas Forlong,Bodega Cooperativa Albarizas,5,Core,0.177,0.178,0.177,Trebujena,4.9,0.232,0.311
+Bodegas Fundador,Bodegas Hidalgo – La Gitana,1,Core,0.121,0.131,0.126,Sanlúcar de Barrameda,4.8,0.232,0.311
+Bodegas Fundador,Bodegas Díez Mérito,2,Core,0.144,0.115,0.129,Jerez de la Frontera,4.7,0.232,0.311
+Bodegas Fundador,Bodegas Luis Pérez,3,Core,0.116,0.168,0.142,Jerez de la Frontera,4.7,0.232,0.311
+Bodegas Fundador,Bodegas Páez Morilla,4,Core,0.15,0.145,0.148,Jerez de la Frontera,4.6,0.232,0.311
+Bodegas Fundador,Bodegas Altanza,5,Core,0.115,0.182,0.149,Jerez de la Frontera,4.7,0.232,0.311
+Bodegas González Byass – Tío Pepe,Bodegas Lustau,1,Marginal,0.331,0.278,0.304,Jerez de la Frontera,4.5,0.232,0.311
+Bodegas González Byass – Tío Pepe,Bodegas Dios Baco,2,Potencial,0.246,0.389,0.318,Jerez de la Frontera,4.4,0.232,0.311
+Bodegas González Byass – Tío Pepe,Bodegas Barbadillo,3,Potencial,0.405,0.388,0.396,Sanlúcar de Barrameda,4.5,0.232,0.311
+Bodegas González Byass – Tío Pepe,Bodegas Osborne,4,Potencial,0.34,0.528,0.434,El Puerto de Santa María,4.5,0.232,0.311
+Bodegas González Byass – Tío Pepe,"Bodega, Viña Y Casa Rural Santa Petronila",5,Potencial,0.274,0.639,0.456,Jerez de la Frontera,4.4,0.232,0.311
+Bodegas Gutiérrez Colosía,Bodegas Yuste,1,Marginal,0.261,0.047,0.154,Sanlúcar de Barrameda,4.6,0.232,0.311
+Bodegas Gutiérrez Colosía,Bodegas Luis Pérez,2,Core,0.188,0.128,0.158,Jerez de la Frontera,4.7,0.232,0.311
+Bodegas Gutiérrez Colosía,Bodegas Altanza,3,Core,0.199,0.143,0.171,Jerez de la Frontera,4.7,0.232,0.311
+Bodegas Gutiérrez Colosía,Bodegas Williams & Humbert Sau,4,Marginal,0.269,0.127,0.198,Jerez de la Frontera,4.5,0.232,0.311
+Bodegas Gutiérrez Colosía,Bodegas Fundador,5,Core,0.137,0.289,0.213,Jerez de la Frontera,4.6,0.232,0.311
+Bodegas Herederos De Argüeso,Bodegas Díez Mérito,1,Core,0.154,0.005,0.08,Jerez de la Frontera,4.7,0.232,0.311
+Bodegas Herederos De Argüeso,Cooperativa Agrícola Virgen De Palomares,2,Core,0.185,0.058,0.122,Trebujena,4.6,0.232,0.311
+Bodegas Herederos De Argüeso,Bodegas Hidalgo – La Gitana,3,Core,0.143,0.112,0.128,Sanlúcar de Barrameda,4.8,0.232,0.311
+Bodegas Herederos De Argüeso,Bodegas Páez Morilla,4,Core,0.232,0.036,0.134,Jerez de la Frontera,4.6,0.232,0.311
+Bodegas Herederos De Argüeso,Bodegas Altanza,5,Core,0.196,0.073,0.134,Jerez de la Frontera,4.7,0.232,0.311
+Bodegas Hidalgo – La Gitana,Bodegas Díez Mérito,1,Core,0.13,0.117,0.124,Jerez de la Frontera,4.7,0.232,0.311
+Bodegas Hidalgo – La Gitana,Bodegas Fundador,2,Core,0.121,0.131,0.126,Jerez de la Frontera,4.6,0.232,0.311
+Bodegas Hidalgo – La Gitana,Bodegas Herederos De Argüeso,3,Core,0.143,0.112,0.128,Sanlúcar de Barrameda,4.5,0.232,0.311
+Bodegas Hidalgo – La Gitana,Bodegas Luis Pérez,4,Core,0.148,0.108,0.128,Jerez de la Frontera,4.7,0.232,0.311
+Bodegas Hidalgo – La Gitana,Bodegas Altanza,5,Core,0.139,0.123,0.131,Jerez de la Frontera,4.7,0.232,0.311
+Bodegas Luis Pérez,Bodegas Altanza,1,Core,0.155,0.015,0.085,Jerez de la Frontera,4.7,0.232,0.311
+Bodegas Luis Pérez,Bodegas Díez Mérito,2,Core,0.177,0.072,0.124,Jerez de la Frontera,4.7,0.232,0.311
+Bodegas Luis Pérez,Bodegas Hidalgo – La Gitana,3,Core,0.148,0.108,0.128,Sanlúcar de Barrameda,4.8,0.232,0.311
+Bodegas Luis Pérez,Bodegas Páez Morilla,4,Core,0.172,0.102,0.137,Jerez de la Frontera,4.6,0.232,0.311
+Bodegas Luis Pérez,Bodegas Fundador,5,Core,0.116,0.168,0.142,Jerez de la Frontera,4.6,0.232,0.311
+Bodegas Lustau,Bodegas Osborne,1,Sustituto,0.163,0.357,0.26,El Puerto de Santa María,4.5,0.232,0.311
+Bodegas Lustau,Bodegas Barbadillo,2,Sustituto,0.202,0.396,0.299,Sanlúcar de Barrameda,4.5,0.232,0.311
+Bodegas Lustau,Bodegas González Byass – Tío Pepe,3,Marginal,0.331,0.278,0.304,Jerez de la Frontera,4.2,0.232,0.311
+Bodegas Lustau,Bodegas Dios Baco,4,Sustituto,0.174,0.522,0.348,Jerez de la Frontera,4.4,0.232,0.311
+Bodegas Lustau,"Bodega, Viña Y Casa Rural Santa Petronila",5,Sustituto,0.225,0.486,0.355,Jerez de la Frontera,4.4,0.232,0.311
+Bodegas Manuel Aragón,Bodegas Forlong,1,Core,0.188,0.037,0.113,El Puerto de Santa María,4.9,0.232,0.311
+Bodegas Manuel Aragón,Bodegas Álvaro Domecq,2,Core,0.204,0.038,0.121,Jerez de la Frontera,4.8,0.232,0.311
+Bodegas Manuel Aragón,Bodega Mar 7,3,Core,0.208,0.052,0.13,Sanlúcar de Barrameda,4.9,0.232,0.311
+Bodegas Manuel Aragón,Viña La Torre,4,Core,0.184,0.192,0.188,El Puerto de Santa María / Jerez de la Frontera,4.9,0.232,0.311
+Bodegas Manuel Aragón,Bodegas Cayetano Del Pino,5,Marginal,0.243,0.154,0.198,Jerez de la Frontera,4.7,0.232,0.311
+Bodegas Miguel Domecq – Entrechuelos,Viña La Torre,1,Marginal,0.279,0.121,0.2,El Puerto de Santa María / Jerez de la Frontera,4.9,0.232,0.311
+Bodegas Miguel Domecq – Entrechuelos,Bodegas Espinosa De Los Monteros,2,Marginal,0.273,0.144,0.208,Jerez de la Frontera,5.0,0.232,0.311
+Bodegas Miguel Domecq – Entrechuelos,Bodegas Álvaro Domecq,3,Core,0.177,0.274,0.225,Jerez de la Frontera,4.8,0.232,0.311
+Bodegas Miguel Domecq – Entrechuelos,Bodegas Manuel Aragón,4,Core,0.208,0.249,0.228,Chiclana de la Frontera,4.7,0.232,0.311
+Bodegas Miguel Domecq – Entrechuelos,Bodegas Rey Fernando De Castilla,5,Core,0.232,0.235,0.233,Jerez de la Frontera,4.6,0.232,0.311
+Bodegas Osborne,Bodegas Barbadillo,1,Core,0.178,0.217,0.197,Sanlúcar de Barrameda,4.5,0.232,0.311
+Bodegas Osborne,Bodegas Lustau,2,Sustituto,0.163,0.357,0.26,Jerez de la Frontera,4.5,0.232,0.311
+Bodegas Osborne,Bodegas Dios Baco,3,Sustituto,0.199,0.558,0.378,Jerez de la Frontera,4.4,0.232,0.311
+Bodegas Osborne,"Bodega, Viña Y Casa Rural Santa Petronila",4,Sustituto,0.225,0.593,0.409,Jerez de la Frontera,4.4,0.232,0.311
+Bodegas Osborne,Cooperativa De Viticultores Chiclaneros,5,Potencial,0.253,0.59,0.422,Chiclana de la Frontera,4.3,0.232,0.311
+Bodegas Páez Morilla,Bodegas Díez Mérito,1,Core,0.112,0.032,0.072,Jerez de la Frontera,4.7,0.232,0.311
+Bodegas Páez Morilla,Bodegas Herederos De Argüeso,2,Core,0.232,0.036,0.134,Sanlúcar de Barrameda,4.5,0.232,0.311
+Bodegas Páez Morilla,Bodegas Luis Pérez,3,Core,0.172,0.102,0.137,Jerez de la Frontera,4.7,0.232,0.311
+Bodegas Páez Morilla,Bodegas Altanza,4,Core,0.189,0.1,0.145,Jerez de la Frontera,4.7,0.232,0.311
+Bodegas Páez Morilla,Bodegas Fundador,5,Core,0.15,0.145,0.148,Jerez de la Frontera,4.6,0.232,0.311
+Bodegas Real Tesoro & Valdespino,Bodegas Díez Mérito,1,Core,0.094,0.182,0.138,Jerez de la Frontera,4.7,0.232,0.311
+Bodegas Real Tesoro & Valdespino,Bodegas Páez Morilla,2,Core,0.1,0.212,0.156,Jerez de la Frontera,4.6,0.232,0.311
+Bodegas Real Tesoro & Valdespino,Bodegas Fundador,3,Core,0.116,0.219,0.167,Jerez de la Frontera,4.6,0.232,0.311
+Bodegas Real Tesoro & Valdespino,Bodegas Williams & Humbert Sau,4,Core,0.112,0.234,0.173,Jerez de la Frontera,4.5,0.232,0.311
+Bodegas Real Tesoro & Valdespino,Bodegas Herederos De Argüeso,5,Core,0.172,0.176,0.174,Sanlúcar de Barrameda,4.5,0.232,0.311
+Bodegas Rey Fernando De Castilla,Bodegas Barón,1,Marginal,0.249,0.04,0.144,Sanlúcar de Barrameda,4.9,0.232,0.311
+Bodegas Rey Fernando De Castilla,Viña La Torre,2,Core,0.152,0.176,0.164,El Puerto de Santa María / Jerez de la Frontera,4.9,0.232,0.311
+Bodegas Rey Fernando De Castilla,Bodega Cooperativa Albarizas,3,Core,0.169,0.159,0.164,Trebujena,4.9,0.232,0.311
+Bodegas Rey Fernando De Castilla,Bodegas Cayetano Del Pino,4,Core,0.196,0.152,0.174,Jerez de la Frontera,4.7,0.232,0.311
+Bodegas Rey Fernando De Castilla,Bodega Gago & Co. Barrels – Wines,5,Core,0.187,0.176,0.182,Jerez de la Frontera,4.9,0.232,0.311
+Bodegas Tradición,Bodegas Álvaro Domecq,1,Core,0.098,0.136,0.117,Jerez de la Frontera,4.8,0.232,0.311
+Bodegas Tradición,Bodegas Manuel Aragón,2,Marginal,0.241,0.161,0.201,Chiclana de la Frontera,4.7,0.232,0.311
+Bodegas Tradición,Bodegas Cayetano Del Pino,3,Sustituto,0.117,0.314,0.216,Jerez de la Frontera,4.7,0.232,0.311
+Bodegas Tradición,Bodega Mar 7,4,Core,0.222,0.213,0.217,Sanlúcar de Barrameda,4.9,0.232,0.311
+Bodegas Tradición,Bodegas Forlong,5,Marginal,0.243,0.197,0.22,El Puerto de Santa María,4.9,0.232,0.311
+Bodegas Williams & Humbert Sau,Bodegas Real Tesoro & Valdespino,1,Core,0.112,0.234,0.173,Jerez de la Frontera,4.6,0.232,0.311
+Bodegas Williams & Humbert Sau,Bodegas Gutiérrez Colosía,2,Marginal,0.269,0.127,0.198,El Puerto de Santa María,4.6,0.232,0.311
+Bodegas Williams & Humbert Sau,Bodegas Yuste,3,Marginal,0.291,0.17,0.23,Sanlúcar de Barrameda,4.6,0.232,0.311
+Bodegas Williams & Humbert Sau,Bodegas Díez Mérito,4,Sustituto,0.142,0.323,0.232,Jerez de la Frontera,4.7,0.232,0.311
+Bodegas Williams & Humbert Sau,Bodegas Altanza,5,Core,0.199,0.266,0.232,Jerez de la Frontera,4.7,0.232,0.311
+Bodegas Yuste,Bodegas Gutiérrez Colosía,1,Marginal,0.261,0.047,0.154,El Puerto de Santa María,4.6,0.232,0.311
+Bodegas Yuste,Bodegas Altanza,2,Marginal,0.232,0.158,0.195,Jerez de la Frontera,4.7,0.232,0.311
+Bodegas Yuste,Cooperativa Agrícola Virgen De Palomares,3,Core,0.191,0.206,0.199,Trebujena,4.6,0.232,0.311
+Bodegas Yuste,Covisan – Cooperativa Vitivinícola Sanluqueña,4,Core,0.136,0.284,0.21,Sanlúcar de Barrameda,4.6,0.232,0.311
+Bodegas Yuste,Bodegas Díez Mérito,5,Core,0.206,0.222,0.214,Jerez de la Frontera,4.7,0.232,0.311
+Bodegas Álvaro Domecq,Bodegas Tradición,1,Core,0.098,0.136,0.117,Jerez de la Frontera,4.7,0.232,0.311
+Bodegas Álvaro Domecq,Bodegas Manuel Aragón,2,Core,0.204,0.038,0.121,Chiclana de la Frontera,4.7,0.232,0.311
+Bodegas Álvaro Domecq,Bodega Mar 7,3,Core,0.188,0.077,0.133,Sanlúcar de Barrameda,4.9,0.232,0.311
+Bodegas Álvaro Domecq,Bodegas Forlong,4,Core,0.215,0.061,0.138,El Puerto de Santa María,4.9,0.232,0.311
+Bodegas Álvaro Domecq,Bodegas Cayetano Del Pino,5,Core,0.143,0.178,0.161,Jerez de la Frontera,4.7,0.232,0.311
+Cooperativa Agrícola Virgen De Palomares,Bodegas Díez Mérito,1,Core,0.188,0.053,0.121,Jerez de la Frontera,4.7,0.232,0.311
+Cooperativa Agrícola Virgen De Palomares,Bodegas Herederos De Argüeso,2,Core,0.185,0.058,0.122,Sanlúcar de Barrameda,4.5,0.232,0.311
+Cooperativa Agrícola Virgen De Palomares,Bodegas Hidalgo – La Gitana,3,Core,0.199,0.072,0.135,Sanlúcar de Barrameda,4.8,0.232,0.311
+Cooperativa Agrícola Virgen De Palomares,Bodegas Altanza,4,Core,0.226,0.051,0.138,Jerez de la Frontera,4.7,0.232,0.311
+Cooperativa Agrícola Virgen De Palomares,Bodegas Luis Pérez,5,Marginal,0.252,0.062,0.157,Jerez de la Frontera,4.7,0.232,0.311
+Cooperativa De Viticultores Chiclaneros,"Bodega, Viña Y Casa Rural Santa Petronila",1,Core,0.201,0.253,0.227,Jerez de la Frontera,4.4,0.232,0.311
+Cooperativa De Viticultores Chiclaneros,Bodegas Dios Baco,2,Sustituto,0.196,0.539,0.368,Jerez de la Frontera,4.4,0.232,0.311
+Cooperativa De Viticultores Chiclaneros,Bodegas Lustau,3,Potencial,0.299,0.483,0.391,Jerez de la Frontera,4.5,0.232,0.311
+Cooperativa De Viticultores Chiclaneros,Bodegas Osborne,4,Potencial,0.253,0.59,0.422,El Puerto de Santa María,4.5,0.232,0.311
+Cooperativa De Viticultores Chiclaneros,Bodegas Barbadillo,5,Potencial,0.3,0.624,0.462,Sanlúcar de Barrameda,4.5,0.232,0.311
+Covisan – Cooperativa Vitivinícola Sanluqueña,Bodegas Delgado Zuleta,1,Core,0.224,0.047,0.136,Sanlúcar de Barrameda,4.7,0.232,0.311
+Covisan – Cooperativa Vitivinícola Sanluqueña,Bodegas Luis Pérez,2,Core,0.197,0.134,0.166,Jerez de la Frontera,4.7,0.232,0.311
+Covisan – Cooperativa Vitivinícola Sanluqueña,Cooperativa Agrícola Virgen De Palomares,3,Core,0.154,0.178,0.166,Trebujena,4.6,0.232,0.311
+Covisan – Cooperativa Vitivinícola Sanluqueña,Bodegas Altanza,4,Core,0.223,0.13,0.176,Jerez de la Frontera,4.7,0.232,0.311
+Covisan – Cooperativa Vitivinícola Sanluqueña,Bodegas Díez Mérito,5,Core,0.195,0.188,0.191,Jerez de la Frontera,4.7,0.232,0.311
+Finca La Pintora,Bodegas Luis Pérez,1,Core,0.14,0.19,0.165,Jerez de la Frontera,4.7,0.232,0.311
+Finca La Pintora,Bodegas Hidalgo – La Gitana,2,Core,0.133,0.2,0.167,Sanlúcar de Barrameda,4.8,0.232,0.311
+Finca La Pintora,Bodegas Altanza,3,Core,0.181,0.176,0.178,Jerez de la Frontera,4.7,0.232,0.311
+Finca La Pintora,Bodegas Díez Mérito,4,Core,0.191,0.181,0.186,Jerez de la Frontera,4.7,0.232,0.311
+Finca La Pintora,Cooperativa Agrícola Virgen De Palomares,5,Marginal,0.252,0.128,0.19,Trebujena,4.6,0.232,0.311
+Viña La Torre,Bodegas Espinosa De Los Monteros,1,Core,0.164,0.023,0.093,Jerez de la Frontera,5.0,0.232,0.311
+Viña La Torre,Bodega Mar 7,2,Core,0.119,0.146,0.133,Sanlúcar de Barrameda,4.9,0.232,0.311
+Viña La Torre,Bodegas Forlong,3,Core,0.132,0.157,0.145,El Puerto de Santa María,4.9,0.232,0.311
+Viña La Torre,Bodegas Rey Fernando De Castilla,4,Core,0.152,0.176,0.164,Jerez de la Frontera,4.6,0.232,0.311
+Viña La Torre,Bodegas Álvaro Domecq,5,Core,0.154,0.217,0.185,Jerez de la Frontera,4.8,0.232,0.311

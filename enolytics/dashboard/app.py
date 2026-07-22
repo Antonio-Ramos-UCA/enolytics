@@ -29,6 +29,7 @@ from enolytics.analitica import ipa as modelo_ipa  # noqa: E402
 from enolytics.analitica import recomendaciones as reco  # noqa: E402
 from enolytics.analitica import reputacion as rep  # noqa: E402
 from enolytics.analitica import coocurrencia as cooc  # noqa: E402
+from enolytics.analitica import competidores as competi  # noqa: E402 (solo lee CSV)
 from enolytics.dashboard import estilo  # noqa: E402
 
 
@@ -446,6 +447,40 @@ def cargar_coocurrencia() -> dict:
     """Co-ocurrencias de atributos (todas / positivas / negativas). Ver analitica/coocurrencia."""
     an = cargar_resenas_anotadas()
     return cooc.por_sentimiento(an) if not an.empty else {}
+
+
+@st.cache_data
+def cargar_competidores():
+    """Competidores directos por bodega (Zhou et al., 2026), precalculado. Solo lee CSV."""
+    return competi.cargar()
+
+
+# Tipo de competidor (Kamensky) → icono, color y explicación en llano.
+KAMENSKY = {
+    "Core":      ("🎯", estilo.ESTADO["critico"],  "mismo cliente y recursos parecidos: tu rival más directo"),
+    "Sustituto": ("🔄", estilo.ESTADO["atencion"], "mismo cliente, pero ofrece cosas distintas"),
+    "Marginal":  ("➖", estilo.ESTADO["mejorable"], "recursos parecidos, pero apunta a otro cliente"),
+    "Potencial": ("🌱", estilo.ESTADO["ok"],       "hoy distinto en cliente y recursos: vigílalo"),
+}
+
+
+def figura_terreno_competitivo(sub: pd.DataFrame):
+    """Mapa de terreno competitivo (Kamensky): distancia de mercado (x) vs de recursos (y)."""
+    umc = float(sub["umbral_mc"].iloc[0])
+    urs = float(sub["umbral_rs"].iloc[0])
+    sub = sub.assign(icono=sub["tipo"].map(lambda t: KAMENSKY[t][0]))
+    fig = px.scatter(sub, x="dist_mercado", y="dist_recursos", color="tipo",
+                     text="icono", hover_name="competidor",
+                     color_discrete_map={t: KAMENSKY[t][1] for t in KAMENSKY},
+                     labels={"dist_mercado": "◀ mismo cliente · distinto cliente ▶",
+                             "dist_recursos": "◀ recursos parecidos · recursos distintos ▶",
+                             "tipo": "Tipo"})
+    fig.add_vline(x=umc, line_dash="dash", line_color=estilo.INK_TENUE)
+    fig.add_hline(y=urs, line_dash="dash", line_color=estilo.INK_TENUE)
+    fig.update_traces(textposition="middle center", textfont=dict(size=15),
+                      marker=dict(size=26, opacity=0.85, line=dict(width=1, color="#fff")))
+    # Ejes normales: distancia baja (más parecido) = izquierda/abajo, como dicen las etiquetas.
+    return estilo.figura(fig, alto=380)
 
 
 @st.cache_data
@@ -2050,8 +2085,8 @@ else:
     b = df_f[df_f["nombre"] == nombre].iloc[0]
     an_bod = anotadas[anotadas["bodega"] == nombre] if not anotadas.empty else pd.DataFrame()
 
-    tab_reco, tab_ficha, tab_res = st.tabs(
-        ["🎯 Recomendaciones", "🏭 Ficha", "😊 Reseñas y análisis"])
+    tab_reco, tab_comp, tab_ficha, tab_res = st.tabs(
+        ["🎯 Recomendaciones", "🥊 Competidores", "🏭 Ficha", "😊 Reseñas y análisis"])
 
     # ----- Pestaña: Recomendaciones accionables de esta bodega -----
     with tab_reco:
@@ -2094,6 +2129,43 @@ else:
             titulo=f"🎯 Qué debería priorizar {nombre}",
             vacio="Sin recomendaciones pendientes: esta bodega no presenta puntos críticos "
                   "con los datos disponibles.")
+
+    # ----- Pestaña: Competidores directos (Zhou et al., 2026) -----
+    with tab_comp:
+        df_comp, viables_comp = cargar_competidores()
+        if nombre not in viables_comp:
+            n_at = int((an_bod["atributos"].map(len) > 0).sum()) if not an_bod.empty else 0
+            st.info(
+                f"**Muestra insuficiente para el análisis de competidores.** Esta bodega no tiene "
+                f"perfil bastante ({n_at} reseñas con opinión sobre atributos, y faltan datos de "
+                f"ficha). El método necesita un perfil mínimo para no dar competidores al azar. "
+                f"Su reputación y recomendaciones sí están disponibles.")
+        else:
+            sub = df_comp[df_comp["bodega"] == nombre].sort_values("rango")
+            st.markdown("#### 🥊 Tus competidores directos")
+            st.caption(
+                "Las bodegas más parecidas a la tuya por **mercado** (a qué cliente sirves) y por "
+                "**recursos** (lo que ofreces). No es todo el Marco, sino **tu grupo**. "
+                "_(Método Zhou et al., 2026: clustering K-prototypes + categorización de Kamensky.)_")
+            for _, r in sub.iterrows():
+                ic, color, expl = KAMENSKY.get(r["tipo"], ("•", estilo.INK_TENUE, ""))
+                with st.container(border=True):
+                    c1, c2 = st.columns([3, 1])
+                    c1.markdown(f"**{int(r['rango'])}. {r['competidor']}**  \n"
+                                f"<span style='color:{color};font-weight:600'>{ic} {r['tipo']}</span> "
+                                f"· {expl}", unsafe_allow_html=True)
+                    c2.markdown(f"<div style='text-align:right'>{r['rating_comp']}★<br>"
+                                f"<span style='color:{estilo.INK_TENUE};font-size:.8rem'>"
+                                f"{r['localidad_comp']}</span></div>", unsafe_allow_html=True)
+            st.markdown("##### Mapa del terreno competitivo _(Kamensky)_")
+            st.caption("Cada competidor, situado por su distancia de **mercado** (eje X) y de "
+                       "**recursos** (eje Y). Las líneas separan los cuatro tipos. Cuanto más "
+                       "abajo-izquierda, más directo es el rival.")
+            st.plotly_chart(figura_terreno_competitivo(sub), use_container_width=True)
+            fuente("estimado", "Rasgos de la bodega: servicios, certificación y madurez digital "
+                   "(recursos); perfil de sentimiento por atributo, nota, ubicación e idioma "
+                   "(mercado). **v1 sin el precio de la visita** (pendiente): el eje de mercado se "
+                   "calcula sin él y se refinará cuando lo tengamos.")
 
     # ----- Pestaña: Ficha -----
     with tab_ficha:
