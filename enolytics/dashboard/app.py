@@ -1001,13 +1001,15 @@ if df.empty:
 VISTA_RESUMEN = "🏠 Resumen ejecutivo"
 VISTA_INTELIGENCIAS = "🧭 Las 7 inteligencias"
 VISTA_BODEGA = "🏭 Bodega individual"
+VISTA_GUIA = "📖 Guía y metodología"
 
 with st.sidebar:
     st.header("Navegación")
-    rol = st.radio("Vista", [VISTA_RESUMEN, VISTA_INTELIGENCIAS, VISTA_BODEGA],
+    rol = st.radio("Vista", [VISTA_RESUMEN, VISTA_INTELIGENCIAS, VISTA_BODEGA, VISTA_GUIA],
                    captions=["Lo esencial, de un vistazo",
                              "El análisis completo por inteligencia",
-                             "Ficha y recomendaciones de una bodega"])
+                             "Ficha y recomendaciones de una bodega",
+                             "Qué es cada apartado y de dónde sale cada dato"])
     st.divider()
     localidades = sorted(df["localidad"].dropna().unique())
     with st.expander("Filtrar por localidad", expanded=False):
@@ -1032,6 +1034,90 @@ if rol in (VISTA_RESUMEN, VISTA_INTELIGENCIAS):
         aereo_mercados=aereo_mercados, aereo_capacidad=aereo_capacidad,
         cruceros=cruceros,
     )
+
+# --------------------------------------------------------------------------- #
+# VISTA 4 — GUÍA Y METODOLOGÍA (Pieza 2 de Paula): qué es cada apartado y de dónde sale
+# --------------------------------------------------------------------------- #
+GLOSARIO_MODELOS = [
+    ("Importancia–Desempeño", "IPA", "Un mapa que dice **en qué trabajar primero**: cruza cuánto "
+     "le importa cada aspecto al cliente con cómo de bien se hace."),
+    ("Importancia por impacto", "PRCA", "La forma correcta de medir la importancia: no cuántas "
+     "veces se menciona algo, sino **cuánto mueve la nota global**. Así, un problema que se "
+     "comenta poco pero hunde la satisfacción (la reserva) aparece como urgente."),
+    ("Higiénico vs. deleitador", "Kano", "Distingue lo que **si falla molesta pero si va bien no "
+     "suma** (higiénico: precio, reserva) de lo que **te diferencia cuando lo bordas** "
+     "(deleitador: entorno, viñedo)."),
+    ("Comparación con el resto", "IPCA", "Compara cada bodega con la **media del Marco**: en qué "
+     "va por delante y en qué por detrás."),
+    ("Evolución en el tiempo", "DIPA / DIPCA", "Si la satisfacción (DIPA) o la posición "
+     "competitiva (DIPCA) de una bodega **mejora o empeora** año a año."),
+    ("De qué se habla junto", "co-word", "Qué atributos se **mencionan juntos** en las reseñas, "
+     "revelando la estructura de la experiencia (grafo de co-ocurrencias)."),
+    ("Competidores directos", "Zhou 2026", "Los **3-5 rivales concretos** de cada bodega, por "
+     "parecido en **mercado** (a qué cliente sirve) y **recursos** (lo que ofrece)."),
+]
+FUENTES_GUIA = [
+    ("Reseñas de Google", "10.972 reseñas reales del Marco (satisfacción, atributos, idioma).", "🔵"),
+    ("ACEVIN", "Observatorio de las Rutas del Vino de España (visitantes, oferta, perfil).", "🟢"),
+    ("Dataestur / SEGITTUR", "Gasto turístico, percepción, cruceros y conectividad aérea.", "🟢"),
+    ("Google Trends", "Interés de búsqueda comparado con otras rutas.", "🔵"),
+    ("FEV", "Certificación climática Sustainable Wineries for Climate Protection.", "🟢"),
+    ("Ruta del Vino y Brandy de Jerez", "Catálogo de bodegas y oferta enoturística.", "🟢"),
+    ("Auditoría web propia + OpenStreetMap", "Madurez digital, accesibilidad y transporte.", "🔵"),
+]
+
+if rol == VISTA_GUIA:
+    st.markdown(estilo.hero("📖 Guía de uso y metodología",
+                            "Cómo leer la plataforma, y de dónde sale cada dato"),
+                unsafe_allow_html=True)
+    st.caption("Qué contiene cada apartado, qué significan los análisis y el origen de cada "
+               "indicador. Sirve al bodeguero para entenderlo y al proyecto como documentación "
+               "metodológica (anexo para FEDER).")
+    try:
+        from enolytics.dashboard import informe as _informe
+        st.download_button("⬇️  Descargar la guía (PDF)",
+                           data=_informe.generar_guia_pdf(GLOSARIO_MODELOS, FUENTES_GUIA),
+                           file_name="ENOLYTICS_guia_de_uso.pdf", mime="application/pdf")
+    except Exception as e:
+        st.caption(f"(No se pudo generar el PDF de la guía: {e})")
+
+    st.subheader("1 · Cómo leer los datos: el origen de cada indicador")
+    st.caption("Cada dato lleva una marca de color que dice **cómo de firme es**. Nunca se mezcla "
+               "una estadística oficial con una estimación sin avisar.")
+    for _icono, _nombre, _desc in config.ORIGENES_DATO.values():
+        st.markdown(f"{_icono} **{_nombre}.** {_desc}")
+
+    st.subheader("2 · Las formas de mirar la plataforma")
+    for _t, _d in [(VISTA_RESUMEN, "Lo esencial de un vistazo: cómo va el destino y las 3 acciones "
+                    "más urgentes. Para decidir en 5 segundos."),
+                   (VISTA_INTELIGENCIAS, "El análisis completo, una pestaña por inteligencia. Cada "
+                    "una abre con lo esencial; el detalle, plegado."),
+                   (VISTA_BODEGA, "La ficha de una bodega: reputación, competidores, análisis, "
+                    "recomendaciones y su informe descargable."),
+                   (VISTA_GUIA, "Esta página: qué es cada apartado y de dónde sale cada dato.")]:
+        st.markdown(f"**{_t}** — {_d}")
+
+    st.subheader("3 · Las 7 inteligencias: qué responde cada una")
+    st.caption("El análisis se organiza en siete inteligencias competitivas (memoria del proyecto, "
+               "alineado con la norma UNE 178502 y las categorías de SEGITTUR).")
+    for _clave, _info in config.OBJETIVOS_INTELIGENCIAS.items():
+        with st.container(border=True):
+            st.markdown(f"**{_info['titulo']}** &nbsp; `{_info['segittur']}`")
+            st.caption(_info["objetivo"])
+
+    st.subheader("4 · Los análisis, explicados sin jerga")
+    for _term, _sig, _expl in GLOSARIO_MODELOS:
+        st.markdown(f"**{_term}** · _{_sig}_ — {_expl}")
+    st.info("**Un principio de la casa:** los resúmenes de reputación **no los genera una IA** "
+            "(que podría inventar). Se componen a partir de los datos reales agregados → mismo "
+            "dato, mismo texto, siempre. Es lo que lo hace reproducible y auditable.")
+
+    st.subheader("5 · De dónde salen los datos")
+    for _n, _d, _o in FUENTES_GUIA:
+        st.markdown(f"{_o} **{_n}** — {_d}")
+    st.caption("Algunos indicadores de la memoria (empleo por bodega, consumos ambientales, "
+               "precios de experiencias) se completarán con cuestionarios y fuentes adicionales, "
+               "porque no existen en abierto.")
 
 # --------------------------------------------------------------------------- #
 # VISTA 1 — RESUMEN EJECUTIVO: ¿cómo vamos y qué hago primero? (5 segundos)

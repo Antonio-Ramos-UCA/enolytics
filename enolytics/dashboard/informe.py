@@ -290,3 +290,88 @@ def _lista_box(pdf, x, y, w, titulo, items, color):
     for i, it in enumerate(items):
         pdf.set_xy(x + 3, y + 7 + i * 5)
         pdf.cell(w - 5, 4, _t("- " + str(it)))
+
+
+def generar_guia_pdf(glosario: list, fuentes: list) -> bytes:
+    """Guía de uso / metodología como PDF (anexo de metodología para FEDER). Ver Pieza 2."""
+    from fpdf import FPDF
+    from enolytics import config as _cfg
+
+    pdf = FPDF(format="A4", unit="mm")
+    pdf.set_auto_page_break(auto=True, margin=16)
+    pdf.add_page()
+    W = pdf.w - pdf.l_margin - pdf.r_margin
+
+    def h2(txt):
+        pdf.ln(2.5)
+        pdf.set_font("Helvetica", "B", 12)
+        pdf.set_text_color(*CAOBA)
+        pdf.cell(0, 7, _t(txt), new_x="LMARGIN", new_y="NEXT")
+        y = pdf.get_y()
+        pdf.set_draw_color(*LINEA)
+        pdf.line(pdf.l_margin, y, pdf.l_margin + W, y)
+        pdf.ln(1.5)
+
+    def parr(txt, size=9.5, color=INK_SUAVE, bold_lead=None):
+        if bold_lead:
+            pdf.set_font("Helvetica", "B", size)
+            pdf.set_text_color(*INK)
+            pdf.write(4.6, _t(bold_lead + " "))
+        pdf.set_font("Helvetica", "", size)
+        pdf.set_text_color(*color)
+        pdf.multi_cell(W, 4.6, _t(txt), new_x="LMARGIN", new_y="NEXT")
+
+    # Cabecera
+    pdf.set_fill_color(*CAOBA)
+    pdf.rect(0, 0, pdf.w, 28, style="F")
+    pdf.set_xy(pdf.l_margin, 7)
+    pdf.set_font("Helvetica", "B", 8)
+    pdf.set_text_color(235, 225, 215)
+    pdf.cell(0, 4, _t("ENOLYTICS · GUÍA DE USO Y METODOLOGÍA"), new_x="LMARGIN", new_y="NEXT")
+    pdf.set_x(pdf.l_margin)
+    pdf.set_font("Helvetica", "B", 16)
+    pdf.set_text_color(255, 255, 255)
+    pdf.cell(0, 9, _t("Cómo leer la plataforma, y de dónde sale cada dato"),
+             new_x="LMARGIN", new_y="NEXT")
+    pdf.set_y(34)
+
+    h2("1 · Cómo leer los datos: el origen de cada indicador")
+    parr("Cada dato lleva una marca que dice cómo de firme es. Nunca se mezcla una estadística "
+         "oficial con una estimación sin avisar.")
+    for icono, nombre, desc in _cfg.ORIGENES_DATO.values():
+        parr(desc, bold_lead=f"[{nombre}]")
+
+    h2("2 · Las formas de mirar la plataforma")
+    for nom, desc in [("Resumen ejecutivo", "Lo esencial de un vistazo y las 3 acciones urgentes."),
+                      ("Las 7 inteligencias", "El análisis completo, una pestaña por inteligencia."),
+                      ("Bodega individual", "Ficha de una bodega: reputación, competidores, análisis "
+                       "e informe descargable."),
+                      ("Guía y metodología", "Esta guía.")]:
+        parr(desc, bold_lead=nom + " -")
+
+    h2("3 · Las 7 inteligencias: qué responde cada una")
+    for info in _cfg.OBJETIVOS_INTELIGENCIAS.values():
+        parr(info["objetivo"], bold_lead=f"{info['titulo']} ({info['segittur']}):")
+
+    h2("4 · Los análisis, explicados sin jerga")
+    for term, sig, expl in glosario:
+        parr(expl.replace("**", ""), bold_lead=f"{term} ({sig}):")
+    pdf.ln(1)
+    parr("Principio de la casa: los resúmenes de reputación NO los genera una IA. Se componen de "
+         "los datos reales agregados (mismo dato, mismo texto, siempre): reproducible y auditable.",
+         size=9, color=CAOBA)
+
+    h2("5 · De dónde salen los datos")
+    for nom, desc, _o in fuentes:
+        parr(desc, bold_lead=nom + " -")
+
+    pdf.set_y(-14)
+    pdf.set_draw_color(*LINEA)
+    pdf.line(pdf.l_margin, pdf.get_y(), pdf.l_margin + W, pdf.get_y())
+    pdf.ln(1)
+    pdf.set_font("Helvetica", "", 7)
+    pdf.set_text_color(*GRIS)
+    pdf.multi_cell(W, 3, _t("Documento vivo, generado del catálogo de indicadores del proyecto. "
+                            "ENOLYTICS · Universidad de Cádiz · Proyecto FEDER Andalucía 2021-2027 "
+                            "· alineado con la norma UNE 178502."), new_x="LMARGIN", new_y="NEXT")
+    return bytes(pdf.output())

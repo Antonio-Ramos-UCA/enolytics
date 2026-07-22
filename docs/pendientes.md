@@ -413,7 +413,14 @@
     volcado a PDF. NOTA: la metodología de competidores NO es el Chen 1996 clásico que se supuso al
     principio, sino **Zhou et al. 2026** (K-prototypes + Kamensky), ya implementado.
 
-- [ ] ⭐ **PIEZA 2 — GUÍA DE USO / METODOLOGÍA** (documento + página de ayuda en el dashboard).
+- [x] ✅⭐ **HECHO (22/07) — PIEZA 2: GUÍA DE USO / METODOLOGÍA.** Nueva vista **📖 Guía y
+  metodología** en el dashboard (4.ª vista del menú), con las 5 secciones del ejemplo de Paula:
+  (1) origen de cada indicador (de `config.ORIGENES_DATO`), (2) las formas de mirar la plataforma,
+  (3) las 7 inteligencias (de `config.OBJETIVOS_INTELIGENCIAS`), (4) los análisis sin jerga
+  (IPA/PRCA/Kano/IPCA/DIPA/DIPCA/co-word/competidores), (5) fuentes. Casi se genera sola del
+  catálogo de indicadores, como decía Paula. **+ PDF descargable** (`informe.generar_guia_pdf`) =
+  el anexo de metodología para FEDER. Verificado (render + PDF revisado en imagen).
+- [ ] ~~PIEZA 2 — GUÍA~~ (hecha, ver arriba). Detalle original:
   Explica qué contiene cada apartado y de dónde sale cada dato. 5 secciones del ejemplo: (1) origen
   de cada indicador (🟢 oficial/🔵 observado/🟡 estimado), (2) las 3 vistas, (3) las 7 inteligencias
   (pregunta + fuente), (4) los análisis sin jerga (IPA/PRCA/Kano/IPCA/DIPA/DIPCA en una frase),
