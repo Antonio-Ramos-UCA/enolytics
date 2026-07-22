@@ -40,6 +40,12 @@
   - **Calendario de publicación 2026** → imprescindible para la **automatización periódica** ("tiempo real").
   - [ ] Falta revisar las **páginas 5-9** del blog.
 - [ ] **Consejo Regulador de Jerez** — memorias anuales (producción, ventas, exportación).
+- [ ] 💡 **PLATAFORMA DE DATOS ABIERTOS DEL AYUNTAMIENTO DE JEREZ** (idea de Antonio, 21/07).
+  Tiene **información por atractivos turísticos** que puede ser de interés para la inteligencia de
+  Negocios/Mercado (afluencia, oferta, eventos, puntos de interés del destino más allá de las
+  bodegas). Explorar el portal de datos abiertos: qué conjuntos hay, formato (API / CSV / JSON),
+  licencia y frecuencia de actualización. Encaja con el catálogo de oferta enoturística que ya
+  tenemos y podría enriquecer el contexto del destino (qué más visita el enoturista en Jerez).
 
 ## Calidad del análisis (NLP)
 - [x] ⭐ **IDIOMA DE LAS RESEÑAS → procedencia** (`enolytics/nlp/idioma.py`, langdetect con semilla fija para que sea reproducible). Columnas `idioma` y `segmento_idioma` en `resenas.csv`.
@@ -208,6 +214,17 @@
   - [ ] Falta (opcional): LDA sobre el inglés/otros idiomas por si emergen temas distintos; y el
     flujo Zhang completo (rederivar TODOS los atributos desde LDA), que es rehacer el cimiento.
 - [ ] Validar/afinar el léxico de atributos con criterio experto (Paula / bodegas).
+- [ ] 💡 **GRAFO DE CO-OCURRENCIAS DE ATRIBUTOS (análisis co-word)** (idea de Antonio, 21/07).
+  Representar qué atributos se **mencionan juntos** dentro de una misma reseña, con el método
+  **co-word** de la bibliometría: matriz de co-ocurrencias + **grafo de red** (nodos = atributos,
+  aristas = nº de reseñas que los mencionan a la vez; grosor = frecuencia). Revela la **estructura
+  de la experiencia**: p. ej., si «Vino y cata» va casi siempre con «Personal y trato», o si
+  «Precio» se menciona junto a «Gastronomía». Muy factible: **el dato ya existe** (la columna
+  `atributos` de `resenas.csv` es la lista de atributos por reseña; ya la medimos de pasada al
+  auditar «cara»). Detalles: (a) se puede hacer a nivel destino y por bodega; (b) útil clustering
+  de comunidades (qué atributos forman "paquetes" de experiencia); (c) opcional cruzar con el
+  sentimiento (co-ocurrencias en reseñas positivas vs negativas). Encaja con la línea
+  bibliométrica/IPA del proyecto y da un visual potente para el dashboard y la memoria.
 
 ## Modelos analíticos
 - [x] 🐛 **TRES ARREGLOS DE PRODUCTO** (17/07, a petición de Antonio: "estoy pensando en mejorar
