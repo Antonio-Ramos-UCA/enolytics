@@ -428,14 +428,21 @@
   - 💻 **Casi se genera sola:** ya tenemos `config.ORIGENES_DATO`, `OBJETIVOS_INTELIGENCIAS`, la
     leyenda de orígenes y los títulos en lenguaje llano. Es ensamblar contenido existente.
 
-- [ ] ⭐ **PIEZA 3 — SIMULADOR "¿QUÉ PASARÍA SI…?"**. Mueves una palanca y ves el efecto estimado
-  (responder las 209 críticas; subir ingreso/visitante a 55€ → +6,2 M€; captar 5% de cruceristas →
-  +34.808 visitantes; subir «Organización» medio punto → cambia de cuadrante IPA). Cierra una
-  promesa literal de la memoria ("simulaciones y proyecciones de escenarios") y es el efecto "wow".
-  - ⚠️ **Honestidad (Paula insiste):** son **proyecciones lineales, no predicciones**. El simulador
-    debe dejar claro que proyecta un escenario. Lo de "cambiar de cuadrante" hay que calcularlo con
-    el PRCA real. Usa modelos que ya tenemos (PRCA, reputación, ingreso/visitante).
-  - **Orden sugerido por Paula:** informe (lo más vendible) → simulador (el wow) → guía (cierre).
+- [x] ⭐ **PIEZA 3 — SIMULADOR "¿QUÉ PASARÍA SI…?"** ✅ (vista `🎛️ Simulador «¿y si…?»` en app.py).
+  Cuatro palancas, cada una con su cifra base **real** y su cálculo explicado:
+  - 💶 **Monetización:** ingreso/visitante objetivo → ingresos proyectados (base 2024: 40,4 €/vis,
+    17,2 M€; subir a 55 € → +6,2 M€, tal como estimaba Paula).
+  - 🚢 **Cruceros:** % de captación → nuevos visitantes + € (base 2025: 624.540 cruceristas Bahía de
+    Cádiz; 5% → +31.227 visitantes, +1,26 M€).
+  - ⭐ **Respuesta a críticos:** cuántas de las 590 reseñas ≤2★ sin respuesta contestar → nueva tasa
+    de respuesta. **Enmarcado como KPI de gestión, NO como predicción de estrellas** (honestidad).
+  - 🎯 **Calidad percibida:** subir un atributo X puntos → recoloca en el mapa IPA (umbrales fijos
+    del escenario base) y dice si cambia de cuadrante. «Organización» +0,6 → «Concéntrese aquí» →
+    «Siga con el buen trabajo».
+  - ⚠️ **Honestidad (Paula insiste):** banner fijo "proyecta un escenario, no predice el futuro";
+    cada palanca detalla su supuesto lineal. Reutiliza modelos existentes (ACEVIN, Dataestur,
+    reseñas, PRCA/IPA). Verificado con AppTest sin excepciones.
+  - **Orden sugerido por Paula (COMPLETADO):** informe → simulador → guía.
 
 - [ ] **Datos nuevos que prioriza Paula** (algunos ya en "Datos y fuentes"/"NLP"): **índice de
   presencia digital / redes** (Instagram/Facebook + seguidores, estar en TripAdvisor/Vivino,

@@ -1001,14 +1001,17 @@ if df.empty:
 VISTA_RESUMEN = "🏠 Resumen ejecutivo"
 VISTA_INTELIGENCIAS = "🧭 Las 7 inteligencias"
 VISTA_BODEGA = "🏭 Bodega individual"
+VISTA_SIMULADOR = "🎛️ Simulador «¿y si…?»"
 VISTA_GUIA = "📖 Guía y metodología"
 
 with st.sidebar:
     st.header("Navegación")
-    rol = st.radio("Vista", [VISTA_RESUMEN, VISTA_INTELIGENCIAS, VISTA_BODEGA, VISTA_GUIA],
+    rol = st.radio("Vista",
+                   [VISTA_RESUMEN, VISTA_INTELIGENCIAS, VISTA_BODEGA, VISTA_SIMULADOR, VISTA_GUIA],
                    captions=["Lo esencial, de un vistazo",
                              "El análisis completo por inteligencia",
                              "Ficha y recomendaciones de una bodega",
+                             "Mueve una palanca y proyecta el efecto",
                              "Qué es cada apartado y de dónde sale cada dato"])
     st.divider()
     localidades = sorted(df["localidad"].dropna().unique())
@@ -1094,6 +1097,9 @@ if rol == VISTA_GUIA:
                     "una abre con lo esencial; el detalle, plegado."),
                    (VISTA_BODEGA, "La ficha de una bodega: reputación, competidores, análisis, "
                     "recomendaciones y su informe descargable."),
+                   (VISTA_SIMULADOR, "Un banco de pruebas: mueve una palanca (monetización, "
+                    "cruceros, respuesta a críticos, calidad) y proyecta su efecto. **Proyecta un "
+                    "escenario, no predice el futuro.**"),
                    (VISTA_GUIA, "Esta página: qué es cada apartado y de dónde sale cada dato.")]:
         st.markdown(f"**{_t}** — {_d}")
 
@@ -1118,6 +1124,184 @@ if rol == VISTA_GUIA:
     st.caption("Algunos indicadores de la memoria (empleo por bodega, consumos ambientales, "
                "precios de experiencias) se completarán con cuestionarios y fuentes adicionales, "
                "porque no existen en abierto.")
+
+# --------------------------------------------------------------------------- #
+# VISTA — SIMULADOR «¿y si…?» (Pieza 3 de Paula): mueve una palanca, proyecta el efecto
+# --------------------------------------------------------------------------- #
+def _mil(n: float, dec: int = 0) -> str:
+    """Formatea un número al estilo español (miles con punto, decimales con coma)."""
+    s = f"{n:,.{dec}f}"
+    return s.replace(",", "·").replace(".", ",").replace("·", ".")
+
+
+if rol == VISTA_SIMULADOR:
+    st.markdown(estilo.hero("🎛️ Simulador «¿y si…?»",
+                            "Mueve una palanca y proyecta su efecto sobre el Marco"),
+                unsafe_allow_html=True)
+    st.warning(
+        "⚠️ **Esto proyecta un escenario, no predice el futuro.** Cada palanca aplica una "
+        "regla **lineal y sencilla** («si el ingreso por visitante sube a X, y todo lo demás "
+        "sigue igual, los ingresos serían Y»). Sirve para **ordenar prioridades y dimensionar "
+        "una decisión**, no como una previsión. Los supuestos de cada palanca se explican debajo "
+        "de su resultado.")
+
+    tab_mon, tab_cru, tab_cri, tab_cal = st.tabs(
+        ["💶 Monetización", "🚢 Cruceros", "⭐ Respuesta a críticos", "🎯 Calidad percibida"])
+
+    # ---- Palanca 1: monetización (ingreso por visitante) ----
+    with tab_mon:
+        st.markdown("#### ¿Y si cada visitante dejara más dinero?")
+        if acevin_ingresos.empty or acevin.empty:
+            st.info("No hay datos de ingresos/visitantes (ACEVIN) para simular.")
+        else:
+            _iy = int(acevin_ingresos["anio"].max())
+            _im = acevin_ingresos[(acevin_ingresos["ruta"] == "Marco de Jerez") &
+                                  (acevin_ingresos["anio"] == _iy)]["ingresos_eur"]
+            _vm = acevin[(acevin["ruta"] == "Marco de Jerez") &
+                         (acevin["anio"] == _iy)]["visitantes"]
+            if _im.empty or _vm.empty or _vm.iloc[0] == 0:
+                st.info("Faltan ingresos o visitantes del Marco para el mismo año.")
+            else:
+                ing0 = float(_im.iloc[0]); vis0 = int(_vm.iloc[0])
+                epv0 = ing0 / vis0
+                st.caption(f"Punto de partida ({_iy}, ACEVIN): **{_mil(vis0)} visitantes** dejan "
+                           f"**{_mil(ing0/1e6,1)} M€**, es decir **{_mil(epv0,1)} € por visitante**.")
+                objetivo = st.slider("Ingreso por visitante objetivo (€)",
+                                     min_value=float(round(epv0, 1)),
+                                     max_value=float(round(epv0, 1)) + 25.0,
+                                     value=float(round(epv0, 1)) + 10.0, step=0.5)
+                ing1 = objetivo * vis0
+                extra = ing1 - ing0
+                c1, c2, c3 = st.columns(3)
+                c1.metric("Ingresos proyectados", f"{_mil(ing1/1e6,1)} M€",
+                          f"{_mil(extra/1e6,1)} M€", help="Con los mismos visitantes de hoy.")
+                c2.metric("Diferencia por visitante", f"{_mil(objetivo,1)} €",
+                          f"{_mil(objetivo-epv0,1)} €")
+                c3.metric("Variación", f"{_mil((ing1/ing0-1)*100,1)} %")
+                st.caption("**Cómo se calcula:** ingresos = (ingreso por visitante objetivo) × "
+                           "(visitantes actuales). **Supuesto:** el nº de visitantes no cambia; "
+                           "subir el gasto medio se logra con más experiencias premium, venta en "
+                           "bodega o restauración —no está garantizado por mover el mando.")
+
+    # ---- Palanca 2: captación de cruceristas ----
+    with tab_cru:
+        st.markdown("#### ¿Y si captáramos parte del crucero de la Bahía de Cádiz?")
+        if cruceros.empty:
+            st.info("No hay datos de cruceros (Dataestur) para simular.")
+        else:
+            cru = cruceros.copy()
+            cru["AÑO"] = cru["AÑO"].astype(int)
+            _pa = cru.groupby("AÑO")["MES"].nunique()
+            _comp = _pa[_pa >= 12].index
+            cy = int(_comp.max()) if len(_comp) else int(cru["AÑO"].max())
+            pax = int(cru[cru["AÑO"] == cy]["PASAJEROS_CRUCERO"].sum())
+            # ingreso por visitante para traducir a euros (si existe)
+            epv = None
+            if not acevin_ingresos.empty and not acevin.empty:
+                _iy = int(acevin_ingresos["anio"].max())
+                _im = acevin_ingresos[(acevin_ingresos["ruta"] == "Marco de Jerez") &
+                                      (acevin_ingresos["anio"] == _iy)]["ingresos_eur"]
+                _vm = acevin[(acevin["ruta"] == "Marco de Jerez") &
+                             (acevin["anio"] == _iy)]["visitantes"]
+                if not _im.empty and not _vm.empty and _vm.iloc[0]:
+                    epv = float(_im.iloc[0]) / int(_vm.iloc[0])
+                    vis0 = int(_vm.iloc[0])
+            st.caption(f"Punto de partida ({cy}, Dataestur): **{_mil(pax)} cruceristas** pasaron "
+                       f"por el puerto de la Bahía de Cádiz.")
+            pct = st.slider("Porcentaje de cruceristas que visita una bodega del Marco (%)",
+                            min_value=0.0, max_value=10.0, value=5.0, step=0.5)
+            nuevos = int(round(pax * pct / 100))
+            c1, c2, c3 = st.columns(3)
+            c1.metric("Nuevos visitantes/año", f"+{_mil(nuevos)}")
+            if epv is not None:
+                c2.metric("Ingresos asociados", f"+{_mil(nuevos*epv/1e6,2)} M€",
+                          help="Nuevos visitantes × ingreso medio por visitante actual.")
+                c3.metric("Sobre los visitantes de hoy", f"+{_mil(nuevos/vis0*100,1)} %")
+            st.caption("**Cómo se calcula:** nuevos visitantes = (nº de cruceristas) × (% de "
+                       "captación). **Supuesto:** es un **techo optimista** —cada crucerista "
+                       "captado se comporta como un visitante medio actual. Requiere producto "
+                       "adaptado a la escala del crucero (horarios, idioma, transporte).")
+
+    # ---- Palanca 3: respuesta a críticos (KPI de gestión, NO predicción de estrellas) ----
+    with tab_cri:
+        st.markdown("#### ¿Y si contestáramos a las reseñas críticas sin respuesta?")
+        if resenas.empty or "respuesta_propietario" not in resenas.columns:
+            st.info("No hay reseñas con dato de respuesta del propietario.")
+        else:
+            cri = resenas[resenas["puntuacion"] <= 2]
+            _r = cri["respuesta_propietario"].astype(str).str.strip()
+            con = int(((cri["respuesta_propietario"].notna()) & (_r != "") & (_r != "nan")).sum())
+            tot = len(cri); sin = tot - con
+            tasa0 = con / tot * 100 if tot else 0.0
+            st.caption(f"Punto de partida (reseñas de Google): **{_mil(tot)} reseñas críticas "
+                       f"(≤2★)** en el Marco. Contestadas: **{_mil(con)}** "
+                       f"(**{_mil(tasa0,1)} %**). Sin respuesta: **{_mil(sin)}**.")
+            resp = st.slider("Reseñas críticas sin respuesta que se pasarían a contestar",
+                             min_value=0, max_value=int(sin), value=int(sin), step=10)
+            tasa1 = (con + resp) / tot * 100 if tot else 0.0
+            c1, c2 = st.columns(2)
+            c1.metric("Nueva tasa de respuesta a críticos", f"{_mil(tasa1,1)} %",
+                      f"{_mil(tasa1-tasa0,1)} pp")
+            c2.metric("Reseñas críticas contestadas", f"{_mil(con+resp)} de {_mil(tot)}")
+            st.info("**Qué mide y qué no.** Esta palanca es un **objetivo de gestión**, no una "
+                    "predicción de estrellas. Contestar es la herramienta de reputación **más "
+                    "barata y visible** (la lee cada futuro visitante), pero **no afirmamos** que "
+                    "suba la nota media en X: eso dependería de la calidad de cada respuesta. "
+                    "Lo que el mando cuantifica es el **esfuerzo** para llegar a una tasa de "
+                    "respuesta homologable a la del sector.")
+
+    # ---- Palanca 4: calidad percibida (mover un atributo en el mapa IPA) ----
+    with tab_cal:
+        st.markdown("#### ¿Y si mejorásemos un atributo? ¿Cambia de cuadrante en el mapa?")
+        base = ipa_desde_prca("Marco de Jerez")
+        if base.empty:
+            st.info("No hay tabla IPA por impacto (PRCA) para el Marco.")
+        else:
+            ui = float(base["importancia"].mean())
+            ud = float(base["desempeno"].mean())
+            attr = st.selectbox("Atributo a mejorar", sorted(base["atributo"]))
+            fila = base[base["atributo"] == attr].iloc[0]
+            des0 = float(fila["desempeno"])
+            subida = st.slider("Mejora en la percepción del atributo (puntos sobre 5)",
+                               min_value=0.0, max_value=min(1.0, round(5.0 - des0, 2)),
+                               value=min(0.5, round(5.0 - des0, 2)), step=0.1)
+            des1 = min(5.0, des0 + subida)
+            registros = [{"atributo": r["atributo"],
+                          "importancia": float(r["importancia"]),
+                          "desempeno": des1 if r["atributo"] == attr else float(r["desempeno"])}
+                         for _, r in base.iterrows()]
+            recalc = modelo_ipa.calcular_ipa(registros, umbral_imp=ui, umbral_des=ud)
+            nuevo = next(p for p in recalc if p.atributo == attr)
+            cuad0 = str(fila["cuadrante"]); cuad1 = nuevo.etiqueta
+            c1, c2, c3 = st.columns(3)
+            c1.metric("Percepción actual", f"{_mil(des0,2)} / 5")
+            c2.metric("Percepción objetivo", f"{_mil(des1,2)} / 5", f"+{_mil(subida,1)}")
+            c3.metric("Umbral del mapa", f"{_mil(ud,2)} / 5",
+                      help="Percepción media de los atributos: la línea que separa "
+                           "«bien» de «a mejorar» en el eje vertical del IPA.")
+            if cuad1 != cuad0:
+                st.success(f"**«{attr}» cambiaría de cuadrante:** de _{cuad0}_ → **{cuad1}**. "
+                           "Cruzaría la línea de desempeño del mapa.")
+            elif des1 >= ud > des0:
+                st.success(f"**«{attr}» cruzaría el umbral de desempeño** ({_mil(ud,2)}).")
+            else:
+                falta = ud - des1
+                if falta > 0:
+                    st.info(f"**«{attr}» seguiría en _{cuad1}_.** Le faltarían **{_mil(falta,2)} "
+                            f"puntos** más para cruzar el umbral del mapa.")
+                else:
+                    st.info(f"**«{attr}» se mantiene en _{cuad1}_** (ya estaba por encima del umbral).")
+            st.caption("**Cómo se calcula:** se recoloca el atributo en el mapa IPA con la nueva "
+                       "percepción, dejando fijas las líneas (los umbrales del escenario actual). "
+                       "**Supuesto:** subir medio punto de percepción es un **esfuerzo real** de "
+                       "mejora del servicio; el mando muestra el destino, no el camino.")
+
+    st.divider()
+    st.caption("Las palancas usan modelos ya presentes en la plataforma (ingreso/visitante de "
+               "ACEVIN, cruceros de Dataestur, reseñas de Google, mapa IPA por impacto/PRCA). "
+               "Idea de Paula (propuesta de mejora, Pieza 3).")
+    st.stop()
+
 
 # --------------------------------------------------------------------------- #
 # VISTA 1 — RESUMEN EJECUTIVO: ¿cómo vamos y qué hago primero? (5 segundos)

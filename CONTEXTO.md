@@ -191,8 +191,17 @@ Callon (normalizado); capa positivo/negativo. Solo a nivel de DESTINO (bodega = 
 generada de `config.ORIGENES_DATO` y `OBJETIVOS_INTELIGENCIAS`) + **PDF descargable**
 (`informe.generar_guia_pdf`) = anexo de metodología FEDER.
 
-**PENDIENTE:** ⏳ **PIEZA 3 — SIMULADOR "¿qué pasaría si…?"** (proyecciones lineales honestas; el
-"wow"). Todo lo demás subido y verificado (AppTest + PDFs revisados en imagen). Reboot en Streamlit.
+**4. ✅ PIEZA 3 — SIMULADOR "¿y si…?"** 5.ª vista **🎛️ Simulador «¿y si…?»** con banner fijo
+*"proyecta un escenario, no predice el futuro"*. Cuatro palancas, cifra base **real** de la
+plataforma y cálculo explícito con su supuesto lineal: **💶 Monetización** (ingreso/visitante →
+ingresos; 40,4 €→55 € = +6,2 M€), **🚢 Cruceros** (% captación de 624.540 cruceristas → visitantes+€;
+5% = +31.227), **⭐ Respuesta a críticos** (contestar de las 590 ≤2★ sin respuesta → tasa de
+respuesta; **KPI de gestión, NO predicción de estrellas**), **🎯 Calidad percibida** (subir un
+atributo → recoloca en el mapa IPA con umbrales fijos y dice si cambia de cuadrante; «Organización»
++0,6 cambia de cuadrante). Reutiliza ACEVIN/Dataestur/reseñas/PRCA-IPA. Verificado con AppTest.
+
+**Las 3 piezas de Paula quedan COMPLETADAS** (informe → simulador → guía). Todo subido y verificado
+(AppTest + PDFs revisados en imagen). Reboot en Streamlit para verlo en vivo.
 
 ## ═══ SESIÓN 2026-07-18 — PRCA AL DASHBOARD, KANO, GASTRONOMÍA (LDA) Y MEJORAS DE UX ═══
 ### (Antonio: conectar PRCA, abordar Kano, cobertura de modelos, LDA→Gastronomía, y repaso de UX)
