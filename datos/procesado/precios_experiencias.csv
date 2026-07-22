@@ -1,0 +1,18 @@
+bodega,experiencia,incluye,precio_desde_eur,precio_hasta_eur,precio_reducido,fuente,metodo,confianza,fecha_consulta
+Bodegas Williams & Humbert Sau,Visita + cata 4 vinos,"Fino Pando, Amontillado 15a, Dry Sack, Canasta Cream (2h)",25,35,,williams-humbert.com/en/visits,webfetch_oficial,alta,2026-07-22
+Bodegas Williams & Humbert Sau,Visita + cata 4 vinos + brandy,+ Gran Duque de Alba (2h),35,45,,williams-humbert.com/en/visits,webfetch_oficial,alta,2026-07-22
+Bodegas Williams & Humbert Sau,Premium Colección de Añadas,"2,5h",50,60,,williams-humbert.com/en/visits,webfetch_oficial,alta,2026-07-22
+Bodegas Williams & Humbert Sau,Premium Soleras VOS/VORS,"Jalifa 30a, Dos Cortados 20a, Don Guido PX (2,5h)",70,80,,williams-humbert.com/en/visits,webfetch_oficial,alta,2026-07-22
+Bodegas Osborne,Visita estándar,"4 vinos + snacks, Toro Gallery (90min)",25,25,5 (6-17 años),osborne.es,webfetch_websearch,alta,2026-07-22
+Bodegas Osborne,Visita Premium,3 VORS + vermut + Cinco Jotas,70,70,,osborne.es,webfetch_websearch,alta,2026-07-22
+Bodegas Herederos De Argüeso,Visita + cata 5 vinos,"2 blancos, Manzanilla, Amontillado, Oloroso",15,15,,bodegasargueso.com,websearch,media,2026-07-22
+Bodegas Díez Mérito,Visita + cata 3 vinos,Patios y jardines (75min),9,9,,diezmerito.com,websearch,media,2026-07-22
+Bodegas Díez Mérito,Visita + cata 5 vinos,,18,18,,diezmerito.com,websearch,media,2026-07-22
+Bodegas Álvaro Domecq,Visita + cata línea 1730 (VORS),"Fino La Janda, Oloroso Alburejo, Cream (1-1,5h)",20,20,,alvarodomecq.com,websearch,media,2026-07-22
+Bodegas Gutiérrez Colosía,Visita + cata 6 vinos,"Fino, Amont., Oloroso, Cream, Moscatel, PX",15,15,6 (>4 años),gutierrez-colosia.com,websearch,media,2026-07-22
+Bodegas Gutiérrez Colosía,Visita con maridaje (Bespoke),,32,32,,gutierrez-colosia.com,websearch,media,2026-07-22
+Bodegas Luis Pérez,Tour y Cata,"Viñedo, bodega, museo + 4 vinos y aperitivos (90min)",25,25,,bodegasluisperez.com,websearch,media,2026-07-22
+Bodegas Rey Fernando De Castilla,(consultar),Visita ~1h + cata; precio no publicado,,,,fernandodecastilla.com,websearch,consultar,2026-07-22
+Bodega Cooperativa Albarizas,(consultar),Cata en sala; precio no publicado,,,,vinosdealbarizas.com,websearch,consultar,2026-07-22
+Bodegas Halcón,(consultar),Visita + cata + gastronomía; precio no publicado,,,,bodegashalcon.es,websearch,consultar,2026-07-22
+Viña El Carmen,(consultar),Precio no publicado,,,,vecwines.com,websearch,consultar,2026-07-22
