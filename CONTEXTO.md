@@ -162,6 +162,38 @@ streamlit, pandas, sklearn, plotly, matplotlib, requests, bs4.
 6. **En paralelo (no bloquea):** diseñar cuestionarios a partir de la Tabla 1 de la
    memoria; incorporar indicadores oficiales (INE, Dataestur, ACEVIN, Google Trends).
 
+## ═══ SESIÓN 2026-07-21/22 — CO-OCURRENCIAS + PROPUESTAS DE PAULA (Piezas 1 y 2) ═══
+> Sesión centrada en la **propuesta de mejora de Paula (IP)** para convertir el dashboard en producto.
+
+**0. GRAFO DE CO-OCURRENCIAS (método co-word, idea de Antonio).** `analitica/coocurrencia.py` +
+grafo de red en la pestaña Clientes ("¿De qué habla junto el visitante?"). Bruto + equivalencia de
+Callon (normalizado); capa positivo/negativo. Solo a nivel de DESTINO (bodega = v2 pendiente).
+
+**1. PROPUESTA DE PAULA** (3 piezas + datos + temas de memoria). Guardada: mockups originales en
+`Propuestas de mejora - Paula/` (3 HTML + README) y resumen accionable en `docs/pendientes.md`
+(sección "⭐ PROPUESTAS DE PAULA"). Las 3 piezas: informe PDF por bodega, guía, simulador.
+
+**2. ✅ PIEZA 1 — MOTOR DE COMPETIDORES DIRECTOS + INFORME PDF.**
+- `analitica/competidores.py`, fiel a **Zhou et al. (2026)**, IJHM (`BIBLIOGRAFIA/Zhou_2026_IJHM.pdf`):
+  rasgos por bodega → **K-prototypes** (`kmodes`) para identificar → **Kamensky** (core/sustituto/
+  marginal/potencial) con **distancia de Gower** en dos ejes: **Mercado** (perfil de sentimiento +
+  nota + ubicación haversine + % internacional) y **Recursos** (servicios one-hot + FEV + madurez
+  digital + tamaño). NO es Chen 1996 (eso se supuso al principio; se corrigió al leer el paper).
+- Decisiones (Antonio): v1 sin precio; 37/42 bodegas viables (≥4 atributos+GPS+servicios), a las
+  5 pobres mensaje honesto; k=3 por silueta; umbrales por mediana. Cara validada (Barbadillo→
+  Osborne/Lustau/GB; Tradición→premium). Precalculado a `competidores.csv`.
+- Dashboard: pestaña **🥊 Competidores** (lista + mapa de terreno de Kamensky + cita de Zhou).
+- **Informe PDF** `dashboard/informe.py` con **fpdf2** (puro Python; weasyprint NO vale en Cloud).
+  Botón "Descargar informe (PDF)" en la ficha (pestaña Recomendaciones). 1 página, identidad caoba,
+  estructura de Paula (Parte A/B). `fpdf2` SÍ entra en requirements.txt.
+
+**3. ✅ PIEZA 2 — GUÍA DE USO / METODOLOGÍA.** 4.ª vista **📖 Guía y metodología** (5 secciones, casi
+generada de `config.ORIGENES_DATO` y `OBJETIVOS_INTELIGENCIAS`) + **PDF descargable**
+(`informe.generar_guia_pdf`) = anexo de metodología FEDER.
+
+**PENDIENTE:** ⏳ **PIEZA 3 — SIMULADOR "¿qué pasaría si…?"** (proyecciones lineales honestas; el
+"wow"). Todo lo demás subido y verificado (AppTest + PDFs revisados en imagen). Reboot en Streamlit.
+
 ## ═══ SESIÓN 2026-07-18 — PRCA AL DASHBOARD, KANO, GASTRONOMÍA (LDA) Y MEJORAS DE UX ═══
 ### (Antonio: conectar PRCA, abordar Kano, cobertura de modelos, LDA→Gastronomía, y repaso de UX)
 > **Sesión larga y muy productiva.** El dashboard pasó de *potente pero abrumador* a *potente y
