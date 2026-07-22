@@ -88,15 +88,33 @@ def css() -> str:
   h4 {{ font-size: .95rem !important; font-weight: 650 !important; color: {INK_SUAVE};
         text-transform: uppercase; letter-spacing: .06em; }}
 
-  /* ---------- Cabecera de marca ---------- */
+  /* ---------- Cabecera de marca (Opción A · «filo de vino») ---------- */
+  /* Fondo claro (albariza) para no comer aire; la escala del vino vive en un filo
+     degradado de 6 px en el borde superior. La marca va discreta arriba; el título
+     de sección manda, con una barra oloroso al lado. */
   .eno-hero {{
-    background: linear-gradient(100deg, {PX} 0%, {OLOROSO} 52%, {PALO_CORTADO} 100%);
-    color: #fff; border-radius: 14px; padding: 1.25rem 1.5rem; margin-bottom: 1.4rem;
-    box-shadow: 0 1px 2px rgba(28,27,25,.08), 0 10px 26px -12px rgba(59,30,18,.55);
-    border-top: 2px solid rgba(198,144,47,.55);  /* filo de oro amontillado */
+    position: relative; background: {SUPERFICIE};
+    border: 1px solid {REJILLA}; border-radius: 14px;
+    padding: 1.1rem 1.4rem 1.15rem; margin-bottom: 1.4rem; overflow: hidden;
+    box-shadow: 0 1px 2px rgba(28,27,25,.05);
   }}
-  .eno-hero h1 {{ color: #fff !important; margin: 0 0 .15rem 0; font-size: 1.75rem !important; }}
-  .eno-hero p {{ margin: 0; opacity: .88; font-size: .92rem; }}
+  .eno-hero::before {{  /* filo de la escala del vino: fino → Pedro Ximénez */
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 6px;
+    background: linear-gradient(90deg, {FINO}, {AMONTILLADO}, {PALO_CORTADO}, {OLOROSO}, {PX});
+  }}
+  .eno-brandrow {{
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: .8rem; flex-wrap: wrap; margin-bottom: .7rem;
+  }}
+  .eno-brand {{ font-weight: 700; font-size: .95rem; color: {TINTO}; letter-spacing: .01em; }}
+  .eno-tagline {{ font-size: .78rem; color: {INK_TENUE}; }}
+  .eno-title {{ display: flex; align-items: stretch; gap: .8rem; }}
+  .eno-title .bar {{ width: 4px; flex: none; border-radius: 2px; background: {OLOROSO}; }}
+  .eno-hero h1 {{
+    color: {INK} !important; margin: 0 0 .1rem 0;
+    font-size: 1.6rem !important; line-height: 1.15;
+  }}
+  .eno-hero p {{ margin: 0; color: {INK_SUAVE}; font-size: .9rem; }}
 
   /* ---------- Tarjetas (KPI, semáforo, secciones) ---------- */
   [data-testid="stMetric"] {{
@@ -152,9 +170,26 @@ def css() -> str:
 """
 
 
+# Marca y descriptor, discretos, que acompañan a cada título de sección en la cabecera.
+MARCA = "🍷 ENOLYTICS"
+TAGLINE = "Inteligencia enoturística del Marco de Jerez"
+
+
 def hero(titulo: str, subtitulo: str) -> str:
-    """Cabecera de marca del cuadro de mando."""
-    return f'<div class="eno-hero"><h1>{titulo}</h1><p>{subtitulo}</p></div>'
+    """Cabecera «filo de vino» (Opción A): marca discreta + título de sección.
+
+    Fondo claro (albariza) con un filo degradado de la escala del vino en el borde
+    superior. Una sola cabecera por página: arriba la marca, debajo el título de
+    sección grande con una barra oloroso al lado. Ligera, pero mantiene la identidad.
+    """
+    return (
+        '<div class="eno-hero">'
+        f'<div class="eno-brandrow"><span class="eno-brand">{MARCA}</span>'
+        f'<span class="eno-tagline">{TAGLINE}</span></div>'
+        f'<div class="eno-title"><div class="bar"></div>'
+        f'<div><h1>{titulo}</h1><p>{subtitulo}</p></div></div>'
+        '</div>'
+    )
 
 
 def figura(fig, alto: int = 320, leyenda: bool = True):

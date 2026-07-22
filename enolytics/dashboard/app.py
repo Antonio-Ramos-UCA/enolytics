@@ -981,10 +981,6 @@ acevin_ingresos = cargar_acevin_ingresos()
 acevin_demanda = cargar_acevin_demanda()
 
 st.markdown(estilo.css(), unsafe_allow_html=True)
-st.markdown(
-    estilo.hero("🍷 ENOLYTICS",
-                "Inteligencia competitiva integrada para el enoturismo del Marco de Jerez"),
-    unsafe_allow_html=True)
 
 if df.empty:
     st.warning(
@@ -1022,6 +1018,22 @@ with st.sidebar:
         st.caption(f"Filtrando {len(sel_local)} de {len(localidades)} localidades")
 
 df_f = df[df["localidad"].isin(sel_local)]
+
+# --------------------------------------------------------------------------- #
+# Cabecera única «filo de vino» (Opción A de Paula): marca discreta + título de la
+# vista actual. Una sola cabecera por página, en vez de dos bloques oscuros apilados.
+# --------------------------------------------------------------------------- #
+_CABECERAS = {
+    VISTA_RESUMEN: ("Resumen ejecutivo", "Lo esencial del destino, de un vistazo"),
+    VISTA_INTELIGENCIAS: ("Las 7 inteligencias", "El análisis competitivo completo del Marco"),
+    VISTA_BODEGA: ("Bodega individual", "Ficha, competidores y recomendaciones de cada bodega"),
+    VISTA_SIMULADOR: ("Simulador «¿y si…?»",
+                      "Mueve una palanca y proyecta su efecto sobre el Marco"),
+    VISTA_GUIA: ("Guía de uso y metodología",
+                 "Cómo leer la plataforma, y de dónde sale cada dato"),
+}
+_ct, _cs = _CABECERAS.get(rol, ("ENOLYTICS", estilo.TAGLINE))
+st.markdown(estilo.hero(_ct, _cs), unsafe_allow_html=True)
 
 # --------------------------------------------------------------------------- #
 # Cálculos comunes al destino (resumen e inteligencias comparten motor)
@@ -1070,9 +1082,6 @@ FUENTES_GUIA = [
 ]
 
 if rol == VISTA_GUIA:
-    st.markdown(estilo.hero("📖 Guía de uso y metodología",
-                            "Cómo leer la plataforma, y de dónde sale cada dato"),
-                unsafe_allow_html=True)
     st.caption("Qué contiene cada apartado, qué significan los análisis y el origen de cada "
                "indicador. Sirve al bodeguero para entenderlo y al proyecto como documentación "
                "metodológica (anexo para FEDER).")
@@ -1136,9 +1145,6 @@ def _mil(n: float, dec: int = 0) -> str:
 
 
 if rol == VISTA_SIMULADOR:
-    st.markdown(estilo.hero("🎛️ Simulador «¿y si…?»",
-                            "Mueve una palanca y proyecta su efecto sobre el Marco"),
-                unsafe_allow_html=True)
     st.warning(
         "⚠️ **Esto proyecta un escenario, no predice el futuro.** Cada palanca aplica una "
         "regla **lineal y sencilla** («si el ingreso por visitante sube a X, y todo lo demás "
