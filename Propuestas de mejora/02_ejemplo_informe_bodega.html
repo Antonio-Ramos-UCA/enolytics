@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Informe por bodega — Ejemplo (propuesta de Paula)</title>
+<!-- Ejemplo de informe descargable por bodega. Propuesta de Paula (IP), 21/07/2026.
+     Datos reales de reputación; en "competidores directos" las bodegas son de ejemplo. -->
+<style>
+  :root{
+    --plane:#f6f4ef; --surface:#ffffff; --surface-2:#fbfaf6;
+    --ink:#17150f; --ink-2:#57534a; --ink-muted:#8a8578; --hairline:#e3dfd5; --rule:#d8d3c6;
+    --accent:#0b6e7a; --accent-ink:#06525c; --accent-wash:#e8f1f2;
+    --good:#0ca30c; --good-wash:#e9f5e9; --crit:#d03b3b; --crit-wash:#fbeceb; --warn:#ec835a; --warn-wash:#fdf0e9;
+    --display:Georgia,"Iowan Old Style","Palatino Linotype",Palatino,serif;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+    --mono:ui-monospace,"Cascadia Mono","SF Mono",Consolas,Menlo,monospace;
+    --r:8px;
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --plane:#100f0c; --surface:#1b1915; --surface-2:#211f1a;
+    --ink:#f5f2ea; --ink-2:#bdb8ac; --ink-muted:#8a8578; --hairline:#2e2b25; --rule:#3a362e;
+    --accent:#4ec3d0; --accent-ink:#8ad8e1; --accent-wash:#123135;
+    --good-wash:#16301a; --crit-wash:#33191a; --warn-wash:#35211a;
+  }}
+  body{background:var(--plane);color:var(--ink);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased;margin:0;}
+  .note{max-width:720px;margin:0 auto;padding:18px 20px 0;font-size:.82rem;color:var(--ink-muted);text-align:center;}
+  .note b{color:var(--ink-2);}
+  .page{max-width:720px;margin:16px auto;background:var(--surface);border:1px solid var(--hairline);border-radius:var(--r);box-shadow:0 1px 3px rgba(0,0,0,.05);overflow:hidden;}
+  .pad{padding:26px 30px;display:flex;flex-direction:column;gap:20px;}
+  .cover{background:linear-gradient(135deg,var(--accent) 0%,var(--accent-ink) 100%);color:#fff;padding:34px 30px;display:flex;flex-direction:column;gap:6px;}
+  .cover .k{font-size:.72rem;text-transform:uppercase;letter-spacing:.16em;opacity:.85;}
+  .cover h1{font-family:var(--display);font-size:1.9rem;font-weight:400;line-height:1.15;}
+  .cover .meta{font-size:.86rem;opacity:.9;margin-top:6px;}
+  .sec-label{font-family:var(--mono);font-size:.68rem;font-weight:700;letter-spacing:.08em;color:var(--accent-ink);background:var(--accent-wash);padding:3px 9px;border-radius:4px;display:inline-block;}
+  h2{font-family:var(--display);font-size:1.3rem;font-weight:400;border-bottom:2px solid var(--rule);padding-bottom:6px;}
+  h3{font-size:.98rem;font-weight:700;}
+  p{font-size:.92rem;color:var(--ink-2);}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1px;background:var(--hairline);border:1px solid var(--hairline);border-radius:6px;overflow:hidden;}
+  .kpi{background:var(--surface);padding:11px 13px;display:flex;flex-direction:column;gap:2px;}
+  .kpi .l{font-size:.66rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-muted);font-weight:600;}
+  .kpi .v{font-family:var(--mono);font-size:1.3rem;font-weight:700;letter-spacing:-.01em;}
+  .kpi .s{font-size:.72rem;color:var(--ink-2);}
+  .kpi .s.up{color:var(--good);} .kpi .s.down{color:var(--crit);}
+  .comp{display:flex;flex-direction:column;gap:8px;}
+  .comp-item{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;background:var(--surface-2);border:1px solid var(--hairline);border-radius:6px;padding:9px 12px;}
+  .comp-rank{font-family:var(--mono);font-weight:700;color:var(--accent);font-size:.9rem;}
+  .comp-name{font-size:.9rem;font-weight:600;}
+  .comp-why{font-size:.76rem;color:var(--ink-muted);}
+  .comp-score{font-family:var(--mono);font-size:.82rem;font-weight:600;color:var(--ink-2);}
+  .src{font-size:.72rem;color:var(--ink-muted);display:flex;align-items:center;gap:6px;}
+  .dot{width:7px;height:7px;border-radius:50%;flex:none;}
+  .dot.of{background:var(--good);} .dot.ob{background:var(--accent);} .dot.px{background:var(--warn);}
+  .rec{display:flex;gap:12px;background:var(--surface-2);border:1px solid var(--hairline);border-radius:6px;padding:12px 14px;}
+  .rec .n{font-family:var(--mono);font-weight:700;color:var(--accent);flex:none;}
+  .rec .t{font-size:.9rem;font-weight:600;}
+  .rec .d{font-size:.82rem;color:var(--ink-2);margin-top:2px;}
+  .rec .d b{color:var(--ink);}
+  .pill{display:inline-flex;align-items:center;gap:5px;font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:999px;}
+  .pill.g{background:var(--good-wash);color:#0a7a0a;} .pill.c{background:var(--crit-wash);color:var(--crit);} .pill.w{background:var(--warn-wash);color:#b4501f;}
+  .strengths{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  @media(max-width:520px){.strengths{grid-template-columns:1fr;}}
+  .sbox{border:1px solid var(--hairline);border-radius:6px;padding:11px 13px;display:flex;flex-direction:column;gap:6px;}
+  .sbox .h{font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;font-weight:700;}
+  .sbox.up .h{color:#0a7a0a;} .sbox.dn .h{color:var(--crit);}
+  .sbox li{font-size:.84rem;color:var(--ink-2);}
+  .sbox ul{margin:0;padding-left:1.1rem;display:flex;flex-direction:column;gap:3px;}
+  .context{background:var(--accent-wash);border-radius:6px;padding:14px 16px;}
+  .context h3{color:var(--accent-ink);font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;}
+  .context .row{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:.86rem;color:var(--ink-2);}
+  .context b{color:var(--ink);font-family:var(--mono);}
+  .foot{border-top:1px solid var(--hairline);padding:16px 30px;font-size:.74rem;color:var(--ink-muted);display:flex;flex-direction:column;gap:4px;}
+</style>
+</head>
+<body>
+<p class="note">🍷 <b>Ejemplo ilustrativo</b> del informe que se descargaría por cada bodega. Datos reales de reputación; en «competidores directos», las bodegas son de ejemplo, pero el <b>diseño es el definitivo</b> y el cálculo real (MC+RS) es factible con los datos que ya tenemos.</p>
+
+<div class="page">
+  <div class="cover">
+    <div class="k">ENOLYTICS · Informe competitivo de bodega</div>
+    <h1>Bodega Cooperativa Albarizas</h1>
+    <div class="meta">📍 Trebujena (Cádiz) · Marco de Jerez &nbsp;·&nbsp; Generado el 15/07/2026 · Universidad de Cádiz</div>
+  </div>
+
+  <div class="pad">
+    <span class="sec-label">PARTE A · QUIÉN ERES</span>
+
+    <div>
+      <h2>Tu reputación online</h2>
+      <div class="kpis" style="margin-top:12px">
+        <div class="kpi"><span class="l">Valoración</span><span class="v">4,89</span><span class="s">9 reseñas</span></div>
+        <div class="kpi"><span class="l">vs. media del Marco</span><span class="v">+0,33</span><span class="s up">media: 4,56 ★</span></div>
+        <div class="kpi"><span class="l">Con texto</span><span class="v">6</span><span class="s">de 9</span></div>
+        <div class="kpi"><span class="l">Reseñas contestadas</span><span class="v">0%</span><span class="s down">0 de 9</span></div>
+      </div>
+      <p style="margin-top:8px">La Cooperativa Albarizas está <b>por encima de la media del Marco</b> en satisfacción, pero <b>no responde a ninguna reseña</b>: una oportunidad fácil.</p>
+      <div class="src" style="margin-top:6px"><span class="dot ob"></span> Dato observado · Reseñas de Google</div>
+    </div>
+
+    <div>
+      <h3>De dónde vienen tus visitantes</h3>
+      <p>El <b>33%</b> de las reseñas con texto están en idioma extranjero (proxy de cliente internacional). El internacional puntúa incluso algo más alto.</p>
+      <div class="src"><span class="dot px"></span> Estimación · idioma de la reseña ≠ nacionalidad</div>
+    </div>
+
+    <span class="sec-label" style="margin-top:8px">PARTE B · CÓMO COMPITES Y QUÉ HACER</span>
+
+    <div>
+      <h2>Tus competidores directos</h2>
+      <p>Las bodegas más parecidas a la tuya, por <b>tipo de cliente</b> (Market Commonality) y <b>recursos</b> (Resource Similarity). Con quién compites de verdad — no todo el Marco, sino tu grupo.</p>
+      <div class="comp" style="margin-top:10px">
+        <div class="comp-item"><span class="comp-rank">1</span><span><span class="comp-name">Bodegas Caydsa</span> <span class="comp-why">· cooperativa, Sanlúcar · perfil y tamaño similar</span></span><span class="comp-score">4,71 ★</span></div>
+        <div class="comp-item"><span class="comp-rank">2</span><span><span class="comp-name">Bodega Mar 7</span> <span class="comp-why">· pequeña, Sanlúcar · cliente de proximidad</span></span><span class="comp-score">4,80 ★</span></div>
+        <div class="comp-item"><span class="comp-rank">3</span><span><span class="comp-name">Cooperativa Vitivinícola de Chiclana</span> <span class="comp-why">· cooperativa local</span></span><span class="comp-score">4,52 ★</span></div>
+      </div>
+      <div class="src" style="margin-top:8px"><span class="dot px"></span> Bodegas de ejemplo · el diseño es el definitivo; el cálculo real (MC + RS) es factible con los datos que ya tenemos</div>
+    </div>
+
+    <div>
+      <h2>Tus fortalezas y debilidades</h2>
+      <div class="strengths" style="margin-top:10px">
+        <div class="sbox up"><span class="h">↗ En lo que destacas</span><ul><li>Trato cercano y cooperativo</li><li>Autenticidad / arraigo al territorio</li><li>Cata comentada</li></ul></div>
+        <div class="sbox dn"><span class="h">↘ Lo que flojea</span><ul><li>Organización y reserva</li><li>Señalización / cómo llegar</li><li>Presencia digital</li></ul></div>
+      </div>
+      <div class="src" style="margin-top:8px"><span class="dot ob"></span> Dato observado · sentimiento por atributo (BERT) sobre tus reseñas</div>
+    </div>
+
+    <div>
+      <h2>Tu presencia digital y sostenibilidad</h2>
+      <div class="kpis" style="margin-top:12px">
+        <div class="kpi"><span class="l">Madurez digital</span><span class="v">3 / 5</span><span class="s">media Marco: 3,5</span></div>
+        <div class="kpi"><span class="l">Reserva online</span><span class="v">No</span><span class="s down">el 66% del Marco sí</span></div>
+        <div class="kpi"><span class="l">Certificación clima (FEV)</span><span class="v">No</span><span class="s">10% del Marco la tiene</span></div>
+        <div class="kpi"><span class="l">Transporte público</span><span class="v">Sí</span><span class="s up">a pie desde parada</span></div>
+      </div>
+      <div class="src" style="margin-top:6px"><span class="dot ob"></span> Dato observado · auditoría de tu web + registros oficiales</div>
+    </div>
+
+    <div>
+      <h2>Qué hacer para ganar clientes</h2>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
+        <div class="rec"><span class="n">1</span><div><span class="t">Responde a tus reseñas <span class="pill c">▲ Prioridad alta</span></span><div class="d">Tienes <b>9 reseñas y 0 respuestas</b>. Responder es gratis y lo lee el visitante que está decidiendo. La mejora de reputación más barata.</div></div></div>
+        <div class="rec"><span class="n">2</span><div><span class="t">Activa la reserva online <span class="pill w">◆ Media</span></span><div class="d">El <b>66% del Marco</b> ya la tiene y tú no. Reduce fricción y mejora "Organización y reserva", tu punto débil.</div></div></div>
+        <div class="rec"><span class="n">3</span><div><span class="t">Comunica tu carácter cooperativo y ecológico <span class="pill g">● Palanca</span></span><div class="d">Es tu <b>deleitador</b>: donde puedes diferenciarte. Ponlo en la web y en redes.</div></div></div>
+      </div>
+    </div>
+
+    <div class="context">
+      <h3>El Marco de Jerez, en contexto</h3>
+      <div class="row">
+        <span><b>425.652</b> visitantes (1.º de España)</span>
+        <span><b>40,4 €</b> por visitante (Rioja: 70 €)</span>
+        <span><b>2,6 M</b> búsquedas de vuelo sin conexión directa</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span>Fuentes: reseñas de Google · ACEVIN · Dataestur/SEGITTUR · FEV · auditoría web propia. Cada dato indica su origen (🟢 oficial · 🔵 observado · 🟡 estimado).</span>
+    <span>ENOLYTICS · Universidad de Cádiz · Proyecto FEDER Andalucía 2021-2027 · datos: Ruta del Vino y Brandy de Jerez</span>
+  </div>
+</div>
+</body>
+</html>

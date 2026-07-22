@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Propuesta de mejora — ENOLYTICS</title>
+<!-- Propuesta de Paula (IP) recibida el 21/07/2026. Guardada desde el artefacto de claude.ai
+     (se ha retirado el envoltorio técnico del visor; el diseño y el contenido son los originales). -->
+<style>
+  :root{
+    --plane:#f6f4ef; --surface:#ffffff; --surface-2:#fbfaf6;
+    --ink:#17150f; --ink-2:#57534a; --ink-muted:#8a8578; --hairline:#e3dfd5; --rule:#d8d3c6;
+    --accent:#0b6e7a; --accent-ink:#06525c; --accent-wash:#e8f1f2;
+    --good:#0ca30c; --good-wash:#e9f5e9; --gold:#c2610a; --gold-wash:#fbeede;
+    --display:Georgia,"Iowan Old Style","Palatino Linotype",Palatino,serif;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+    --mono:ui-monospace,"Cascadia Mono","SF Mono",Consolas,Menlo,monospace;
+    --r:10px;
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --plane:#100f0c; --surface:#1b1915; --surface-2:#211f1a;
+    --ink:#f5f2ea; --ink-2:#bdb8ac; --ink-muted:#8a8578; --hairline:#2e2b25; --rule:#3a362e;
+    --accent:#4ec3d0; --accent-ink:#8ad8e1; --accent-wash:#123135;
+    --good-wash:#16301a; --gold:#e0913f; --gold-wash:#33240f;
+  }}
+  body{background:var(--plane);color:var(--ink);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased;margin:0;}
+  .wrap{max-width:840px;margin:0 auto;padding:32px 20px 72px;display:flex;flex-direction:column;gap:26px;}
+  header{display:flex;flex-direction:column;gap:10px;}
+  .eyebrow{font-size:.72rem;text-transform:uppercase;letter-spacing:.15em;font-weight:600;color:var(--accent-ink);}
+  h1{font-family:var(--display);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:400;line-height:1.15;}
+  .lead{font-size:1.05rem;color:var(--ink-2);max-width:64ch;}
+  .lead b{color:var(--ink);}
+  .intro{background:var(--accent-wash);border-left:3px solid var(--accent);border-radius:8px;padding:16px 20px;font-size:1rem;}
+  .intro b{color:var(--accent-ink);}
+  .card{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;}
+  .card-top{display:flex;align-items:center;gap:14px;padding:18px 22px 14px;border-bottom:1px solid var(--hairline);}
+  .icon{font-size:1.9rem;line-height:1;flex:none;}
+  .card-top .n{font-family:var(--mono);font-size:.72rem;font-weight:700;color:var(--accent-ink);background:var(--accent-wash);padding:3px 9px;border-radius:999px;letter-spacing:.05em;}
+  .card-top h2{font-family:var(--display);font-size:1.4rem;font-weight:400;flex:1;}
+  .card-body{padding:16px 22px 20px;display:flex;flex-direction:column;gap:14px;}
+  .qbox{display:flex;flex-direction:column;gap:5px;}
+  .qlabel{font-size:.68rem;text-transform:uppercase;letter-spacing:.09em;font-weight:700;color:var(--ink-muted);}
+  .qtext{font-size:.96rem;color:var(--ink-2);}
+  .qtext b{color:var(--ink);}
+  .heart{background:var(--gold-wash);border:1px solid color-mix(in srgb,var(--gold) 35%,transparent);border-radius:8px;padding:12px 15px;font-size:.92rem;color:var(--ink-2);}
+  .heart b{color:var(--gold);}
+  .heart .t{font-weight:700;color:var(--gold);display:block;margin-bottom:2px;font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;}
+  .why{display:flex;flex-direction:column;gap:6px;}
+  .why div{display:flex;gap:9px;align-items:baseline;font-size:.92rem;color:var(--ink-2);}
+  .why .k{color:var(--good);font-weight:700;flex:none;}
+  .why b{color:var(--ink);}
+  .steps{display:flex;flex-direction:column;gap:8px;background:var(--surface-2);border:1px solid var(--hairline);border-radius:8px;padding:13px 15px;}
+  .steps-t{font-size:.82rem;font-weight:700;color:var(--ink);}
+  .step{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:baseline;font-size:.88rem;color:var(--ink-2);}
+  .step .sn{font-family:var(--mono);font-weight:700;color:var(--accent);flex:none;}
+  .step b{color:var(--ink);}
+  .ready{display:inline-flex;align-items:center;gap:7px;font-size:.82rem;font-weight:600;background:var(--good-wash);color:#0a7a0a;padding:6px 12px;border-radius:999px;align-self:flex-start;}
+  .seelink{display:inline-flex;align-items:center;gap:8px;font-size:.9rem;font-weight:600;color:var(--accent-ink);background:var(--accent-wash);border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);padding:9px 14px;border-radius:8px;text-decoration:none;align-self:flex-start;}
+  .sim{background:var(--surface-2);border:1px dashed var(--hairline);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:12px;}
+  .sim-row{display:grid;grid-template-columns:1fr auto;gap:6px 14px;align-items:center;}
+  .sim-lever{font-size:.9rem;color:var(--ink);}
+  .sim-lever .mono{font-family:var(--mono);}
+  .sim-arrow{font-size:.85rem;color:var(--accent-ink);font-weight:600;text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;}
+  .sim-row + .sim-row{border-top:1px solid var(--hairline);padding-top:12px;}
+  .caveat{background:var(--gold-wash);border:1px solid color-mix(in srgb,var(--gold) 30%,transparent);border-radius:8px;padding:12px 15px;font-size:.86rem;color:var(--ink-2);}
+  .caveat .t{font-weight:700;color:var(--gold);font-size:.76rem;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:4px;}
+  .caveat b{color:var(--ink);}
+  h2.sec{font-family:var(--display);font-size:1.5rem;font-weight:400;border-bottom:2px solid var(--rule);padding-bottom:8px;}
+  .datalist{display:flex;flex-direction:column;gap:9px;}
+  .ditem{background:var(--surface);border:1px solid var(--hairline);border-radius:8px;padding:12px 15px;display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:baseline;}
+  .ditem .nm{font-size:.94rem;font-weight:600;}
+  .ditem .ds{font-size:.84rem;color:var(--ink-2);grid-column:1;}
+  .ditem .tg{font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:3px 8px;border-radius:999px;white-space:nowrap;}
+  .tg.new{background:var(--gold-wash);color:var(--gold);}
+  .tg.list{background:var(--accent-wash);color:var(--accent-ink);}
+  .pend{background:var(--surface-2);border:1px solid var(--hairline);border-radius:var(--r);padding:18px 20px;display:flex;flex-direction:column;gap:10px;}
+  .pend li{font-size:.9rem;color:var(--ink-2);}
+  .pend ul{margin:0;padding-left:1.15rem;display:flex;flex-direction:column;gap:7px;}
+  .pend b{color:var(--ink);}
+  footer{border-top:2px solid var(--rule);padding-top:20px;font-size:.95rem;color:var(--ink-2);}
+  footer b{color:var(--ink);}
+  .tagline{font-family:var(--display);font-size:1.15rem;color:var(--ink);text-wrap:balance;margin-bottom:8px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">ENOLYTICS · Propuesta de mejora</div>
+    <h1>Tres piezas para convertir el dashboard en un producto</h1>
+    <p class="lead">El análisis ya está listo y además es la leche. Lo que falta no es más análisis: es <b>empaquetarlo en entregables</b> y <b>dejar que el usuario proyecte escenarios</b>. Estas tres piezas hacen eso y cierran promesas hechas en la memoria.</p>
+  </header>
+
+  <div class="intro">
+    <b>La idea de fondo:</b> ninguna de las tres es empezar de cero. Reutilizan lo que ya tenemos construido (reputación, PRCA, recomendaciones, ingreso/visitante…) y lo convierten en algo que la bodega se lleva y con lo que decide.
+  </div>
+
+  <div class="card">
+    <div class="card-top"><span class="icon">📄</span><h2>Informe descargable por bodega</h2><span class="n">PIEZA 1</span></div>
+    <div class="card-body">
+      <div class="qbox"><span class="qlabel">Qué es</span><span class="qtext">Un <b>PDF por bodega</b>, descargable desde su ficha. Dos partes: <b>«Quién eres»</b> (reputación, clientes, recomendaciones — que ya generamos) y <b>«Cómo compites»</b> (tu posición vs. el Marco y qué hacer para ganar clientes).</span></div>
+      <div class="heart"><span class="t">★ El corazón — y lo genuinamente nuevo</span><b>Los competidores directos de cada bodega</b>, con nuestra metodología de ACEDE (Market Commonality + Resource Similarity). Ojo: el <b>IPCA</b> que ya tenemos compara cada bodega contra la <b>media del Marco</b>; esto es distinto — son <b>sus 3-5 rivales concretos</b>. Es lo que nadie más tiene.</div>
+      <div class="steps"><span class="steps-t">Y es factible casi con lo que ya tenemos — 3 pasos:</span>
+        <div class="step"><span class="sn">1</span><span><b>Una ficha de rasgos por bodega:</b> perfil de atributos que valora su visitante (ya lo tenemos, del sentimiento BERT) + idioma nacional/internacional + servicios enoturísticos + tamaño + madurez digital + certificación. Todo existe ya; <b>solo faltaría el precio de la visita</b> para afinar el eje «mercado» (ya está en la lista).</span></div>
+        <div class="step"><span class="sn">2</span><span><b>Medir el parecido</b> entre cada par de bodegas (una similitud sencilla) → matriz «quién se parece a quién».</span></div>
+        <div class="step"><span class="sn">3</span><span><b>Quedarse con las 3-5 más parecidas</b> de cada bodega → sus competidores directos, tal como en el ejemplo.</span></div>
+      </div>
+      <div class="qbox"><span class="qlabel">Por qué merece la pena</span>
+        <div class="why">
+          <div><span class="k">✓</span><span>Es lo que hará que <b>las bodegas quieran</b> usar la plataforma (y nos rellenen las encuestas).</span></div>
+          <div><span class="k">✓</span><span>Cuenta como <b>entregable y material de transferencia</b> para FEDER.</span></div>
+        </div>
+      </div>
+      <a class="seelink" href="02_ejemplo_informe_bodega.html">📄 Ver un ejemplo del informe →</a>
+      <span class="ready">✅ 7 de 11 secciones ya existen — solo hay que volcarlas al PDF</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-top"><span class="icon">📘</span><h2>Guía de uso / metodología</h2><span class="n">PIEZA 2</span></div>
+    <div class="card-body">
+      <div class="qbox"><span class="qlabel">Qué es</span><span class="qtext">Un documento (y una página de ayuda en el dashboard) que explica <b>qué contiene cada apartado y de dónde sale cada dato</b>.</span></div>
+      <div class="qbox"><span class="qlabel">Por qué merece la pena — dos pájaros de un tiro</span>
+        <div class="why">
+          <div><span class="k">✓</span><span>Para el <b>bodeguero</b>: entiende lo que ve y confía en el dato.</span></div>
+          <div><span class="k">✓</span><span>Para <b>FEDER</b>: es el <b>anexo de metodología</b> de la justificación, ya escrito.</span></div>
+        </div>
+      </div>
+      <a class="seelink" href="03_guia_de_uso.html">📘 Ver la guía desarrollada →</a>
+      <span class="ready">✅ Se puede generar casi sola del catálogo de indicadores que ya existe</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-top"><span class="icon">🎛️</span><h2>Simulador «¿qué pasaría si…?»</h2><span class="n">PIEZA 3</span></div>
+    <div class="card-body">
+      <div class="qbox"><span class="qlabel">Qué es</span><span class="qtext">Mueves una <b>palanca</b> y el dashboard te enseña el <b>efecto estimado</b>. Convierte los datos en decisiones: deja de mirar el pasado y proyecta.</span></div>
+      <div class="sim">
+        <div class="sim-row"><span class="sim-lever">Si respondes a tus <span class="mono">209</span> críticas sin contestar…</span><span class="sim-arrow">→ % de respuesta: 0% → 100%</span></div>
+        <div class="sim-row"><span class="sim-lever">Si el Marco sube el ingreso por visitante a <span class="mono">55&nbsp;€</span>…</span><span class="sim-arrow">→ +6,2 M€ / año</span></div>
+        <div class="sim-row"><span class="sim-lever">Si captas el <span class="mono">5%</span> de los 696.151 cruceristas…</span><span class="sim-arrow">→ +34.808 visitantes</span></div>
+        <div class="sim-row"><span class="sim-lever">Si subes «Organización y reserva» medio punto…</span><span class="sim-arrow">→ cambias de cuadrante en el IPA</span></div>
+      </div>
+      <div class="caveat"><span class="t">⚠️ Con honestidad — son proyecciones, no predicciones</span>Los números son <b>estimaciones lineales sencillas</b> (los 6,2 M€ = 425.652 visitantes × 14,6 € más). El simulador debe dejar claro que <b>proyecta un escenario</b>, no que predice el futuro. Y lo de «cambiar de cuadrante» habría que calcularlo con el motor PRCA que ya tenemos — aquí es solo un ejemplo ilustrativo.</div>
+      <div class="qbox"><span class="qlabel">Por qué merece la pena</span>
+        <div class="why">
+          <div><span class="k">✓</span><span>Cierra una promesa literal de la memoria: <b>«simulaciones y proyecciones de escenarios»</b>.</span></div>
+          <div><span class="k">✓</span><span>Es el <b>efecto «wow»</b> — lo que hace que la plataforma se recuerde.</span></div>
+        </div>
+      </div>
+      <span class="ready">✅ Usa los modelos que ya tenemos (PRCA, reputación, ingreso/visitante)</span>
+    </div>
+  </div>
+
+  <section style="display:flex;flex-direction:column;gap:14px">
+    <h2 class="sec">Datos que podrían enriquecer el dashboard</h2>
+    <p class="qtext">La mayoría de fuentes ya las tenemos o están en la lista de pendientes. Estas son las que priorizaría, porque <b>alimentan directamente el informe y el simulador</b>:</p>
+    <div class="datalist">
+      <div class="ditem"><span class="nm">TripAdvisor + Vivino</span><span class="tg list">en la lista</span><span class="ds">Segunda fuente de reseñas (más visitante internacional) y notas/precios de los vinos. Refuerzan la parte de reputación y de producto de cada bodega.</span></div>
+      <div class="ditem"><span class="nm">Precios de las experiencias</span><span class="tg list">en la lista</span><span class="ds">De Civitatis, GetYourGuide y las webs. Es la pieza que falta para la brecha de monetización: sin saber a cuánto vende cada uno la visita, la recomendación de "sube el precio" es intuición.</span></div>
+      <div class="ditem"><span class="nm">Afluencia (Google Places · «popular times»)</span><span class="tg list">en la lista</span><span class="ds">Cuánta gente hay por hora y día en cada bodega. Da la estacionalidad que pide FEDER (P4A) sin sensores.</span></div>
+      <div class="ditem"><span class="nm">Índice de presencia digital (redes)</span><span class="tg new">nuevo</span><span class="ds">Ampliar la Inteligencia Tecnológica más allá de la web: sumar redes activas (Instagram/Facebook + seguidores), estar en TripAdvisor/Vivino y canales de reserva → un índice por bodega. Destapa las bodegas invisibles online. Es dato por bodega → va al informe.</span></div>
+      <div class="ditem"><span class="nm">Google Routes / Distance Matrix</span><span class="tg new">nuevo</span><span class="ds"><b>Tiempos reales</b> de coche y transporte público (no en línea recta, como ahora). Arregla la limitación que ya avisamos en transporte sostenible y da rigor al relato de cruceros/conectividad: el «a 40 min de Jerez» pasaría a ser tiempo real puerta a puerta desde el puerto y el aeropuerto.</span></div>
+      <div class="ditem"><span class="nm">Atributos de Google Places</span><span class="tg list">en la lista</span><span class="ds"><b>Accesibilidad física real</b> (entrada/aseo adaptados, parking), admite reservas, rango de precio, apto para grupos. Completa la Inteligencia Tecnológica: hoy auditamos la web, pero la accesibilidad física la tiene Google.</span></div>
+      <div class="ditem"><span class="nm">YouTube (Data API)</span><span class="tg new">nuevo</span><span class="ds">Nº de vídeos y visualizaciones por bodega → alcance de marca. Suma al índice de presencia digital. Con cuota gratuita.</span></div>
+    </div>
+    <p style="font-size:.85rem;color:var(--ink-muted)">Aviso honesto: TripAdvisor, Vivino y Civitatis van por scraping (con sus términos de uso); las APIs de Google Maps (Places, Routes, Street View) tienen coste por consulta, aunque con capa gratuita mensual holgada para 42 bodegas. Nada grave, pero a tenerlo en cuenta.</p>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:12px">
+    <h2 class="sec">Temas pendientes (para hablar en equipo)</h2>
+    <p class="qtext">No son mejoras del producto, sino <b>cosas de la memoria y de FEDER</b> que conviene cerrar en algún momento. Las dejo aquí para no perderlas de vista:</p>
+    <div class="pend">
+      <ul>
+        <li><b>Power BI → Streamlit.</b> La memoria firmada decía Power BI + Azure; usamos Streamlit. Hay que justificarlo por escrito ante el organismo.</li>
+        <li><b>3.500 € de Azure sin ejecutar.</b> La memoria los presupuestó y no se usan (Streamlit es gratis). Decidir qué hacer con ese importe.</li>
+        <li><b>Acceso público.</b> La memoria dice "acceso protegido, solo personas autorizadas" y el dashboard es público. Decidir si se restringe.</li>
+        <li><b>Cuestionarios.</b> Son hito de la Fase 1 y muchos indicadores solo se cubren así. Siguen por diseñar.</li>
+        <li><b>Bodega piloto Emilio Hidalgo.</b> La memoria fija el piloto en Emilio Hidalgo y Tradición; Tradición ya está, pero Emilio Hidalgo sigue sin datos (web caída, sin GPS). Recogerlos con Fernando y Águeda.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <div class="tagline">Todo el análisis ya está. Esto lo empaqueta y lo proyecta.</div>
+    <b>En orden:</b> primero el <b>informe</b> (lo más vendible), luego el <b>simulador</b> (el wow), y la <b>guía</b> de cierre. Nada es empezar de cero — es sacarle partido a lo que ya funciona.
+    <br><br>
+    <span style="color:var(--ink-muted);font-size:.85rem">ENOLYTICS · Universidad de Cádiz · propuesta para el equipo (Paula, IP)</span>
+  </footer>
+
+</div>
+</body>
+</html>

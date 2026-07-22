@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ENOLYTICS — Guía de uso (propuesta de Paula)</title>
+<!-- Guía de uso / metodología desarrollada. Propuesta de Paula (IP), 21/07/2026. -->
+<style>
+  :root{
+    --plane:#f6f4ef; --surface:#ffffff; --surface-2:#fbfaf6;
+    --ink:#17150f; --ink-2:#57534a; --ink-muted:#8a8578; --hairline:#e3dfd5; --rule:#d8d3c6;
+    --accent:#0b6e7a; --accent-ink:#06525c; --accent-wash:#e8f1f2;
+    --good:#0ca30c; --observ:#0b6e7a; --est:#ec835a;
+    --display:Georgia,"Iowan Old Style","Palatino Linotype",Palatino,serif;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+    --mono:ui-monospace,"Cascadia Mono","SF Mono",Consolas,Menlo,monospace;
+    --r:8px;
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --plane:#100f0c; --surface:#1b1915; --surface-2:#211f1a;
+    --ink:#f5f2ea; --ink-2:#bdb8ac; --ink-muted:#8a8578; --hairline:#2e2b25; --rule:#3a362e;
+    --accent:#4ec3d0; --accent-ink:#8ad8e1; --accent-wash:#123135; --observ:#4ec3d0;
+  }}
+  body{background:var(--plane);color:var(--ink);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased;margin:0;}
+  .wrap{max-width:780px;margin:0 auto;padding:30px 20px 72px;display:flex;flex-direction:column;gap:28px;}
+  header{display:flex;flex-direction:column;gap:8px;border-bottom:2px solid var(--rule);padding-bottom:18px;}
+  .eyebrow{font-size:.72rem;text-transform:uppercase;letter-spacing:.15em;font-weight:600;color:var(--accent-ink);}
+  h1{font-family:var(--display);font-size:clamp(1.7rem,3.8vw,2.3rem);font-weight:400;line-height:1.15;}
+  .lead{font-size:1.02rem;color:var(--ink-2);max-width:64ch;}
+  section{display:flex;flex-direction:column;gap:14px;}
+  h2{font-family:var(--display);font-size:1.35rem;font-weight:400;border-bottom:1px solid var(--hairline);padding-bottom:6px;}
+  h3{font-size:1rem;font-weight:700;}
+  p{font-size:.94rem;color:var(--ink-2);max-width:66ch;}
+  p b, li b{color:var(--ink);}
+  .toc{background:var(--surface-2);border:1px solid var(--hairline);border-radius:var(--r);padding:16px 20px;}
+  .toc h3{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-muted);margin-bottom:8px;}
+  .toc ol{margin:0;padding-left:1.3rem;display:flex;flex-direction:column;gap:5px;font-size:.92rem;color:var(--ink-2);}
+  .legend{display:flex;flex-direction:column;gap:10px;background:var(--surface);border:1px solid var(--hairline);border-radius:var(--r);padding:16px 18px;}
+  .legend .row{display:flex;gap:11px;align-items:baseline;font-size:.92rem;color:var(--ink-2);}
+  .dot{width:9px;height:9px;border-radius:50%;flex:none;position:relative;top:1px;}
+  .dot.of{background:var(--good);} .dot.ob{background:var(--observ);} .dot.px{background:var(--est);}
+  .views{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;}
+  .view{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--r);padding:14px 16px;border-top:3px solid var(--accent);display:flex;flex-direction:column;gap:5px;}
+  .view h3{font-size:.95rem;}
+  .view p{font-size:.85rem;margin:0;}
+  .intel{display:flex;flex-direction:column;gap:8px;}
+  .irow{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--r);padding:13px 16px;display:grid;grid-template-columns:1fr;gap:5px;}
+  .irow .top{display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
+  .irow .name{font-size:.98rem;font-weight:700;}
+  .badge{font-family:var(--mono);font-size:.64rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 7px;border-radius:4px;background:var(--accent-wash);color:var(--accent-ink);}
+  .irow .q{font-size:.88rem;color:var(--ink-2);}
+  .irow .f{font-size:.78rem;color:var(--ink-muted);}
+  .irow .f b{color:var(--ink-2);}
+  .gloss{display:flex;flex-direction:column;gap:10px;}
+  .gterm{background:var(--surface);border:1px solid var(--hairline);border-left:3px solid var(--accent);border-radius:6px;padding:12px 15px;}
+  .gterm .t{font-weight:700;font-size:.92rem;}
+  .gterm .t span{font-family:var(--mono);font-size:.72rem;color:var(--accent-ink);background:var(--accent-wash);padding:2px 6px;border-radius:3px;margin-left:6px;}
+  .gterm p{font-size:.86rem;margin-top:4px;}
+  .callout{background:var(--accent-wash);border-left:3px solid var(--accent);border-radius:6px;padding:14px 16px;font-size:.92rem;color:var(--ink);}
+  .callout b{color:var(--accent-ink);}
+  ul.clean{margin:0;padding-left:1.15rem;display:flex;flex-direction:column;gap:6px;}
+  ul.clean li{font-size:.92rem;color:var(--ink-2);}
+  footer{border-top:1px solid var(--hairline);padding-top:16px;font-size:.82rem;color:var(--ink-muted);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">ENOLYTICS · Guía de uso y metodología</div>
+    <h1>Cómo leer la plataforma, y de dónde sale cada dato</h1>
+    <p class="lead">Esta guía explica, en lenguaje llano, qué contiene cada apartado del dashboard, qué significan los análisis y cuál es el origen de cada indicador. Sirve al bodeguero para entenderlo y al proyecto como documentación metodológica.</p>
+  </header>
+
+  <div class="toc">
+    <h3>Contenido</h3>
+    <ol>
+      <li>Cómo leer los datos: el origen de cada indicador</li>
+      <li>Las tres formas de mirar la plataforma</li>
+      <li>Las 7 inteligencias: qué responde cada una</li>
+      <li>Los análisis, explicados sin jerga (IPA, IPCA, DIPA…)</li>
+      <li>De dónde salen los datos (fuentes)</li>
+    </ol>
+  </div>
+
+  <section>
+    <h2>1 · Cómo leer los datos: el origen de cada indicador</h2>
+    <p>Cada dato del dashboard lleva una marca de color que dice <b>cómo de firme es</b>. Nunca se mezcla una estadística oficial con una estimación sin avisar.</p>
+    <div class="legend">
+      <div class="row"><span class="dot of"></span><span><b>🟢 Dato oficial.</b> Publicado por un organismo (ACEVIN, Dataestur/SEGITTUR, FEV, INE). La máxima fiabilidad.</span></div>
+      <div class="row"><span class="dot ob"></span><span><b>🔵 Dato observado.</b> Medido directamente de una fuente pública (reseñas de Google, la web de la bodega). Es real, pero no una estadística oficial.</span></div>
+      <div class="row"><span class="dot px"></span><span><b>🟡 Estimación / proxy.</b> Una aproximación que calcula ENOLYTICS (p. ej. el idioma de la reseña como pista de la procedencia). Se interpreta con cautela.</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>2 · Las tres formas de mirar la plataforma</h2>
+    <div class="views">
+      <div class="view"><h3>🏠 Resumen ejecutivo</h3><p>Lo esencial de un vistazo: cómo va el destino y las 3 acciones más urgentes. Para decidir en 5 segundos.</p></div>
+      <div class="view"><h3>🧭 Las 7 inteligencias</h3><p>El análisis completo, una pestaña por inteligencia. Cada una abre con lo esencial; el detalle, plegado.</p></div>
+      <div class="view"><h3>🏭 Bodega individual</h3><p>La ficha de una bodega concreta: su reputación, su análisis y sus recomendaciones.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>3 · Las 7 inteligencias: qué responde cada una</h2>
+    <p>El proyecto organiza el análisis en siete "inteligencias competitivas". Cada una responde a una pregunta y se apoya en unas fuentes.</p>
+    <div class="intel">
+      <div class="irow"><div class="top"><span class="name">💶 Económica</span><span class="badge">Sostenibilidad · SEGITTUR</span></div><div class="q">¿Cuánto aporta el enoturismo a la economía? Ingresos, gasto por visitante, empleo.</div><div class="f">Fuente: <b>ACEVIN · Dataestur</b></div></div>
+      <div class="irow"><div class="top"><span class="name">📈 Mercado</span><span class="badge">Demanda</span></div><div class="q">¿Qué demanda hay y de dónde viene? Interés de búsqueda, mercados emisores, cruceros, demanda aérea futura.</div><div class="f">Fuente: <b>Google Trends · Dataestur</b></div></div>
+      <div class="irow"><div class="top"><span class="name">🥊 Competidores</span><span class="badge">Oferta / Demanda</span></div><div class="q">¿Cómo está el Marco frente a otras rutas del vino (Rioja, Ribera…)? Posición, oferta, monetización.</div><div class="f">Fuente: <b>ACEVIN · reseñas</b></div></div>
+      <div class="irow"><div class="top"><span class="name">😊 Clientes</span><span class="badge">Demanda</span></div><div class="q">¿Quién es el visitante y qué valora? Perfil, satisfacción por atributo, procedencia de las reseñas.</div><div class="f">Fuente: <b>reseñas de Google · ACEVIN</b></div></div>
+      <div class="irow"><div class="top"><span class="name">🏛️ Negocios</span><span class="badge">Oferta</span></div><div class="q">¿Qué oferta tiene el destino? Bodegas, restaurantes, recursos, capacidad de llegada.</div><div class="f">Fuente: <b>Ruta del Vino · Dataestur</b></div></div>
+      <div class="irow"><div class="top"><span class="name">🖥️ Tecnológica</span><span class="badge">Oferta</span></div><div class="q">¿Cómo de digital y accesible es cada bodega? Web, reserva online, accesibilidad.</div><div class="f">Fuente: <b>auditoría de las webs</b></div></div>
+      <div class="irow"><div class="top"><span class="name">🌱 Sostenibilidad</span><span class="badge">Sostenibilidad · UNE 178502</span></div><div class="q">¿Qué compromiso ambiental hay? Certificaciones, comunicación ecológica, transporte.</div><div class="f">Fuente: <b>FEV · web · OpenStreetMap</b></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>4 · Los análisis, explicados sin jerga</h2>
+    <p>El dashboard usa varios modelos con nombre técnico. Aquí, en una frase cada uno:</p>
+    <div class="gloss">
+      <div class="gterm"><div class="t">Importancia–Desempeño <span>IPA</span></div><p>Un mapa que dice <b>en qué debe trabajar primero</b> una bodega: cruza cuánto le importa cada aspecto al cliente con cómo de bien se hace.</p></div>
+      <div class="gterm"><div class="t">Importancia por impacto <span>PRCA</span></div><p>La forma correcta de medir la importancia: no cuántas veces se menciona algo, sino <b>cuánto mueve la nota global</b>. Así, un problema que se comenta poco pero hunde la satisfacción (la reserva) aparece como urgente.</p></div>
+      <div class="gterm"><div class="t">Higiénico vs. deleitador <span>Kano</span></div><p>Distingue lo que <b>si falla molesta pero si va bien no suma</b> (higiénico: precio, reserva) de lo que <b>te diferencia cuando lo bordas</b> (deleitador: entorno, viñedo).</p></div>
+      <div class="gterm"><div class="t">Comparación con el resto <span>IPCA</span></div><p>Compara cada bodega con la <b>media del Marco</b>: en qué va por delante y en qué por detrás.</p></div>
+      <div class="gterm"><div class="t">Evolución en el tiempo <span>DIPA / DIPCA</span></div><p>Si la satisfacción (DIPA) o la posición competitiva (DIPCA) de una bodega <b>mejora o empeora</b> año a año.</p></div>
+    </div>
+    <div class="callout">
+      <b>Un principio de la casa:</b> los resúmenes de reputación <b>no los genera una IA</b> (que podría inventar). Se componen a partir de los datos reales agregados → mismo dato, mismo texto, siempre. Es lo que lo hace reproducible y auditable.
+    </div>
+  </section>
+
+  <section>
+    <h2>5 · De dónde salen los datos</h2>
+    <ul class="clean">
+      <li><b>Reseñas de Google</b> — 10.972 reseñas reales de las bodegas del Marco (satisfacción, atributos, idioma). 🔵</li>
+      <li><b>ACEVIN</b> — Observatorio de las Rutas del Vino de España (visitantes, oferta, perfil del enoturista). 🟢</li>
+      <li><b>Dataestur / SEGITTUR</b> — gasto turístico, percepción, cruceros y conectividad aérea. 🟢</li>
+      <li><b>Google Trends</b> — interés de búsqueda comparado con otras rutas. 🔵</li>
+      <li><b>FEV</b> — certificación climática Sustainable Wineries for Climate Protection. 🟢</li>
+      <li><b>Ruta del Vino y Brandy de Jerez</b> — catálogo de bodegas y oferta. 🟢</li>
+      <li><b>Auditoría web propia + OpenStreetMap</b> — madurez digital, accesibilidad y transporte. 🔵</li>
+    </ul>
+    <p style="font-size:.85rem;color:var(--ink-muted)">Nota: algunos indicadores de la memoria (empleo por bodega, consumos ambientales, precios de experiencias) se completarán con cuestionarios a bodegas y con fuentes adicionales, porque no existen en abierto.</p>
+  </section>
+
+  <footer>
+    Documento vivo. Se genera a partir del catálogo de indicadores del proyecto, así que se actualiza con él.
+    <br><br>
+    ENOLYTICS · Universidad de Cádiz · Proyecto FEDER Andalucía 2021-2027 · alineado con la norma UNE 178502
+  </footer>
+
+</div>
+</body>
+</html>
