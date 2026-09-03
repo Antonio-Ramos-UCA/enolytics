@@ -116,6 +116,16 @@ def css() -> str:
   }}
   .eno-hero p {{ margin: 0; color: {INK_SUAVE}; font-size: .9rem; }}
 
+  /* ---------- Filtro activo, visible desde la vista ---------- */
+  /* El filtro de localidad vive en la barra lateral, o sea fuera de la vista que
+     condiciona. Esta línea lo trae a la vista para que se entienda de dónde sale lo
+     que hay en el desplegable, sin tener que adivinarlo. */
+  .eno-filtro {{
+    background: {PLANO}; border: 1px solid {REJILLA}; border-left: 3px solid {AMONTILLADO};
+    border-radius: 8px; padding: .45rem .75rem; font-size: .84rem; color: {INK_SUAVE};
+  }}
+  .eno-filtro b {{ color: {INK}; }}
+
   /* ---------- Tarjetas (KPI, semáforo, secciones) ---------- */
   [data-testid="stMetric"] {{
     background: #fff; border: 1px solid {BORDE}; border-radius: 12px;
@@ -192,10 +202,25 @@ def hero(titulo: str, subtitulo: str) -> str:
     )
 
 
-def figura(fig, alto: int = 320, leyenda: bool = True):
+def figura(fig, alto: int = 320, leyenda: bool = True,
+           titulo_leyenda: str | None = None, ejes: bool = False):
     """Aplica el estilo común a una figura de Plotly.
 
     Rejilla y ejes discretos, sin adornos, tipografía del sistema y superficie de la marca.
+
+    **El «undefined» de la observación 8 de Paula salía de aquí**, y no era el título de
+    la leyenda sino el **del gráfico**: esta función fijaba `title` con fuente y posición
+    pero **sin texto**, y Streamlit pinta ese hueco como el texto literal «undefined»
+    (comprobado en un navegador real: pasa con el objeto sin `text` y también con
+    `text=None`; solo la cadena vacía lo evita). Por eso se conserva el título que traiga
+    la figura y, si no trae ninguno, se dice explícitamente que está vacío.
+
+    `titulo_leyenda`: título de la leyenda cuando aporta algo («Tipo de competidor»).
+    Si no se pasa, la leyenda va sin título.
+
+    `ejes`: deja los rótulos de los ejes que traiga la figura. Por defecto se quitan
+    —la mayoría de los gráficos se explican con su encabezado y su pie—, pero hay
+    gráficos, como el mapa de Kamensky, donde el eje ES la explicación.
     """
     fig.update_layout(
         height=alto,
@@ -203,16 +228,18 @@ def figura(fig, alto: int = 320, leyenda: bool = True):
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         font=dict(family=TIPO, size=12, color=INK_SUAVE),
-        title=dict(font=dict(size=13, color=INK, family=TIPO), x=0, xanchor="left"),
+        title=dict(text=fig.layout.title.text or "",
+                   font=dict(size=13, color=INK, family=TIPO), x=0, xanchor="left"),
         showlegend=leyenda,
         legend=dict(orientation="h", yanchor="bottom", y=1.02, x=0,
-                    title_text="", font=dict(size=11)),
+                    title_text=titulo_leyenda or None, font=dict(size=11)),
         hoverlabel=dict(bgcolor="#fff", bordercolor=BORDE,
                         font=dict(family=TIPO, size=12, color=INK)),
     )
+    rotulo = dict(title_font=dict(size=11, color=INK_TENUE)) if ejes else dict(title_text=None)
     fig.update_xaxes(showgrid=False, zeroline=False,
-                     linecolor=REJILLA, tickfont=dict(color=INK_TENUE, size=11), title_text="")
+                     linecolor=REJILLA, tickfont=dict(color=INK_TENUE, size=11), **rotulo)
     fig.update_yaxes(showgrid=True, gridcolor=REJILLA, gridwidth=1, zeroline=False,
                      linecolor="rgba(0,0,0,0)",
-                     tickfont=dict(color=INK_TENUE, size=11), title_text="")
+                     tickfont=dict(color=INK_TENUE, size=11), **rotulo)
     return fig

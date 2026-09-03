@@ -292,8 +292,13 @@ def _lista_box(pdf, x, y, w, titulo, items, color):
         pdf.cell(w - 5, 4, _t("- " + str(it)))
 
 
-def generar_guia_pdf(glosario: list, fuentes: list) -> bytes:
-    """Guía de uso / metodología como PDF (anexo de metodología para FEDER). Ver Pieza 2."""
+def generar_guia_pdf(glosario: list, fuentes: list,
+                     umbrales_metodo: list, umbrales_equipo: list) -> bytes:
+    """Guía de uso / metodología como PDF (anexo de metodología para FEDER).
+
+    `fuentes`: (nombre, descripción, clave de origen) — cuelgan del color que les toca.
+    `umbrales_*`: (umbral, por qué) de los dos bloques de la sección 5.
+    """
     from fpdf import FPDF
     from enolytics import config as _cfg
 
@@ -335,11 +340,20 @@ def generar_guia_pdf(glosario: list, fuentes: list) -> bytes:
              new_x="LMARGIN", new_y="NEXT")
     pdf.set_y(34)
 
-    h2("1 · Cómo leer los datos: el origen de cada indicador")
-    parr("Cada dato lleva una marca que dice cómo de firme es. Nunca se mezcla una estadística "
-         "oficial con una estimación sin avisar.")
-    for icono, nombre, desc in _cfg.ORIGENES_DATO.values():
+    # Una sola sección para «qué significa cada color» y «de dónde salen los datos»: son la
+    # misma pregunta contada dos veces (observación 3 de Paula).
+    h2("1 · De dónde salen los datos, y cómo de firmes son")
+    parr("Cada dato lleva una marca que dice cómo de firme es y de qué fuente viene. Nunca se "
+         "mezcla una estadística oficial con una estimación sin avisar.")
+    for clave, (icono, nombre, desc) in _cfg.ORIGENES_DATO.items():
+        pdf.ln(1)
         parr(desc, bold_lead=f"[{nombre}]")
+        propias = [(n, d) for n, d, o in fuentes if o == clave]
+        for nom, desc_f in propias:
+            parr(desc_f, bold_lead=f"   . {nom} -", size=9)
+        if not propias:
+            parr("   . Sin fuente propia: no es un origen, es un cálculo nuestro a partir de "
+                 "los datos anteriores.", size=9, color=CAOBA)
 
     h2("2 · Las formas de mirar la plataforma")
     for nom, desc in [("Resumen ejecutivo", "Lo esencial de un vistazo y las 3 acciones urgentes."),
@@ -361,9 +375,19 @@ def generar_guia_pdf(glosario: list, fuentes: list) -> bytes:
          "los datos reales agregados (mismo dato, mismo texto, siempre): reproducible y auditable.",
          size=9, color=CAOBA)
 
-    h2("5 · De dónde salen los datos")
-    for nom, desc, _o in fuentes:
-        parr(desc, bold_lead=nom + " -")
+    # Los umbrales, declarados. Un motor de recomendaciones con los listones dichos es
+    # defendible y publicable; uno cuyos listones no se sabe de dónde salen, no (obs. 10).
+    h2("5 · Los umbrales: de dónde sale cada listón")
+    parr("Una recomendación aparece cuando un dato cruza un listón. No son la misma clase de "
+         "decisión, así que van separados.")
+    pdf.ln(1)
+    parr("Los que tienen base metodológica", size=9.5, color=INK)
+    for umbral, porque in umbrales_metodo:
+        parr(porque, bold_lead=f"   . {umbral} -", size=9)
+    pdf.ln(1)
+    parr("Los que son criterio del equipo de ENOLYTICS", size=9.5, color=INK)
+    for umbral, porque in umbrales_equipo:
+        parr(porque, bold_lead=f"   . {umbral} -", size=9)
 
     pdf.set_y(-14)
     pdf.set_draw_color(*LINEA)

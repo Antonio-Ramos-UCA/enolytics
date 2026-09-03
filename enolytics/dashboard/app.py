@@ -381,7 +381,10 @@ def figura_perfil(tabla: pd.DataFrame):
     fig = px.scatter(
         t, x="perfil_pos", y="atributo", size="importancia", size_max=30,
         color="perfil_pos", color_continuous_scale=estilo.SECUENCIAL,
-        labels={"perfil_pos": "", "atributo": ""},
+        # Nombres de verdad, no cadenas vacías: los ejes los quita `estilo.figura`, pero
+        # esto es lo que se lee al pasar el ratón por encima.
+        labels={"perfil_pos": "Perfil (higiénico ↔ deleitador)", "atributo": "Atributo",
+                "importancia": "Importancia (impacto)"},
     )
     fig.update_traces(marker=dict(line=dict(width=1, color="#fff")))
     fig.update_yaxes(categoryorder="array", categoryarray=list(t["atributo"]))
@@ -474,13 +477,15 @@ def figura_terreno_competitivo(sub: pd.DataFrame):
                      color_discrete_map={t: KAMENSKY[t][1] for t in KAMENSKY},
                      labels={"dist_mercado": "◀ mismo cliente · distinto cliente ▶",
                              "dist_recursos": "◀ recursos parecidos · recursos distintos ▶",
-                             "tipo": "Tipo"})
+                             "tipo": "Tipo de competidor"})
     fig.add_vline(x=umc, line_dash="dash", line_color=estilo.INK_TENUE)
     fig.add_hline(y=urs, line_dash="dash", line_color=estilo.INK_TENUE)
     fig.update_traces(textposition="middle center", textfont=dict(size=15),
                       marker=dict(size=26, opacity=0.85, line=dict(width=1, color="#fff")))
     # Ejes normales: distancia baja (más parecido) = izquierda/abajo, como dicen las etiquetas.
-    return estilo.figura(fig, alto=380)
+    # Aquí el eje ES la explicación (`ejes=True`): sin rótulo, el mapa se queda en números
+    # sueltos entre 0,16 y 0,3 que no significan nada para un bodeguero.
+    return estilo.figura(fig, alto=380, titulo_leyenda="Tipo de competidor", ejes=True)
 
 
 @st.cache_data
@@ -624,12 +629,17 @@ def fuente(origen: str, detalle: str) -> None:
 
 
 def leyenda_origenes() -> None:
-    """Explica los distintivos de origen del dato (rigor metodológico)."""
-    with st.expander("ℹ️ Cómo leer los datos: origen de cada indicador"):
-        for emoji, etiqueta, desc in config.ORIGENES_DATO.values():
-            st.markdown(f"{emoji} **{etiqueta}** — {desc}")
-        st.caption("Todo indicador del cuadro de mando lleva su distintivo. Nunca se mezcla "
-                   "estadística oficial con estimaciones sin advertirlo.")
+    """Recordatorio de una línea de los distintivos de origen del dato.
+
+    Recordatorio y explicación son cosas distintas. En las vistas con datos basta una línea
+    siempre visible con los tres puntos y su etiqueta: quien ya sabe lo que significan no
+    necesita más, y quien no, tiene la guía. La explicación larga vive **solo** en la guía,
+    que antes repetía esto mismo en dos secciones (observación 3 de Paula).
+    """
+    marcas = " · ".join(f"{emoji} {etiqueta.replace('Dato ', '').lower()}"
+                        for emoji, etiqueta, _ in config.ORIGENES_DATO.values())
+    st.caption(f"Origen de cada dato: {marcas}. &nbsp; Qué significan y de qué fuente sale cada "
+               "uno, en **📖 Guía y metodología**.")
 
 
 @st.cache_data
@@ -915,6 +925,31 @@ def pintar_recomendaciones(recs: list, titulo: str, vacio: str,
                 _tarjeta(r, abierta=False)
 
 
+def recomendaciones_inteligencia(recs: list, inteligencia: str) -> None:
+    """Cierra la pestaña de una inteligencia con SUS recomendaciones, no con todas.
+
+    La lista priorizada del destino vive **solo** en el Resumen ejecutivo, que es para lo
+    que sirve esa vista. Aquí, cada recomendación aparece junto al dato que la justifica.
+    Antes la lista completa salía además en un desplegable al principio de esta vista, y
+    las dos copias ya se habían descuadrado —14 en una, 12 en la otra— (observación 1 de
+    Paula). Ahora hay una sola fuente y el reparto lo hace la propia recomendación, que ya
+    declara a qué inteligencia pertenece.
+    """
+    propias = [r for r in recs if r.inteligencia == inteligencia]
+    st.divider()
+    with st.container(border=True):
+        if not propias:
+            st.markdown("### 🎯 Qué hacer con esta inteligencia")
+            st.success("✅ Sin recomendaciones pendientes en esta inteligencia con los datos "
+                       "actuales.")
+        else:
+            pintar_recomendaciones(
+                propias, titulo="🎯 Qué hacer con esta inteligencia",
+                vacio="Sin recomendaciones pendientes.", expandir=False)
+        st.caption("👉 La lista completa y priorizada del destino está en "
+                   "**🏠 Resumen ejecutivo**.")
+
+
 def cabecera_inteligencia(clave: str) -> None:
     """Muestra el objetivo de la inteligencia según la memoria + su categoría SEGITTUR."""
     info = config.OBJETIVOS_INTELIGENCIAS.get(clave)
@@ -925,6 +960,13 @@ def cabecera_inteligencia(clave: str) -> None:
                      f"(Tabla 1 de la memoria)"):
         for ind in info["indicadores"]:
             st.markdown(f"- {ind}")
+    # «Sostenibilidad» encabezando la pestaña Económica se lee como una errata, porque en
+    # lenguaje corriente significa «ambiental». El dato es correcto —es lo que dice la Tabla 1
+    # de la memoria—, así que no se toca: se aclara al lado, y FUERA del desplegable, porque
+    # cerrado lo único que se ve es el título (observación 2 de Paula).
+    if "sostenibilidad" in info["segittur"].lower() and clave != "sostenibilidad":
+        st.caption("En SEGITTUR, la sostenibilidad incluye el pilar **económico y social**, "
+                   "no solo el ambiental.")
 
 
 def resumen_dipa(ev: pd.DataFrame, anios: int = 3) -> pd.DataFrame:
@@ -982,6 +1024,21 @@ acevin_demanda = cargar_acevin_demanda()
 
 st.markdown(estilo.css(), unsafe_allow_html=True)
 
+
+def separar_localidades(valor) -> list[str]:
+    """Localidades de una bodega, a partir del texto del catálogo.
+
+    Una bodega puede estar entre dos municipios: Viña La Torre guarda «El Puerto de Santa
+    María / Jerez de la Frontera». Ese texto compuesto se convertía en una categoría más
+    del filtro, así que la bodega no salía ni por Jerez ni por El Puerto y Jerez figuraba
+    con una bodega de menos (observación 5 de Paula). En la ficha se sigue mostrando el
+    texto completo, que es información buena.
+    """
+    if not isinstance(valor, str):
+        return []
+    return [parte.strip() for parte in valor.split("/") if parte.strip()]
+
+
 if df.empty:
     st.warning(
         "No hay catálogo de bodegas todavía. Genera el catálogo con:\n\n"
@@ -1010,14 +1067,41 @@ with st.sidebar:
                              "Mueve una palanca y proyecta el efecto",
                              "Qué es cada apartado y de dónde sale cada dato"])
     st.divider()
-    localidades = sorted(df["localidad"].dropna().unique())
+    locs_bodega = df["localidad"].apply(separar_localidades)
+    localidades = sorted({loc for lista in locs_bodega for loc in lista})
     with st.expander("Filtrar por localidad", expanded=False):
         sel_local = st.multiselect("Localidad", localidades, default=localidades,
-                                   label_visibility="collapsed")
-    if len(sel_local) < len(localidades):
+                                   key="sel_local", label_visibility="collapsed")
+    if not sel_local:
+        st.caption("Sin selección: se muestran todas las localidades")
+    elif len(sel_local) < len(localidades):
         st.caption(f"Filtrando {len(sel_local)} de {len(localidades)} localidades")
 
-df_f = df[df["localidad"].isin(sel_local)]
+# Un filtro vacío significa TODAS, que es lo que cualquiera espera de un filtro. Antes
+# dejaba el catálogo a cero y reventaba la vista de bodega (observación 4 de Paula).
+filtro_local_activo = bool(sel_local) and len(sel_local) < len(localidades)
+df_f = (df[locs_bodega.apply(lambda lista: any(loc in sel_local for loc in lista))]
+        if filtro_local_activo else df)
+
+
+def aviso_filtro_localidad() -> None:
+    """Deja ver DESDE la vista que hay un filtro puesto en la barra lateral, y cómo quitarlo.
+
+    El filtro vive fuera de la vista pero decide lo que la vista puede enseñar: sin este
+    aviso, quien entra directo a una vista filtrada solo ve una lista corta (o vacía) y no
+    tiene manera de saber por qué. Es el fondo del asunto de la observación 4 de Paula:
+    no es un problema de código, es de recorrido.
+    """
+    if not filtro_local_activo:
+        return
+    izq, der = st.columns([5, 1])
+    izq.markdown(
+        f"<div class='eno-filtro'>Filtrando por: <b>{' · '.join(sel_local)}</b></div>",
+        unsafe_allow_html=True)
+    if der.button("Quitar filtro", use_container_width=True,
+                  help="Vuelve a mostrar todas las localidades"):
+        st.session_state["sel_local"] = list(localidades)
+        st.rerun()
 
 # --------------------------------------------------------------------------- #
 # Cabecera única «filo de vino» (Opción A de Paula): marca discreta + título de la
@@ -1071,14 +1155,74 @@ GLOSARIO_MODELOS = [
     ("Competidores directos", "Zhou 2026", "Los **3-5 rivales concretos** de cada bodega, por "
      "parecido en **mercado** (a qué cliente sirve) y **recursos** (lo que ofrece)."),
 ]
+# Cada fuente cuelga del ORIGEN al que pertenece (la clave de `config.ORIGENES_DATO`), para
+# poder explicar en un solo sitio qué significa cada color y de qué fuente viene. Fíjate en
+# que «estimado» NO tiene fuentes: no es un origen, es un cálculo nuestro — y eso, dicho así,
+# se ve (observación 3 de Paula).
 FUENTES_GUIA = [
-    ("Reseñas de Google", "10.972 reseñas reales del Marco (satisfacción, atributos, idioma).", "🔵"),
-    ("ACEVIN", "Observatorio de las Rutas del Vino de España (visitantes, oferta, perfil).", "🟢"),
-    ("Dataestur / SEGITTUR", "Gasto turístico, percepción, cruceros y conectividad aérea.", "🟢"),
-    ("Google Trends", "Interés de búsqueda comparado con otras rutas.", "🔵"),
-    ("FEV", "Certificación climática Sustainable Wineries for Climate Protection.", "🟢"),
-    ("Ruta del Vino y Brandy de Jerez", "Catálogo de bodegas y oferta enoturística.", "🟢"),
-    ("Auditoría web propia + OpenStreetMap", "Madurez digital, accesibilidad y transporte.", "🔵"),
+    ("ACEVIN", "Observatorio de las Rutas del Vino de España (visitantes, oferta, perfil).", "oficial"),
+    ("Dataestur / SEGITTUR", "Gasto turístico, percepción, cruceros y conectividad aérea.", "oficial"),
+    ("FEV", "Certificación climática Sustainable Wineries for Climate Protection.", "oficial"),
+    ("Ruta del Vino y Brandy de Jerez", "Catálogo de bodegas y oferta enoturística.", "oficial"),
+    ("Reseñas de Google", "10.972 reseñas reales del Marco (satisfacción, atributos, idioma).", "observado"),
+    ("Google Trends", "Interés de búsqueda comparado con otras rutas.", "observado"),
+    ("Auditoría web propia + OpenStreetMap", "Madurez digital, accesibilidad y transporte.", "observado"),
+]
+
+# --------------------------------------------------------------------------- #
+# Los umbrales que gobiernan lo que la plataforma declara (observación 10 de Paula).
+# Se publican porque un motor de recomendaciones con los listones DECLARADOS es defendible
+# y publicable; uno cuyos listones no se sabe de dónde salen, no. Van en dos bloques porque
+# no son la misma clase de decisión: los primeros tienen base metodológica y están
+# justificados en el código; los segundos son criterio del equipo, y se dicen como tales.
+# Los valores se leen de las constantes reales, para que la guía no se desincronice.
+# --------------------------------------------------------------------------- #
+UMBRAL_KANO = 0.20            # Pratt et al. (2020); ver enolytics/analitica/prca.py
+MIN_OBS_POR_VARIABLE = 10     # ídem
+
+UMBRALES_METODO = [
+    (f"{nlp.MIN_MENCIONES} menciones",
+     "Mínimo de reseñas para publicar la nota de un atributo. Con 6, «Entorno y viñedo» de "
+     "Barbadillo salía 5,00 y una sola reseña de 3★ lo dejaba en 4,71: por debajo de este "
+     "listón, el desempeño es ruido."),
+    (f"{modelo_ipa.BANDA_INDIFERENCIA:.2f}★".replace(".", ","),
+     "Banda de indiferencia del IPCA en estrellas. Sale de la distribución real de las 162 "
+     "brechas bodega-atributo del Marco (percentil 25 = 0,093). Sin ella, una brecha de "
+     "−0,004 se etiquetaba «Actuar» y una de +0,001, «Fortaleza»."),
+    (f"{modelo_ipa.BANDA_INDIFERENCIA_SENT:.2f}".replace(".", ","),
+     "La misma banda, para el IPCA por sentimiento, que tiene otra escala de dispersión. "
+     "Percentil 25 de las brechas reales (94 pares, 16 bodegas)."),
+    (f"±{UMBRAL_KANO:.2f}".replace(".", ","),
+     "Umbral de Kano para separar atributos higiénicos de deleitadores. Tomado de "
+     "Pratt et al. (2020), el mismo que usan Han et al. (2026)."),
+    (f"{MIN_OBS_POR_VARIABLE} casos por variable",
+     "Mínimo de observaciones por variable de la regresión PRCA, para no sobreajustar. "
+     "Por debajo, la bodega se queda con el IPA clásico en vez de con un modelo inestable."),
+    (f"{nlp_idioma.MIN_CARACTERES} caracteres",
+     "Longitud mínima de una reseña para arriesgar una detección de idioma. Por debajo, "
+     "queda como «Sin determinar» en lugar de inventar una procedencia."),
+]
+
+UMBRALES_EQUIPO = [
+    ("0 % · 5 críticas",
+     "Se recomienda empezar a responder reseñas si la bodega no ha contestado **ninguna** y "
+     "acumula 5 o más críticas de 1-2★."),
+    ("15 % · 10 críticas",
+     "Se recomienda mejorar la atención si responde a menos del 15 % y tiene 10 o más críticas."),
+    ("3 bodegas · 50 críticas",
+     "Se activa el aviso al destino cuando hay 3 o más bodegas que no responden nunca y suman "
+     "50 o más críticas entre ellas."),
+    ("10 €",
+     "Brecha de ingreso por visitante frente a la ruta líder a partir de la cual se declara "
+     "«brecha de monetización»."),
+    ("20 % de webs sin zoom",
+     "Proporción de webs que impiden ampliar la página a partir de la cual se recomienda "
+     "actuar sobre accesibilidad en el destino."),
+    ("80 % de reserva online",
+     "Por debajo de esta cobertura se recomienda impulsar la reserva online en el destino."),
+    ("75 % · 60 %",
+     "Se recomienda comunicar el transporte sostenible cuando el 75 % o más de las bodegas es "
+     "accesible sin coche y, aun así, el 60 % o más de los enoturistas llega en coche."),
 ]
 
 if rol == VISTA_GUIA:
@@ -1088,16 +1232,31 @@ if rol == VISTA_GUIA:
     try:
         from enolytics.dashboard import informe as _informe
         st.download_button("⬇️  Descargar la guía (PDF)",
-                           data=_informe.generar_guia_pdf(GLOSARIO_MODELOS, FUENTES_GUIA),
+                           data=_informe.generar_guia_pdf(GLOSARIO_MODELOS, FUENTES_GUIA,
+                                                         UMBRALES_METODO, UMBRALES_EQUIPO),
                            file_name="ENOLYTICS_guia_de_uso.pdf", mime="application/pdf")
     except Exception as e:
         st.caption(f"(No se pudo generar el PDF de la guía: {e})")
 
-    st.subheader("1 · Cómo leer los datos: el origen de cada indicador")
-    st.caption("Cada dato lleva una marca de color que dice **cómo de firme es**. Nunca se mezcla "
-               "una estadística oficial con una estimación sin avisar.")
-    for _icono, _nombre, _desc in config.ORIGENES_DATO.values():
-        st.markdown(f"{_icono} **{_nombre}.** {_desc}")
+    # Antes esto se contaba dos veces: aquí («el origen de cada indicador») y otra vez al
+    # final («de dónde salen los datos»). Fundidas en una: los tres colores como encabezado
+    # y las fuentes colgando de cada uno, que responde las dos preguntas a la vez
+    # (observación 3 de Paula).
+    st.subheader("1 · De dónde salen los datos, y cómo de firmes son")
+    st.caption("Cada dato lleva una marca de color que dice **cómo de firme es** y de qué fuente "
+               "viene. Nunca se mezcla una estadística oficial con una estimación sin avisar.")
+    for _clave, (_icono, _nombre, _desc) in config.ORIGENES_DATO.items():
+        with st.container(border=True):
+            st.markdown(f"{_icono} **{_nombre}** — {_desc}")
+            _fuentes = [(n, d) for n, d, o in FUENTES_GUIA if o == _clave]
+            for _n, _d in _fuentes:
+                st.markdown(f"- **{_n}** · {_d}")
+            if not _fuentes:
+                st.caption("**Sin fuente propia: no es un origen, es un cálculo nuestro** a "
+                           "partir de los datos de arriba.")
+    st.caption("Algunos indicadores de la memoria (empleo por bodega, consumos ambientales, "
+               "precios de experiencias) se completarán con cuestionarios y fuentes adicionales, "
+               "porque no existen en abierto.")
 
     st.subheader("2 · Las formas de mirar la plataforma")
     for _t, _d in [(VISTA_RESUMEN, "Lo esencial de un vistazo: cómo va el destino y las 3 acciones "
@@ -1127,12 +1286,18 @@ if rol == VISTA_GUIA:
             "(que podría inventar). Se componen a partir de los datos reales agregados → mismo "
             "dato, mismo texto, siempre. Es lo que lo hace reproducible y auditable.")
 
-    st.subheader("5 · De dónde salen los datos")
-    for _n, _d, _o in FUENTES_GUIA:
-        st.markdown(f"{_o} **{_n}** — {_d}")
-    st.caption("Algunos indicadores de la memoria (empleo por bodega, consumos ambientales, "
-               "precios de experiencias) se completarán con cuestionarios y fuentes adicionales, "
-               "porque no existen en abierto.")
+    st.subheader("5 · Los umbrales: de dónde sale cada listón")
+    st.caption("Una recomendación aparece cuando un dato cruza un listón. Estos son todos los "
+               "listones de la plataforma, y de dónde sale cada uno. **No son la misma clase de "
+               "decisión**, así que van separados.")
+    st.markdown("**Los que tienen base metodológica**")
+    for _u, _por in UMBRALES_METODO:
+        st.markdown(f"- `{_u}` — {_por}")
+    st.markdown("**Los que son criterio del equipo**")
+    st.caption("Alguien tiene que poner el listón: estos los pone el equipo de ENOLYTICS. Son "
+               "decisiones legítimas, y por eso se declaran como lo que son.")
+    for _u, _por in UMBRALES_EQUIPO:
+        st.markdown(f"- `{_u}` — {_por}")
     st.stop()
 
 # --------------------------------------------------------------------------- #
@@ -1182,7 +1347,10 @@ if rol == VISTA_SIMULADOR:
                 c1, c2, c3 = st.columns(3)
                 c1.metric("Ingresos proyectados", f"{_mil(ing1/1e6,1)} M€",
                           f"{_mil(extra/1e6,1)} M€", help="Con los mismos visitantes de hoy.")
-                c2.metric("Diferencia por visitante", f"{_mil(objetivo,1)} €",
+                # El rótulo nombra el NÚMERO GRANDE (el objetivo que acaba de elegir el
+                # usuario), no la flechita, que ya responde sola a «¿cuánto he subido?»
+                # (observación 7 de Paula).
+                c2.metric("Ingreso por visitante objetivo", f"{_mil(objetivo,1)} €",
                           f"{_mil(objetivo-epv0,1)} €")
                 c3.metric("Variación", f"{_mil((ing1/ing0-1)*100,1)} %")
                 st.caption("**Cómo se calcula:** ingresos = (ingreso por visitante objetivo) × "
@@ -1304,9 +1472,11 @@ if rol == VISTA_SIMULADOR:
                        "mejora del servicio; el mando muestra el destino, no el camino.")
 
     st.divider()
+    # Nada de citar documentos internos ni quién propuso qué: quien usa la plataforma no los
+    # ha visto nunca (observación 9 de Paula). Lo que sí se queda es de dónde salen los
+    # modelos, que es justo lo que uno se pregunta al ver un simulador.
     st.caption("Las palancas usan modelos ya presentes en la plataforma (ingreso/visitante de "
-               "ACEVIN, cruceros de Dataestur, reseñas de Google, mapa IPA por impacto/PRCA). "
-               "Idea de Paula (propuesta de mejora, Pieza 3).")
+               "ACEVIN, cruceros de Dataestur, reseñas de Google, mapa IPA por impacto/PRCA).")
     st.stop()
 
 
@@ -1371,13 +1541,9 @@ if rol == VISTA_INTELIGENCIAS:
     st.caption("Una pestaña por cada una de las **7 inteligencias competitivas** del modelo "
                "ENOLYTICS. Cada una abre con lo esencial; el detalle está en los desplegables.")
     leyenda_origenes()
-
-    with st.expander("🎯 Ver las 12 recomendaciones accionables del destino"):
-        pintar_recomendaciones(
-            recs_destino,
-            titulo="Recomendaciones para el destino",
-            vacio="No hay recomendaciones pendientes con los datos actuales.",
-            expandir=False)
+    st.caption("Cada pestaña cierra con **las recomendaciones de su propia inteligencia**, "
+               "junto al dato que las justifica. La lista completa y priorizada del destino "
+               "está en **🏠 Resumen ejecutivo**.")
 
     tab_eco, tab_mer, tab_comp, tab_cli, tab_neg, tab_tec, tab_sos = st.tabs(
         ["💶 Económica", "📈 Mercado", "🥊 Competidores", "😊 Clientes",
@@ -1420,11 +1586,15 @@ if rol == VISTA_INTELIGENCIAS:
                           f"{foco_m['ingresos_eur'].iloc[0] / 1e6:.1f} M€",
                           help="Ingresos por visitas a bodegas y museos del Marco (ACEVIN). "
                                "No incluye alojamiento ni restauración.")
-                e2.metric("Ingreso por visitante", f"{foco_m['eur_por_visitante'].iloc[0]:.1f} €")
-                if not total.empty:
-                    media_nac = total["ingresos_eur"].iloc[0] / 3_036_878
+                # La comparación cuelga de la tarjeta A LA QUE SE JUZGA (el Marco), no de la
+                # media: puesta en la media, la flecha verde decía justo lo contrario de lo
+                # que pasa (observación 6 de Paula).
+                media_nac = total["ingresos_eur"].iloc[0] / 3_036_878 if not total.empty else None
+                e2.metric("Ingreso por visitante", f"{foco_m['eur_por_visitante'].iloc[0]:.1f} €",
+                          (f"{foco_m['eur_por_visitante'].iloc[0] - media_nac:+.1f} € vs media "
+                           f"nacional") if media_nac is not None else None)
+                if media_nac is not None:
                     e3.metric("Media nacional", f"{media_nac:.1f} €",
-                              f"{foco_m['eur_por_visitante'].iloc[0] - media_nac:+.1f} € vs Marco",
                               help="Ingreso medio por visitante en el conjunto de las Rutas del "
                                    "Vino de España.")
 
@@ -1433,10 +1603,17 @@ if rol == VISTA_INTELIGENCIAS:
 
                 mejor = mon.sort_values("eur_por_visitante", ascending=False).iloc[0]
                 if mejor["ruta"] != "Marco de Jerez":
-                    brecha = mejor["eur_por_visitante"] - foco_m["eur_por_visitante"].iloc[0]
+                    epv_marco = foco_m["eur_por_visitante"].iloc[0]
+                    brecha = mejor["eur_por_visitante"] - epv_marco
+                    # Dos cosas ciertas a la vez, y las dos importan: por encima de la media
+                    # y muy por debajo del líder. Dicho junto, para que no parezca una
+                    # contradicción con la tarjeta de arriba (observación 6 de Paula).
+                    situa = (f"**Por encima de la media de las rutas españolas** "
+                             f"({media_nac:.1f} €) **y a {brecha:.1f} € del líder.** "
+                             if media_nac is not None else "")
                     st.warning(
-                        f"⚠️ **Brecha de monetización:** el Marco ingresa "
-                        f"**{foco_m['eur_por_visitante'].iloc[0]:.1f} € por visitante**, frente a "
+                        f"⚠️ **Brecha de monetización:** {situa}El Marco ingresa "
+                        f"**{epv_marco:.1f} € por visitante**, frente a "
                         f"los **{mejor['eur_por_visitante']:.1f} €** de *{mejor['ruta']}* "
                         f"(**{brecha:.1f} € menos por cada visita**). Lidera en volumen, pero "
                         f"convierte menos cada visita en ingreso: margen en precio de la visita, "
@@ -1462,6 +1639,7 @@ if rol == VISTA_INTELIGENCIAS:
             serie = gasto_cadiz[gasto_cadiz["TIPO_ORIGEN"].isin(["Total Nacional", "Internacional"])]
             pivot = serie.pivot_table(index="fecha", columns="TIPO_ORIGEN", values="GASTO", aggfunc="sum")
             lineas(pivot)
+        recomendaciones_inteligencia(recs_destino, "Económica")
 
     # ----- 2. Inteligencia de Mercado -----
     with tab_mer:
@@ -1501,8 +1679,13 @@ if rol == VISTA_INTELIGENCIAS:
                 v = acevin[(acevin["anio"] == anio_c) & (acevin["ruta"] == "Marco de Jerez")]
                 if not v.empty:
                     n_bod = int(v["visitantes"].iloc[0])
+                    # La diferencia se cuenta DESDE la tarjeta que la lleva. Estaba al revés
+                    # (n_cru − n_bod): al ser positiva, salía flecha verde en la tarjeta de las
+                    # bodegas, o sea justo lo contrario del aviso rojo de debajo. Es el mismo
+                    # patrón de la observación 6 de Paula, encontrado al repasar todas las
+                    # tarjetas con delta, como ella pedía.
                     c3.metric("Visitantes a bodegas del Marco", f"{n_bod:,}".replace(",", "."),
-                              f"{n_cru - n_bod:+,}".replace(",", ".") + " vs cruceristas")
+                              f"{n_bod - n_cru:+,}".replace(",", ".") + " vs cruceristas")
                     if n_cru > n_bod:
                         st.error(
                             f"🚨 **Llegan MÁS cruceristas al puerto de Cádiz "
@@ -1670,6 +1853,7 @@ if rol == VISTA_INTELIGENCIAS:
                     s2.metric("Satisf. productos", f"{medias_p.get('INDICE_SATISFACCION_PRODUCTOS_TURISTICOS', float('nan')):.0f}")
                     s3.metric("Seguridad", f"{medias_p.get('INDICE_PERCEPCION_SEGURIDAD', float('nan')):.0f}")
                     s4.metric("Clima", f"{medias_p.get('INDICE_PERCEPCION_CLIMATICA', float('nan')):.0f}")
+        recomendaciones_inteligencia(recs_destino, "Mercado")
 
     # ----- 3. Inteligencia de Competidores -----
     with tab_comp:
@@ -1819,6 +2003,7 @@ if rol == VISTA_INTELIGENCIAS:
 
         st.caption("⚠️ Pendiente (Tabla 1 de la memoria): **comparación de precios** de servicios "
                    "enoturísticos y **estrategias diferenciadoras** de otras rutas.")
+        recomendaciones_inteligencia(recs_destino, "Competidores")
 
     # ----- 4. Inteligencia de Clientes -----
     with tab_cli:
@@ -2053,6 +2238,7 @@ if rol == VISTA_INTELIGENCIAS:
                         use_container_width=True, hide_index=True)
             else:
                 st.caption("No hay suficientes reseñas en este segmento para el grafo.")
+        recomendaciones_inteligencia(recs_destino, "Clientes")
 
     # ----- 5. Inteligencia de Negocios -----
     with tab_neg:
@@ -2122,6 +2308,7 @@ if rol == VISTA_INTELIGENCIAS:
             df_f[["nombre", "localidad", "telefono", "web", "url_ficha"]],
             use_container_width=True, hide_index=True,
         )
+        recomendaciones_inteligencia(recs_destino, "Negocios")
 
     # ----- 6. Inteligencia Tecnológica -----
     with tab_tec:
@@ -2230,6 +2417,7 @@ if rol == VISTA_INTELIGENCIAS:
                         "menciona_apoyo_sensorial": "Menciona apoyo sensorial"}),
                     use_container_width=True, hide_index=True,
                 )
+        recomendaciones_inteligencia(recs_destino, "Tecnológica")
 
     # ----- 7. Inteligencia en Sostenibilidad -----
     with tab_sos:
@@ -2353,11 +2541,18 @@ if rol == VISTA_INTELIGENCIAS:
                        "penalizar a quien bloquea robots. Nota del Marco: por el sistema de "
                        "criaderas y solera, los vinos tradicionales no pueden certificarse como "
                        "«vino ecológico»; la señal ecológica se refiere a viñedo/vinos tranquilos.")
+        recomendaciones_inteligencia(recs_destino, "Sostenibilidad")
+
 
 # --------------------------------------------------------------------------- #
 # Vista BODEGA: ficha individual en detalle
 # --------------------------------------------------------------------------- #
 else:
+    aviso_filtro_localidad()
+    if df_f.empty:
+        st.info("No hay bodegas con el filtro actual. "
+                "Amplía la selección de localidades en la barra lateral.")
+        st.stop()
     nombre = st.selectbox("Selecciona una bodega", df_f["nombre"].sort_values())
     b = df_f[df_f["nombre"] == nombre].iloc[0]
     an_bod = anotadas[anotadas["bodega"] == nombre] if not anotadas.empty else pd.DataFrame()

@@ -4,9 +4,9 @@
 > poder continuar desde cualquier ordenador (este proyecto está en Dropbox y se
 > sincroniza). Si retomas con Claude en otro equipo, pásale este archivo primero.
 >
-> **Última actualización:** 2026-07-22 (Simulador «¿y si…?» = Pieza 3 de Paula; cabecera «filo de
-> vino» = Opción A de Paula; **precios de las visitas** obtenidos vía extractor híbrido — leer la
-> sesión del 22/07. Pendiente: decidir cómo cablear el precio al dashboard)
+> **Última actualización:** 2026-09-03 (**aplicadas las 10 observaciones de Paula**: los 2 errores
+> y las 8 mejoras de lectura — leer la sesión del 03/09. Sigue pendiente de la sesión anterior:
+> decidir cómo cablear el precio de las visitas al dashboard)
 
 ---
 
@@ -162,6 +162,88 @@ streamlit, pandas, sklearn, plotly, matplotlib, requests, bs4.
 5. **Integrar todo en el dashboard** (pestañas de reseñas, sentimiento, cuadrantes IPA).
 6. **En paralelo (no bloquea):** diseñar cuestionarios a partir de la Tabla 1 de la
    memoria; incorporar indicadores oficiales (INE, Dataestur, ACEVIN, Google Trends).
+
+## ═══ SESIÓN 2026-09-03 — LAS 10 OBSERVACIONES DE PAULA, APLICADAS ═══
+> Segunda entrega de Paula (**«Preguntas y observaciones pendientes»**, guardada en
+> `Propuestas de mejora - Paula/04_preguntas_y_observaciones.{html,md}`): diez puntos salidos de
+> **usar** el cuadro de mando. No son piezas nuevas, son arreglos sobre lo que ya hay.
+> **Las diez quedan aplicadas y verificadas en un navegador real** (Playwright + AppTest).
+
+**LOS DOS ERRORES**
+
+**4. ✅ La vista de bodega reventaba con el filtro de localidad vacío** (`IndexError` en el
+`.iloc[0]`). Arreglado en los tres niveles que pedía Paula: (1) guarda `df_f.empty` con mensaje
+en vez de traceback; (2) **filtro vacío = todas**, que es lo que cualquiera espera; (3) el filtro
+**se ve desde la vista** — línea «Filtrando por: … · Quitar filtro» (`aviso_filtro_localidad()` +
+clase `.eno-filtro`), porque el fondo del asunto no era de código sino de recorrido: el filtro
+vive en la barra lateral pero decide lo que la vista puede enseñar.
+
+**5. ✅ Una bodega con dos localidades contaba como localidad nueva.** `Viña La Torre` guarda
+«El Puerto de Santa María / Jerez de la Frontera» y el texto compuesto era una categoría más.
+Nuevo `separar_localidades()`: el filtro se construye sobre los valores ya separados. **7
+localidades reales en vez de 8**, y La Torre sale en las dos (**Jerez pasa de 21 a 22**).
+Verificado: filtro vacío → 42 bodegas sin excepción; Jerez → 22 con La Torre; El Puerto → 4 con
+La Torre.
+
+**LAS OCHO OBSERVACIONES**
+
+**1. ✅ Las recomendaciones salían dos veces y ya se habían descuadrado (14 ≠ 12).** La lista
+priorizada queda **solo en el Resumen ejecutivo**; en Las 7 inteligencias, cada pestaña cierra
+con **las suyas** (`recomendaciones_inteligencia()`), junto al dato que las justifica. El reparto
+lo hace la propia recomendación, que ya declaraba su inteligencia. Comprobado que **suman 14**
+(Clientes 5, Mercado 3, Tecnológica 3, Negocios/Económica/Sostenibilidad 1). Competidores no
+tiene ninguna en el motor de destino → mensaje honesto en vez de hueco.
+
+**2. ✅ «Categoría SEGITTUR: Sostenibilidad» en la pestaña Económica.** El dato es correcto (Tabla
+1 de la memoria), no se toca: se añade la aclaración *«En SEGITTUR, la sostenibilidad incluye el
+pilar económico y social, no solo el ambiental»* **fuera del desplegable**, porque cerrado lo
+único que se veía era el título.
+
+**3. ✅ «Cómo leer los datos» salía tres veces.** Separado **recordatorio** de **explicación**:
+`leyenda_origenes()` pasa a ser **una línea siempre visible** con los tres puntos; y en la guía se
+**funden las secciones 1 y 5 en una**, con los tres colores como encabezado y las fuentes colgando
+de cada uno. `FUENTES_GUIA` pasa a llevar la **clave de origen** en vez del emoji. Así se ve lo
+que antes quedaba escondido: **el ámbar no tiene fuentes** porque no es un origen, es un cálculo
+nuestro.
+
+**6. ✅ La tarjeta «Media nacional» comparaba al revés.** La comparación cuelga ahora de la tarjeta
+**a la que se juzga**: «Ingreso por visitante 40,4 € · ↑ +3,4 € vs media nacional», y «Media
+nacional 37,0 €» queda limpia. Y el aviso de brecha dice las dos verdades juntas: *por encima de
+la media de las rutas españolas y a 29,6 € del líder*.
+
+**7. ✅ «Diferencia por visitante» enseñaba el objetivo.** Renombrada **«Ingreso por visitante
+objetivo»** en el Simulador: el rótulo nombra el número grande y la flechita responde sola.
+
+**8. ✅ El «undefined» de los gráficos — LA CAUSA NO ERA LA QUE PARECÍA.** No era el título de la
+leyenda sino **el del gráfico**: `estilo.figura()` fijaba `title` con fuente y posición **pero sin
+texto**, y Streamlit pinta ese hueco como el texto literal «undefined». Comprobado en navegador
+real con un banco de pruebas: falla con el objeto sin `text` y también con `text=None`; **solo la
+cadena vacía lo evita**. Un arreglo de una línea (conservar el título que traiga la figura) mata
+los **29 casos** que había. `estilo.figura()` gana además `titulo_leyenda` y `ejes`. De paso, el
+**mapa de Kamensky** recupera los rótulos de sus ejes —que la función borraba, dejándolo en
+números sueltos entre 0,16 y 0,3— y estrena leyenda «Tipo de competidor».
+
+**9. ✅ Apunte interno en pantalla.** Fuera el «Idea de Paula (propuesta de mejora, Pieza 3)» del
+pie del Simulador; se queda la línea de los modelos. Barrido: no hay más apuntes internos en la
+interfaz.
+
+**10. ✅ Umbrales documentados.** Nueva **sección 5 de la guía** (y del PDF), en los dos bloques que
+pedía Paula: los que **tienen base metodológica** (8 menciones, 0,10★, 0,07, ±0,20 de Kano, 10
+casos/variable, 20 caracteres) y los que son **criterio del equipo** (0 %·5 críticas, 15 %·10,
+3 bodegas·50, 10 €, 20 % sin zoom, 80 % reserva online, 75/60 % transporte). **Los valores se leen
+de las constantes reales** (`nlp.MIN_MENCIONES`, `ipa.BANDA_INDIFERENCIA…`), para que la guía no se
+desincronice. No se ha cambiado ningún umbral: solo se dice cuál es cada cosa.
+
+**HALLAZGO PROPIO DE LOS BARRIDOS QUE PAULA PEDÍA**
+- **Otra tarjeta invertida como la 6**, que ella no había visto: en *Cruceros*, «Visitantes a
+  bodegas del Marco» llevaba de delta `n_cruceristas − n_bodegas`. Al ser positivo salía **flecha
+  verde**, o sea lo contrario del aviso rojo de justo debajo. Corregido a `n_bodegas − n_cruceristas`.
+- `.iloc[0]` sobre tablas filtradas: revisados los 30 usos; el único sobre una tabla que el
+  usuario puede vaciar era el de la observación 4. Los demás están guardados.
+
+**Verificación:** AppTest sin excepciones en las 5 vistas + los casos del filtro; barrido con
+Playwright de las 5 vistas y sus 11 pestañas → **0 gráficos con «undefined»**; PDF de la guía
+regenerado con la firma nueva; capturas revisadas.
 
 ## ═══ SESIÓN 2026-07-22 — SIMULADOR (Pieza 3), CABECERA «FILO DE VINO» Y PRECIOS DE VISITA ═══
 > Se cerró la 3.ª pieza de Paula, se aligeró la cabecera (Opción A de Paula) y se abrió una

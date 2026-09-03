@@ -377,6 +377,35 @@
 - [x] **Enlace permanente** — PUBLICADO en **https://enolytics-feder-uca.streamlit.app** (Streamlit Community Cloud, repo público `Antonio-Ramos-UCA/enolytics`). Redespliega solo al hacer `git push`. Falta (opcional): restringir vista por correo desde Settings → Sharing.
 - [ ] **Automatización incremental** de reseñas (API Outscraper + programación) — la parte "periódica" de la memoria.
 
+## ⭐ SEGUNDA ENTREGA DE PAULA — «Preguntas y observaciones pendientes» (03/09) ✅ APLICADA
+> Diez puntos salidos de **usar** el cuadro de mando: 2 errores y 8 observaciones de lectura.
+> Originales en `Propuestas de mejora - Paula/04_preguntas_y_observaciones.{html,md}`; el detalle
+> de cómo se resolvió cada uno, en la sesión del 03/09 de [`../CONTEXTO.md`](../CONTEXTO.md).
+
+- [x] **1** Recomendaciones duplicadas y descuadradas (14 ≠ 12) → lista priorizada solo en el
+  Resumen; cada pestaña de inteligencia cierra con las suyas.
+- [x] **2** «Categoría SEGITTUR: Sostenibilidad» en Económica → aclaración de una línea, fuera del
+  desplegable. El dato no se toca.
+- [x] **3** «Cómo leer los datos» ×3 → recordatorio de una línea en las vistas; guía §1 y §5
+  fundidas, con los colores de encabezado y las fuentes colgando de cada uno.
+- [x] 🐞 **4** Bodega individual reventaba con el filtro vacío → guarda + «vacío = todas» + filtro
+  visible desde la vista con «Quitar filtro».
+- [x] 🐞 **5** Viña La Torre («El Puerto / Jerez») contaba como localidad nueva → `separar_localidades()`;
+  7 localidades reales, Jerez pasa de 21 a 22.
+- [x] **6** «Media nacional» comparaba al revés → la comparación cuelga de la tarjeta juzgada.
+- [x] **7** «Diferencia por visitante» → «Ingreso por visitante objetivo».
+- [x] **8** «undefined» en los gráficos → **no era la leyenda, era el título del gráfico**:
+  `estilo.figura()` fijaba `title` sin `text`. Arreglado en la raíz (29 casos → 0). Kamensky
+  recupera además los rótulos de sus ejes.
+- [x] **9** Apunte interno («Idea de Paula, Pieza 3») fuera del Simulador.
+- [x] **10** Umbrales documentados en la guía y en su PDF, en dos bloques (metodológicos vs.
+  criterio del equipo), leyendo los valores de las constantes reales.
+- [x] **Extra, de los barridos que pedía Paula:** otra tarjeta invertida como la 6 en *Cruceros*
+  («Visitantes a bodegas del Marco» llevaba el delta de los cruceristas, en verde, diciendo lo
+  contrario del aviso rojo de debajo).
+- [ ] **Pendiente de decidir (no es de esta tanda):** cablear los precios de las visitas al
+  dashboard (opción A o B de la sesión del 22/07).
+
 ## ⭐ PROPUESTAS DE PAULA (IP) — convertir el dashboard en PRODUCTO (21/07)
 > Paula mandó 3 "piezas" + datos + temas de memoria (artefacto revisado el 21/07). Idea de fondo:
 > el análisis ya está y es potente; lo que falta no es más análisis, es **empaquetarlo en

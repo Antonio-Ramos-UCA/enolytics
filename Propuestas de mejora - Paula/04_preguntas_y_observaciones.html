@@ -1,0 +1,1177 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- "Preguntas y observaciones pendientes" — revisión de la plataforma enviada por Paula (IP)
+     el 03/09/2026. Guardada desde el artefacto de claude.ai (se ha retirado el envoltorio
+     técnico del visor; el diseño y el contenido son los originales). -->
+<title>Preguntas y observaciones pendientes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Petrona:wght@500;600;700&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+:root {
+  --bg:      #EFECE3;
+  --surface: #FAF8F2;
+  --sunk:    #E7E2D6;
+  --ink:     #241C12;
+  --ink2:    #4E4739;
+  --muted:   #7A7263;
+  --hair:    #DDD6C7;
+  --rule:    #CFC7B5;
+
+  --oloroso: #7A3B1E;
+  --amon:    #A9741E;
+  --amon-br: #C6902F;
+  --fino:    #EBD98A;
+  --palo:    #A45E2A;
+  --px:      #3B1E12;
+
+  --error:   #A32718;
+  --error-bg:#F6E3DE;
+  --ok:      #1E7B4F;
+  --verde:   #1E7B4F;
+  --azul:    #1F6FB2;
+  --ambar:   #A97418;
+
+  --shadow: 0 1px 2px rgba(59,30,18,.06), 0 8px 24px -18px rgba(59,30,18,.35);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:      #17120E;
+    --surface: #211A14;
+    --sunk:    #120E0B;
+    --ink:     #EFE7DA;
+    --ink2:    #C9BEAC;
+    --muted:   #968B7A;
+    --hair:    #33291F;
+    --rule:    #4A3D2F;
+
+    --oloroso: #E39469;
+    --amon:    #DCAB53;
+    --amon-br: #C6902F;
+    --fino:    #EBD98A;
+    --palo:    #A45E2A;
+    --px:      #3B1E12;
+
+    --error:   #F0846C;
+    --error-bg:#331A14;
+    --ok:      #5BBF8C;
+    --verde:   #5BBF8C;
+    --azul:    #6FAFE0;
+    --ambar:   #DCAB53;
+
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -18px rgba(0,0,0,.9);
+  }
+}
+:root[data-theme="dark"] {
+  --bg:      #17120E;
+  --surface: #211A14;
+  --sunk:    #120E0B;
+  --ink:     #EFE7DA;
+  --ink2:    #C9BEAC;
+  --muted:   #968B7A;
+  --hair:    #33291F;
+  --rule:    #4A3D2F;
+
+  --oloroso: #E39469;
+  --amon:    #DCAB53;
+  --amon-br: #C6902F;
+  --fino:    #EBD98A;
+  --palo:    #A45E2A;
+  --px:      #3B1E12;
+
+  --error:   #F0846C;
+  --error-bg:#331A14;
+  --ok:      #5BBF8C;
+  --verde:   #5BBF8C;
+  --azul:    #6FAFE0;
+  --ambar:   #DCAB53;
+
+  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -18px rgba(0,0,0,.9);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink2);
+  font-family: Archivo, "Segoe UI", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* la escala del jerez, como en el deck: fino arriba, PX al final */
+.escala {
+  display: flex;
+  height: 6px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.escala span { flex: 1; }
+
+.envoltura {
+  max-width: 63rem;
+  margin: 0 auto;
+  padding: 0 1.5rem 5rem;
+}
+
+/* ---------- cabecera ---------- */
+header.cab { padding: 3.5rem 0 2.25rem; }
+
+.eyebrow {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: .72rem;
+  font-weight: 500;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--amon);
+  margin: 0 0 1rem;
+}
+
+h1 {
+  font-family: Petrona, Georgia, serif;
+  font-weight: 700;
+  font-size: clamp(2.1rem, 5.5vw, 3.1rem);
+  line-height: 1.06;
+  letter-spacing: -.015em;
+  color: var(--ink);
+  margin: 0 0 1rem;
+  text-wrap: balance;
+}
+
+.entradilla {
+  max-width: 46rem;
+  font-size: 1.06rem;
+  margin: 0 0 2rem;
+}
+.entradilla strong { color: var(--ink); font-weight: 600; }
+
+/* ---------- índice ---------- */
+.indice {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: .5rem;
+  border-top: 1px solid var(--rule);
+  padding-top: 1.25rem;
+}
+.indice a {
+  display: flex;
+  align-items: baseline;
+  gap: .6rem;
+  padding: .55rem .7rem;
+  border-radius: 3px;
+  text-decoration: none;
+  color: var(--ink2);
+  font-size: .93rem;
+  border: 1px solid transparent;
+  transition: background .15s, border-color .15s;
+}
+.indice a:hover, .indice a:focus-visible {
+  background: var(--surface);
+  border-color: var(--hair);
+  outline: none;
+}
+.indice a:focus-visible { outline: 2px solid var(--oloroso); outline-offset: 1px; }
+.indice .n {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.indice .bicho { color: var(--error); font-weight: 600; }
+
+/* ---------- bloques ---------- */
+section.pregunta {
+  border-top: 1px solid var(--rule);
+  padding-top: 2.5rem;
+  margin-top: 3.25rem;
+  scroll-margin-top: 2rem;
+}
+
+.tope {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+.numero {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 1.6rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--amon-br);
+  padding-top: .32rem;
+  font-variant-numeric: tabular-nums;
+}
+.tope h2 {
+  font-family: Petrona, Georgia, serif;
+  font-size: clamp(1.42rem, 3vw, 1.85rem);
+  font-weight: 600;
+  line-height: 1.18;
+  color: var(--ink);
+  margin: 0;
+  flex: 1 1 18rem;
+  text-wrap: balance;
+}
+
+.chip {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: .68rem;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: .3rem .6rem;
+  border-radius: 2px;
+  white-space: nowrap;
+  align-self: center;
+}
+.chip.err { color: var(--error); background: var(--error-bg); }
+.chip.mej { color: var(--amon); background: var(--sunk); }
+
+p { margin: 0 0 1rem; max-width: 46rem; }
+p.ancho { max-width: 52rem; }
+.rotulo {
+  font-weight: 600;
+  color: var(--ink);
+}
+strong { color: var(--ink); font-weight: 600; }
+em { font-style: italic; }
+
+code {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: .875em;
+  background: var(--sunk);
+  padding: .1em .35em;
+  border-radius: 2px;
+  color: var(--ink);
+}
+
+pre {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: .82rem;
+  line-height: 1.55;
+  background: var(--sunk);
+  border-left: 3px solid var(--amon-br);
+  padding: .9rem 1.1rem;
+  overflow-x: auto;
+  margin: 0 0 1.25rem;
+  color: var(--ink);
+}
+pre code { background: none; padding: 0; font-size: 1em; }
+pre .com { color: var(--muted); }
+pre .mal { color: var(--error); }
+pre .bien { color: var(--ok); }
+
+/* ---------- panel ahora / propuesta ---------- */
+.comparativa {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0 1.75rem;
+}
+.panel {
+  border: 1px solid var(--hair);
+  border-radius: 4px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.panel > .cuerpo { padding: 1rem; display: flex; flex-direction: column; gap: .7rem; }
+.panel.solo { grid-column: 1 / -1; }
+
+.tira {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: .68rem;
+  font-weight: 600;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  padding: .5rem 1rem;
+  border-bottom: 1px solid var(--hair);
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+.tira.ahora { color: var(--error); }
+.tira.prop  { color: var(--ok); }
+.tira::before {
+  content: "";
+  width: .5rem; height: .5rem;
+  border-radius: 50%;
+  background: currentColor;
+  flex: none;
+}
+
+/* ---------- piezas que imitan la plataforma ---------- */
+.vista {
+  font-size: .8rem;
+  color: var(--ink2);
+}
+.ruta {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: .68rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: .55rem;
+}
+.pestanas {
+  display: flex;
+  gap: .15rem;
+  border-bottom: 1px solid var(--hair);
+  margin-bottom: .7rem;
+  flex-wrap: wrap;
+}
+.pestanas span {
+  font-size: .72rem;
+  padding: .3rem .5rem;
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+}
+.pestanas span.on {
+  color: var(--ink);
+  font-weight: 600;
+  border-bottom-color: var(--oloroso);
+}
+.desplegable {
+  border: 1px solid var(--hair);
+  border-radius: 3px;
+  padding: .5rem .7rem;
+  font-size: .8rem;
+  color: var(--ink2);
+  background: var(--bg);
+  display: flex;
+  gap: .5rem;
+  align-items: baseline;
+}
+.desplegable::before { content: "›"; color: var(--muted); font-weight: 600; }
+.desplegable.abierto::before { content: "⌄"; }
+
+.tarjeta-dato {
+  border: 1px solid var(--hair);
+  border-radius: 3px;
+  padding: .6rem .75rem;
+  background: var(--bg);
+}
+.tarjeta-dato .et { font-size: .68rem; color: var(--muted); display: block; }
+.tarjeta-dato .v {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.tarjeta-dato .delta {
+  display: block;
+  font-size: .66rem;
+  margin-top: .2rem;
+  font-family: "IBM Plex Mono", monospace;
+}
+.delta.sube { color: var(--ok); }
+.delta.malo { color: var(--error); }
+.tres { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; }
+.tres.dos { grid-template-columns: repeat(2, 1fr); }
+
+.aviso {
+  border-left: 3px solid;
+  padding: .5rem .75rem;
+  font-size: .78rem;
+  border-radius: 0 3px 3px 0;
+}
+.aviso.rojo  { border-color: var(--error); background: var(--error-bg); color: var(--ink2); }
+.aviso.info  { border-color: var(--azul);  background: var(--sunk); }
+.aviso.nota  { border-color: var(--amon-br); background: var(--sunk); }
+
+.traza {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: .72rem;
+  line-height: 1.5;
+  background: var(--error-bg);
+  border-left: 3px solid var(--error);
+  padding: .7rem .8rem;
+  overflow-x: auto;
+  color: var(--error);
+  border-radius: 0 3px 3px 0;
+}
+
+.selector {
+  border: 1px solid var(--hair);
+  border-radius: 3px;
+  background: var(--bg);
+  overflow: hidden;
+}
+.selector .cabeza {
+  font-size: .72rem;
+  color: var(--muted);
+  padding: .4rem .6rem;
+  border-bottom: 1px solid var(--hair);
+}
+.selector ul { list-style: none; margin: 0; padding: .25rem; }
+.selector li {
+  font-size: .78rem;
+  padding: .22rem .45rem;
+  border-radius: 2px;
+  display: flex;
+  gap: .5rem;
+  align-items: baseline;
+}
+.selector li.mala { background: var(--error-bg); color: var(--error); font-weight: 500; }
+.selector li.nueva { background: var(--sunk); }
+.selector li .marca {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: .62rem;
+  color: var(--muted);
+  margin-left: auto;
+}
+
+.filtro-activo {
+  font-size: .74rem;
+  display: flex;
+  gap: .4rem;
+  align-items: center;
+  flex-wrap: wrap;
+  color: var(--ink2);
+}
+.filtro-activo b { color: var(--ink); font-weight: 600; }
+.filtro-activo .quitar {
+  color: var(--azul);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.punto {
+  display: inline-block;
+  width: .58rem; height: .58rem;
+  border-radius: 50%;
+  vertical-align: -.02em;
+  margin-right: .3rem;
+}
+.p-verde { background: var(--verde); }
+.p-azul  { background: var(--azul); }
+.p-ambar { background: var(--ambar); }
+
+.recordatorio {
+  font-size: .74rem;
+  color: var(--ink2);
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: .4rem .6rem;
+  background: var(--sunk);
+  border-radius: 3px;
+}
+
+.bloque-guia { display: flex; flex-direction: column; gap: .45rem; }
+.bloque-guia .tit {
+  font-size: .78rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+.bloque-guia .fuentes { font-size: .74rem; color: var(--ink2); }
+
+.repetido {
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+}
+.repetido .caja {
+  border: 1px dashed var(--rule);
+  border-radius: 3px;
+  padding: .45rem .6rem;
+  font-size: .74rem;
+  color: var(--ink2);
+  display: flex;
+  justify-content: space-between;
+  gap: .6rem;
+}
+.repetido .caja .donde {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: .64rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.rec-tarjeta {
+  border: 1px solid var(--hair);
+  border-left: 3px solid var(--amon-br);
+  border-radius: 0 3px 3px 0;
+  padding: .5rem .65rem;
+  background: var(--bg);
+  font-size: .76rem;
+}
+.rec-tarjeta .porque {
+  display: block;
+  color: var(--muted);
+  font-size: .7rem;
+  margin-top: .25rem;
+}
+
+.desajuste {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .6rem;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--error);
+  padding: .35rem;
+}
+
+.pie {
+  border-top: 1px solid var(--rule);
+  margin-top: 4rem;
+  padding-top: 1.5rem;
+  font-size: .85rem;
+  color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.pie .marca-pie {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: .7rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="escala" aria-hidden="true">
+  <span style="background:#EBD98A"></span>
+  <span style="background:#DCB44E"></span>
+  <span style="background:#C6902F"></span>
+  <span style="background:#A45E2A"></span>
+  <span style="background:#7A3B1E"></span>
+  <span style="background:#3B1E12"></span>
+</div>
+
+<div class="envoltura">
+
+  <header class="cab">
+    <p class="eyebrow">ENOLYTICS · revisión de la plataforma</p>
+    <h1>Preguntas y observaciones pendientes</h1>
+    <p class="entradilla">Diez cosas que han salido usando el cuadro de mando de ENOLYTICS.
+      <strong>Dos son errores.</strong> El primero rompe la vista de bodega individual. Las
+      otras ocho son observaciones: cosas que funcionan pero que en pantalla se leen mal.
+      De cada una va lo que pasa ahora y cómo quedaría.</p>
+
+    <nav class="indice" aria-label="Las seis preguntas">
+      <a href="#p1"><span class="n">1</span> Las recomendaciones salen dos veces</a>
+      <a href="#p2"><span class="n">2</span> «Sostenibilidad» parece un error</a>
+      <a href="#p3"><span class="n">3</span> La leyenda sale tres veces</a>
+      <a href="#p4"><span class="n bicho">4</span> Bodega individual se cae</a>
+      <a href="#p5"><span class="n bicho">5</span> Una bodega, dos localidades</a>
+      <a href="#p6"><span class="n">6</span> «Media nacional» compara al revés</a>
+      <a href="#p7"><span class="n">7</span> «Diferencia por visitante» no es la diferencia</a>
+      <a href="#p8"><span class="n">8</span> Varias leyendas dicen «undefined»</a>
+      <a href="#p9"><span class="n">9</span> Un apunte interno en pantalla</a>
+      <a href="#p10"><span class="n">10</span> Los umbrales no están documentados</a>
+    </nav>
+  </header>
+
+  <!-- ═══════════════ 1 ═══════════════ -->
+  <section class="pregunta" id="p1">
+    <div class="tope">
+      <span class="numero">1</span>
+      <h2>Las recomendaciones del destino salen dos veces</h2>
+      <span class="chip mej">Observación</span>
+    </div>
+
+    <p class="ancho"><span class="rotulo">Qué pasa.</span> La lista de recomendaciones
+      accionables del destino aparece en dos sitios, y ya se han desincronizado.</p>
+
+    <div class="comparativa">
+      <div class="panel">
+        <div class="tira ahora">Ahora</div>
+        <div class="cuerpo vista">
+          <div>
+            <div class="ruta">Resumen ejecutivo</div>
+            <div class="desplegable">¿Qué hacer primero? · <strong>14 recomendaciones</strong> · 10 de prioridad alta</div>
+          </div>
+          <div class="desajuste">14 &nbsp;≠&nbsp; 12</div>
+          <div>
+            <div class="ruta">Las 7 inteligencias</div>
+            <div class="desplegable">Ver las <strong>12 recomendaciones</strong> accionables del destino</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="tira prop">Propuesta</div>
+        <div class="cuerpo vista">
+          <div>
+            <div class="ruta">Resumen ejecutivo · la lista priorizada, aquí y solo aquí</div>
+            <div class="desplegable">¿Qué hacer primero? · <strong>14 recomendaciones</strong> · 10 de prioridad alta</div>
+          </div>
+          <div>
+            <div class="ruta">Las 7 inteligencias · cada una en su pestaña</div>
+            <div class="pestanas">
+              <span>Económica</span><span>Mercado</span><span>Competidores</span>
+              <span class="on">Clientes</span><span>Negocios</span>
+            </div>
+            <div class="rec-tarjeta">Responder las críticas de 1 y 2 estrellas sin contestar
+              <span class="porque">590 reseñas · 11 bodegas no responden nunca</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="ancho"><span class="rotulo">Qué proponemos.</span> Dejar la lista priorizada
+      solo en el <strong>Resumen ejecutivo</strong> —es justamente para lo que sirve esa
+      vista— y que en <strong>Las 7 inteligencias</strong> cada recomendación aparezca dentro
+      de la pestaña de su propia inteligencia, al lado del dato que la justifica. Todas
+      declaran ya la suya («· Clientes», «· Negocios», «· Económica»), así que el reparto
+      está hecho.</p>
+    <p class="ancho">Con eso no se repite, no puede volver a descuadrarse, y se entiende
+      mejor porque se ven juntas la evidencia y la acción.</p>
+  </section>
+
+  <!-- ═══════════════ 2 ═══════════════ -->
+  <section class="pregunta" id="p2">
+    <div class="tope">
+      <span class="numero">2</span>
+      <h2>«Categoría SEGITTUR: Sostenibilidad» en la pestaña Económica parece un error</h2>
+      <span class="chip mej">Observación</span>
+    </div>
+
+    <p class="ancho"><span class="rotulo">Qué pasa.</span> <strong>El dato es correcto</strong>
+      y está bien traído del <code>config.py</code>: es lo que dice la Tabla 1 de la Memoria
+      Científico-Técnica. Pero en el lenguaje corriente «sostenibilidad» significa
+      <em>ambiental</em>, y verlo encabezando la pestaña <em>Económica</em> hace pensar que se
+      ha cruzado algo.</p>
+    <p class="ancho">La respuesta está dentro del propio desplegable —los tres indicadores
+      previstos son económicos y sociales, ninguno ambiental—, pero <strong>hay que abrirlo</strong>,
+      y lo único que se ve cerrado es el título.</p>
+
+    <div class="comparativa">
+      <div class="panel">
+        <div class="tira ahora">Ahora</div>
+        <div class="cuerpo vista">
+          <div class="pestanas">
+            <span class="on">Económica</span><span>Mercado</span><span>Competidores</span><span>Clientes</span>
+          </div>
+          <div class="desplegable">Categoría SEGITTUR: <strong>Sostenibilidad</strong> · Indicadores previstos (Tabla 1 de la memoria)</div>
+          <div class="aviso rojo">Se lee como una errata: sostenibilidad encabezando lo económico.</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="tira prop">Propuesta</div>
+        <div class="cuerpo vista">
+          <div class="pestanas">
+            <span class="on">Económica</span><span>Mercado</span><span>Competidores</span><span>Clientes</span>
+          </div>
+          <div class="desplegable abierto">Categoría SEGITTUR: <strong>Sostenibilidad</strong> · Indicadores previstos (Tabla 1 de la memoria)</div>
+          <div class="aviso nota">En SEGITTUR, la sostenibilidad incluye el pilar económico y
+            social, no solo el ambiental.</div>
+          <div class="bloque-guia">
+            <span class="fuentes">· Impacto económico del enoturismo<br>
+              · Contribución al empleo y desarrollo local<br>
+              · Rentabilidad del sector enoturístico</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="ancho"><span class="rotulo">Qué proponemos.</span> No tocar el dato: añadir esa
+      aclaración de una línea donde sale la categoría. Con eso deja de parecer una errata.</p>
+  </section>
+
+  <!-- ═══════════════ 3 ═══════════════ -->
+  <section class="pregunta" id="p3">
+    <div class="tope">
+      <span class="numero">3</span>
+      <h2>«Cómo leer los datos» sale tres veces</h2>
+      <span class="chip mej">Observación</span>
+    </div>
+
+    <p class="ancho"><span class="rotulo">Qué pasa.</span> El bloque de la leyenda de
+      procedencia es la misma función <code>leyenda_origenes()</code> pintada en dos sitios, y
+      la guía vuelve sobre lo mismo en una tercera sección. La leyenda dos veces y los
+      colores tres.</p>
+
+    <div class="comparativa">
+      <div class="panel">
+        <div class="tira ahora">Ahora</div>
+        <div class="cuerpo vista">
+          <div class="repetido">
+            <div class="caja"><span>Cómo leer los datos: el origen de cada indicador</span><span class="donde">guía · §1</span></div>
+            <div class="caja"><span>Cómo leer los datos: origen de cada indicador</span><span class="donde">7 inteligencias</span></div>
+            <div class="caja"><span>De dónde salen los datos</span><span class="donde">guía · §5</span></div>
+          </div>
+          <div class="aviso rojo">Tres sitios que explican lo mismo, y hay que mantenerlos los tres.</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="tira prop">Propuesta</div>
+        <div class="cuerpo vista">
+          <div>
+            <div class="ruta">En las vistas con datos · un recordatorio de una línea</div>
+            <div class="recordatorio">
+              <span><span class="punto p-verde"></span>oficial</span>
+              <span><span class="punto p-azul"></span>observado</span>
+              <span><span class="punto p-ambar"></span>estimación</span>
+            </div>
+          </div>
+          <div>
+            <div class="ruta">En la guía · una sola sección, con los colores de encabezado</div>
+            <div class="bloque-guia">
+              <span class="tit"><span class="punto p-verde"></span>Dato oficial</span>
+              <span class="fuentes">ACEVIN · Dataestur/SEGITTUR · FEV · Ruta del Vino y Brandy</span>
+              <span class="tit"><span class="punto p-azul"></span>Dato observado</span>
+              <span class="fuentes">Reseñas de Google · Google Trends · auditoría web propia + OpenStreetMap</span>
+              <span class="tit"><span class="punto p-ambar"></span>Estimación / proxy</span>
+              <span class="fuentes">Sin fuente propia: es un cálculo nuestro a partir de lo anterior.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="ancho"><span class="rotulo">Qué proponemos.</span> Separar el recordatorio de la
+      explicación. En las vistas basta una línea siempre visible con los tres puntos y su
+      etiqueta; quien ya sabe lo que significan no necesita más, y quien no, tiene la guía.
+      La explicación larga vive solo allí.</p>
+    <p class="ancho">Y en la guía, <strong>fundir las secciones 1 y 5 en una sola</strong>,
+      usando los tres colores como encabezados y colgando las fuentes de cada uno. Queda una
+      sección en lugar de dos y responde las dos preguntas a la vez. Fíjate en que el ámbar
+      <strong>no tiene fuentes</strong>, y así se ve muy bien: no es un origen, es un cálculo
+      nuestro. Ahora mismo eso queda escondido.</p>
+  </section>
+
+  <!-- ═══════════════ 4 ═══════════════ -->
+  <section class="pregunta" id="p4">
+    <div class="tope">
+      <span class="numero">4</span>
+      <h2>«Bodega individual» revienta si el filtro de localidad se queda vacío</h2>
+      <span class="chip err">Error · urgente</span>
+    </div>
+
+    <p class="ancho"><span class="rotulo">Qué pasa.</span> Si en la barra lateral se desmarcan
+      todas las localidades, la vista <strong>Bodega individual</strong> cae con un
+      <code>IndexError</code>. Es lo más urgente de esta lista.</p>
+
+    <div class="comparativa">
+      <div class="panel">
+        <div class="tira ahora">Ahora</div>
+        <div class="cuerpo vista">
+          <div class="ruta">Bodega individual · «Filtrando 0 de 8 localidades»</div>
+          <div class="desplegable">Selecciona una bodega</div>
+          <div class="traza">File "app.py", line 2362, in &lt;module&gt;
+    b = df_f[df_f["nombre"] == nombre].iloc[0]
+IndexError: single positional indexer is out-of-bounds</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="tira prop">Propuesta</div>
+        <div class="cuerpo vista">
+          <div class="ruta">Bodega individual</div>
+          <div class="filtro-activo">Filtrando por: <b>Jerez de la Frontera</b>
+            <span class="quitar">Quitar filtro</span></div>
+          <div class="desplegable">Selecciona una bodega</div>
+          <div class="aviso info">No hay bodegas con el filtro actual. Amplía la selección de
+            localidades en la barra lateral.</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="ancho"><span class="rotulo">El fondo del asunto, que no es de código sino de
+      recorrido.</span> El filtro vive en la barra lateral, o sea <strong>fuera</strong> de la
+      vista, pero decide lo que esa vista puede enseñar. Quien entra en «Bodega individual»
+      sin haber tocado el filtro no tiene manera de saber que hay un filtro puesto en otro
+      sitio: solo ve un desplegable vacío y un error rojo.</p>
+    <p class="ancho">Se descubrió así: buscando bodegas se aprende el recorrido «marco
+      localidad → pincho en Bodega individual → me sale el listado de ese sitio → elijo», y
+      funciona. Pero quien pincha directamente en «Bodega individual» se encuentra el error.
+      Y ese es justo el orden natural de quien abre la aplicación por primera vez.</p>
+
+    <p class="ancho"><span class="rotulo">Cómo lo arreglaríamos</span>, de lo más urgente a lo
+      más de fondo:</p>
+
+    <p class="ancho"><strong>1. Que nunca aparezca un traceback.</strong> Si no hay bodegas que
+      enseñar, un mensaje que diga qué pasa y qué hacer:</p>
+<pre><code>if df_f.empty:
+    st.info("No hay bodegas con el filtro actual. "
+            "Amplía la selección de localidades en la barra lateral.")
+    st.stop()</code></pre>
+    <p class="ancho">Conviene mirar si hay más <code>.iloc[0]</code> sobre tablas filtradas con
+      el mismo riesgo.</p>
+
+    <p class="ancho"><strong>2. Que vacío signifique «todas»</strong>, que es lo que cualquiera
+      espera de un filtro. Con esto el caso deja de darse casi siempre:</p>
+<pre><code>df_f = df <span class="bien">if not sel_local else</span> df[df["localidad"].isin(sel_local)]</code></pre>
+
+    <p class="ancho"><strong>3. Y lo que de verdad resuelve el recorrido: que el filtro se vea
+      desde la vista.</strong> Una línea encima del selector con el filtro activo y la manera
+      de quitarlo, como en el panel de arriba. Así se entiende de dónde sale lo que hay en el
+      desplegable, sin tener que adivinar que la causa vive en la barra lateral.</p>
+
+    <div class="panel solo">
+      <div class="tira prop">Mientras tanto</div>
+      <div class="cuerpo vista">
+        <div class="aviso nota">Volver a marcar las localidades en la barra lateral.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ 5 ═══════════════ -->
+  <section class="pregunta" id="p5">
+    <div class="tope">
+      <span class="numero">5</span>
+      <h2>Una bodega con dos localidades se cuenta como una localidad nueva</h2>
+      <span class="chip err">Error</span>
+    </div>
+
+    <p class="ancho"><span class="rotulo">Qué pasa.</span> En el filtro de localidad aparecen
+      tres opciones que se solapan. Es <strong>una sola bodega</strong>, <code>Viña La Torre</code>,
+      que en <code>datos/catalogo/bodegas_enriquecido.csv</code> tiene el campo
+      <code>localidad</code> guardado como el texto compuesto
+      «El Puerto de Santa María / Jerez de la Frontera». Como el filtro agrupa por el valor
+      literal, ese texto se convierte en una categoría más.</p>
+
+    <div class="comparativa">
+      <div class="panel">
+        <div class="tira ahora">Ahora</div>
+        <div class="cuerpo vista">
+          <div class="selector">
+            <div class="cabeza">Filtrar por localidad · 8 opciones</div>
+            <ul>
+              <li>Jerez de la Frontera <span class="marca">21</span></li>
+              <li>El Puerto de Santa María <span class="marca">8</span></li>
+              <li>Sanlúcar de Barrameda <span class="marca">9</span></li>
+              <li class="mala">El Puerto de Santa María / Jerez de la Frontera <span class="marca">1</span></li>
+            </ul>
+          </div>
+          <div class="aviso rojo">Si filtras por «Jerez», Viña La Torre no sale. Ni filtrando
+            por «El Puerto». Y Jerez figura con 21 en vez de 22.</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="tira prop">Propuesta</div>
+        <div class="cuerpo vista">
+          <div class="selector">
+            <div class="cabeza">Filtrar por localidad · 7 opciones</div>
+            <ul>
+              <li class="nueva">Jerez de la Frontera <span class="marca">22</span></li>
+              <li class="nueva">El Puerto de Santa María <span class="marca">9</span></li>
+              <li>Sanlúcar de Barrameda <span class="marca">9</span></li>
+            </ul>
+          </div>
+          <div class="aviso nota">Viña La Torre sale en las dos. En su ficha se sigue viendo el
+            texto completo, que es información buena: la bodega está entre las dos
+            localidades.</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="ancho"><span class="rotulo">Qué proponemos.</span> Que la localidad admita más de
+      un valor. Lo mínimo sería separar por la barra al filtrar:</p>
+<pre><code>loc = df["localidad"].str.split(r"\s*/\s*")
+df_f = df[loc.apply(lambda ls: any(l in sel_local for l in ls))]</code></pre>
+    <p class="ancho">Y que el desplegable se construya sobre los valores ya separados
+      (<code>sorted(set(loc.explode().dropna()))</code>), para que salgan las 7 reales y
+      desaparezca la opción compuesta. Conviene revisar de paso si hay otros campos con el
+      mismo patrón de varios valores en una sola celda.</p>
+  </section>
+
+  <!-- ═══════════════ 6 ═══════════════ -->
+  <section class="pregunta" id="p6">
+    <div class="tope">
+      <span class="numero">6</span>
+      <h2>La tarjeta «Media nacional» compara al revés</h2>
+      <span class="chip mej">Observación</span>
+    </div>
+
+    <p class="ancho"><span class="rotulo">Qué pasa.</span> El Marco ingresa <strong>40,4 €</strong>
+      por visitante y la media nacional es <strong>37,0 €</strong>: el Marco está
+      <strong>3,4 € por encima</strong> de la media. Pero la flecha verde y el «+3,4 €» están
+      puestos en la tarjeta <em>de la media</em>, y dicen «vs Marco», que leído literalmente
+      significa que la media supera al Marco. Es justo al contrario.</p>
+
+    <div class="comparativa">
+      <div class="panel">
+        <div class="tira ahora">Ahora</div>
+        <div class="cuerpo vista">
+          <div class="tres">
+            <div class="tarjeta-dato"><span class="et">Ingresos del enoturismo (2024)</span><span class="v">17,2 M€</span></div>
+            <div class="tarjeta-dato"><span class="et">Ingreso por visitante</span><span class="v">40,4 €</span></div>
+            <div class="tarjeta-dato"><span class="et">Media nacional</span><span class="v">37,0 €</span><span class="delta sube">↑ +3,4 € vs Marco</span></div>
+          </div>
+          <div class="aviso rojo">La flecha verde está en la tarjeta a la que no se juzga, y
+            dice lo contrario de lo que pasa.</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="tira prop">Propuesta</div>
+        <div class="cuerpo vista">
+          <div class="tres">
+            <div class="tarjeta-dato"><span class="et">Ingresos del enoturismo (2024)</span><span class="v">17,2 M€</span></div>
+            <div class="tarjeta-dato"><span class="et">Ingreso por visitante</span><span class="v">40,4 €</span><span class="delta sube">↑ +3,4 € vs media nacional</span></div>
+            <div class="tarjeta-dato"><span class="et">Media nacional</span><span class="v">37,0 €</span></div>
+          </div>
+          <div class="aviso nota">La comparación cuelga de la tarjeta a la que se juzga. Así la
+            flecha verde significa lo que parece.</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="ancho"><span class="rotulo">Comprobado con los datos del prototipo.</span>
+      <code>acevin/ingresos_rutas.csv</code> da 17,2 M€ para el Marco y
+      <code>visitantes_rutas.csv</code> 425.652 visitantes, o sea 40,4 €; el total de las rutas
+      son 112,3 M€, que sobre el total de visitantes de ACEVIN sale a 37,0 €.
+      <strong>Los números están bien; lo que está del revés es el rótulo.</strong></p>
+
+    <p class="ancho"><span class="rotulo">Y una cosa más, que no es un fallo pero conviene
+      saberla.</span> Con este arreglo la pantalla dice dos cosas a la vez que parecen
+      contradictorias y no lo son: el Marco está <strong>por encima de la media nacional</strong>
+      (37,0 €) y <strong>muy por debajo del líder</strong> (Rioja Alta, 70,0 €). Las dos son
+      ciertas y las dos importan. Si cabe, la línea de la brecha podría decirlo así:
+      <em>«por encima de la media de las rutas españolas, y a 29,6 € del líder»</em>.</p>
+  </section>
+
+  <!-- ═══════════════ 7 ═══════════════ -->
+  <section class="pregunta" id="p7">
+    <div class="tope">
+      <span class="numero">7</span>
+      <h2>«Diferencia por visitante» enseña el objetivo, no la diferencia</h2>
+      <span class="chip mej">Observación</span>
+    </div>
+
+    <p class="ancho"><span class="rotulo">Qué pasa.</span> En el <strong>Simulador →
+      Monetización</strong>, con el mando puesto en 50,40 €, la tarjeta central dice
+      «Diferencia por visitante» y enseña <strong>50,4 €</strong>. Pero ese es el ingreso por
+      visitante <em>objetivo</em> —el valor al que acabas de llevar el mando—, no la
+      diferencia. La diferencia son los 10,0 € de la flechita.</p>
+
+    <div class="comparativa">
+      <div class="panel">
+        <div class="tira ahora">Ahora</div>
+        <div class="cuerpo vista">
+          <div class="tres">
+            <div class="tarjeta-dato"><span class="et">Ingresos proyectados</span><span class="v">21,5 M€</span><span class="delta sube">↑ 4,3 M€</span></div>
+            <div class="tarjeta-dato"><span class="et">Diferencia por visitante</span><span class="v">50,4 €</span><span class="delta sube">↑ 10,0 €</span></div>
+            <div class="tarjeta-dato"><span class="et">Variación</span><span class="v">24,7 %</span></div>
+          </div>
+          <div class="aviso rojo">El rótulo describe la flechita, no el número grande. Es el
+            mismo patrón que la pregunta 6.</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="tira prop">Propuesta</div>
+        <div class="cuerpo vista">
+          <div class="tres">
+            <div class="tarjeta-dato"><span class="et">Ingresos proyectados</span><span class="v">21,5 M€</span><span class="delta sube">↑ 4,3 M€</span></div>
+            <div class="tarjeta-dato"><span class="et">Ingreso por visitante objetivo</span><span class="v">50,4 €</span><span class="delta sube">↑ 10,0 €</span></div>
+            <div class="tarjeta-dato"><span class="et">Variación</span><span class="v">24,7 %</span></div>
+          </div>
+          <div class="aviso nota">El rótulo nombra el número grande, y la flechita responde
+            sola a «¿cuánto he subido?».</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="ancho"><span class="rotulo">Qué proponemos.</span> Llamarla <strong>«Ingreso por
+      visitante objetivo»</strong> y dejar el «↑ +10,0 €» como delta, que es lo que ya hace.
+      De las dos opciones es la más útil: el objetivo es lo que el usuario acaba de elegir con
+      el mando.</p>
+    <p class="ancho">Y ya que van dos, <strong>merece la pena repasar de una vez todas las
+      tarjetas que llevan delta</strong>, a ver si en alguna más el rótulo describe la flechita
+      en lugar del número.</p>
+  </section>
+
+  <!-- ═══════════════ 8 ═══════════════ -->
+  <section class="pregunta" id="p8">
+    <div class="tope">
+      <span class="numero">8</span>
+      <h2>La leyenda de varios gráficos imprime «undefined»</h2>
+      <span class="chip mej">Observación</span>
+    </div>
+
+    <p class="ancho"><span class="rotulo">Qué pasa.</span> En tres gráficos distintos sale la
+      palabra <code>undefined</code> donde debería ir el título de la leyenda.</p>
+
+    <div class="comparativa">
+      <div class="panel">
+        <div class="tira ahora">Ahora</div>
+        <div class="cuerpo vista">
+          <div class="ruta">Bodega individual → Competidores → mapa de Kamensky</div>
+          <div class="recordatorio"><span style="color:var(--error);font-weight:600">undefined</span>
+            <span><span class="punto" style="background:var(--ambar)"></span>Marginal</span>
+            <span><span class="punto" style="background:var(--verde)"></span>Potencial</span></div>
+          <div class="repetido">
+            <div class="caja"><span>Perfil de los atributos: ¿higiénico o deleitador?</span><span class="donde">Clientes</span></div>
+            <div class="caja"><span>¿De qué habla junto el visitante? (co-word)</span><span class="donde">Clientes</span></div>
+          </div>
+          <div class="aviso rojo">Lo mismo en los tres: un título de leyenda que no existe se
+            pinta como el texto literal.</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="tira prop">Propuesta</div>
+        <div class="cuerpo vista">
+          <div class="ruta">Bodega individual → Competidores → mapa de Kamensky</div>
+          <div class="recordatorio"><span style="color:var(--ink);font-weight:600">Tipo de competidor</span>
+            <span><span class="punto" style="background:var(--ambar)"></span>Marginal</span>
+            <span><span class="punto" style="background:var(--verde)"></span>Potencial</span></div>
+          <div class="repetido">
+            <div class="caja"><span>Perfil de los atributos → título <strong>«Atributo»</strong></span><span class="donde">Clientes</span></div>
+            <div class="caja"><span>Co-ocurrencias → título <strong>«Aspecto»</strong></span><span class="donde">Clientes</span></div>
+          </div>
+          <div class="aviso nota">Y donde no haga falta título, pasar un valor vacío de verdad
+            en lugar de una variable sin definir.</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="ancho">Es cosmético, pero <strong>se ve mucho</strong>: el mapa de Kamensky es de
+      las pantallas que se enseñan en la demo, y un «undefined» en pantalla resta bastante.</p>
+  </section>
+
+  <!-- ═══════════════ 9 ═══════════════ -->
+  <section class="pregunta" id="p9">
+    <div class="tope">
+      <span class="numero">9</span>
+      <h2>Un apunte interno se ha colado en la pantalla del simulador</h2>
+      <span class="chip mej">Observación</span>
+    </div>
+
+    <p class="ancho"><span class="rotulo">Qué pasa.</span> Al pie del <strong>Simulador «¿y
+      si…?»</strong>, debajo de las palancas, hay una línea que mezcla dos cosas: una que debe
+      quedarse y otra que no.</p>
+
+    <div class="comparativa">
+      <div class="panel">
+        <div class="tira ahora">Ahora</div>
+        <div class="cuerpo vista">
+          <div class="ruta">Simulador · al pie</div>
+          <p style="font-size:.78rem;color:var(--muted);margin:0">Las palancas usan modelos ya
+            presentes en la plataforma (ingreso/visitante de ACEVIN, cruceros de Dataestur,
+            reseñas de Google, mapa IPA por impacto/PRCA).
+            <span style="color:var(--error);font-weight:600">Idea de Paula (propuesta de
+            mejora, Pieza 3).</span></p>
+          <div class="aviso rojo">«Pieza 3» y «propuesta de mejora» son documentos de trabajo
+            nuestros. Quien usa la plataforma no los ha visto nunca.</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="tira prop">Propuesta</div>
+        <div class="cuerpo vista">
+          <div class="ruta">Simulador · al pie</div>
+          <p style="font-size:.78rem;color:var(--muted);margin:0">Las palancas usan modelos ya
+            presentes en la plataforma (ingreso/visitante de ACEVIN, cruceros de Dataestur,
+            reseñas de Google, mapa IPA por impacto/PRCA).</p>
+          <div class="aviso nota">Esta parte se queda: dice que las palancas no se inventan
+            nada, y es justo lo que uno se pregunta al ver un simulador.</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="ancho"><span class="rotulo">Qué proponemos.</span> Dejar la línea de los modelos
+      y borrar la atribución. Y de paso, mirar si hay más apuntes de este tipo en otras vistas:
+      los que citan documentos internos o quién propuso qué.</p>
+  </section>
+
+  <!-- ═══════════════ 10 ═══════════════ -->
+  <section class="pregunta" id="p10">
+    <div class="tope">
+      <span class="numero">10</span>
+      <h2>Los umbrales del motor de recomendaciones no están documentados</h2>
+      <span class="chip mej">Observación</span>
+    </div>
+
+    <p class="ancho"><span class="rotulo">De dónde sale esto.</span> Una recomendación aparece
+      cuando un dato cruza un listón. La pregunta obvia, y la primera que hace cualquiera con
+      criterio, es <strong>de dónde sale ese listón</strong>. Fuimos a mirarlo, y la respuesta
+      es distinta según el umbral.</p>
+
+    <div class="comparativa">
+      <div class="panel">
+        <div class="tira ahora">Ahora</div>
+        <div class="cuerpo vista">
+          <div class="ruta">Bodega individual → Recomendaciones</div>
+          <div class="rec-tarjeta">Empezar a responder las reseñas
+            <span class="porque">La bodega no ha respondido a ninguna reseña, ni siquiera a las
+              209 críticas de 1-2 estrellas.</span></div>
+          <div class="aviso rojo">La regla es: <strong>responde al 0 % y tiene 5 críticas o
+            más</strong>. Pero <strong>¿por qué 5?</strong> No hay nada en pantalla —ni en la
+            guía— que diga que ese listón lo pone el equipo.</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="tira prop">Propuesta</div>
+        <div class="cuerpo vista">
+          <div class="ruta">Guía y metodología · una sección nueva, en dos bloques</div>
+          <div class="contiene">
+            <div class="fila"><span class="que">8 menciones</span><span>mínimo para publicar la nota de un atributo — con 6 salía un 5,00 que una sola reseña de 3★ dejaba en 4,71</span></div>
+            <div class="fila"><span class="que">0,07</span><span>banda de indiferencia — percentil 25 de las 94 brechas reales</span></div>
+            <div class="fila"><span class="que">±0,20</span><span>umbral de Kano — Pratt et al. (2020)</span></div>
+          </div>
+          <div class="ruta">Y debajo, los que son criterio del equipo</div>
+          <div class="contiene">
+            <div class="fila"><span class="que">15 % · 10</span><span>responder a menos del 15 % con 10 críticas o más</span></div>
+            <div class="fila"><span class="que">0 % · 5</span><span>no responder ninguna, con 5 críticas o más</span></div>
+            <div class="fila"><span class="que">10 €</span><span>brecha de ingreso por visitante</span></div>
+          </div>
+          <div class="aviso nota">No hace falta cambiar ningún umbral: basta con decir cuál es
+            cada cosa.</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="ancho"><span class="rotulo">Los del análisis ya están justificados</span> —y muy
+      bien— en los comentarios del código: la banda de indiferencia del IPCA en estrellas
+      (0,10★), la del sentimiento (0,07, del percentil 25 de 94 pares), el mínimo de 8
+      menciones, los 10 casos por variable de la regresión, el λ de Kano (±0,20, de Pratt
+      et&nbsp;al., 2020) y los 20 caracteres para detectar idioma. <strong>Eso no está en la
+      guía, y debería.</strong></p>
+
+    <p class="ancho"><span class="rotulo">Los del motor de recomendaciones, no.</span> El 15 %
+      de respuesta, las 5 y 10 críticas, las 3 bodegas mudas con 50 críticas, los 10 € de
+      brecha, el 20 % de webs sin zoom, el 80 % de reserva online, el 75/60 % del transporte.
+      Ninguno tiene una razón escrita en ninguna parte.</p>
+
+    <p class="ancho"><span class="rotulo">Por qué importa.</span> Son decisiones legítimas
+      —alguien tiene que poner el listón—, pero la plataforma no dice que sean decisiones del
+      equipo. <strong>Un motor de recomendaciones con los umbrales declarados es defendible y
+      publicable; uno cuyos umbrales no se sabe de dónde salen, no.</strong></p>
+  </section>
+
+  <footer class="pie">
+    <span>La numeración es la misma que en
+      <code>Preguntas y observaciones pendientes.md</code>, para poder decir «la 4» y
+      entendernos.</span>
+    <span class="marca-pie">ENOLYTICS · Universidad de Cádiz</span>
+  </footer>
+
+</div>
+
+
+</body>
+
+</html>
