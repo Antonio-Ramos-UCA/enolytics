@@ -403,6 +403,11 @@
 - [x] **Extra, de los barridos que pedía Paula:** otra tarjeta invertida como la 6 en *Cruceros*
   («Visitantes a bodegas del Marco» llevaba el delta de los cruceristas, en verde, diciendo lo
   contrario del aviso rojo de debajo).
+- [x] **Extra (pregunta de Antonio):** el **filtro de localidad**, fuera de la barra lateral. Solo
+  movía 3 cosas de todo el cuadro de mando, pero se veía en las 5 vistas: en la portada convivían
+  «Bodegas 22» (filtrado) y «Visitantes 425.652» (el Marco entero) sin decirlo. Ahora es lo que es
+  —una ayuda de navegación— y se pinta dentro de las dos vistas que lo usan; la tarjeta «Bodegas»
+  dice siempre 42.
 - [ ] **Pendiente de decidir (no es de esta tanda):** cablear los precios de las visitas al
   dashboard (opción A o B de la sesión del 22/07).
 

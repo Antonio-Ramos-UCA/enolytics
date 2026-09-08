@@ -116,16 +116,6 @@ def css() -> str:
   }}
   .eno-hero p {{ margin: 0; color: {INK_SUAVE}; font-size: .9rem; }}
 
-  /* ---------- Filtro activo, visible desde la vista ---------- */
-  /* El filtro de localidad vive en la barra lateral, o sea fuera de la vista que
-     condiciona. Esta línea lo trae a la vista para que se entienda de dónde sale lo
-     que hay en el desplegable, sin tener que adivinarlo. */
-  .eno-filtro {{
-    background: {PLANO}; border: 1px solid {REJILLA}; border-left: 3px solid {AMONTILLADO};
-    border-radius: 8px; padding: .45rem .75rem; font-size: .84rem; color: {INK_SUAVE};
-  }}
-  .eno-filtro b {{ color: {INK}; }}
-
   /* ---------- Tarjetas (KPI, semáforo, secciones) ---------- */
   [data-testid="stMetric"] {{
     background: #fff; border: 1px solid {BORDE}; border-radius: 12px;

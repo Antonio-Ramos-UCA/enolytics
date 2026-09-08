@@ -245,6 +245,27 @@ desincronice. No se ha cambiado ningún umbral: solo se dice cuál es cada cosa.
 Playwright de las 5 vistas y sus 11 pestañas → **0 gráficos con «undefined»**; PDF de la guía
 regenerado con la firma nueva; capturas revisadas.
 
+**11. ✅ EL FILTRO DE LOCALIDAD, A SU SITIO (pregunta de Antonio al hacer el repaso: «en la
+pantalla principal hay un filtro por localidad, ¿tiene sentido?»).** No lo tenía. Estaba en la
+barra lateral, o sea a la vista en las cinco vistas, pero de todo lo que hay en pantalla solo
+movía **tres cosas**: la tarjeta «Bodegas», el mapa/directorio de Negocios y el desplegable de la
+ficha. Lo demás **no se puede** filtrar por localidad: visitantes e ingresos son de ACEVIN para el
+Marco entero, la valoración sale de las 10.972 reseñas y las recomendaciones son del destino. El
+efecto era una **trampa de lectura** en la portada: con «Jerez» puesto se leía *«Bodegas 22 ·
+Visitantes 425.652»*, cuatro tarjetas en fila donde una hablaba de Jerez y tres del Marco sin
+decirlo — el mismo patrón de contexto engañoso de la observación 6. Decisión de Antonio:
+- El filtro es **de navegación, no analítico** → se saca de la barra lateral y se pinta **dentro
+  de las dos vistas donde hace algo** (`selector_localidad()`): la ficha de bodega, al lado del
+  desplegable, y el mapa/directorio de Negocios. Vacío = todas, con marcador «Todas las
+  localidades», así que va compacto.
+- La tarjeta **«Bodegas» dice siempre 42**, el censo del Marco, como sus tres compañeras de fila.
+- Efecto lateral bueno: al vivir el filtro dentro de la vista, la observación 4 de Paula («que el
+  filtro se vea desde la vista») queda resuelta de raíz, y sobran el aviso «Filtrando por…» y su
+  clase CSS `.eno-filtro`, que se retiran.
+- Verificado con AppTest: filtro presente **solo** en Bodega individual y 7 inteligencias; el
+  Resumen, el Simulador y la Guía ya no lo tienen. «Bodegas» = 42 siempre. Jerez → 22 bodegas con
+  Viña La Torre dentro.
+
 ## ═══ SESIÓN 2026-07-22 — SIMULADOR (Pieza 3), CABECERA «FILO DE VINO» Y PRECIOS DE VISITA ═══
 > Se cerró la 3.ª pieza de Paula, se aligeró la cabecera (Opción A de Paula) y se abrió una
 > **vía de datos nueva: el precio de las visitas** (el hueco que el motor de competidores esperaba).

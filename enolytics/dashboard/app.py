@@ -1066,42 +1066,38 @@ with st.sidebar:
                              "Ficha y recomendaciones de una bodega",
                              "Mueve una palanca y proyecta el efecto",
                              "Qué es cada apartado y de dónde sale cada dato"])
-    st.divider()
-    locs_bodega = df["localidad"].apply(separar_localidades)
-    localidades = sorted({loc for lista in locs_bodega for loc in lista})
-    with st.expander("Filtrar por localidad", expanded=False):
-        sel_local = st.multiselect("Localidad", localidades, default=localidades,
-                                   key="sel_local", label_visibility="collapsed")
-    if not sel_local:
-        st.caption("Sin selección: se muestran todas las localidades")
-    elif len(sel_local) < len(localidades):
-        st.caption(f"Filtrando {len(sel_local)} de {len(localidades)} localidades")
+# --------------------------------------------------------------------------- #
+# Filtro de localidad — SOLO donde hace algo.
+#
+# Vivía en la barra lateral, o sea a la vista en las cinco vistas, pero de todo lo que
+# hay en pantalla solo movía tres cosas: el censo de bodegas, el mapa/directorio de
+# Negocios y el desplegable de la ficha. Todo lo demás no se puede filtrar por
+# localidad: visitantes e ingresos son de ACEVIN para el Marco entero, la valoración
+# sale de las 10.972 reseñas y las recomendaciones son del destino. Un filtro global
+# que solo mueve una tarjeta de cuatro no es un filtro, es una trampa de lectura: con
+# «Jerez» puesto, la portada decía «Bodegas 22 · Visitantes 425.652» y cualquiera lee
+# las dos cifras como de Jerez.
+#
+# Ahora es lo que de verdad es: una ayuda de NAVEGACIÓN para encontrar bodegas, dentro
+# de la vista que la usa. Vacío = todas, y así el desplegable va compacto.
+# --------------------------------------------------------------------------- #
+LOCS_BODEGA = df["localidad"].apply(separar_localidades)
+LOCALIDADES = sorted({loc for lista in LOCS_BODEGA for loc in lista})
 
-# Un filtro vacío significa TODAS, que es lo que cualquiera espera de un filtro. Antes
-# dejaba el catálogo a cero y reventaba la vista de bodega (observación 4 de Paula).
-filtro_local_activo = bool(sel_local) and len(sel_local) < len(localidades)
-df_f = (df[locs_bodega.apply(lambda lista: any(loc in sel_local for loc in lista))]
-        if filtro_local_activo else df)
 
+def selector_localidad(clave: str, etiqueta: str = "Filtrar por localidad") -> pd.DataFrame:
+    """Pinta el filtro de localidad y devuelve el catálogo ya filtrado.
 
-def aviso_filtro_localidad() -> None:
-    """Deja ver DESDE la vista que hay un filtro puesto en la barra lateral, y cómo quitarlo.
-
-    El filtro vive fuera de la vista pero decide lo que la vista puede enseñar: sin este
-    aviso, quien entra directo a una vista filtrada solo ve una lista corta (o vacía) y no
-    tiene manera de saber por qué. Es el fondo del asunto de la observación 4 de Paula:
-    no es un problema de código, es de recorrido.
+    Al vivir DENTRO de la vista que filtra, se ve de dónde sale lo que hay en la lista
+    sin tener que adivinar que la causa está en otro sitio — que era el fondo de la
+    observación 4 de Paula. Vacío significa todas.
     """
-    if not filtro_local_activo:
-        return
-    izq, der = st.columns([5, 1])
-    izq.markdown(
-        f"<div class='eno-filtro'>Filtrando por: <b>{' · '.join(sel_local)}</b></div>",
-        unsafe_allow_html=True)
-    if der.button("Quitar filtro", use_container_width=True,
-                  help="Vuelve a mostrar todas las localidades"):
-        st.session_state["sel_local"] = list(localidades)
-        st.rerun()
+    sel = st.multiselect(etiqueta, LOCALIDADES, default=[], key=clave,
+                         placeholder="Todas las localidades",
+                         help="Déjalo vacío para ver todo el Marco.")
+    if not sel:
+        return df
+    return df[LOCS_BODEGA.apply(lambda lista: any(loc in sel for loc in lista))]
 
 # --------------------------------------------------------------------------- #
 # Cabecera única «filo de vino» (Opción A de Paula): marca discreta + título de la
@@ -1500,7 +1496,10 @@ if rol == VISTA_RESUMEN:
             k1.metric(f"Visitantes {_u}", f"{int(_v.iloc[0]):,}".replace(",", "."),
                       f"{_pos}º de España" if _pos else None, delta_color="off",
                       help="Visitas a bodegas y museos del Marco (ACEVIN).")
-    k2.metric("Bodegas", len(df_f))
+    # El censo del Marco, siempre entero, como sus tres compañeras de fila: todas hablan
+    # del destino. Antes esta sola tarjeta se filtraba por localidad y las otras tres no.
+    k2.metric("Bodegas", len(df),
+              help="Bodegas de la Ruta del Vino y Brandy de Jerez recogidas en el catálogo.")
     if not resenas.empty:
         _nota = f"{resenas['puntuacion'].mean():.2f}".replace(".", ",")
         k3.metric("Valoración del destino", f"{_nota} / 5",
@@ -2296,16 +2295,16 @@ if rol == VISTA_INTELIGENCIAS:
                     lineas(serie)
             st.divider()
 
-        st.subheader("Mapa de bodegas")
-        mapa = df_f.dropna(subset=["gps_lat", "gps_lon"]).rename(
+        st.subheader("Mapa y directorio de bodegas")
+        cat = selector_localidad("loc_directorio")
+        st.caption(f"**{len(cat)}** de {len(df)} bodegas del Marco.")
+        mapa = cat.dropna(subset=["gps_lat", "gps_lon"]).rename(
             columns={"gps_lat": "lat", "gps_lon": "lon"}
         )
         if not mapa.empty:
             st.map(mapa[["lat", "lon"]], size=40)
-
-        st.subheader("Directorio de bodegas")
         st.dataframe(
-            df_f[["nombre", "localidad", "telefono", "web", "url_ficha"]],
+            cat[["nombre", "localidad", "telefono", "web", "url_ficha"]],
             use_container_width=True, hide_index=True,
         )
         recomendaciones_inteligencia(recs_destino, "Negocios")
@@ -2548,13 +2547,14 @@ if rol == VISTA_INTELIGENCIAS:
 # Vista BODEGA: ficha individual en detalle
 # --------------------------------------------------------------------------- #
 else:
-    aviso_filtro_localidad()
-    if df_f.empty:
-        st.info("No hay bodegas con el filtro actual. "
-                "Amplía la selección de localidades en la barra lateral.")
+    col_loc, col_bod = st.columns([1, 2])
+    with col_loc:
+        cat = selector_localidad("loc_bodega", "Filtrar por localidad (opcional)")
+    if cat.empty:
+        st.info("No hay bodegas con el filtro actual. Amplía la selección de localidades.")
         st.stop()
-    nombre = st.selectbox("Selecciona una bodega", df_f["nombre"].sort_values())
-    b = df_f[df_f["nombre"] == nombre].iloc[0]
+    nombre = col_bod.selectbox("Selecciona una bodega", cat["nombre"].sort_values())
+    b = cat[cat["nombre"] == nombre].iloc[0]
     an_bod = anotadas[anotadas["bodega"] == nombre] if not anotadas.empty else pd.DataFrame()
 
     tab_reco, tab_comp, tab_ficha, tab_res = st.tabs(
