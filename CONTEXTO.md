@@ -1157,8 +1157,17 @@ datos con Fernando (FMH) y Águeda (ACM), que están en el equipo de trabajo.
   `calcular_dipa(perf_ini, perf_fin)` → variación + tendencia (Mejora/Estable/Empeora).
 - Dashboard (vista Gestor): sección "Evolución temporal (DIPA)" con gráfico de líneas
   por atributo + tabla de tendencias. Helpers `cargar_evolucion()`, `resumen_dipa()`.
-- **Hallazgo:** "Organización y reserva" EMPEORA (3,87→3,55 de 2018-20 a 2024-26);
-  el resto estable o mejora. Refuerza que la logística de la visita es el problema.
+- ⚠️ **CORREGIDO EL 10/09/2026 — ESTE HALLAZGO ESTABA MAL ATRIBUIDO.** Decía: *«"Organización
+  y reserva" EMPEORA (3,87→3,55 de 2018-20 a 2024-26)»*. **Se habían cruzado dos atributos.**
+  Recalculado sobre `sentimiento_atributos.csv` cruzado con el año de la reseña:
+  · **"Precio y valor" es el que EMPEORA: 3,87 → 3,70 (−0,18)** — la única variación que supera
+    la banda de indiferencia del sentimiento (0,07), y además es el 2.º atributo más importante
+    (14,9 %) y el 2.º peor valorado (3,78).
+  · **"Organización y reserva" está ESTABLE: 3,47 → 3,54 (+0,07).** Sigue siendo **el peor
+    valorado en absoluto (3,52)** y el 3.º más importante (14,8 %), pero **no empeora**.
+  · El resto, dentro de la banda: Entorno −0,07 · Gastronomía +0,13 · Instalaciones −0,01 ·
+    Personal +0,05 · Vino −0,02 · Visita +0,07.
+  **No repetir la versión antigua en ninguna charla ni informe.**
 - **Los 4 modelos IPA/IPCA/DIPA de la memoria ya funcionan.** Falta DIPCA (dinámico+
   competitivo) y mejoras NLP (BERT multilingüe, LDA).
 
