@@ -17,6 +17,11 @@ datos/crudo/
 # (getftrtoken=...) en el pie. Se quedan en Dropbox; en docs/ solo va la CITA.
 BIBLIOGRAFIA/
 
+# Normas UNE: PDFs con licencia de AENOR (adquiridos por suscripción universitaria; el pie de
+# cada página identifica al comprador). Mismo criterio que la bibliografía: se quedan en
+# Dropbox para consultarlas; en la documentación solo va la referencia a la norma.
+NORMAS UNE/
+
 # SO / editores
 .DS_Store
 .vscode/
