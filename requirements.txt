@@ -12,3 +12,13 @@ plotly>=5.18,<7.0
 
 # Generación del informe PDF por bodega (puro Python, sin dependencias de sistema).
 fpdf2==2.8.7
+
+# ---------------------------------------------------------------------------
+# Nota de despliegue (28/10/2026). Streamlit Cloud, al detectar un cambio en el
+# repositorio, vuelve a ejecutar app.py pero puede CONSERVAR en memoria los
+# módulos ya importados. Al añadir constantes nuevas a config.py convivieron un
+# app.py nuevo y un config viejo, y la aplicación se cayó con un AttributeError.
+# El código ya está blindado para que eso no vuelva a tumbarla, pero el módulo
+# sigue sin recargarse hasta que se reconstruye el entorno.
+# Tocar ESTE fichero es lo que fuerza esa reconstrucción completa.
+# ---------------------------------------------------------------------------
