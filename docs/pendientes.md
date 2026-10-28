@@ -1,7 +1,9 @@
 # ENOLYTICS — Tareas pendientes (backlog)
 
 > Lista viva de todo lo que queda por hacer, para no perder el hilo entre sesiones.
-> Marca con [x] lo completado. Última actualización: 2026-07-17 (modelo Kano + PRCA).
+> Marca con [x] lo completado. Última actualización: 2026-10-28 (pase de registro
+> profesional, logos FEDER al área principal, y frecuencia MENSUAL decidida para la
+> automatización de reseñas).
 
 ## Datos y fuentes
 - [ ] **SABI** — confirmar acceso de la UCA (biblioteca) para facturación/empleo por bodega (inteligencia económica y de negocios). Alternativa: Registro Mercantil/BORME.
@@ -375,7 +377,48 @@
 - [x] **Reorganizar en pestañas** por inteligencia (Gestor: Visión general · Clientes y experiencia · Económica y mercado. Bodega: Ficha · Reseñas y análisis). Añadir más pestañas al sumar inteligencias.
 - [x] **Etiquetado del origen de cada indicador** (🟢 oficial · 🔵 observado · 🟡 estimado) con leyenda en el dashboard. 13 etiquetas en las 7 inteligencias. `config.ORIGENES_DATO` + helper `fuente()`.
 - [x] **Enlace permanente** — PUBLICADO en **https://enolytics-feder-uca.streamlit.app** (Streamlit Community Cloud, repo público `Antonio-Ramos-UCA/enolytics`). Redespliega solo al hacer `git push`. Falta (opcional): restringir vista por correo desde Settings → Sharing.
-- [ ] **Automatización incremental** de reseñas (API Outscraper + programación) — la parte "periódica" de la memoria.
+- [ ] ⭐ **AUTOMATIZACIÓN INCREMENTAL DE RESEÑAS** — la parte "periódica" de la memoria.
+  **Frecuencia decidida el 28/10/2026 (Antonio): MENSUAL.** Entre las 41 bodegas entran ~4,5
+  reseñas al día (1.640 al año), así que una pasada diaria gastaría 41 consultas de API para
+  traer cuatro reseñas. Mensual trae ~135 por pasada, que ya mueve un indicador.
+
+  **Por qué urge:** la reseña más reciente del corpus es del **06/07/2026**. A 28/10 llevamos
+  casi cuatro meses sin actualizar, ~500 reseñas que no estamos viendo.
+
+  **La cadena ya existe y cada paso se ejecuta solo:**
+  `ingesta/resenas.py` → `etl/resenas.py` → `nlp/sentimiento.py` → `analitica/prca.py` →
+  `analitica/competidores.py`. El dashboard SOLO lee los CSV que deja esa cadena, así que
+  actualizar no es descargar: es volver a recorrerla entera.
+
+  **Lo que falta (dos piezas):**
+  1. **Backend de Outscraper** en `ingesta/resenas.py`. Es lo único sin escribir: hoy
+     `_descargar_google` lanza `NotImplementedError` a propósito, para marcar la frontera. La
+     interfaz ya contempla lo incremental (`descargar_resenas(..., desde=fecha,
+     incremental=True)`) y la deduplicación por `id_externo`. Outscraper admite corte por
+     fecha, así que cada pasada traería solo lo posterior a la última reseña guardada.
+  2. **Modo incremental en `nlp/sentimiento.py`.** Hoy `calcular_y_guardar()` pasa el corpus
+     ENTERO por el BERT (~3 min, 7.277 reseñas con texto). Para una pasada automática hay que
+     puntuar solo los `resena_id` que no estén ya en `sentimiento_atributos.csv` y añadirlos.
+
+  **Dónde se ejecuta: NO en Streamlit Cloud.** `torch`/`transformers` están deliberadamente
+  fuera de `requirements.txt` porque Cloud tiene ~1 GB de RAM y el BERT lo ahoga. La salida
+  natural son **GitHub Actions**: el repositorio ya está ahí, los runners tienen 7 GB, y al
+  hacer commit de los CSV actualizados Streamlit Cloud se redespliega solo. El circuito se
+  cierra sin tocar nada más.
+
+  **Decisiones previas a implementar:**
+  - La clave de Outscraper va en un **secret de GitHub**, nunca en el repositorio (es público).
+  - **Coste**: mirar la tarifa por consulta de Outscraper y echar la cuenta contra la partida
+    de 4.000 €. 41 consultas al mes es poco, pero hay que confirmarlo, no suponerlo.
+  - **Los umbrales NO se recalibran solos.** La banda de indiferencia del IPCA sale del
+    percentil 25 de las brechas actuales. Si se recalculara en cada pasada, cambiaría en
+    silencio lo que la plataforma declara, y el principio de la casa es que los umbrales se
+    declaran. Se dejan fijos y se re-derivan a conciencia cuando toque.
+
+  **Orden de trabajo:** (1) backend de Outscraper + una pasada MANUAL para comprobar que trae
+  bien lo nuevo; (2) modo incremental del BERT; (3) solo entonces el cron mensual. Así en
+  ningún momento hay un robot escribiendo en el repositorio sin que hayamos visto antes lo
+  que escribe.
 
 ## ⭐ SEGUNDA ENTREGA DE PAULA — «Preguntas y observaciones pendientes» (03/09) ✅ APLICADA
 > Diez puntos salidos de **usar** el cuadro de mando: 2 errores y 8 observaciones de lectura.
