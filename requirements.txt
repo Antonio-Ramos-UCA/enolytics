@@ -22,3 +22,6 @@ fpdf2==2.8.7
 # sigue sin recargarse hasta que se reconstruye el entorno.
 # Tocar ESTE fichero es lo que fuerza esa reconstrucción completa.
 # ---------------------------------------------------------------------------
+# Reconstrucción forzada 28/10/2026: el pase de registro cambió textos de
+# analitica/recomendaciones.py, pero el entorno servía el módulo anterior
+# ("críticas mudas", "responder es gratis") junto a un app.py ya nuevo.
