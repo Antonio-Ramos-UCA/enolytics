@@ -1098,10 +1098,22 @@ with st.sidebar:
     # Va en la barra lateral a propósito: es el único sitio que se pinta en las cinco
     # vistas. El pie del área principal está al final del script y solo lo alcanza la
     # vista de bodega, porque las demás terminan antes con st.stop().
+    #
+    # Se lee con getattr y dentro de un try: al desplegar, Streamlit Cloud vuelve a
+    # ejecutar app.py pero puede conservar en memoria la versión ANTERIOR de config,
+    # que todavía no tiene estas constantes. Sin esta guarda, el desfase de unos
+    # segundos entre los dos ficheros tumbaba la plataforma entera con un AttributeError.
+    # El pie es importante, pero nunca debe poder dejar la herramienta inservible.
     st.divider()
-    if config.LOGOS_FEDER.exists():
-        st.image(str(config.LOGOS_FEDER), use_container_width=True)
-    st.caption(config.CLAUSULA_FINANCIACION)
+    try:
+        _logos = getattr(config, "LOGOS_FEDER", None)
+        if _logos is not None and _logos.exists():
+            st.image(str(_logos), use_container_width=True)
+        _clausula = getattr(config, "CLAUSULA_FINANCIACION", None)
+        if _clausula:
+            st.caption(_clausula)
+    except Exception:
+        pass
 # --------------------------------------------------------------------------- #
 # Filtro de localidad — SOLO donde hace algo.
 #

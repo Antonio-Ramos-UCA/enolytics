@@ -73,17 +73,20 @@ def _pie_documento(pdf, W, nota_fuentes: str, size_nota: float = 7.0) -> None:
     pdf.multi_cell(W, 3, _t(nota_fuentes), align="C", new_x="LMARGIN", new_y="NEXT")
     pdf.ln(1)
 
-    if config.LOGOS_FEDER.exists():
+    # getattr por lo mismo que en el cuadro de mando: un config desfasado no debe
+    # impedir que la bodega se descargue su informe.
+    logos = getattr(config, "LOGOS_FEDER", None)
+    if logos is not None and logos.exists():
         # la banda es apaisada (1330 x 103 px): se escala por altura y se centra
         ancho = min(alto_banda * (1330 / 103), W)
-        pdf.image(str(config.LOGOS_FEDER), x=pdf.l_margin + (W - ancho) / 2,
-                  y=pdf.get_y(), w=ancho)
+        pdf.image(str(logos), x=pdf.l_margin + (W - ancho) / 2, y=pdf.get_y(), w=ancho)
         pdf.ln(alto_banda + 1.5)
 
-    pdf.set_font("Helvetica", "", 6.2)
-    pdf.set_text_color(*GRIS)
-    pdf.multi_cell(W, 2.6, _t(config.CLAUSULA_FINANCIACION),
-                   align="C", new_x="LMARGIN", new_y="NEXT")
+    clausula = getattr(config, "CLAUSULA_FINANCIACION", "")
+    if clausula:
+        pdf.set_font("Helvetica", "", 6.2)
+        pdf.set_text_color(*GRIS)
+        pdf.multi_cell(W, 2.6, _t(clausula), align="C", new_x="LMARGIN", new_y="NEXT")
 
     pdf.set_auto_page_break(auto_previo, margin=margen_previo)
 

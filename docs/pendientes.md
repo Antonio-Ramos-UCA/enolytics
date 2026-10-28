@@ -15,7 +15,7 @@
 - [~] **Precios de las visitas/experiencias** — módulo `enolytics/ingesta/precios.py` (extractor con **humano en el bucle**: recorre la web propia de cada bodega, localiza páginas de visitas/reservas y saca importes en € **con su contexto** y nivel de confianza; filtra ruido de tienda). Lote sobre 38 webs → `precios_experiencias_candidatos.csv` (148 candidatos: 85 confianza alta, 19 bodegas `ok`). Las webs SPA (W&H, Osborne…) no las lee el scraper → resueltas por **WebFetch/WebSearch** de su página de visitas. Seed curado y verificado en `precios_experiencias.csv` (13 experiencias con precio + fuente/método/confianza; 4 "a consultar"). **Precios de referencia:** W&H 25-80 €, Osborne 25/70 €, Barbadillo 45-90 €, Cayetano 15-50 €, González Byass 25-98 €, Argüeso 15 €, Díez Mérito 9/18 €, Luis Pérez 25 €, Gutiérrez Colosía 15/32 €, Álvaro Domecq 20 €, Tradición hasta 315 €. **Falta:** (1) el equipo verifica los candidatos `alta` del scraper y los pasa al CSV curado; (2) cuestionario para las "a consultar" y cooperativas pequeñas; (3) **cablear el precio al motor de competidores** (dimensión que ya lo espera) y a una métrica real de "Precio y valor".
 - [x] **ACEVIN — visitantes por ruta del vino** (`enolytics/ingesta/acevin.py`): descarga los informes oficiales del Observatorio RVE (PDF) y extrae visitantes por ruta 2022-2024 → `datos/procesado/acevin/visitantes_rutas.csv`. **Hallazgo: el Marco de Jerez es 1º de España en 2024 (425.652, +11,2%), adelantando a Rioja Alta (−18,6%).**
 - [ ] **Censo de reseñas de otras rutas** (Rioja, Ribera) para comparar *reputación online entre destinos* (requiere Outscraper).
-- [x] **Oferta y precios comparados entre rutas** — ACEVIN: `oferta_rutas.csv` (37 rutas), `ingresos_rutas.csv` (parcial). **Hallazgos: el Marco es 1º en visitantes pero 7º en oferta (111 servicios vs 334 de Ribera), e ingresa 40,4 €/visitante frente a 70,0 € de Rioja Alta.** Falta: precios de experiencias (Civitatis/GetYourGuide).
+- [x] **Oferta y precios comparados entre rutas** — ACEVIN: `oferta_rutas.csv` (37 rutas), `ingresos_rutas.csv` (parcial). ⚠️ **OJO, hallazgo corregido el 28/10/2026.** Durante meses figuró aquí que «el Marco es 1º en visitantes pero 7º en oferta», y de ahí salía una recomendación. **No es una comparación válida:** el ranking de oferta se calcula sobre las 37 rutas con dato de servicios y el de visitantes sobre las 6 que publican visitantes. Además, con 111 servicios el Marco está en el **percentil 81** de oferta (mediana 67). Y la oferta **no explica** la monetización: Rioja Alta 112 servicios y 70,0 €/visita, Penedès 250 y 52,0 €, Marco 111 y 40,4 € (correlación −0,12). **El hallazgo que sí se sostiene: el Marco ingresa 40,4 € por visita frente a los 70,0 € del líder, con una oferta equivalente. La brecha está dentro de la visita.** Falta: precios de experiencias (Civitatis/GetYourGuide).
 - [ ] **Estrategias diferenciadoras** de otras rutas (análisis cualitativo) — indicador de la Tabla 1 aún sin cubrir.
 - [x] **Certificaciones de sostenibilidad** — FEV SWfCP cruzado (4: Barbadillo, González Byass, Lustau, Osborne) + **auditoría web de sostenibilidad** por 7 ejes (`enolytics/ingesta/sostenibilidad.py`): 10 bodegas comunican ecológico; Miguel Domecq 7/7. En `datos/procesado/sostenibilidad.csv`. Nota: el buscador público de **CAAE** solo expone su lista internacional (Perú/México), no el registro español; por la solera, los vinos de Jerez tradicionales no certifican "vino ecológico". Falta (opcional): indicadores de consumo (estimados) y transporte sostenible.
 - [ ] **Atributos de Google Maps** (accesibilidad, reserva online) vía servicio "Google Maps" de Outscraper (inteligencia tecnológica).
@@ -408,8 +408,21 @@
   «Bodegas 22» (filtrado) y «Visitantes 425.652» (el Marco entero) sin decirlo. Ahora es lo que es
   —una ayuda de navegación— y se pinta dentro de las dos vistas que lo usan; la tarjeta «Bodegas»
   dice siempre 42.
-- [ ] **Pendiente de decidir (no es de esta tanda):** cablear los precios de las visitas al
-  dashboard (opción A o B de la sesión del 22/07).
+- [ ] ⭐ **PRECIOS DE LAS VISITAS — aparcado a propósito el 28/10 («muy interesante», Antonio).**
+  Es el hueco de datos más jugoso que queda abierto, y conviene retomarlo con tiempo. Estado:
+  **17 experiencias de 11 bodegas ya curadas y verificadas** (`precios_experiencias.csv`, con
+  fuente, método y confianza) y **167 candidatos del extractor** sobre 38 bodegas, de los que
+  **85 son de confianza alta** y están **sin verificar por el equipo**
+  (`precios_experiencias_candidatos.csv`).
+  **Lo que desbloquea si se cablea:** (1) el precio en la ficha de bodega; (2) una métrica real de
+  «Precio y valor» —hoy el atributo se mide solo por lo que dicen las reseñas, y es el que
+  **empeora** (3,87 → 3,70)—; (3) la **dimensión de precio del motor de competidores**, que ya la
+  espera y hoy va sin ella; (4) la palanca de monetización del simulador, que podría partir del
+  precio real en vez de solo del ingreso medio.
+  **La decisión pendiente sigue siendo A o B:** **A)** cablear ya solo lo de confianza alta en la
+  ficha; **B)** esperar a que el equipo verifique el CSV y cablear las cuatro cosas de golpe.
+  Principio de la casa: no publicar dato sin confirmar, así que B es lo conservador y A exige
+  marcar el dato como no verificado.
 
 ## ⭐ PROPUESTAS DE PAULA (IP) — convertir el dashboard en PRODUCTO (21/07)
 > Paula mandó 3 "piezas" + datos + temas de memoria (artefacto revisado el 21/07). Idea de fondo:
