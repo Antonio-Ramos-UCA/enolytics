@@ -15,6 +15,31 @@ DATOS_CRUDO = DATOS / "crudo"                           # datos sin procesar (re
 DATOS_CRUDO_RESENAS = DATOS_CRUDO / "resenas"
 DATOS_PROCESADO = DATOS / "procesado"                   # datasets ya limpios/derivados
 
+# --------------------------------------------------------------------------- #
+# Obligaciones de publicidad del proyecto (FEDER)
+#
+# La Resolución de 23/12/2024 de la UCA (Resuelve Decimonoveno «Obligaciones», d y g)
+# exige dar publicidad al carácter público de la financiación en los medios de difusión
+# de la actuación, con un texto y unos logos concretos. Se definen aquí, en un único
+# sitio, para que el cuadro de mando y los PDF digan exactamente lo mismo.
+# --------------------------------------------------------------------------- #
+PROYECTO_CODIGO = "FEDER-UCA-2024-A2-27"
+
+CLAUSULA_FINANCIACION = (
+    f"Proyecto {PROYECTO_CODIGO} cofinanciado por el Programa Operativo FEDER Andalucía "
+    f"2021-2027 y por la Consejería de Universidad, Investigación e Innovación de la "
+    f"Junta de Andalucía."
+)
+
+CLAUSULA_FINANCIACION_EN = (
+    f"The authors thank the financial support from Programa Operativo FEDER Andalucía "
+    f"2021-2027 and Consejería de Universidad, Investigación e Innovación, Junta de "
+    f"Andalucía (Proyecto {PROYECTO_CODIGO})."
+)
+
+MARCA_FEDER = DATOS / "marca_feder"
+LOGOS_FEDER = MARCA_FEDER / "banda_logos_feder.png"   # banda obligatoria de logos
+
 # Ficheros clave del catálogo
 CATALOGO_BASE_CSV = DATOS_CATALOGO / "catalogo_bodegas_rutadelvinojerez.csv"
 CATALOGO_CSV = DATOS_CATALOGO / "bodegas_enriquecido.csv"

@@ -468,16 +468,44 @@ KAMENSKY = {
 
 
 def figura_terreno_competitivo(sub: pd.DataFrame):
-    """Mapa de terreno competitivo (Kamensky): distancia de mercado (x) vs de recursos (y)."""
+    """Mapa de terreno competitivo (Kamensky): distancia de mercado (x) vs de recursos (y).
+
+    Dos cuidados que vienen de la revisión de Paula (observaciones 11 y 16):
+
+    · La leyenda muestra **siempre los cuatro tipos**, aunque alguno esté vacío. El pie del
+      gráfico promete que «las líneas separan los cuatro tipos», y antes solo aparecían los
+      que tenían a alguien dentro: el lector contaba dos donde se le anunciaban cuatro. Que
+      una bodega no tenga ningún rival de núcleo **es información**, y así se ve.
+
+    · El globo se compone a mano. Antes heredaba las columnas internas del DataFrame —salía
+      un `icono=🔄` y los nombres de los ejes con sus flechas— y los números iban desnudos,
+      sin decir que son distancias de 0 a 1.
+    """
     umc = float(sub["umbral_mc"].iloc[0])
     urs = float(sub["umbral_rs"].iloc[0])
-    sub = sub.assign(icono=sub["tipo"].map(lambda t: KAMENSKY[t][0]))
+    sub = sub.assign(icono=sub["tipo"].map(lambda t: KAMENSKY[t][0]),
+                     explica=sub["tipo"].map(lambda t: KAMENSKY[t][2]))
     fig = px.scatter(sub, x="dist_mercado", y="dist_recursos", color="tipo",
                      text="icono", hover_name="competidor",
+                     custom_data=["tipo", "explica", "dist_mercado", "dist_recursos"],
+                     category_orders={"tipo": list(KAMENSKY)},
                      color_discrete_map={t: KAMENSKY[t][1] for t in KAMENSKY},
                      labels={"dist_mercado": "◀ mismo cliente · distinto cliente ▶",
                              "dist_recursos": "◀ recursos parecidos · recursos distintos ▶",
                              "tipo": "Tipo de competidor"})
+    fig.update_traces(hovertemplate=(
+        "<b>%{hovertext}</b><br>"
+        "%{customdata[0]} · %{customdata[1]}<br>"
+        "Distancia de mercado: %{customdata[2]:.2f}<br>"
+        "Distancia de recursos: %{customdata[3]:.2f}"
+        "<extra></extra>"))
+    # Los tipos sin ningún competidor entran como traza vacía, solo para la leyenda.
+    presentes = set(sub["tipo"])
+    for t in KAMENSKY:
+        if t not in presentes:
+            fig.add_trace(go.Scatter(x=[None], y=[None], mode="markers", name=f"{t} (0)",
+                                     marker=dict(size=14, color=KAMENSKY[t][1], opacity=0.35),
+                                     hoverinfo="skip", showlegend=True))
     fig.add_vline(x=umc, line_dash="dash", line_color=estilo.INK_TENUE)
     fig.add_hline(y=urs, line_dash="dash", line_color=estilo.INK_TENUE)
     fig.update_traces(textposition="middle center", textfont=dict(size=15),
@@ -955,9 +983,8 @@ def cabecera_inteligencia(clave: str) -> None:
     info = config.OBJETIVOS_INTELIGENCIAS.get(clave)
     if not info:
         return
-    st.info(f"🎯 **Objetivo (Memoria Científico-Técnica):** {info['objetivo']}")
-    with st.expander(f"Categoría SEGITTUR: **{info['segittur']}** · Indicadores previstos "
-                     f"(Tabla 1 de la memoria)"):
+    st.info(f"🎯 **Qué mide esta inteligencia:** {info['objetivo']}")
+    with st.expander(f"Categoría SEGITTUR: **{info['segittur']}** · Indicadores previstos"):
         for ind in info["indicadores"]:
             st.markdown(f"- {ind}")
     # «Sostenibilidad» encabezando la pestaña Económica se lee como una errata, porque en
@@ -1066,6 +1093,15 @@ with st.sidebar:
                              "Ficha y recomendaciones de una bodega",
                              "Mueve una palanca y proyecta el efecto",
                              "Qué es cada apartado y de dónde sale cada dato"])
+
+    # --- Pie institucional: obligación de publicidad del proyecto -------------
+    # Va en la barra lateral a propósito: es el único sitio que se pinta en las cinco
+    # vistas. El pie del área principal está al final del script y solo lo alcanza la
+    # vista de bodega, porque las demás terminan antes con st.stop().
+    st.divider()
+    if config.LOGOS_FEDER.exists():
+        st.image(str(config.LOGOS_FEDER), use_container_width=True)
+    st.caption(config.CLAUSULA_FINANCIACION)
 # --------------------------------------------------------------------------- #
 # Filtro de localidad — SOLO donde hace algo.
 #
@@ -1200,6 +1236,11 @@ UMBRALES_METODO = [
 ]
 
 UMBRALES_EQUIPO = [
+    ("5 menciones",
+     "Mínimo para que un aspecto **aparezca** en la ficha de reputación de una bodega. "
+     "No confundir con el de 8, que decide algo distinto: si se **publica la nota** de ese "
+     "atributo. Con menos de 5 el aspecto ni siquiera se enseña, para no sacar conclusiones "
+     "de dos reseñas; entre 5 y 7 se enseña que se habla de él, pero sin ponerle nota."),
     ("0 % · 5 críticas",
      "Se recomienda empezar a responder reseñas si la bodega no ha contestado **ninguna** y "
      "acumula 5 o más críticas de 1-2★."),
@@ -1222,9 +1263,8 @@ UMBRALES_EQUIPO = [
 ]
 
 if rol == VISTA_GUIA:
-    st.caption("Qué contiene cada apartado, qué significan los análisis y el origen de cada "
-               "indicador. Sirve al bodeguero para entenderlo y al proyecto como documentación "
-               "metodológica (anexo para FEDER).")
+    st.caption("Qué contiene cada apartado, qué significan los análisis y de dónde sale cada "
+               "indicador.")
     try:
         from enolytics.dashboard import informe as _informe
         st.download_button("⬇️  Descargar la guía (PDF)",
@@ -1250,7 +1290,7 @@ if rol == VISTA_GUIA:
             if not _fuentes:
                 st.caption("**Sin fuente propia: no es un origen, es un cálculo nuestro** a "
                            "partir de los datos de arriba.")
-    st.caption("Algunos indicadores de la memoria (empleo por bodega, consumos ambientales, "
+    st.caption("Algunos indicadores previstos (empleo por bodega, consumos ambientales, "
                "precios de experiencias) se completarán con cuestionarios y fuentes adicionales, "
                "porque no existen en abierto.")
 
@@ -1307,11 +1347,21 @@ def _mil(n: float, dec: int = 0) -> str:
 
 if rol == VISTA_SIMULADOR:
     st.warning(
-        "⚠️ **Esto proyecta un escenario, no predice el futuro.** Cada palanca aplica una "
-        "regla **lineal y sencilla** («si el ingreso por visitante sube a X, y todo lo demás "
-        "sigue igual, los ingresos serían Y»). Sirve para **ordenar prioridades y dimensionar "
-        "una decisión**, no como una previsión. Los supuestos de cada palanca se explican debajo "
-        "de su resultado.")
+        "⚠️ **Esto proyecta un escenario, no predice el futuro.** Sirve para **ordenar "
+        "prioridades y dimensionar una decisión**, no como una previsión. Los supuestos de cada "
+        "palanca se explican debajo de su resultado.")
+
+    # Cada palanca dice en qué consiste SU cuenta. Tres proyectan con un supuesto lineal;
+    # la de respuesta a críticos no proyecta nada: es aritmética exacta sobre lo que ya hay.
+    AVISO_PALANCA = {
+        "mon": "Regla lineal: si el ingreso por visitante sube a X y todo lo demás sigue igual, "
+               "los ingresos serían Y.",
+        "cru": "Regla lineal: si se captara el X % de los cruceristas, serían Y visitantes más.",
+        "cri": "Aquí no hay proyección: es una **cuenta exacta** sobre las críticas que ya "
+               "existen. Si se contestaran X, la tasa de respuesta pasaría a Y %.",
+        "cal": "Recolocación en el mapa: si el sentimiento hacia un aspecto pasara a X, el "
+               "atributo se situaría aquí, con los umbrales del escenario actual.",
+    }
 
     tab_mon, tab_cru, tab_cri, tab_cal = st.tabs(
         ["💶 Monetización", "🚢 Cruceros", "⭐ Respuesta a críticos", "🎯 Calidad percibida"])
@@ -1319,6 +1369,7 @@ if rol == VISTA_SIMULADOR:
     # ---- Palanca 1: monetización (ingreso por visitante) ----
     with tab_mon:
         st.markdown("#### ¿Y si cada visitante dejara más dinero?")
+        st.caption(AVISO_PALANCA["mon"])
         if acevin_ingresos.empty or acevin.empty:
             st.info("No hay datos de ingresos/visitantes (ACEVIN) para simular.")
         else:
@@ -1357,6 +1408,7 @@ if rol == VISTA_SIMULADOR:
     # ---- Palanca 2: captación de cruceristas ----
     with tab_cru:
         st.markdown("#### ¿Y si captáramos parte del crucero de la Bahía de Cádiz?")
+        st.caption(AVISO_PALANCA["cru"])
         if cruceros.empty:
             st.info("No hay datos de cruceros (Dataestur) para simular.")
         else:
@@ -1396,6 +1448,7 @@ if rol == VISTA_SIMULADOR:
     # ---- Palanca 3: respuesta a críticos (KPI de gestión, NO predicción de estrellas) ----
     with tab_cri:
         st.markdown("#### ¿Y si contestáramos a las reseñas críticas sin respuesta?")
+        st.caption(AVISO_PALANCA["cri"])
         if resenas.empty or "respuesta_propietario" not in resenas.columns:
             st.info("No hay reseñas con dato de respuesta del propietario.")
         else:
@@ -1424,6 +1477,7 @@ if rol == VISTA_SIMULADOR:
     # ---- Palanca 4: calidad percibida (mover un atributo en el mapa IPA) ----
     with tab_cal:
         st.markdown("#### ¿Y si mejorásemos un atributo? ¿Cambia de cuadrante en el mapa?")
+        st.caption(AVISO_PALANCA["cal"])
         base = ipa_desde_prca("Marco de Jerez")
         if base.empty:
             st.info("No hay tabla IPA por impacto (PRCA) para el Marco.")
@@ -1721,10 +1775,10 @@ if rol == VISTA_INTELIGENCIAS:
                                       f"{int(r['Enoturismo'])})" for m, r in oport.iterrows())
                     st.warning(
                         f"🎯 **Oportunidad de desestacionalización:** en {lista} el puerto está "
-                        f"cerca de su máximo mientras las bodegas caen. **Es la prioridad FEDER "
-                        f"P4A (reducir la estacionalidad) servida en bandeja:** hay miles de "
-                        f"visitantes potenciales a 40 minutos, justo en el mes en que el "
-                        f"enoturismo se vacía."
+                        f"cerca de su máximo mientras las bodegas caen. **Es demanda para los "
+                        f"meses flojos, servida en bandeja:** hay miles de visitantes "
+                        f"potenciales a 40 minutos, justo en el mes en que el enoturismo "
+                        f"se vacía."
                     )
             st.divider()
 
@@ -1943,15 +1997,25 @@ if rol == VISTA_INTELIGENCIAS:
                 st.caption("Top 12 rutas por tamaño de la oferta")
                 barras(of.head(12).set_index("ruta")["servicios"], destacar=FOCO)
 
-                # Desequilibrio: lidera la demanda pero su oferta está muy por detrás
-                if pos and pos_of and pos_of > pos:
-                    st.warning(
-                        f"⚠️ **Desequilibrio demanda-oferta:** el Marco es **{pos}º en visitantes** "
-                        f"pero solo **{pos_of}º en oferta** ({serv_foco} servicios, frente a los "
-                        f"{int(of.iloc[0]['servicios'])} de *{of.iloc[0]['ruta']}*). Atrae más "
-                        f"gente que nadie con una oferta asociada mucho menor → margen para "
-                        f"**ampliar y diversificar la oferta** (prioridad FEDER P4A)."
+                # Ojo: los dos rankings NO son comparables. El de oferta sale de las rutas con
+                # dato de servicios y el de visitantes, de las (muchas menos) que publican
+                # visitantes. Antes se cruzaban para concluir «la oferta no acompaña a la
+                # demanda», y el dato dice lo contrario: el Marco está por encima de la mediana
+                # de oferta. Se sustituye por una lectura que sí se sostiene.
+                if serv_foco and not of.empty:
+                    mediana_of = float(of["servicios"].median())
+                    por_encima = int((of["servicios"] > serv_foco).sum())
+                    st.info(
+                        f"ℹ️ **La oferta del Marco está por encima de la media del conjunto:** "
+                        f"**{serv_foco} servicios**, frente a una mediana de "
+                        f"**{mediana_of:.0f}** entre las {len(of)} rutas con dato. Solo "
+                        f"**{por_encima}** la superan. "
+                        f"El margen de mejora del destino no está, por tanto, en el **número** "
+                        f"de servicios: está en **lo que deja cada visita** (ver *Económica*)."
                     )
+                    st.caption("Los puestos de oferta y de visitantes no son comparables entre sí: "
+                               "se calculan sobre conjuntos distintos de rutas, porque no todas "
+                               "publican ambos datos.")
                 st.caption("Visitantes por servicio (a más alto, más tensionada está la oferta)")
                 barras(cruce.set_index("ruta")["vis_por_servicio"], destacar=FOCO)
 
@@ -2000,7 +2064,7 @@ if rol == VISTA_INTELIGENCIAS:
                     use_container_width=True, hide_index=True,
                 )
 
-        st.caption("⚠️ Pendiente (Tabla 1 de la memoria): **comparación de precios** de servicios "
+        st.caption("⚠️ Todavía no disponible: **comparación de precios** de servicios "
                    "enoturísticos y **estrategias diferenciadoras** de otras rutas.")
         recomendaciones_inteligencia(recs_destino, "Competidores")
 
@@ -2017,8 +2081,8 @@ if rol == VISTA_INTELIGENCIAS:
             if not _v.empty:
                 st.metric(f"Volumen de visitas a bodegas y museos del Marco ({_u})",
                           f"{int(_v.iloc[0]):,}".replace(",", "."),
-                          help="Cubre el indicador «Volumen de visitas a bodegas y Museos del "
-                               "Vino» de la memoria.")
+                          help="Visitas registradas a bodegas y museos del vino del Marco, "
+                               "según el observatorio de ACEVIN.")
                 fuente("oficial", "ACEVIN — Observatorio Turístico de las Rutas del Vino.")
 
         # --- Perfil del enoturista (benchmark NACIONAL de ACEVIN) ---
@@ -2027,10 +2091,11 @@ if rol == VISTA_INTELIGENCIAS:
                              expanded=True):
                 fuente("oficial", "ACEVIN — Análisis de la demanda turística (628 encuestas, "
                                   "95% de confianza, ±3,9%).")
+                # La muestra y el nivel de confianza ya van en la línea de la fuente, que
+                # además trae el margen de error: aquí sobraban (observación 5 de Paula).
                 st.caption("⚠️ **Dato nacional**, no específico del Marco: ACEVIN no desglosa por "
-                           "ruta (628 encuestas, 95% confianza). Sirve como **referencia** para "
-                           "comparar y como plantilla validada para un cuestionario propio. "
-                           "Cubre los indicadores de perfil, motivaciones y canales de la memoria.")
+                           "ruta. Sirve como **referencia** para comparar y como plantilla "
+                           "validada para un cuestionario propio.")
                 for cat in ["Perfil", "Comportamiento", "Promoción y comercialización",
                             "Impacto económico"]:
                     sub = acevin_demanda[acevin_demanda["categoria"] == cat]
@@ -2110,7 +2175,15 @@ if rol == VISTA_INTELIGENCIAS:
             if not dfr.empty:
                 mudas = dfr[dfr["% contestadas"] == 0]
                 g1, g2, g3 = st.columns(3)
-                g1.metric("Respuesta media del Marco", f"{dfr['% contestadas'].mean():.0f}%")
+                # Mismo criterio que la valoración: ponderada por reseña, no media de
+                # medias por bodega. Si no, una bodega con 30 reseñas pesa lo mismo que
+                # una con 1.689 (observación 15 de Paula).
+                _resp = (dfr["Reseñas"] * dfr["% contestadas"] / 100).sum()
+                _tot = dfr["Reseñas"].sum()
+                g1.metric("Reseñas contestadas en el Marco",
+                          f"{_resp / _tot * 100:.0f}%" if _tot else "—",
+                          help="Sobre el total de reseñas de las bodegas con muestra "
+                               "suficiente, no como media de los porcentajes de cada bodega.")
                 g2.metric("Bodegas que no responden nada", f"{len(mudas)} de {len(dfr)}",
                           delta_color="inverse")
                 if not mudas.empty:
@@ -2582,8 +2655,15 @@ else:
 
         fila_cen = _fila(censo)
         rating_bod = fila_cen.get("rating") if fila_cen else None
-        rating_marco = (censo["rating"].mean() if not censo.empty
-                        and "rating" in censo.columns else None)
+        # UNA sola «media del Marco» en toda la plataforma: la media de TODAS las reseñas
+        # (ponderada), que es la que se enseña en el Resumen ejecutivo. Antes el informe
+        # usaba la media simple de las notas de cada bodega (4,68 frente a 4,56): las dos
+        # son correctas, pero el bodeguero veía una cifra en pantalla y otra en su informe
+        # sin que nadie se lo explicara (observación 15 de Paula). Además, comparar la nota
+        # de una bodega —que es media de SUS reseñas— contra la media de todas las reseñas
+        # es la comparación homogénea; contra la media de medias, no.
+        rating_marco = (float(resenas["puntuacion"].mean())
+                        if not resenas.empty and "puntuacion" in resenas.columns else None)
 
         res_bod_r = resenas[resenas["bodega"] == nombre] if not resenas.empty else pd.DataFrame()
         recs_bod = reco.recomendaciones_bodega(
@@ -2605,8 +2685,8 @@ else:
         # Informe PDF descargable (Pieza 1 de Paula): todo lo de la ficha en un documento.
         st.divider()
         st.markdown("#### 📄 Informe de la bodega")
-        st.caption("Un PDF de una página con la reputación, los competidores directos, las "
-                   "fortalezas/debilidades y qué hacer. Pensado para entregar a la bodega.")
+        st.caption("Un PDF de una página con la reputación, el grupo competitivo, las "
+                   "fortalezas/debilidades y qué hacer. Una página, lista para imprimir.")
         try:
             from enolytics.dashboard import informe as _informe
             pdf_bytes = _informe.generar_pdf_bodega(nombre, recs_bod, res_bod_r, rating_marco)
@@ -2628,11 +2708,28 @@ else:
                 f"Su reputación y recomendaciones sí están disponibles.")
         else:
             sub = df_comp[df_comp["bodega"] == nombre].sort_values("rango")
-            st.markdown("#### 🥊 Tus competidores directos")
+            # El encabezado es fijo pero el contenido cambia de una bodega a otra: hay
+            # bodegas sin ningún rival de núcleo. Un título que no cambia no puede describir
+            # bien un contenido que sí cambia (observación 11 de Paula), así que se titula
+            # por lo que el bloque enseña SIEMPRE y la etiqueta de cada línea dice si es
+            # directo o no. La glosa de «recursos» describía el concepto por cómo se mide
+            # (observación 14): los recursos son lo que la bodega TIENE para competir, no
+            # lo que pone a la venta.
+            st.markdown("#### 🥊 Tu grupo competitivo")
+            _nucleo = int((sub["tipo"] == "Core").sum())
             st.caption(
                 "Las bodegas más parecidas a la tuya por **mercado** (a qué cliente sirves) y por "
-                "**recursos** (lo que ofreces). No es todo el Marco, sino **tu grupo**. "
+                "**recursos** (con los que cuentas para competir). No es todo el Marco, sino "
+                "**tu grupo**, ordenado de más a menos cercano. "
                 "_(Método Zhou et al., 2026: clustering K-prototypes + categorización de Kamensky.)_")
+            if _nucleo:
+                st.caption(f"De las {len(sub)}, **{_nucleo}** {'es' if _nucleo == 1 else 'son'} "
+                           f"🎯 **de núcleo**: mismo cliente y recursos parecidos, o sea tu rival "
+                           f"más directo.")
+            else:
+                st.caption("**Ninguna es un rival directo:** ninguna comparte a la vez cliente y "
+                           "recursos contigo. Lo que tienes son competidores cercanos por un eje "
+                           "u otro — mira la etiqueta de cada una.")
             for _, r in sub.iterrows():
                 ic, color, expl = KAMENSKY.get(r["tipo"], ("•", estilo.INK_TENUE, ""))
                 with st.container(border=True):
@@ -2645,8 +2742,9 @@ else:
                                 f"{r['localidad_comp']}</span></div>", unsafe_allow_html=True)
             st.markdown("##### Mapa del terreno competitivo _(Kamensky)_")
             st.caption("Cada competidor, situado por su distancia de **mercado** (eje X) y de "
-                       "**recursos** (eje Y). Las líneas separan los cuatro tipos. Cuanto más "
-                       "abajo-izquierda, más directo es el rival.")
+                       "**recursos** (eje Y), ambas de 0 a 1. Las líneas separan los cuatro "
+                       "tipos; los que no tienen a nadie salen en la leyenda con un **(0)**. "
+                       "Cuanto más abajo-izquierda, más directo es el rival.")
             st.plotly_chart(figura_terreno_competitivo(sub), use_container_width=True)
             fuente("estimado", "Rasgos de la bodega: servicios, certificación y madurez digital "
                    "(recursos); perfil de sentimiento por atributo, nota, ubicación e idioma "
@@ -2821,4 +2919,4 @@ else:
         else:
             st.caption("No hay reseñas descargadas para esta bodega.")
 
-st.caption("ENOLYTICS · Universidad de Cádiz · datos: Ruta del Vino y Brandy de Jerez")
+st.caption("**ENOLYTICS** · Universidad de Cádiz · datos: Ruta del Vino y Brandy de Jerez")

@@ -128,29 +128,30 @@ def recomendaciones_destino(
                         "mejora de reputación de **menor coste y mayor visibilidad** del destino."),
                 fuente="Reseñas de Google"))
 
-    # --- 1. Desequilibrio demanda-oferta (Competidores / Negocios) ---
-    if not _vacio(acevin) and not _vacio(acevin_oferta):
-        ult = int(acevin["anio"].max())
-        rank = acevin[acevin["anio"] == ult].sort_values("visitantes", ascending=False)
-        rank = rank.reset_index(drop=True)
-        of = acevin_oferta.sort_values("servicios", ascending=False).reset_index(drop=True)
-        if FOCO in set(rank["ruta"]) and FOCO in set(of["ruta"]):
-            pos_vis = int(rank.index[rank["ruta"] == FOCO][0]) + 1
-            pos_of = int(of.index[of["ruta"] == FOCO][0]) + 1
-            serv = int(of.loc[of["ruta"] == FOCO, "servicios"].iloc[0])
-            lider_of = of.iloc[0]
-            if pos_of > pos_vis + 2:
-                recs.append(Recomendacion(
-                    prioridad="alta", inteligencia="Negocios",
-                    titulo="Ampliar y diversificar la oferta enoturística",
-                    diagnostico=(f"El Marco es **{pos_vis}º en visitantes** pero solo "
-                                 f"**{pos_of}º en oferta** ({serv} servicios, frente a los "
-                                 f"{int(lider_of['servicios'])} de {lider_of['ruta']}). "
-                                 f"La oferta no acompaña a la demanda."),
-                    accion=("Captar nuevos socios para el club de producto (restauración, "
-                            "alojamiento, experiencias) y ampliar el catálogo de actividades. "
-                            "Alineado con la prioridad FEDER **P4A** (diversificar la oferta)."),
-                    fuente=f"ACEVIN {ult}"))
+    # --- 1. RETIRADA: «Ampliar y diversificar la oferta» ---
+    #
+    # Esta regla se disparaba cuando el Marco quedaba peor situado en el ranking de OFERTA
+    # que en el de VISITANTES, y concluía que «la oferta no acompaña a la demanda».
+    # Se retira el 28/10/2026 porque el dato no la sostiene, por dos motivos independientes:
+    #
+    #   1) Los dos rankings NO son comparables: el de oferta se calcula sobre las 37 rutas
+    #      con dato de servicios y el de visitantes sobre las 6 que publican visitantes.
+    #      «1.º en visitantes» y «7.º en oferta» miden universos distintos.
+    #   2) Aun comparando bien, la conclusión se invierte: con 111 servicios el Marco está
+    #      en el percentil 81 de oferta (mediana de las rutas: 67). Solo 6 de 37 lo superan.
+    #
+    # Y la inferencia de fondo —más oferta alrededor ⇒ más ingreso por visita— tampoco se
+    # sostiene en las tres rutas que publican los tres datos: Rioja Alta tiene una oferta
+    # casi idéntica (112 servicios) e ingresa 70,0 € por visita frente a los 40,4 € del
+    # Marco, mientras que Penedès, con 250 servicios, se queda en 52,0 €. La correlación
+    # entre servicios e ingreso por visita es −0,12.
+    #
+    # Diversificar la oferta puede seguir siendo una buena política por estancia media,
+    # pernoctaciones o desestacionalización, pero ACEVIN solo publica esos indicadores a
+    # nivel NACIONAL, no por ruta: no hay dato del Marco que sostenga la recomendación.
+    # Principio de la casa: una regla se dispara solo si el dato la sostiene.
+    # La evidencia útil (la oferta no explica la brecha) pasa a «Elevar el ingreso por
+    # visitante», que es donde sí dice algo.
 
     # --- 2. Brecha de monetización (Económica) ---
     if not _vacio(acevin_ingresos) and not _vacio(acevin):
@@ -165,6 +166,19 @@ def recomendaciones_destino(
             mejor = ing.sort_values("eur_vis", ascending=False).iloc[0]
             if not foco.empty and mejor["ruta"] != FOCO:
                 brecha = mejor["eur_vis"] - foco["eur_vis"].iloc[0]
+                # La oferta de alrededor NO explica esa brecha, y conviene decirlo aquí:
+                # si el líder tiene una oferta equivalente a la nuestra, el margen está
+                # dentro de la visita, no en el número de servicios del destino.
+                comparativa = ""
+                if not _vacio(acevin_oferta) and "servicios" in acevin_oferta.columns:
+                    serv = acevin_oferta.set_index("ruta")["servicios"]
+                    if FOCO in serv.index and mejor["ruta"] in serv.index:
+                        s_foco, s_mejor = int(serv[FOCO]), int(serv[mejor["ruta"]])
+                        if abs(s_foco - s_mejor) <= max(10, 0.15 * s_mejor):
+                            comparativa = (f" Y no es cuestión de tamaño de la oferta: "
+                                           f"{mejor['ruta']} tiene **{s_mejor} servicios** y el "
+                                           f"Marco **{s_foco}**, prácticamente los mismos. "
+                                           f"**La diferencia está dentro de la visita.**")
                 if brecha > 10:
                     recs.append(Recomendacion(
                         prioridad="alta", inteligencia="Económica",
@@ -172,7 +186,7 @@ def recomendaciones_destino(
                         diagnostico=(f"El Marco ingresa **{foco['eur_vis'].iloc[0]:.1f} € por "
                                      f"visitante**, frente a los **{mejor['eur_vis']:.1f} €** de "
                                      f"{mejor['ruta']}: **{brecha:.1f} € menos por cada visita**. "
-                                     f"Lidera en volumen, pero monetiza peor."),
+                                     f"Lidera en volumen, pero monetiza peor.{comparativa}"),
                         accion=("Revisar el precio de la visita (hoy por debajo del potencial), "
                                 "impulsar la venta en tienda y crear **experiencias premium** "
                                 "(catas verticales, maridajes, visitas privadas)."),
@@ -225,7 +239,7 @@ def recomendaciones_destino(
                     accion=("Diseñar **excursiones de medio día** empaquetadas con las navieras "
                             "y las agencias receptivas del puerto (visita + cata, 4-5 horas). "
                             "Ataca a la vez dos objetivos: **captar demanda nueva** y **reducir "
-                            "la estacionalidad** (prioridad FEDER P4A)."),
+                            "la estacionalidad**."),
                     fuente="Dataestur — tráfico portuario + ACEVIN"))
 
     # --- 3-bis. Demanda aérea sin conectividad directa (Mercado) ---

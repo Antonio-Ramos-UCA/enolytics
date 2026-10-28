@@ -4,9 +4,9 @@
 > poder continuar desde cualquier ordenador (este proyecto está en Dropbox y se
 > sincroniza). Si retomas con Claude en otro equipo, pásale este archivo primero.
 >
-> **Última actualización:** 2026-09-03 (**aplicadas las 10 observaciones de Paula**: los 2 errores
-> y las 8 mejoras de lectura — leer la sesión del 03/09. Sigue pendiente de la sesión anterior:
-> decidir cómo cablear el precio de las visitas al dashboard)
+> **Última actualización:** 2026-10-28 (segunda tanda de Paula: **los 13 puntos reales cerrados** (3 ya lo estaban) —entre
+> ellos los dos bugs de PDF y una recomendación que el dato no sostenía— y **cláusula y logos de
+> financiación FEDER**, que no estaban en ninguna parte. Leer la sesión del 28/10)
 
 ---
 
@@ -162,6 +162,99 @@ streamlit, pandas, sklearn, plotly, matplotlib, requests, bs4.
 5. **Integrar todo en el dashboard** (pestañas de reseñas, sentimiento, cuadrantes IPA).
 6. **En paralelo (no bloquea):** diseñar cuestionarios a partir de la Tabla 1 de la
    memoria; incorporar indicadores oficiales (INE, Dataestur, ACEVIN, Google Trends).
+
+## ═══ SESIÓN 2026-10-28 — SEGUNDA TANDA DE PAULA + PUBLICIDAD FEDER ═══
+> Paula envió un segundo documento (`Nuevas propuestas de mejora de Paula/`) con 16 puntos.
+> **Los tres primeros ya estaban resueltos y desplegados desde septiembre** (comprobado en la app
+> pública: la tarjeta dice «Ingreso por visitante objetivo», no queda «Idea de Paula» y hay 0
+> gráficos con «undefined»). El documento mezcla notas antiguas con nuevas — **avisar a Paula**.
+> Quedaban 13 reales. En esta sesión se cierran 9.
+
+**6. ✅ RECOMENDACIÓN RETIRADA: «Ampliar y diversificar la oferta».** Era peor de lo que Paula
+detectó. (a) La regla cruzaba **«1.º en visitantes» (ranking sobre 6 rutas) con «7.º en oferta»
+(sobre 37)**: universos distintos, comparación inválida. (b) El fondo se invierte: con 111
+servicios el Marco está en el **percentil 81** de oferta (mediana 67); solo 6 de 37 lo superan.
+(c) La inferencia «más oferta ⇒ más ingreso por visita» no se sostiene: Rioja Alta tiene 112
+servicios y 70,0 €/visita; Penedès 250 y 52,0 €; el Marco 111 y 40,4 €. **Correlación −0,12.**
+Paula pedía conservarla justificándola por estancia/pernoctaciones, pero ACEVIN solo publica esos
+indicadores a nivel **nacional**, no por ruta → no hay dato del Marco que la sostenga, y el
+principio de la casa es que una regla se dispara solo si el dato la sostiene. La evidencia útil
+pasa a **«Elevar el ingreso por visitante»**, que ahora dice que el líder tiene prácticamente los
+mismos servicios: *la diferencia está dentro de la visita*. El aviso gemelo del cuadro de mando,
+reescrito. **Recomendaciones de destino: 14 → 13.** Negocios se queda sin ninguna.
+
+**15. ✅ DOS «MEDIAS DEL MARCO» UNIFICADAS.** En pantalla 4,56 (ponderada por reseña) y en el
+informe PDF 4,675 (media simple de las 41 bodegas). Las dos correctas, pero el bodeguero veía una
+cifra en la web y otra en su informe. **Se adopta la ponderada** en toda la plataforma (decisión de
+Antonio): es la que ya salía en portada y es la comparación homogénea —media de reseñas contra
+media de reseñas—. El informe ahora rotula «media de todas las reseñas: 4,56». Mismo criterio
+aplicado a la **tasa de respuesta**, que tenía idéntico defecto.
+
+**7 y 8. ✅ LOS DOS BUGS DE PDF, UNA SOLA CAUSA.** El rótulo en negrita se escribía con `write()`
+—que desplaza el cursor— y después se pedía una celda del **ancho útil completo desde esa
+posición**: el texto se componía más ancho que el papel. Medido: la guía llegaba a **599,6 pt en
+una página de 595,3**, con **24 de 73 líneas** cortadas. Resuelto componiendo el párrafo de una
+sola vez con `markdown=True` de fpdf2, lo que **arregla también la observación 8**: el marcado
+`**negrita**` se convierte en vez de imprimir los asteriscos. Verificado: 564,1 pt máximo, 0 líneas
+invadiendo y 0 asteriscos en los **dos** PDF.
+- 🎁 Efecto lateral: desaparecen **páginas espurias**. El pie antiguo se posicionaba más allá del
+  margen de salto automático y generaba una hoja extra. La guía pasa de 3 a 2 páginas y el informe
+  de bodega **vuelve a ser de una sola página**, que es lo que promete.
+- 🐛 Y de paso: el informe entregaba a las bodegas «**2,6 M** búsquedas de vuelo». Cifra vieja; la
+  verificada es 3,25 M. Corregido.
+
+**4, 5, 9, 13. ✅ LENGUAJE INTERNO FUERA DE LA PANTALLA.** Quitadas las citas a la memoria de las
+siete pestañas («Objetivo (Memoria Científico-Técnica)» → «Qué mide esta inteligencia»; fuera
+«Tabla 1 de la memoria»), el «anexo para FEDER» de la entradilla de la guía, el «Pensado para
+entregar a la bodega» (dicho a la propia bodega) y la muestra de ACEVIN duplicada dos líneas
+seguidas. Los comentarios del código que citan la memoria **se quedan**, como pide Paula.
+
+**⭐ PUBLICIDAD FEDER — OBLIGACIÓN QUE NO SE ESTABA CUMPLIENDO.** Antonio aportó el documento de
+requisitos del Vicerrectorado y el código del proyecto: **FEDER-UCA-2024-A2-27**.
+- La plataforma **no tenía ninguna cláusula de financiación ni los logos**. La Resolución de
+  23/12/2024 (Resuelve Decimonoveno, d y g) los exige en los medios de difusión.
+- Ojo a la distinción: lo que Paula pedía quitar («prioridad FEDER **P4A**» dentro de las
+  recomendaciones) **no es la publicidad obligatoria**, es el código de una línea del programa
+  usado para justificar un consejo de negocio. Se quita, y se añade lo que sí toca.
+- `config.py` centraliza ahora `PROYECTO_CODIGO`, `CLAUSULA_FINANCIACION` (y su versión en inglés
+  para publicaciones) y `LOGOS_FEDER`. Logos extraídos del .docx a `datos/marca_feder/`
+  (banda oficial: UE · Ministerio de Hacienda · Fondos Europeos · Junta · UCA) con su `LEEME.md`.
+- Pintados en: **la barra lateral del cuadro de mando** —a propósito: es el único sitio que se
+  renderiza en las cinco vistas; el pie del área principal está al final del script y **solo lo
+  alcanzaba la vista de bodega**, defecto que ya existía— y al pie de **los dos PDF**, con el salto
+  de página desactivado para que no se separen de los logos.
+
+**11, 14 y 16. ✅ EL BLOQUE DE COMPETIDORES.**
+- **11.** El encabezado era fijo («Tus competidores directos») y el contenido cambia de bodega a
+  bodega: González Byass no tiene **ningún** rival de núcleo. Pasa a **«Tu grupo competitivo»** —
+  verdadero siempre— y debajo una línea dice cuántos son de núcleo o, si no hay, que **ninguna es
+  un rival directo**. Cambiado en los **dos** sitios: pantalla e informe PDF.
+- **11 bis.** El pie del mapa prometía «las líneas separan los cuatro tipos» y la leyenda solo
+  enseñaba los que tenían a alguien. Ahora salen **siempre los cuatro**, con **(0)** los vacíos:
+  que una bodega no tenga rival directo es información y antes se perdía en silencio.
+- **14.** «recursos (**lo que ofreces**)» definía el constructo por cómo se mide. En Chen los
+  recursos son lo que la empresa **posee** —incluidos intangibles: marca, patrimonio, soleras—,
+  y lo que medimos (servicios, certificación FEV, madurez digital) es el proxy. Pasa a
+  **«recursos (con los que cuentas para competir)»**, en pantalla y en el PDF.
+- **16.** El globo del mapa enseñaba la columna interna `icono=` y los nombres de los ejes con sus
+  flechas, con los números desnudos. Ahora se compone a mano: nombre, tipo con su explicación y
+  las dos distancias rotuladas.
+
+**12. ✅ EL AVISO DEL SIMULADOR, UNO POR PALANCA.** El ejemplo del paréntesis era el de
+Monetización y se leía igual en las cuatro pestañas. Peor aún: en *Respuesta a críticos*
+contradecía al recuadro de debajo, porque esa palanca **no aplica ningún modelo** — es una cuenta
+exacta. La frase general («proyecta un escenario, no predice el futuro») se queda fija arriba y
+cada pestaña abre con el aviso de SU cuenta.
+
+**10. ✅ EL UMBRAL QUE FALTABA.** Documentado en la guía el **mínimo de 5 menciones**
+(`reputacion.MIN_MENCIONES`) para que un aspecto **aparezca** en la ficha, distinguiéndolo
+explícitamente del de **8** (`nlp.MIN_MENCIONES`), que decide si se **publica la nota**. Son dos
+listones distintos y se prestaban a confusión.
+
+**Los 13 puntos reales de la lista de Paula quedan cerrados.**
+
+**Verificación:** AppTest sin excepciones en las cinco vistas; cláusula presente en las cinco;
+PDF medidos con PyMuPDF antes y después; capturas revisadas.
 
 ## ═══ SESIÓN 2026-09-03 — LAS 10 OBSERVACIONES DE PAULA, APLICADAS ═══
 > Segunda entrega de Paula (**«Preguntas y observaciones pendientes»**, guardada en

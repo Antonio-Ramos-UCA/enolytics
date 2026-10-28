@@ -2,7 +2,7 @@
 
 Genera un PDF de una página con la estructura del ejemplo de Paula:
   · PARTE A «Quién eres»  — reputación y procedencia.
-  · PARTE B «Cómo compites» — competidores directos (Zhou et al., 2026), fortalezas/debilidades,
+  · PARTE B «Cómo compites» — grupo competitivo (Zhou et al., 2026), fortalezas/debilidades,
     presencia digital y sostenibilidad, qué hacer, y el contexto del Marco.
 
 Se genera **en vivo en el servidor** con `fpdf2` (puro Python, sin dependencias de sistema —
@@ -44,6 +44,48 @@ def _t(s) -> str:
     for a, b in _REEMPLAZOS.items():
         s = s.replace(a, b)
     return s.encode("latin-1", "ignore").decode("latin-1")
+
+
+def _pie_documento(pdf, W, nota_fuentes: str, size_nota: float = 7.0) -> None:
+    """Pie de los PDF: nota de fuentes + banda de logos + cláusula de financiación.
+
+    La cláusula y los logos los exige la Resolución de 23/12/2024 de la UCA para los
+    medios de difusión de la actuación financiada. El texto y la imagen viven en
+    `config`, para que el cuadro de mando y los dos PDF digan exactamente lo mismo.
+
+    Se compone con el **salto de página automático desactivado**: el pie se ancla al
+    final de la página en curso y, al dibujar la banda de logos, fpdf saltaba de página
+    y dejaba la cláusula sola en una hoja nueva.
+    """
+    auto_previo = pdf.auto_page_break
+    margen_previo = pdf.b_margin
+    pdf.set_auto_page_break(False)
+
+    alto_banda = 7.0
+    # altura total reservada: regla + nota + banda + cláusula
+    pdf.set_y(-(10 + alto_banda + 14))
+    pdf.set_draw_color(*LINEA)
+    pdf.line(pdf.l_margin, pdf.get_y(), pdf.l_margin + W, pdf.get_y())
+    pdf.ln(1.5)
+
+    pdf.set_font("Helvetica", "", size_nota)
+    pdf.set_text_color(*GRIS)
+    pdf.multi_cell(W, 3, _t(nota_fuentes), align="C", new_x="LMARGIN", new_y="NEXT")
+    pdf.ln(1)
+
+    if config.LOGOS_FEDER.exists():
+        # la banda es apaisada (1330 x 103 px): se escala por altura y se centra
+        ancho = min(alto_banda * (1330 / 103), W)
+        pdf.image(str(config.LOGOS_FEDER), x=pdf.l_margin + (W - ancho) / 2,
+                  y=pdf.get_y(), w=ancho)
+        pdf.ln(alto_banda + 1.5)
+
+    pdf.set_font("Helvetica", "", 6.2)
+    pdf.set_text_color(*GRIS)
+    pdf.multi_cell(W, 2.6, _t(config.CLAUSULA_FINANCIACION),
+                   align="C", new_x="LMARGIN", new_y="NEXT")
+
+    pdf.set_auto_page_break(auto_previo, margin=margen_previo)
 
 
 def _perfil_sentimiento(nombre: str) -> pd.Series:
@@ -96,10 +138,11 @@ def generar_pdf_bodega(nombre: str, recs: list, res_bod: pd.DataFrame,
         pdf.cell(0, 6, _t("  " + txt), new_x="LMARGIN", new_y="NEXT", fill=True)
         pdf.ln(1)
 
-    def parrafo(txt, size=9.5, color=INK_SUAVE):
+    def parrafo(txt, size=9.5, color=INK_SUAVE, marcado=True):
         pdf.set_font("Helvetica", "", size)
         pdf.set_text_color(*color)
-        pdf.multi_cell(W, 4.6, _t(txt), new_x="LMARGIN", new_y="NEXT")
+        pdf.multi_cell(W, 4.6, _t(txt), markdown=marcado,
+                       new_x="LMARGIN", new_y="NEXT")
 
     # ---------- Cabecera (banda caoba) ----------
     pdf.set_fill_color(*CAOBA)
@@ -141,7 +184,8 @@ def generar_pdf_bodega(nombre: str, recs: list, res_bod: pd.DataFrame,
     kpis = [("Valoración", f"{val:.2f}".replace(".", ","), f"{n} reseñas"),
             ("vs. media del Marco",
              (f"{val - rating_marco:+.2f}".replace(".", ",") if rating_marco else "-"),
-             (f"media {rating_marco:.2f}".replace(".", ",") if rating_marco else "")),
+             (f"media de todas las reseñas: {rating_marco:.2f}".replace(".", ",")
+              if rating_marco else "")),
             ("Con texto", str(con_texto), f"de {n}"),
             ("Contestadas", f"{contestadas:.0f}%", "de las reseñas")]
     _kpi_row(pdf, W, kpis)
@@ -152,11 +196,19 @@ def generar_pdf_bodega(nombre: str, recs: list, res_bod: pd.DataFrame,
     # Competidores directos
     from enolytics.analitica import competidores as competi
     df_comp, viables = competi.cargar()
-    titulo_seccion("Tus competidores directos")
+    titulo_seccion("Tu grupo competitivo")
     if nombre in viables and not df_comp.empty:
         sub = df_comp[df_comp["bodega"] == nombre].sort_values("rango")
         parrafo("Las bodegas más parecidas a la tuya por mercado (a qué cliente sirves) y por "
-                "recursos (lo que ofreces). No es todo el Marco, sino tu grupo.")
+                "recursos (con los que cuentas para competir). No es todo el Marco, sino tu "
+                "grupo, ordenado de más a menos cercano.")
+        nucleo = int((sub["tipo"] == "Core").sum())
+        parrafo(f"De las {len(sub)}, {nucleo} {'es' if nucleo == 1 else 'son'} de núcleo: mismo "
+                f"cliente y recursos parecidos, o sea tu rival más directo."
+                if nucleo else
+                "Ninguna es un rival directo: ninguna comparte a la vez cliente y recursos "
+                "contigo. Son competidores cercanos por un eje u otro; mira la etiqueta de cada "
+                "una.", size=8.5)
         pdf.ln(1)
         for _, r in sub.iterrows():
             pdf.set_font("Helvetica", "B", 9.5)
@@ -215,7 +267,8 @@ def generar_pdf_bodega(nombre: str, recs: list, res_bod: pd.DataFrame,
         pdf.multi_cell(W, 4.6, _t(f"{i}. {r.titulo}"), new_x="LMARGIN", new_y="NEXT")
         pdf.set_font("Helvetica", "", 8.5)
         pdf.set_text_color(*INK_SUAVE)
-        pdf.multi_cell(W, 4.2, _t("   " + r.accion), new_x="LMARGIN", new_y="NEXT")
+        pdf.multi_cell(W, 4.2, _t("   " + r.accion), markdown=True,
+                       new_x="LMARGIN", new_y="NEXT")
         pdf.ln(0.5)
     if not altas:
         parrafo("Sin recomendaciones críticas con los datos disponibles.")
@@ -233,20 +286,13 @@ def generar_pdf_bodega(nombre: str, recs: list, res_bod: pd.DataFrame,
     pdf.set_font("Helvetica", "", 8.5)
     pdf.set_text_color(*INK_SUAVE)
     pdf.cell(0, 5, _t("425.652 visitantes (1.º de España)   ·   40,4 EUR por visitante "
-                      "(Rioja: 70)   ·   2,6 M búsquedas de vuelo sin conexión directa"))
+                      "(Rioja: 70)   ·   3,3 M búsquedas de vuelo desde países sin vuelo directo"))
 
     # ---------- Pie ----------
-    pdf.set_y(-16)
-    pdf.set_draw_color(*LINEA)
-    pdf.line(pdf.l_margin, pdf.get_y(), pdf.l_margin + W, pdf.get_y())
-    pdf.ln(1)
-    pdf.set_font("Helvetica", "", 6.8)
-    pdf.set_text_color(*GRIS)
-    pdf.multi_cell(W, 3, _t(
-        "Fuentes: reseñas de Google · ACEVIN · Dataestur/SEGITTUR · FEV · auditoría web propia. "
-        "Competidores: Zhou et al. (2026), Int. J. Hospitality Management. "
-        "ENOLYTICS · Universidad de Cádiz · Proyecto FEDER Andalucía 2021-2027."),
-        new_x="LMARGIN", new_y="NEXT")
+    _pie_documento(pdf, W,
+                   "Fuentes: reseñas de Google · ACEVIN · Dataestur/SEGITTUR · FEV · auditoría "
+                   "web propia. Competidores: Zhou et al. (2026), Int. J. Hospitality "
+                   "Management. ENOLYTICS · Universidad de Cádiz.", size_nota=6.8)
 
     return bytes(pdf.output())
 
@@ -318,13 +364,23 @@ def generar_guia_pdf(glosario: list, fuentes: list,
         pdf.ln(1.5)
 
     def parr(txt, size=9.5, color=INK_SUAVE, bold_lead=None):
-        if bold_lead:
-            pdf.set_font("Helvetica", "B", size)
-            pdf.set_text_color(*INK)
-            pdf.write(4.6, _t(bold_lead + " "))
+        """Un párrafo del documento, compuesto en UNA sola celda.
+
+        Antes el rótulo en negrita se escribía con `write()` —que deja el cursor a la
+        derecha— y a continuación se pedía una celda del ancho ÚTIL COMPLETO desde esa
+        posición: el texto se componía más ancho que el papel y perdía las últimas
+        palabras de cada línea (24 de 73 líneas se salían; el borde derecho llegaba a
+        599,6 pt en una página de 595,3). Observación 7 de Paula.
+
+        Ahora se compone todo de una vez con `markdown=True`, que además convierte el
+        marcado `**negrita**` del texto de origen en lugar de imprimir los asteriscos
+        (observación 8).
+        """
         pdf.set_font("Helvetica", "", size)
         pdf.set_text_color(*color)
-        pdf.multi_cell(W, 4.6, _t(txt), new_x="LMARGIN", new_y="NEXT")
+        completo = f"**{bold_lead}** {txt}" if bold_lead else txt
+        pdf.multi_cell(W, 4.6, _t(completo), markdown=True,
+                       new_x="LMARGIN", new_y="NEXT")
 
     # Cabecera
     pdf.set_fill_color(*CAOBA)
@@ -369,7 +425,7 @@ def generar_guia_pdf(glosario: list, fuentes: list,
 
     h2("4 · Los análisis, explicados sin jerga")
     for term, sig, expl in glosario:
-        parr(expl.replace("**", ""), bold_lead=f"{term} ({sig}):")
+        parr(expl, bold_lead=f"{term} ({sig}):")
     pdf.ln(1)
     parr("Principio de la casa: los resúmenes de reputación NO los genera una IA. Se componen de "
          "los datos reales agregados (mismo dato, mismo texto, siempre): reproducible y auditable.",
@@ -389,13 +445,7 @@ def generar_guia_pdf(glosario: list, fuentes: list,
     for umbral, porque in umbrales_equipo:
         parr(porque, bold_lead=f"   . {umbral} -", size=9)
 
-    pdf.set_y(-14)
-    pdf.set_draw_color(*LINEA)
-    pdf.line(pdf.l_margin, pdf.get_y(), pdf.l_margin + W, pdf.get_y())
-    pdf.ln(1)
-    pdf.set_font("Helvetica", "", 7)
-    pdf.set_text_color(*GRIS)
-    pdf.multi_cell(W, 3, _t("Documento vivo, generado del catálogo de indicadores del proyecto. "
-                            "ENOLYTICS · Universidad de Cádiz · Proyecto FEDER Andalucía 2021-2027 "
-                            "· alineado con la norma UNE 178502."), new_x="LMARGIN", new_y="NEXT")
+    _pie_documento(pdf, W,
+                   "Documento vivo, generado del catálogo de indicadores del proyecto. "
+                   "ENOLYTICS · Universidad de Cádiz · alineado con la norma UNE 178502.")
     return bytes(pdf.output())
