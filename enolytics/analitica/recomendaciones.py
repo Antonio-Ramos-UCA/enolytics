@@ -66,8 +66,8 @@ def _por_impacto(fila) -> bool:
 # fija en "revisar la reserva y la organización", lo que dejó de tener sentido al añadir
 # Gastronomía y al medir la importancia por impacto: el peor atributo ya no es siempre la reserva.
 ACCIONES_ATRIBUTO = {
-    "Organización y reserva": ("Revisar el proceso de reserva y la organización de la visita de "
-                               "punta a punta: confirmaciones, puntualidad, tamaño del grupo y "
+    "Organización y reserva": ("Revisar el proceso de reserva y la organización de la visita en "
+                               "su conjunto: confirmaciones, puntualidad, tamaño del grupo y "
                                "tiempos de espera."),
     "Precio y valor": ("Revisar la relación calidad-precio percibida. A menudo el problema no es "
                        "el precio sino que no se comunica bien qué incluye la visita o la cata."),
@@ -75,9 +75,9 @@ ACCIONES_ATRIBUTO = {
                                    "restaurante): calidad, variedad y encaje con la visita. En el "
                                    "Marco el 'vino + comida' es cada vez más parte de la experiencia."),
     "Vino y cata": ("Revisar la cata en sí: número y variedad de vinos, explicación y ritmo. Es "
-                    "el corazón del producto enoturístico."),
-    "Personal y trato": ("Reforzar la formación del personal de sala y de los guías: es lo que "
-                         "más deleita al visitante cuando va bien."),
+                    "el núcleo del producto enoturístico."),
+    "Personal y trato": ("Reforzar la formación del personal de sala y de los guías: es el atributo "
+                         "con mayor capacidad de generar satisfacción."),
     "Instalaciones": ("Revisar el estado, la comodidad y la señalización de las instalaciones "
                       "(salas, patios, accesibilidad, limpieza)."),
     "Visita y experiencia": ("Revisar el guion de la visita: contenido, duración y dinamismo, "
@@ -122,10 +122,11 @@ def recomendaciones_destino(
                 diagnostico=(f"**{len(mudas)} de {len(respuestas)} bodegas no responden a "
                              f"ninguna reseña**, acumulando **{criticas} críticas de 1-2★ sin una "
                              f"sola respuesta**. La más expuesta: **{peor['Bodega']}** "
-                             f"({int(peor['Críticas (1-2★)'])} críticas mudas)."),
-                accion=("Formar a las bodegas en gestión de reputación online: responder es "
-                        "**gratis** y lo lee el futuro visitante que está decidiendo. Es la "
-                        "mejora de reputación de **menor coste y mayor visibilidad** del destino."),
+                             f"({int(peor['Críticas (1-2★)'])} críticas sin contestar)."),
+                accion=("Formar a las bodegas en gestión de reputación online. La respuesta "
+                        "**no tiene coste** y es visible para quien consulta las reseñas antes "
+                        "de decidir su visita: es la actuación de reputación de **menor coste y "
+                        "mayor visibilidad** del destino."),
                 fuente="Reseñas de Google"))
 
     # --- 1. RETIRADA: «Ampliar y diversificar la oferta» ---
@@ -229,7 +230,7 @@ def recomendaciones_destino(
                 n_bod = int(v["visitantes"].iloc[0])
                 recs.append(Recomendacion(
                     prioridad="alta", inteligencia="Mercado",
-                    titulo="Capturar al crucerista: un mercado cautivo a 40 minutos",
+                    titulo="Captar al crucerista: un mercado a 40 minutos del Marco",
                     diagnostico=(f"En {anio_c} desembarcaron **{n_cru:,}".replace(",", ".") +
                                  f" cruceristas** en la Bahía de Cádiz, **más que los "
                                  f"{n_bod:,}".replace(",", ".") +
@@ -238,7 +239,7 @@ def recomendaciones_destino(
                                  f"justo cuando el enoturismo cae."),
                     accion=("Diseñar **excursiones de medio día** empaquetadas con las navieras "
                             "y las agencias receptivas del puerto (visita + cata, 4-5 horas). "
-                            "Ataca a la vez dos objetivos: **captar demanda nueva** y **reducir "
+                            "Atiende simultáneamente dos objetivos: **captar demanda nueva** y **reducir "
                             "la estacionalidad**."),
                     fuente="Dataestur — tráfico portuario + ACEVIN"))
 
@@ -255,11 +256,11 @@ def recomendaciones_destino(
                                .head(4)["pais"].tolist())
             recs.append(Recomendacion(
                 prioridad="alta", inteligencia="Mercado",
-                titulo="Negociar rutas aéreas directas con los mercados que ya nos buscan",
+                titulo="Negociar rutas aéreas directas con los mercados que ya generan demanda de búsqueda",
                 diagnostico=(f"**{total_b:,}".replace(",", ".") +
                              f" búsquedas de vuelo a Jerez proceden de países **sin un solo "
                              f"asiento directo**: {paises}. La demanda **ya existe y está "
-                             f"medida**; lo que falta es el avión."),
+                             f"medida**; lo que falta es la conexión aérea."),
                 accion=("Llevar estos datos a la mesa de negociación con aerolíneas y con el "
                         "Patronato de Turismo: no es una hipótesis, es **intención de viaje "
                         "cuantificada**. Es el argumento más fuerte para abrir ruta."),
@@ -276,8 +277,8 @@ def recomendaciones_destino(
                     titulo="Plan de accesibilidad sensorial del destino",
                     diagnostico=(f"**Ninguna** de las {len(acc)} bodegas auditadas menciona "
                                  f"audioguías, braille, lengua de signos ni material accesible "
-                                 f"para personas con discapacidad visual o auditiva. Es un "
-                                 f"**vacío total** del destino."),
+                                 f"para personas con discapacidad visual o auditiva. Es "
+                                 f"una carencia generalizada del destino."),
                     accion=("Impulsar un plan conjunto de accesibilidad sensorial (audioguías, "
                             "signoguías, material en braille) y certificarlo. Además de la "
                             "inclusión, es un **factor de diferenciación** frente a otras rutas."),
@@ -294,7 +295,7 @@ def recomendaciones_destino(
                                  f"({sin_zoom / len(acc) * 100:.0f}%) impiden ampliar la página** "
                                  f"(`user-scalable=no`). Excluye directamente a personas con baja "
                                  f"visión."),
-                    accion=("Es un arreglo **de una sola línea de código**. Comunicar a las "
+                    accion=("Es una corrección **de una sola línea de código**. Comunicar a las "
                             "bodegas afectadas: quitar `user-scalable=no` y `maximum-scale=1` "
                             "de la etiqueta *viewport*."),
                     fuente="Auditoría de accesibilidad web"))
@@ -348,13 +349,13 @@ def recomendaciones_destino(
                         "aunque se mencione poco, **cuando el visitante habla de ello suele ser "
                         "porque ha fallado, y eso arrastra la nota de toda la visita**.")
                 if str(r.get("perfil", "")) == "Higiénico":
-                    nota += (" Es además un atributo **higiénico**: arreglarlo **evita quejas**, "
-                             "pero no esperes que por sí solo suba la nota ni te diferencie.")
+                    nota += (" Es además un atributo **higiénico**: corregirlo **evita quejas**, "
+                             "pero por sí solo no eleva la valoración ni aporta diferenciación.")
             elif "cuadrante" in tabla_ipa.columns and "Baja prioridad" in str(r.get("cuadrante", "")):
                 nota = (" ⚠️ El IPA por frecuencia lo sitúa en *«Baja prioridad»* porque se "
-                        "menciona poco, pero eso es engañoso: **de la organización y la reserva el "
-                        "visitante solo habla cuando falla**. El nº de menciones infravalora su "
-                        "importancia real.")
+                        "menciona poco, pero esa lectura resulta incompleta: **de la organización y "
+                        "la reserva el visitante solo habla cuando falla**. El nº de menciones "
+                        "infravalora su importancia real.")
             recs.append(Recomendacion(
                 prioridad="alta", inteligencia="Clientes",
                 titulo=f"Punto débil del destino: «{r['atributo']}»",
@@ -394,8 +395,8 @@ def recomendaciones_destino(
             recs.append(Recomendacion(
                 prioridad="media", inteligencia="Clientes",
                 titulo=f"Palanca de diferenciación: «{r['atributo']}»",
-                diagnostico=(f"**{r['atributo']}** es un atributo **deleitador**: cuando va bien "
-                             f"**sube de verdad la satisfacción**, no solo evita quejas. Hoy "
+                diagnostico=(f"**{r['atributo']}** es un atributo **deleitador**: cuando funciona bien "
+                             f"**eleva la satisfacción**, no solo evita quejas. Hoy "
                              f"puntúa **{r['desempeno']:.2f}/5**. Es donde el Marco puede destacar "
                              f"frente a otras rutas, más que en los atributos que se dan por supuestos."),
                 accion=(_accion_atributo(r["atributo"]) + " Y **comunicarlo en la promoción** del "
@@ -446,11 +447,12 @@ def recomendaciones_bodega(
                 prioridad="alta", inteligencia="Clientes",
                 titulo="Empezar a responder las reseñas (hoy no se responde ninguna)",
                 diagnostico=(f"La bodega **no ha respondido a ninguna reseña**, ni siquiera a "
-                             f"las **{n_neg} críticas de 1-2 estrellas**. Cada una queda ahí, "
-                             f"sin réplica, para el próximo visitante que la lea."),
-                accion=("Responder es **gratis** y es lo primero que ve quien duda. Contestar "
-                        "las críticas con educación (reconocer, explicar, invitar a volver) "
-                        "mejora la percepción incluso de quien no escribió la reseña."),
+                             f"las **{n_neg} críticas de 1-2 estrellas**, que permanecen sin "
+                             f"réplica ante quien las consulte."),
+                accion=("La respuesta **no tiene coste** y es visible para quien está decidiendo "
+                        "su visita. Contestar las críticas de forma cordial —reconocer, explicar "
+                        "e invitar a regresar— mejora la percepción incluso de quien no escribió "
+                        "la reseña."),
                 fuente="Reseñas de Google"))
         elif pct < 15 and n_neg >= 10:
             recs.append(Recomendacion(
@@ -480,15 +482,15 @@ def recomendaciones_bodega(
         ipa_r, ipca_r, dipca_r = sig.get("ipa"), sig.get("ipca"), sig.get("dipca")
         partes = []
         if ipa_r is not None:
-            partes.append(f"**Mueve mucho la satisfacción** del visitante y hoy puntúa "
-                          f"**{ipa_r['desempeno']:.2f}/5**, de lo más flojo de la bodega "
+            partes.append(f"**Tiene un impacto alto en la satisfacción** del visitante y su desempeño "
+                          f"actual es **{ipa_r['desempeno']:.2f}/5**, uno de los más bajos de la bodega "
                           f"({_menciones(ipa_r)} menciones).")
             perfil = str(ipa_r.get("perfil", ""))
             if perfil == "Higiénico":
-                partes.append("Es *higiénico*: arreglarlo evita quejas, aunque por sí solo no "
-                              "te diferencie.")
+                partes.append("Es *higiénico*: corregirlo evita quejas, aunque por sí solo no "
+                              "aporte diferenciación.")
             elif perfil == "Deleitador":
-                partes.append("Es *deleitador*: mejorarlo **sube de verdad la satisfacción**, no "
+                partes.append("Es *deleitador*: mejorarlo **eleva la satisfacción**, no "
                               "solo evita quejas.")
         if ipca_r is not None:
             partes.append(f"Va **por detrás del resto del Marco** ({ipca_r['Esta bodega']:.2f} "
@@ -521,7 +523,7 @@ def recomendaciones_bodega(
                 prioridad="media", inteligencia="Clientes",
                 titulo=f"Dónde puede destacar: «{r['atributo']}»",
                 diagnostico=(f"**{r['atributo']}** es un **deleitador** para los visitantes de "
-                             f"esta bodega (crea satisfacción de verdad) y hoy puntúa "
+                             f"esta bodega (genera satisfacción, no solo evita quejas) y hoy puntúa "
                              f"**{r['desempeno']:.2f}/5**. Es su palanca para diferenciarse."),
                 accion=(_accion_atributo(r["atributo"]) + " Y usarlo como gancho en la web y en "
                         "la comunicación de la bodega."),
@@ -565,7 +567,7 @@ def recomendaciones_bodega(
                 titulo="Desbloquear el zoom de la web (barrera de accesibilidad)",
                 diagnostico=("La web **impide ampliar la página** (`user-scalable=no`), lo que "
                              "excluye a personas con baja visión."),
-                accion=("Arreglo de **una línea**: quitar `user-scalable=no` / `maximum-scale=1` "
+                accion=("Corrección de **una línea**: eliminar `user-scalable=no` / `maximum-scale=1` "
                         "de la etiqueta *viewport*."),
                 fuente="Auditoría de accesibilidad (WCAG)"))
         if not fila_accesibilidad.get("imagenes_con_alt"):
@@ -581,8 +583,8 @@ def recomendaciones_bodega(
                 prioridad="baja", inteligencia="Tecnológica",
                 titulo="Oportunidad: ofrecer y comunicar apoyo sensorial",
                 diagnostico=("La web no menciona audioguías, braille ni lengua de signos. "
-                             "**Ninguna bodega del Marco lo hace**: quien dé el paso será la "
-                             "primera."),
+                             "**Ninguna bodega del Marco lo hace**: la primera en incorporarlo "
+                             "obtendría un rasgo distintivo exclusivo."),
                 accion="Incorporar audioguía o signoguía en la visita y comunicarlo en la web.",
                 fuente="Auditoría de accesibilidad"))
 
@@ -601,7 +603,7 @@ def recomendaciones_bodega(
     if fila_transporte is not None and not fila_transporte.get("accesible_transporte_publico", True):
         recs.append(Recomendacion(
             prioridad="media", inteligencia="Sostenibilidad",
-            titulo="Facilitar la llegada sin coche",
+            titulo="Facilitar la llegada sin vehículo privado",
             diagnostico=(f"La bodega **no es alcanzable a pie** desde el transporte público "
                          f"(parada de autobús más cercana a "
                          f"{fila_transporte.get('dist_bus_km', '?')} km)."),

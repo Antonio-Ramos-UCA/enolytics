@@ -671,7 +671,7 @@ filas = [["Vista", "Qué ofrece"],
          ["Resumen ejecutivo", "Cuatro cifras del destino y semáforo de las siete inteligencias; las tres acciones más urgentes"],
          ["Las 7 inteligencias", "El análisis completo, una pestaña por inteligencia, con sus recomendaciones al pie"],
          ["Bodega individual", "Ficha, reputación, competidores directos, análisis IPA/IPCA propio, informe PDF"],
-         ["Simulador «¿y si…?»", "Cuatro palancas para proyectar escenarios sobre cifras reales"],
+         ["Simulador de escenarios", "Cuatro variables para proyectar escenarios sobre cifras reales"],
          ["Guía y metodología", "Qué es cada apartado, de dónde sale cada dato y qué umbral aplica; descargable en PDF"]]
 tabla(s, MX, y + Inches(1.9), ANCHO, filas, [Inches(2.6), Inches(9.23)], size=11.5, alto_fila=Inches(0.4))
 cita_pie(s, "Desplegada en Streamlit Community Cloud; código en GitHub (Antonio-Ramos-UCA/enolytics).")
@@ -1138,7 +1138,7 @@ s, y = lamina("Funcionalidades del cuadro de mando", eyebrow="Parte II · Funcio
 cw3 = (ANCHO - Inches(0.5)) / 3
 func = [("Informe PDF por bodega", "Una página, generada en el servidor: reputación, competidores directos, fortalezas y "
          "debilidades, presencia digital y sostenibilidad, qué hacer. Pensado para entregar a la bodega."),
-        ("Simulador «¿y si…?»", "Cuatro palancas —monetización, captación de cruceristas, respuesta a críticas, calidad "
+        ("Simulador de escenarios", "Cuatro variables —monetización, captación de cruceristas, respuesta a críticas, calidad "
          "percibida— sobre cifras reales, con la fórmula y el supuesto a la vista. **Proyecta un escenario; no predice.**"),
         ("Guía y metodología", "Qué es cada apartado, de dónde sale cada dato, qué significa cada análisis y qué umbral "
          "aplica. Descargable en PDF como **anexo metodológico** del proyecto."),

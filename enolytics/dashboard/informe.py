@@ -174,7 +174,7 @@ def generar_pdf_bodega(nombre: str, recs: list, res_bod: pd.DataFrame,
     sety(36)
 
     # ---------- PARTE A ----------
-    etiqueta_parte("PARTE A · QUIÉN ERES")
+    etiqueta_parte("PARTE A · SITUACIÓN")
 
     # Reputación
     n = len(res_bod)
@@ -183,7 +183,7 @@ def generar_pdf_bodega(nombre: str, recs: list, res_bod: pd.DataFrame,
     from enolytics.analitica import reputacion as rep
     tr = rep.tasa_respuesta(res_bod) if n else {}
     contestadas = tr.get("pct_total", 0.0)
-    titulo_seccion("Tu reputación online")
+    titulo_seccion("Reputación online")
     kpis = [("Valoración", f"{val:.2f}".replace(".", ","), f"{n} reseñas"),
             ("vs. media del Marco",
              (f"{val - rating_marco:+.2f}".replace(".", ",") if rating_marco else "-"),
@@ -194,24 +194,25 @@ def generar_pdf_bodega(nombre: str, recs: list, res_bod: pd.DataFrame,
     _kpi_row(pdf, W, kpis)
 
     # ---------- PARTE B ----------
-    etiqueta_parte("PARTE B · CÓMO COMPITES Y QUÉ HACER")
+    etiqueta_parte("PARTE B · POSICIÓN COMPETITIVA Y ACTUACIONES")
 
     # Competidores directos
     from enolytics.analitica import competidores as competi
     df_comp, viables = competi.cargar()
-    titulo_seccion("Tu grupo competitivo")
+    titulo_seccion("Grupo competitivo")
     if nombre in viables and not df_comp.empty:
         sub = df_comp[df_comp["bodega"] == nombre].sort_values("rango")
-        parrafo("Las bodegas más parecidas a la tuya por mercado (a qué cliente sirves) y por "
-                "recursos (con los que cuentas para competir). No es todo el Marco, sino tu "
-                "grupo, ordenado de más a menos cercano.")
+        parrafo("Las bodegas más próximas a esta por mercado (el cliente al que se dirige) y por "
+                "recursos (los medios de que dispone para competir). No es el conjunto del Marco, "
+                "sino su grupo competitivo, ordenado de mayor a menor proximidad.")
         nucleo = int((sub["tipo"] == "Core").sum())
-        parrafo(f"De las {len(sub)}, {nucleo} {'es' if nucleo == 1 else 'son'} de núcleo: mismo "
-                f"cliente y recursos parecidos, o sea tu rival más directo."
+        parrafo(f"De las {len(sub)}, {nucleo} {'es' if nucleo == 1 else 'son'} de núcleo: comparten "
+                f"cliente y disponen de recursos semejantes, por lo que constituyen la competencia "
+                f"más directa."
                 if nucleo else
-                "Ninguna es un rival directo: ninguna comparte a la vez cliente y recursos "
-                "contigo. Son competidores cercanos por un eje u otro; mira la etiqueta de cada "
-                "una.", size=8.5)
+                "Ninguna constituye competencia directa: ninguna comparte simultáneamente cliente "
+                "y recursos. Son competidores próximos en uno de los dos ejes; la etiqueta de cada "
+                "línea lo precisa.", size=8.5)
         pdf.ln(1)
         for _, r in sub.iterrows():
             pdf.set_font("Helvetica", "B", 9.5)
@@ -228,9 +229,10 @@ def generar_pdf_bodega(nombre: str, recs: list, res_bod: pd.DataFrame,
         pdf.ln(1)
         pdf.set_font("Helvetica", "I", 7.5)
         pdf.set_text_color(*GRIS)
-        pdf.multi_cell(W, 3.6, _t("Core: mismo cliente y recursos (rival directo) · Sustituto: "
-                                  "mismo cliente, recursos distintos · Marginal: recursos "
-                                  "parecidos, otro cliente · Potencial: distinto en ambos."),
+        pdf.multi_cell(W, 3.6, _t("Core: mismo cliente y recursos semejantes (competencia "
+                                  "directa) · Sustituto: mismo cliente, recursos distintos · "
+                                  "Marginal: recursos semejantes, otro cliente · Potencial: "
+                                  "distinto en ambos ejes."),
                        new_x="LMARGIN", new_y="NEXT")
     else:
         parrafo("Muestra insuficiente para el análisis de competidores de esta bodega.")
@@ -238,11 +240,11 @@ def generar_pdf_bodega(nombre: str, recs: list, res_bod: pd.DataFrame,
     # Fortalezas y debilidades
     perfil = _perfil_sentimiento(nombre)
     if not perfil.empty:
-        titulo_seccion("Tus fortalezas y debilidades")
+        titulo_seccion("Fortalezas y debilidades")
         y0 = pdf.get_y()
-        _lista_box(pdf, pdf.l_margin, y0, W / 2 - 3, "EN LO QUE DESTACAS",
+        _lista_box(pdf, pdf.l_margin, y0, W / 2 - 3, "FORTALEZAS",
                    list(perfil.head(3).index), OK)
-        _lista_box(pdf, pdf.l_margin + W / 2 + 3, y0, W / 2 - 3, "LO QUE FLOJEA",
+        _lista_box(pdf, pdf.l_margin + W / 2 + 3, y0, W / 2 - 3, "ASPECTOS A MEJORAR",
                    list(perfil.tail(3).index[::-1]), MAL)
         pdf.set_y(y0 + 26)
 
@@ -250,7 +252,7 @@ def generar_pdf_bodega(nombre: str, recs: list, res_bod: pd.DataFrame,
     aud = _fila_csv(nombre, "auditoria_web.csv")
     sos = _fila_csv(nombre, "sostenibilidad.csv")
     tra = _fila_csv(nombre, "transporte_sostenible.csv")
-    titulo_seccion("Tu presencia digital y sostenibilidad")
+    titulo_seccion("Presencia digital y sostenibilidad")
     kpis2 = [
         ("Madurez digital", f"{int(aud.get('madurez_digital', 0))} / 5", ""),
         ("Reserva online", "Sí" if aud.get("reserva_online") else "No", ""),
@@ -260,7 +262,7 @@ def generar_pdf_bodega(nombre: str, recs: list, res_bod: pd.DataFrame,
     _kpi_row(pdf, W, kpis2)
 
     # Qué hacer
-    titulo_seccion("Qué hacer para ganar clientes")
+    titulo_seccion("Actuaciones recomendadas")
     altas = [r for r in (recs or []) if getattr(r, "prioridad", "") == "alta"][:3]
     if not altas:
         altas = (recs or [])[:3]
@@ -395,14 +397,14 @@ def generar_guia_pdf(glosario: list, fuentes: list,
     pdf.set_x(pdf.l_margin)
     pdf.set_font("Helvetica", "B", 16)
     pdf.set_text_color(255, 255, 255)
-    pdf.cell(0, 9, _t("Cómo leer la plataforma, y de dónde sale cada dato"),
+    pdf.cell(0, 9, _t("Cómo leer la plataforma y de dónde procede cada dato"),
              new_x="LMARGIN", new_y="NEXT")
     pdf.set_y(34)
 
     # Una sola sección para «qué significa cada color» y «de dónde salen los datos»: son la
     # misma pregunta contada dos veces (observación 3 de Paula).
-    h2("1 · De dónde salen los datos, y cómo de firmes son")
-    parr("Cada dato lleva una marca que dice cómo de firme es y de qué fuente viene. Nunca se "
+    h2("1 · Origen de los datos y grado de fiabilidad")
+    parr("Cada dato lleva una marca que indica su grado de fiabilidad y la fuente de la que procede. Nunca se "
          "mezcla una estadística oficial con una estimación sin avisar.")
     for clave, (icono, nombre, desc) in _cfg.ORIGENES_DATO.items():
         pdf.ln(1)
@@ -411,11 +413,11 @@ def generar_guia_pdf(glosario: list, fuentes: list,
         for nom, desc_f in propias:
             parr(desc_f, bold_lead=f"   . {nom} -", size=9)
         if not propias:
-            parr("   . Sin fuente propia: no es un origen, es un cálculo nuestro a partir de "
+            parr("   . Sin fuente propia: no es un origen, sino un cálculo derivado de "
                  "los datos anteriores.", size=9, color=CAOBA)
 
-    h2("2 · Las formas de mirar la plataforma")
-    for nom, desc in [("Resumen ejecutivo", "Lo esencial de un vistazo y las 3 acciones urgentes."),
+    h2("2 · Las vistas de la plataforma")
+    for nom, desc in [("Resumen ejecutivo", "Indicadores clave del destino y las tres actuaciones prioritarias."),
                       ("Las 7 inteligencias", "El análisis completo, una pestaña por inteligencia."),
                       ("Bodega individual", "Ficha de una bodega: reputación, competidores, análisis "
                        "e informe descargable."),
@@ -426,25 +428,25 @@ def generar_guia_pdf(glosario: list, fuentes: list,
     for info in _cfg.OBJETIVOS_INTELIGENCIAS.values():
         parr(info["objetivo"], bold_lead=f"{info['titulo']} ({info['segittur']}):")
 
-    h2("4 · Los análisis, explicados sin jerga")
+    h2("4 · Los modelos analíticos")
     for term, sig, expl in glosario:
         parr(expl, bold_lead=f"{term} ({sig}):")
     pdf.ln(1)
-    parr("Principio de la casa: los resúmenes de reputación NO los genera una IA. Se componen de "
+    parr("Criterio metodológico: los resúmenes de reputación no se generan con IA generativa. Se componen de "
          "los datos reales agregados (mismo dato, mismo texto, siempre): reproducible y auditable.",
          size=9, color=CAOBA)
 
     # Los umbrales, declarados. Un motor de recomendaciones con los listones dichos es
     # defendible y publicable; uno cuyos listones no se sabe de dónde salen, no (obs. 10).
-    h2("5 · Los umbrales: de dónde sale cada listón")
-    parr("Una recomendación aparece cuando un dato cruza un listón. No son la misma clase de "
+    h2("5 · Los umbrales aplicados y su justificación")
+    parr("Una recomendación aparece cuando un dato cruza un umbral. No son la misma clase de "
          "decisión, así que van separados.")
     pdf.ln(1)
-    parr("Los que tienen base metodológica", size=9.5, color=INK)
+    parr("Umbrales con base metodológica", size=9.5, color=INK)
     for umbral, porque in umbrales_metodo:
         parr(porque, bold_lead=f"   . {umbral} -", size=9)
     pdf.ln(1)
-    parr("Los que son criterio del equipo de ENOLYTICS", size=9.5, color=INK)
+    parr("Umbrales fijados por criterio del equipo", size=9.5, color=INK)
     for umbral, porque in umbrales_equipo:
         parr(porque, bold_lead=f"   . {umbral} -", size=9)
 
