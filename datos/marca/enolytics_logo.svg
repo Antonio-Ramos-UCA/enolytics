@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 453 132" width="453" height="132" role="img" aria-label="ENOLYTICS">
+  <g transform="translate(-12.9, 4)">
+  <defs>
+    <clipPath id="cuenco-logo">
+      <path d="M 39 18 C 32.5 31, 32.5 59, 47.5 72 C 52 76.5, 68 76.5, 72.5 72 C 87.5 59, 87.5 31, 81 18 Z"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#cuenco-logo)">
+      <rect x="42.75" y="58" width="7.5" height="16" rx="1.6" fill="#C6902F"/>
+      <rect x="51.75" y="49" width="7.5" height="25" rx="1.6" fill="#A45E2A"/>
+      <rect x="60.75" y="40" width="7.5" height="34" rx="1.6" fill="#7A3B1E"/>
+      <rect x="69.75" y="31" width="7.5" height="43" rx="1.6" fill="#3B1E12"/>
+  </g>
+  <path d="M 39 18 C 32.5 31, 32.5 59, 47.5 72 C 52 76.5, 68 76.5, 72.5 72 C 87.5 59, 87.5 31, 81 18 Z" fill="none" stroke="#7A3B1E" stroke-width="3.2"
+        stroke-linejoin="round"/>
+  <path d="M 60 76 L 60 99" stroke="#7A3B1E" stroke-width="3.2"
+        stroke-linecap="round"/>
+  <path d="M 43 103 Q 60 97.5 77 103 Q 60 108.5 43 103 Z" fill="#7A3B1E"/>
+  </g>
+  <text x="114.1" y="72" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif" font-size="46"
+        font-weight="700" letter-spacing="2.4" fill="#1C1B19">ENOLYTICS</text>
+  <text x="116.1" y="100" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif" font-size="15.5"
+        font-weight="400" letter-spacing="0.2" fill="#57544E">Inteligencia enoturística del Marco de Jerez</text>
+</svg>
