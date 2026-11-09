@@ -4,9 +4,9 @@
 > poder continuar desde cualquier ordenador (este proyecto está en Dropbox y se
 > sincroniza). Si retomas con Claude en otro equipo, pásale este archivo primero.
 >
-> **Última actualización:** 2026-10-28 (segunda tanda de Paula: **los 13 puntos reales cerrados** (3 ya lo estaban) —entre
-> ellos los dos bugs de PDF y una recomendación que el dato no sostenía— y **cláusula y logos de
-> financiación FEDER**, que no estaban en ninguna parte. Leer la sesión del 28/10)
+> **Última actualización:** 2026-10-29 (pase de **registro profesional** en toda la plataforma,
+> **logos FEDER al área principal** porque en la barra lateral eran ilegibles, **frecuencia mensual**
+> decidida para la automatización de reseñas y **marca gráfica propia**. Leer la sesión del 28-29/10)
 
 ---
 
@@ -55,15 +55,26 @@ SEGITTUR: Oferta / Demanda / Sostenibilidad. Alineado con norma UNE 178502.
 
 ## 3. Estado de las fuentes de datos
 
-1. **Reseñas online:** NO descargadas aún. **Prueba de viabilidad hecha (2026-07-01):**
-   con `requests` no se accede (Google exige JavaScript; TripAdvisor devuelve 403);
-   Playwright (navegador real) funciona pero es frágil y confunde bodegas. Decisión:
-   **API de terceros (Outscraper)** para las reseñas. Falta que el usuario cree la
-   cuenta y aporte la API key (variable de entorno `OUTSCRAPER_API_KEY`).
-2. **Cuestionarios (a bodegas/visitantes/OGDs):** NO diseñados. No bloquean el
-   arranque; se diseñarán derivándolos de los indicadores de la Tabla 1 de la memoria.
-3. **Catálogo de bodegas:** ✅ HECHO — 41 bodegas de la Ruta del Vino y Brandy de
-   Jerez (ver sección 4).
+> Esta sección se revisó el 29/10/2026. Decía todavía «reseñas NO descargadas», que era
+> cierto el 1 de julio y llevaba cuatro meses sin tocarse.
+
+1. **Reseñas de Google:** ✅ **10.972 reseñas de las 41 bodegas** (`datos/procesado/resenas.csv`).
+   Descargadas con el **panel web** de Outscraper, no por API. ⚠️ **El corpus es ESTÁTICO:**
+   la reseña más reciente es del **06/07/2026**. Ver «Automatización incremental» en
+   `docs/pendientes.md`: frecuencia decidida **mensual**, falta el backend y la clave.
+   La API de Outscraper **exige saldo** en la cuenta, y ahí se quedó parado (ver el cierre
+   del 01/07 al final de este documento).
+2. **Fuentes oficiales:** ✅ ACEVIN (visitantes, oferta, ingresos, perfil), Dataestur/SEGITTUR
+   (gasto, percepción, cruceros, conectividad aérea), FEV (certificación climática).
+3. **Observación propia:** ✅ auditoría web de las 41 bodegas (madurez digital, accesibilidad
+   WCAG, sostenibilidad comunicada), transporte público vía OpenStreetMap, Google Trends.
+4. **Precios de las experiencias:** ⚠️ **a medias.** 17 verificados de 11 bodegas; 167
+   candidatos del extractor (85 de confianza alta) **sin validar por el equipo**. Decisión
+   A/B abierta, ver `docs/pendientes.md`.
+5. **TripAdvisor:** ❌ no iniciado (requiere la misma vía de API).
+6. **Cuestionarios (a bodegas/visitantes/OGDs):** ❌ NO diseñados. No bloquean; se derivarán
+   de los indicadores de la Tabla 1 de la memoria.
+7. **Catálogo de bodegas:** ✅ HECHO — 41 bodegas de la Ruta (ver sección 4).
 
 ---
 
@@ -95,36 +106,59 @@ Ver sección 5. Todo compila e importa correctamente.
 
 ## 5. Estructura del código
 
+> Revisada el 29/10/2026. La versión anterior era de julio y marcaba `etl/`, `nlp/` y medio
+> `analitica/` como *stubs pendientes*: hace meses que no lo son.
+
+**~10.800 líneas en 33 módulos.** El flujo es siempre el mismo: *ingesta → etl → nlp →
+analitica → dashboard*. Cada etapa deja un CSV en `datos/procesado/` y **el dashboard solo
+lee CSV**: nunca calcula nada pesado en caliente.
+
 ```
 PROTOTIPO ENOLYTICS/
-├── CONTEXTO.md              ← este archivo
-├── README.md
-├── requirements.txt
-├── .gitignore
-├── enolytics/               # paquete principal
-│   ├── config.py            # rutas, constantes, las 7 inteligencias, fuentes
-│   ├── ingesta/
-│   │   ├── ruta_jerez.py    # scraper del catálogo (funciones reutilizables)
-│   │   └── resenas.py       # interfaz común descargar_resenas() + dataclass Resena (STUB)
-│   ├── etl/                 # (stub, pendiente)
-│   ├── nlp/                 # (stub, pendiente)
+├── CONTEXTO.md              ← este archivo (diario del proyecto)
+├── README.md · requirements.txt · .gitignore
+├── enolytics/
+│   ├── config.py            # rutas, 7 inteligencias, orígenes del dato, cláusula FEDER
+│   ├── ingesta/             # cada fuente, su módulo
+│   │   ├── ruta_jerez.py    # catálogo de bodegas (scraper propio)
+│   │   ├── resenas.py       # ⚠️ interfaz + dataclass Resena — BACKEND SIN IMPLEMENTAR
+│   │   ├── acevin.py · dataestur.py · cruceros.py · conectividad_aerea.py
+│   │   ├── google_trends.py · auditoria_web.py · accesibilidad.py
+│   │   ├── sostenibilidad.py · transporte.py · precios.py
+│   │   └── navegador.py     # Playwright, para webs que bloquean robots
+│   ├── etl/resenas.py       # normaliza y escribe resenas.csv + censo_google.csv
+│   ├── nlp/
+│   │   ├── analisis.py      # léxico multilingüe de atributos (ES/EN/DE/IT/FR)
+│   │   ├── idioma.py        # detección de idioma → proxy de procedencia
+│   │   └── sentimiento.py   # BERT multilingüe, sentimiento POR ATRIBUTO frase a frase
 │   ├── analitica/
-│   │   └── ipa.py           # IPA funcional; IPCA/DIPA/DIPCA stubs
+│   │   ├── ipa.py           # IPA · IPCA · DIPA · DIPCA (familia completa)
+│   │   ├── prca.py          # importancia por IMPACTO (regresión) + perfil Kano
+│   │   ├── competidores.py  # K-prototypes + Gower + categorización de Kamensky
+│   │   ├── coocurrencia.py  # co-word (índice de equivalencia de Callon)
+│   │   ├── reputacion.py    # ficha de reputación, tasas de respuesta
+│   │   └── recomendaciones.py  # ⭐ motor de recomendaciones accionables
 │   └── dashboard/
-│       └── app.py           # Streamlit funcional (mapa + fichas + vistas por rol)
+│       ├── app.py           # 5 vistas (~2.900 líneas)
+│       ├── estilo.py        # identidad visual: paleta, CSS, estilo de gráficos
+│       └── informe.py       # los dos PDF (informe de bodega y guía)
 ├── datos/
-│   ├── catalogo/            # CSV + JSON del catálogo (versionable)
-│   ├── crudo/resenas/       # reseñas descargadas (NO versionado)
-│   └── procesado/           # datasets derivados
+│   ├── catalogo/            # catálogo de las 41 bodegas
+│   ├── crudo/               # descargas en bruto (NO versionado)
+│   ├── procesado/           # los CSV que lee el dashboard
+│   ├── marca/               # ⭐ marca gráfica de ENOLYTICS (logo e isotipo)
+│   └── marca_feder/         # banda de logos y cláusula de financiación (obligatorio)
+├── docs/                    # pendientes.md, protocolo_trabajo.md, auditorías, planes
 ├── scripts/
-│   └── actualizar_catalogo.py
-├── tests/
+│   ├── actualizar_catalogo.py · generar_marca.py
+│   ├── plantilla_pptx.py · generar_presentacion_{cursos_verano,gestores}.py
 └── MEMORIA/                 # memoria científico-técnica (PDF)
 ```
 
-Funciones clave de `enolytics/ingesta/ruta_jerez.py`:
-`descargar_catalogo()`, `enriquecer_bodegas()`, `guardar_catalogo()`,
-`actualizar_catalogo_completo()`, `cargar_catalogo()`.
+**Lo que NO entra en `requirements.txt` a propósito:** `torch` y `transformers`. Streamlit
+Cloud tiene ~1 GB de RAM y el BERT lo ahoga. El NLP se ejecuta **en local**, deja su CSV, y
+eso es lo que se publica. Es la razón de que la automatización mensual tenga que vivir en
+GitHub Actions y no en Cloud.
 
 ---
 
@@ -152,16 +186,89 @@ streamlit, pandas, sklearn, plotly, matplotlib, requests, bs4.
 
 ## 7. Próximos pasos (por orden sugerido)
 
-1. **Localizar las bodegas en Google Maps / TripAdvisor** — usando GPS + nombre,
-   encontrar la ficha de cada bodega en esas plataformas (paso previo a las reseñas).
-2. **Implementar el scraper de reseñas** — decidir antes: scraper propio (Playwright)
-   vs API de terceros. Implementar los backends de `enolytics/ingesta/resenas.py`.
-3. **NLP** — análisis de sentimiento (BERT español) y modelado de temas (LDA) sobre
-   las reseñas → extraer atributos con medidas de importancia y desempeño.
-4. **Completar IPCA / DIPA / DIPCA** en `enolytics/analitica/ipa.py`.
-5. **Integrar todo en el dashboard** (pestañas de reseñas, sentimiento, cuadrantes IPA).
-6. **En paralelo (no bloquea):** diseñar cuestionarios a partir de la Tabla 1 de la
-   memoria; incorporar indicadores oficiales (INE, Dataestur, ACEVIN, Google Trends).
+> Reescritos el 29/10/2026. Los seis pasos que había aquí (scraper, NLP, completar
+> IPCA/DIPA/DIPCA, integrar en el dashboard) **están hechos desde julio**. La lista viva y
+> detallada es `docs/pendientes.md`; esto es solo el titular.
+
+1. ⭐ **Automatización mensual de reseñas.** El corpus lleva parado desde el 06/07. Dos piezas:
+   el **backend de Outscraper** (bloqueado: la API exige saldo) y el **modo incremental** de
+   `nlp/sentimiento.py`, que hoy repasa el corpus entero en cada ejecución. El segundo **no
+   depende de nadie** y es el que hace viable lo demás.
+2. **Precios de las visitas.** Decisión A/B pendiente. Si se cablea, mejora cuatro sitios a la
+   vez: ficha de bodega, métrica real de «Precio y valor», eje de precio de competidores y
+   palanca del simulador.
+3. **SABI** — confirmar el acceso de la biblioteca de la UCA. Desbloquea facturación y empleo
+   **por bodega**, hoy a cero en la Tabla 1 de la memoria.
+4. **Cuestionarios** a bodegas y a enoturistas, solo para lo que no dan las fuentes públicas.
+5. **Decisiones abiertas de producto:** los emojis decorativos de los encabezados; y si la
+   marca nueva (`datos/marca/`) entra en la app, los PDF y las presentaciones.
+
+## ═══ SESIÓN 2026-10-28/29 — REGISTRO PROFESIONAL, LOGOS LEGIBLES Y MARCA PROPIA ═══
+> Antonio, mirando la app: *«aparecen expresiones que no tienen un marcado estilo profesional y me
+> parecen un poco infantiles. Por ejemplo, debajo de Resumen ejecutivo aparece "Lo esencial del
+> destino, de un vistazo"»*. De ahí salió un repaso de todo el texto visible, y después dos cosas
+> más que fueron apareciendo al mirar la pantalla.
+
+**1. ✅ PASE DE REGISTRO EN TODA LA PLATAFORMA (~75 textos).** Se extrajeron por AST **todas** las
+cadenas que llegan al usuario en `dashboard/app.py`, `dashboard/informe.py` y
+`analitica/recomendaciones.py`, y se repasaron una a una. Lo retirado, por familias:
+- **Títulos en forma de pregunta** → enunciados: *«¿Mejora o empeora con el tiempo?»* → «Evolución
+  temporal de la satisfacción»; *«¿Cómo va frente al resto del Marco?»* → «Posición frente al resto
+  del Marco»; *«¿Quién busca volar a Jerez?»*, *«¿Qué es urgente mejorar y qué no?»*.
+- **Coloquialismos:** *«te diferencia cuando lo bordas»*, *«de lo más flojo»*, *«lo que flojea»*,
+  *«hunden la nota»*, *«sube de verdad la satisfacción»*, *«un vacío total»*, *«lo que falta es el
+  avión»*, *«el corazón del producto»*, *«no dar competidores al azar»*.
+- **Tuteo al lector** → impersonal: *«mira la vista»* → «véase la vista»; *«no esperes que…»*;
+  *«léelo como señal, no como veredicto»* → «interprétese como señal, no como resultado concluyente».
+- **Primera persona del equipo:** *«un cálculo nuestro»*, *«no afirmamos»*, *«los mercados que ya
+  nos buscan»*, *«se refinará cuando lo tengamos»*.
+- **Jerga interna:** *«listón»* → umbral (14 sitios), *«Principio de la casa»* → «Criterio
+  metodológico», *«el mando muestra el destino, no el camino»*.
+- **Énfasis tipográfico:** los tres `👉` y las mayúsculas enfáticas (*«Llegan MÁS cruceristas… que
+  TODAS las bodegas juntas»*).
+- En el **PDF de bodega**, «EN LO QUE DESTACAS» / «LO QUE FLOJEA» → «FORTALEZAS» / «ASPECTOS A
+  MEJORAR», y las secciones en segunda persona («Tu reputación», «Tu grupo competitivo») pasan a
+  impersonal.
+- Los **emojis funcionales** (🟢🔵🟡 del origen del dato, ⚠️ de cautela) **se quedan**. Los
+  **decorativos de los encabezados quedan como decisión abierta de Antonio**, sin tocar.
+
+**2. ✅ LOS LOGOS FEDER, AL ÁREA PRINCIPAL.** Antonio: *«los logos de los patrocinadores se ven
+pequeños»*. Y era medible: la banda oficial es de **1330×103 px, proporción 13:1**, y la barra
+lateral mide ~235 px → se pintaba a **235×18**. Movida al área principal sale a **1084×84** y se
+distinguen los cinco escudos. Estaba en la barra lateral porque era el único sitio común a las
+cinco vistas (cada una acaba en su propio `st.stop()`); ahora hay una función
+**`pie_institucional()`** que se llama antes de cada parada. Mantiene la guarda `getattr` + `try`
+que se puso tras la caída en producción: el pie es obligatorio, pero no puede dejar la app
+inservible. Verificado: cláusula presente en las cinco vistas, 0 excepciones.
+
+**3. ⚠️ EL DESPLIEGUE LLEGÓ A MEDIAS, OTRA VEZ.** Tras el push, producción servía el `app.py`
+nuevo con el `recomendaciones.py` **viejo** («críticas mudas», «responder es gratis»): la caché de
+módulos de Streamlit Cloud vuelve a ejecutar `app.py` pero no reimporta lo ya cargado. Se resolvió
+tocando `requirements.txt`, que fuerza la reconstrucción completa. **Es el mismo fallo del
+AttributeError de septiembre**, y conviene recordarlo: *cambiar algo fuera de `app.py` exige
+reconstruir el entorno o reiniciar la app* (ver §6 del protocolo de equipo).
+
+**4. ✅ AUTOMATIZACIÓN DE RESEÑAS: FRECUENCIA DECIDIDA — MENSUAL.** Antonio preguntó por ello
+(*«que el sistema se nutra de reseñas que se generan diariamente»*). Se propuso **mensual en vez de
+diaria** y lo aceptó: entre las 41 bodegas entran **~4,5 reseñas al día**, así que una pasada diaria
+gastaría 41 consultas de API para traer cuatro reseñas. El plan completo, con las dos piezas que
+faltan y las tres decisiones previas, está en `docs/pendientes.md`.
+
+**5. ✅ MARCA GRÁFICA PROPIA (`datos/marca/`).** No había logo de ENOLYTICS: solo el de la UCA y la
+banda FEDER, que son publicidad obligatoria y no identifican al producto. El signo es una **copita
+de catavinos cuyo contenido es un gráfico de barras ascendente** —*eno* + *lytics* en una sola
+imagen—, con las barras recortadas por la silueta del vaso. Se genera con
+`scripts/generar_marca.py`, que **importa los colores de `dashboard/estilo.py`** para que el logo no
+pueda desviarse de la paleta de la app. Logotipo horizontal e isotipo, en SVG y PNG transparente a
+doble densidad, en versión clara y oscura, con su `LEEME.md`.
+
+**Verificación de la sesión:** AppTest en las cinco vistas sin excepciones; PDF medidos con PyMuPDF
+(informe 1 página, guía 2, sin desbordes); capturas en navegador real de Resumen, Guía, Simulador,
+Bodega, Clientes y Mercado; y producción comprobada a ojo tras la reconstrucción.
+
+**Queda abierto:** los emojis decorativos de los encabezados · la decisión A/B de los precios ·
+avisar a Paula de que sus puntos 1-3 ya estaban resueltos · y si la marca nueva entra en la app,
+los PDF y las presentaciones.
 
 ## ═══ SESIÓN 2026-10-28 — SEGUNDA TANDA DE PAULA + PUBLICIDAD FEDER ═══
 > Paula envió un segundo documento (`Nuevas propuestas de mejora de Paula/`) con 16 puntos.
@@ -223,6 +330,9 @@ requisitos del Vicerrectorado y el código del proyecto: **FEDER-UCA-2024-A2-27*
   renderiza en las cinco vistas; el pie del área principal está al final del script y **solo lo
   alcanzaba la vista de bodega**, defecto que ya existía— y al pie de **los dos PDF**, con el salto
   de página desactivado para que no se separen de los logos.
+  > ⚠️ **Rectificado al día siguiente (29/10):** en la barra lateral los logos salían a 18 px de
+  > alto y no se distinguían. Se sacaron al área principal con `pie_institucional()`. Ver la
+  > sesión de abajo.
 
 **11, 14 y 16. ✅ EL BLOQUE DE COMPETIDORES.**
 - **11.** El encabezado era fijo («Tus competidores directos») y el contenido cambia de bodega a
