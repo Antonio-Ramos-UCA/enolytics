@@ -567,4 +567,8 @@
   (corpus monolingüe). Nuestro corpus multilingüe sí. Candidato fuerte a paper.
 - [ ] **Revista objetivo:** IJCHM (Emerald, Q1) acepta exactamente este método (reseñas + Kano +
   IPA). Ver el paper de `BIBLIOGRAFIA/` como plantilla de estructura y de nivel exigido.
-- [ ] Definir TFM/TFG asociados.
+- [ ] Definir TFM/TFG asociados. **Guión redactado el 15/11/2026: `docs/tfg_guion.md`.**
+  TFG principal propuesto: IPA **segmentado** por procedencia del visitante (hispanohablante
+  4,58 vs. internacional 4,46) — la pregunta que ENOLYTICS no responde, que es lo que evita
+  que el trabajo sea un manual de uso del cuadro de mando. Incluye otros 5 temas posibles
+  sobre la misma base (accesibilidad, cruceros, DTI, reputación, conectividad aérea).
