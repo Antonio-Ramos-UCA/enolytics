@@ -92,10 +92,10 @@ El plan contempla cinco semanas de trabajo efectivo más las fiestas para el cie
 | Semana | Fechas | Tarea | Entrega al tutor |
 |---|---|---|---|
 | 1 | 18–22 nov | Lectura del plan, comprobación del requisito académico del apartado 8 y lectura de los dos artículos base: Bi et al. (2019) y Zhang et al. (2021) | Índice propuesto y objetivos redactados |
-| 2 | 23–29 nov | Marco teórico I: enoturismo, el Marco de Jerez como destino, satisfacción y calidad percibida | Borrador de los tres epígrafes |
-| 3 | 30 nov – 6 dic | Marco teórico II: el IPA, sus críticas y el IPA derivado de reseñas. Festivos del 6 al 8 | Marco teórico completo |
+| 2 | 23–29 nov | Revisión de la literatura, epígrafes 2.1 a 2.3: enoturismo, el Marco de Jerez como destino, satisfacción y calidad percibida | Epígrafes 2.1 a 2.3 |
+| 3 | 30 nov – 6 dic | Revisión de la literatura, epígrafes 2.4 a 2.7: el IPA, sus críticas, el IPA derivado de reseñas y la laguna detectada. Festivos del 6 al 8 | Capítulo 2 completo |
 | 4 | 7–13 dic | Metodología y resultados. Entrega del material y lectura de las matrices con su guion | Capítulos de metodología y resultados |
-| 5 | 14–20 dic | Discusión y conclusiones | Borrador completo |
+| 5 | 14–20 dic | Discusión y conclusiones. Cierre de la introducción | Capítulos 5 y 6, y borrador completo |
 | Navidad | 21 dic – 3 ene | Revisión, formato, resúmenes en español e inglés, índices y bibliografía APA. Sin análisis nuevo | — |
 | Entrega | **lun 4 ene** | Versión definitiva | TFG completo |
 
@@ -109,19 +109,204 @@ expone en el apartado 6.
 
 ## 5. Estructura del documento
 
-Está establecida por la normativa de la Facultad para el TFG clásico de investigación. La
-extensión mínima es de 30 páginas, sin contar portada ni anexos.
+La estructura está establecida por la normativa de la Facultad para el TFG clásico de
+investigación, que exige portada, índice, resúmenes en los dos idiomas, introducción, un
+desarrollo con revisión de la literatura, metodología y análisis de resultados, conclusiones,
+bibliografía y anexos. La extensión mínima es de 30 páginas, sin contar portada ni anexos.
 
-1. Portada, con título, autor, tutor, grado y fecha, más la cláusula de financiación del proyecto
-   que recoge el apartado 12.1.a
-2. Índice paginado, más índice de tablas y de figuras
-3. Resúmenes de unas 350 palabras, en español y en inglés
-4. Introducción, con la justificación, los objetivos y la estructura del trabajo
-5. Desarrollo, que debe incluir al menos revisión de la literatura, metodología y análisis de
-   resultados
-6. Conclusiones
-7. Bibliografía, en normas APA
-8. Anexos, si procede
+Lo que sigue desarrolla ese esqueleto: qué contiene cada capítulo, en qué epígrafes se divide y
+qué extensión orientativa le corresponde. La numeración es la del propio trabajo, no la de este
+plan, y la semana que se indica remite al calendario del apartado 4.
+
+### Portada
+
+Título, autoría, tutor, grado, facultad y fecha, más la cláusula de financiación del proyecto que
+recoge el apartado 12.1.a. El título debe dejar claro el ámbito, enoturismo o Marco de Jerez, y
+anunciar la segmentación. Una formulación posible: «Prioridades de mejora en el enoturismo del
+Marco de Jerez: análisis importancia-desempeño segmentado por procedencia del visitante a partir
+de reseñas en línea».
+
+### Índices
+
+Índice paginado, índice de tablas e índice de figuras. Conviene redactar el trabajo con los
+estilos de título del procesador de textos desde el primer día, porque los tres índices se
+generan solos a partir de ellos y se actualizan al cerrar el documento.
+
+### Resumen y abstract
+
+Unas 350 palabras cada uno. Se redactan al final, cuando ya existen los resultados, y conviene
+ordenarlos en cinco movimientos: contexto y problema, objetivo, datos y método, resultado
+principal con su cifra, e implicación para la gestión. Se cierran con cuatro a seis palabras
+clave. El abstract se traduce a partir del resumen ya cerrado y se revisa con cuidado: una
+traducción automática sin revisar se detecta, y la normativa evalúa los dos resúmenes dentro del
+bloque de organización.
+
+### Capítulo 1. Introducción · 3 a 4 páginas · semana 1, cierre en la 5
+
+1.1. Justificación. El Marco de Jerez como primera ruta de España en visitantes, con 425.652 en
+2024, frente a un ingreso de 40,4 € por visitante muy inferior al de Rioja Alta. El contraste
+entre liderazgo en volumen y rezago en valor, descartada la explicación del tamaño de la oferta,
+sitúa la pregunta en el interior de la visita. Es el material del apartado 1 de este plan.
+
+1.2. Objetivos. Un objetivo general: determinar si las prioridades de mejora del enoturismo del
+Marco de Jerez difieren según la procedencia del visitante. Y cuatro específicos: identificar los
+atributos de la experiencia que los visitantes mencionan en sus reseñas; medir la importancia y el
+desempeño de cada atributo en cada segmento; construir y comparar las dos matrices
+importancia-desempeño; y derivar recomendaciones de gestión para el destino, diferenciadas por
+segmento si los resultados lo justifican. Este epígrafe es el que las conclusiones deberán
+responder una por una, de modo que conviene dejarlo cerrado pronto.
+
+1.3. Estructura del trabajo. Un párrafo por capítulo, en el orden en que aparecen.
+
+### Capítulo 2. Revisión de la literatura · 8 a 10 páginas · semanas 2 y 3
+
+2.1. El enoturismo como producto turístico. Delimitación del concepto, evolución de la demanda y
+perfil del visitante de bodega.
+
+2.2. El Marco de Jerez como destino enoturístico. Oferta, cifras del Observatorio de ACEVIN y
+posición entre las 37 rutas españolas. Es el contexto empírico del trabajo y conviene que sea
+descriptivo y breve, no un capítulo de historia del vino.
+
+2.3. Satisfacción y calidad percibida en la visita a bodega. Los atributos que la literatura
+identifica como determinantes de la satisfacción y los modelos con los que se han medido.
+
+2.4. El análisis importancia-desempeño. Origen en Martilla y James (1977), lógica de los cuatro
+cuadrantes y lectura de cada uno. A continuación, sus críticas: la posición de los ejes y su
+efecto sobre la asignación de cuadrante, la diferencia entre importancia declarada e importancia
+inferida, y el supuesto de independencia entre atributos. Estas críticas no son un adorno
+bibliográfico: la decisión metodológica de usar umbrales comunes a los dos segmentos, que se
+explica en el epígrafe 3.6, se justifica precisamente con ellas.
+
+2.5. El IPA derivado de reseñas en línea. Bi et al. (2019) y Zhang et al. (2021): qué sustituyen
+respecto del cuestionario —la frecuencia de mención pasa a medir la importancia y el sentimiento
+pasa a medir el desempeño— y qué se gana y qué se pierde con esa sustitución.
+
+2.6. Procedencia del visitante y valoración de la experiencia. Lo que la literatura ha observado
+sobre diferencias en la valoración según el origen del visitante.
+
+2.7. Síntesis y laguna detectada. Un epígrafe corto que cierre el capítulo: los trabajos que
+derivan un IPA de reseñas tratan el destino como un público único y no segmentan. De ahí la
+pregunta de este trabajo. Sin este epígrafe la revisión queda como una sucesión de resúmenes; con
+él, queda justificada.
+
+### Capítulo 3. Metodología · 6 a 8 páginas · semana 4
+
+3.1. Diseño de la investigación. Carácter descriptivo y comparativo, no inferencial. Unidad de
+análisis, la reseña; nivel de análisis, el destino en conjunto.
+
+3.2. Fuente de datos y corpus. Reseñas de Google de las 41 bodegas de la Ruta, 10.972 registros
+entre el 22 de julio de 2011 y el 6 de julio de 2026. Aquí va el párrafo de encuadre en el
+proyecto que recoge el apartado 12.1.b, y aquí se cita el corpus como datos facilitados por el
+proyecto ENOLYTICS.
+
+3.3. Identificación de atributos. Los ocho atributos de la experiencia: vino y cata, personal y
+trato, visita y experiencia, instalaciones, precio y valor, entorno y viñedo, organización y
+reserva, y gastronomía y restauración. Procedimiento de detección por diccionarios multilingües y
+resultado: 6.542 reseñas con al menos un atributo identificado.
+
+3.4. Medición de la importancia y del desempeño. La importancia se mide por la frecuencia
+relativa con que cada atributo aparece mencionado; el desempeño, por el sentimiento del fragmento
+en que se menciona, no por la estrella de la reseña. La justificación debe quedar escrita: la
+estrella es una valoración global de la visita y no permite atribuir el acierto o el fallo a un
+atributo concreto, mientras que el sentimiento del fragmento sí. Es la solución de Zhang et al.
+(2021).
+
+3.5. Segmentación por procedencia. El idioma de la reseña como variable que aproxima el origen:
+castellano, catalán, gallego y euskera al segmento nacional, y el resto al internacional.
+Corrección aplicada al catalán y acotación del sesgo con el dato de Dataestur. El apartado 10 de
+este plan contiene el desarrollo completo, que debe reproducirse aquí y no solo en el apartado de
+limitaciones.
+
+3.6. Construcción de las matrices. Umbrales de corte comunes a los dos segmentos, 33,721 % en
+importancia y 4,017 en desempeño, y no un umbral propio para cada uno. La razón debe explicarse:
+con umbrales calculados sobre cada segmento por separado, un atributo podría aparecer en
+cuadrantes distintos sin que su importancia ni su desempeño hubieran cambiado, solo porque se ha
+movido la rejilla. Con umbrales comunes, cualquier diferencia entre matrices es una diferencia
+real entre segmentos.
+
+3.7. Instrumental procedente del proyecto. Declaración expresa de qué parte del tratamiento de
+los datos procede de ENOLYTICS y qué parte es trabajo propio, según el apartado 3 de este plan.
+
+3.8. Consideraciones éticas y protección de datos. Seudonimización del corpus, residuo de nombres
+de persona en el texto de algunas reseñas y regla de sustitución al citar.
+
+### Capítulo 4. Análisis de resultados · 8 a 10 páginas · semana 4
+
+4.1. Descripción del corpus. Distribución temporal, reparto por bodega, reparto por segmento y
+distribución de las valoraciones. El 75,9 % de reseñas de cinco estrellas se presenta aquí, porque
+condiciona la lectura de todo lo que sigue.
+
+4.2. Importancia y desempeño de los ocho atributos en el conjunto del destino. Tabla de
+referencia, previa a la segmentación.
+
+4.3. Matriz del turista nacional. Figura y lectura cuadrante a cuadrante.
+
+4.4. Matriz del turista internacional. Figura y lectura, con la misma estructura que el epígrafe
+anterior para que la comparación resulte inmediata.
+
+4.5. Comparación de las dos matrices. Superposición con el desplazamiento de cada atributo y tabla
+de brechas. Aquí se expone el primer resultado: ningún atributo cambia de cuadrante. Debe
+presentarse como lo que es, un hallazgo, y no como una ausencia de hallazgo.
+
+4.6. Las dos brechas de mayor magnitud. Organización y reserva, con 10,61 puntos porcentuales más
+de menciones en el segmento internacional, e instalaciones, con 17,39 puntos más en el nacional.
+Entorno y viñedo se señala con asterisco y se excluye de la interpretación, por sus 37 menciones
+en el segmento internacional.
+
+Todas las tablas y figuras llevan título, numeración y línea de fuente, con la mención al proyecto
+que exige el apartado 12.1.c.
+
+### Capítulo 5. Discusión · 3 a 4 páginas · semana 5
+
+5.1. Contraste con la literatura. Los resultados frente a lo que describen Bi et al. (2019) y
+Zhang et al. (2021), con atención al efecto techo: sus corpus están más repartidos y el de este
+trabajo no, lo que afecta a la capacidad de discriminar atributos por encima de la media.
+
+5.2. Convergencia con una medición independiente. La auditoría de las 41 webs del proyecto mostró
+carencia generalizada de reserva en línea y de versión en inglés, lo que coincide con la mayor
+mención de problemas de organización y reserva en el segmento internacional. Dos fuentes distintas
+que apuntan a lo mismo refuerzan el resultado.
+
+5.3. Implicaciones para la gestión del destino. Qué se deriva de que las prioridades coincidan y
+el énfasis no: una sola agenda de actuación, con distinto peso según el público al que se dirija
+cada medida. Recomendaciones sobre organización y reserva, y sobre la mediación interpretativa del
+patrimonio para el visitante extranjero.
+
+### Capítulo 6. Conclusiones · 2 a 3 páginas · semana 5
+
+Respuesta expresa a cada uno de los objetivos específicos, en el mismo orden en que se enunciaron
+en el epígrafe 1.2; aportación del trabajo; limitaciones, en forma sintética, puesto que la
+central ya se ha declarado en metodología; y futuras líneas de investigación, entre ellas la
+incorporación de TripAdvisor, el análisis por bodega, el contraste inferencial de las diferencias
+observadas y el seguimiento de la serie temporal.
+
+No se introduce en este capítulo ningún dato que no figure en el capítulo 4. La rúbrica valora la
+correspondencia de las conclusiones con los objetivos y con los resultados obtenidos.
+
+### Capítulo 7. Bibliografía
+
+Normas APA, solo con las obras efectivamente citadas en el texto, ordenadas alfabéticamente.
+
+### Anexos
+
+No computan para el mínimo de 30 páginas. Aquí van el diccionario de términos de cada atributo,
+las tablas numéricas completas de menciones y sentimiento, y las figuras que no se hayan
+incorporado al capítulo 4.
+
+### Reparto orientativo de la extensión
+
+| Capítulo | Páginas |
+|---|---|
+| 1. Introducción | 3 a 4 |
+| 2. Revisión de la literatura | 8 a 10 |
+| 3. Metodología | 6 a 8 |
+| 4. Análisis de resultados | 8 a 10 |
+| 5. Discusión | 3 a 4 |
+| 6. Conclusiones | 2 a 3 |
+| Total, sin índices ni bibliografía | 30 a 39 |
+
+El mínimo normativo se alcanza con holgura. Si el trabajo se queda corto, el capítulo donde suele
+faltar desarrollo es el 2, y el que nunca debe engordarse con relleno es el 4.
 
 ### Normas de formato
 
