@@ -29,7 +29,7 @@ Nómbralas `AAAA-MM-DD_descripcion.pdf` para que ordenen solas.
 
 | | |
 |---|---|
-| **Tema** | IPA **segmentado por procedencia**: ¿valoran lo mismo el visitante hispanohablante y el internacional? |
+| **Tema** | IPA **segmentado por procedencia**: ¿valoran lo mismo el turista nacional y el internacional? |
 | **Tutor** | Antonio Rafael Ramos Rodríguez |
 | **Entrega al tutor** | **4 de enero de 2027** *(la norma dice «hasta el 6», pero el 6 es Reyes)* |
 | **Defensa** | Entre el 1 y el 16 de febrero de 2027 |

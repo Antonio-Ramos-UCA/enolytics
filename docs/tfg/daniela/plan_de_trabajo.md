@@ -10,8 +10,8 @@
 
 ## 1. Qué vas a hacer
 
-> **¿Valoran lo mismo el visitante que escribe en español y el que escribe en otro idioma? ¿O
-> el Marco de Jerez debería atender a dos agendas distintas?**
+> **¿Valoran lo mismo el turista nacional y el internacional? ¿O el Marco de Jerez debería
+> atender a dos agendas distintas?**
 
 Vas a analizar **10.972 reseñas reales** de las 41 bodegas de la Ruta del Vino y Brandy de Jerez
 y a construir **dos análisis importancia-desempeño (IPA)**, uno por segmento. El IPA es un mapa
@@ -52,11 +52,11 @@ visitante.
 
 **Segundo, y es lo bueno: el peso cambia muchísimo, y cambia donde más duele.**
 
-| Atributo | Lo mencionan los hispanohablantes | Los internacionales |
+| Atributo | Turista nacional | Turista internacional |
 |---|---|---|
-| **Organización y reserva** | 2,7 % de sus reseñas | **13,0 %** |
-| Visita y experiencia | 69,9 % | 79,8 % |
-| **Instalaciones** | **62,3 %** | 44,1 % |
+| **Organización y reserva** | 2,6 % de sus reseñas | **13,3 %** |
+| Visita y experiencia | 70,0 % | 79,7 % |
+| **Instalaciones** | **62,0 %** | 44,6 % |
 
 El visitante internacional tropieza con la reserva **casi cinco veces más**. Y «organización y
 reserva» es, además, **el atributo con peor desempeño de los ocho en los dos segmentos**. Lo que
@@ -66,9 +66,9 @@ Eso enlaza con algo que el proyecto ya había medido por otra vía: la auditorí
 mostró que la mayoría de bodegas **no tiene reserva online ni versión en inglés**. La queja no
 sale de la nada, y tu conclusión se escribe sola.
 
-Al revés pasa con las **instalaciones**: el visitante en español habla mucho más de ellas —son
-las catedrales del vino—, un patrimonio que al internacional parece decirle menos, o que no sabe
-leer si nadie se lo explica. Ahí tienes otra recomendación.
+Al revés pasa con las **instalaciones**: el turista nacional habla mucho más de ellas —son las
+catedrales del vino—, un patrimonio que al internacional parece decirle menos, o que no sabe leer
+si nadie se lo explica. Ahí tienes otra recomendación.
 
 > **Tu tesis, en una frase:** las prioridades coinciden, el énfasis no; y la mayor divergencia
 > cae sobre el atributo peor resuelto del destino.
@@ -179,7 +179,7 @@ Recibirás un **Excel** con:
 - Un **guion de interpretación** — empieza por esa hoja
 - La hoja **Comparación**, que es el corazón del trabajo: cuánto menciona cada segmento cada
   atributo, con qué sentimiento, y la brecha entre ambos
-- Las **dos matrices IPA**, hispanohablante e internacional
+- Las **dos matrices IPA**, turista nacional y turista internacional
 - Las reseñas **seudonimizadas**, con su segmento
 
 Y cuatro figuras listas para pegar: las dos matrices, una que superpone ambas con flechas, y
@@ -192,8 +192,8 @@ Y cuatro figuras listas para pegar: las dos matrices, una que superpone ambas co
 | Reseñas | 10.972 |
 | Bodegas | 41 |
 | Con atributo detectado | 6.542 |
-| — hispanohablantes | 4.854 |
-| — internacionales | 1.556 |
+| — de turista nacional | 4.893 |
+| — de turista internacional | 1.517 |
 | — sin idioma determinado | 132 (**solo el 2 %**) |
 | Periodo | 22/07/2011 – 06/07/2026 |
 | Valoraciones de 5★ | 75,9 % |
@@ -255,12 +255,22 @@ y el Consejo Regulador de la D.O. Jerez-Xérès-Sherry.
 
 Un TFG que reconoce sus límites puntúa **más**, no menos. Las tuyas:
 
-- **Idioma no es nacionalidad.** Es la limitación central de tu diseño, así que decláralo en
-  Metodología y no solo aquí: un mexicano escribe en español y es turista internacional, y un
-  alemán que sepa español puede escribir en español. El idioma es un **proxy** de procedencia —el
-  mejor disponible sin encuestar— pero es un proxy. A tu favor: de las reseñas con atributo
-  detectado, solo el **2 %** queda sin clasificar, porque las demasiado cortas para detectar
-  idioma tampoco tienen atributos.
+- **El idioma es un proxy de la procedencia.** Es la limitación central de tu diseño, así que
+  va en **Metodología**, no escondida aquí. Lo honesto no es solo declararla: es **acotarla con un
+  dato**, y lo tienes.
+
+  El segmento se asigna por el idioma detectado: castellano, catalán, gallego o euskera →
+  **nacional**; cualquier otro → **internacional**. Tiene dos fugas, una corregida y otra medida:
+
+  - **Corregida:** el catalán es lengua de España. Las 39 reseñas en catalán cuentan como
+    nacionales, que es lo que son.
+  - **Medida:** un latinoamericano escribe en español y se contaría como nacional. Según
+    **Dataestur**, solo el **0,87 %** de las búsquedas de vuelo internacionales hacia Jerez
+    procede de países hispanohablantes —93.918 de 10.836.376—, así que el sesgo por esa vía es
+    **inferior al 1 %**. Cita esa cifra: es lo que sostiene todo tu diseño.
+
+  A tu favor también: de las reseñas con atributo detectado, solo el **2 %** queda sin
+  clasificar, porque las demasiado cortas para detectar idioma tampoco tienen atributos.
 - **Un atributo con muestra fina.** *Entorno y viñedo* tiene solo **37 menciones** en el segmento
   internacional. Va marcado con un asterisco en las figuras: no construyas ninguna conclusión
   sobre él.

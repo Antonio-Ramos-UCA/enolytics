@@ -2,7 +2,7 @@
 
 El trabajo
 ----------
-Comparar **qué valora el visitante hispanohablante y qué el internacional** en las bodegas del
+Comparar **qué valora el turista nacional y qué el internacional** en las bodegas del
 Marco de Jerez, mediante dos matrices importancia-desempeño construidas sobre 10.972 reseñas.
 Es una pregunta de gestión de destinos, no de medición: a un tribunal de Turismo le interesa
 saber si el destino debe atender a una agenda o a dos.
@@ -52,10 +52,14 @@ sys.path.insert(0, str(RAIZ))
 PROC = RAIZ / "datos" / "procesado"
 SALIDA = RAIZ / "docs" / "tfg" / "daniela" / "material"
 
-HISPANO = "Hispanohablante"
-INTERNAC = "Internacional (no hispanohablante)"
-SEGMENTOS = [HISPANO, INTERNAC]
-CORTO = {HISPANO: "Hispanohablante", INTERNAC: "Internacional"}
+NACIONAL = "Nacional"
+INTERNAC = "Internacional"
+SEGMENTOS = [NACIONAL, INTERNAC]
+CORTO = {NACIONAL: NACIONAL, INTERNAC: INTERNAC}
+
+# Lenguas de España. El castellano y las cooficiales marcan al visitante NACIONAL.
+# El catalán estaba cayendo en "internacional", que es sencillamente falso: son españoles.
+LENGUAS_ESPANA = {"es", "ca", "gl", "eu"}
 
 # Por debajo de esto, el dato del atributo en ese segmento es demasiado fino para sostener nada.
 MIN_FIABLE = 50
@@ -73,18 +77,36 @@ def seudonimo(resena_id: str) -> str:
     return "V-" + hashlib.sha256(str(resena_id).encode()).hexdigest()[:8].upper()
 
 
+def segmentar(idioma) -> str:
+    """Nacional / Internacional a partir del idioma detectado.
+
+    El idioma es un PROXY de procedencia, y el proxy tiene dos fugas. Una se corrige y la
+    otra se mide:
+    · Se corrige: el catalán (y el gallego o el euskera, si aparecen) es lengua de España.
+      Quien escribe en catalán es un visitante nacional, no internacional.
+    · Se mide: un latinoamericano escribe en español y se contaría como nacional. Según
+      Dataestur, solo el **0,87 %** de las búsquedas de vuelo internacionales hacia Jerez
+      procede de países hispanohablantes (93.918 de 10.836.376), así que el sesgo por esa vía
+      es inferior al 1 %. Es la cifra que justifica el diseño, y va citada en el TFG.
+    """
+    if not isinstance(idioma, str) or not idioma:
+        return "Sin determinar"
+    return NACIONAL if idioma.lower() in LENGUAS_ESPANA else INTERNAC
+
+
 def cargar():
     res = pd.read_csv(PROC / "resenas.csv")
     sa = pd.read_csv(PROC / "sentimiento_atributos.csv")
-    seg = res[["resena_id", "segmento_idioma"]].drop_duplicates("resena_id")
+    res["segmento"] = res["idioma"].map(segmentar)
+    seg = res[["resena_id", "segmento"]].drop_duplicates("resena_id")
     d = (sa.drop_duplicates(["resena_id", "atributo"])
            .merge(seg, on="resena_id", how="left"))
-    return res, d[d["segmento_idioma"].isin(SEGMENTOS)]
+    return res, d[d["segmento"].isin(SEGMENTOS)]
 
 
 def tabla_segmento(d: pd.DataFrame, segmento: str) -> pd.DataFrame:
     """Importancia (% de reseñas del segmento que lo mencionan) y desempeño (sentimiento)."""
-    sub = d[d["segmento_idioma"] == segmento]
+    sub = d[d["segmento"] == segmento]
     total = sub["resena_id"].nunique()
     t = (sub.groupby("atributo")
             .agg(menciones=("resena_id", "nunique"),
@@ -92,7 +114,7 @@ def tabla_segmento(d: pd.DataFrame, segmento: str) -> pd.DataFrame:
             .reset_index())
     t["importancia"] = (t["menciones"] / total * 100).round(2)
     t["desempeno"] = t["desempeno"].round(3)
-    t["segmento"] = CORTO[segmento]
+    t["segmento"] = segmento
     t["muestra_fina"] = t["menciones"] < MIN_FIABLE
     return t.sort_values("importancia", ascending=False)
 
@@ -159,7 +181,7 @@ def figura_movimiento(th, ti, u_i, u_d, destino):
     """Las dos nubes sobre la MISMA rejilla, con una flecha por atributo.
 
     Es la figura de la defensa: de un vistazo se ve hacia dónde se mueve cada atributo al
-    pasar del visitante hispanohablante al internacional.
+    pasar del turista nacional al internacional.
     """
     import matplotlib
     matplotlib.use("Agg")
@@ -173,11 +195,11 @@ def figura_movimiento(th, ti, u_i, u_d, destino):
                     arrowprops=dict(arrowstyle="->", color="#C9C5BA", lw=1.6,
                                     shrinkA=7, shrinkB=7))
     ax.scatter(j["importancia_h"], j["desempeno_h"], s=95, color="#2a78d6",
-               zorder=3, label="Hispanohablante")
+               zorder=3, label="Turista nacional")
     ax.scatter(j["importancia_i"], j["desempeno_i"], s=95, color="#eb6834",
-               zorder=3, label="Internacional")
+               zorder=3, label="Turista internacional")
     _marco(ax, u_i, u_d, EJES,
-           "Qué cambia del visitante hispanohablante al internacional")
+           "Qué cambia del turista nacional al internacional")
     medio = j[["importancia_h", "importancia_i"]].values.mean()
     for _, r in j.iterrows():
         der = r["importancia_i"] > medio
@@ -194,16 +216,18 @@ LEEME = [
     ("GUION DE INTERPRETACION — TFG Daniela", ""),
     ("", ""),
     ("LA PREGUNTA DEL TRABAJO",
-     "Valoran lo mismo el visitante hispanohablante y el internacional? O el Marco de Jerez "
+     "Valoran lo mismo el turista nacional y el internacional? O el Marco de Jerez "
      "deberia atender a dos agendas distintas?"),
     ("", ""),
     ("Que hay en este libro", ""),
     ("Resenas", "Las 10.972 resenas SEUDONIMIZADAS, con su segmento. En vez del nombre del "
                 "autor hay un codigo estable (V-XXXXXXXX)."),
+    ("COMO SE DEFINE EL SEGMENTO",
+     "Por el IDIOMA detectado de la resena. Castellano, catalan, gallego o euskera = turista NACIONAL; cualquier otro = INTERNACIONAL. Es un proxy, y tiene dos fugas: una se corrige y la otra se mide. Se corrige: el catalan es lengua de Espana, asi que quien escribe en catalan es nacional (39 resenas que antes caian en internacional). Se mide: un latinoamericano escribe en espanol y se contaria como nacional, pero segun Dataestur solo el 0,87 % de las busquedas de vuelo internacionales hacia Jerez procede de paises hispanohablantes (93.918 de 10.836.376). CITA ESA CIFRA en la metodologia: es lo que justifica el diseno."),
     ("Comparacion", "LA HOJA CLAVE. Que porcentaje de las resenas de cada segmento menciona "
                     "cada atributo, con que sentimiento, y si cambia de cuadrante."),
-    ("IPA hispanohablante", "La matriz del visitante que escribe en espanol."),
-    ("IPA internacional", "La matriz del que escribe en otro idioma."),
+    ("IPA nacional", "La matriz del turista nacional: escribe en castellano, catalan, gallego o euskera."),
+    ("IPA internacional", "La matriz del turista internacional: escribe en cualquier otro idioma."),
     ("Atributos", "Tabla base por segmento, con menciones en bruto."),
     ("", ""),
     ("AVISO RGPD",
@@ -240,9 +264,8 @@ LEEME = [
      "Las prioridades coinciden; el enfasis no. Y la mayor divergencia cae sobre el atributo peor resuelto del destino, lo que convierte la reserva en ingles y online en la actuacion de mayor retorno."),
     ("", ""),
     ("LIMITACIONES QUE DEBES DECLARAR", ""),
-    ("Idioma no es nacionalidad",
-     "Un mexicano escribe en espanol y es turista internacional. El idioma es un PROXY de "
-     "procedencia, el mejor disponible, pero es un proxy."),
+    ("El idioma es un proxy de la procedencia",
+     "No es lo mismo escribir en espanol que residir en Espana. Lo honesto es declararlo Y acotarlo: el sesgo por latinoamericanos contados como nacionales afecta a menos del 1 % de la demanda internacional hacia Jerez (Dataestur). Declaralo en Metodologia, no solo en limitaciones."),
     ("Muestra fina en un atributo",
      "Entorno y vinedo tiene solo 37 menciones en el segmento internacional. Va marcado con un "
      "asterisco en las figuras. No construyas ninguna conclusion sobre el."),
@@ -257,7 +280,7 @@ LEEME = [
     ("Resenas totales", "10.972"),
     ("Bodegas", "41"),
     ("Resenas con atributo detectado", "6.542"),
-    ("  de ellas, hispanohablantes", "4.854"),
+    ("  de ellas, nacionales", "4.893"),
     ("  de ellas, internacionales", "1.556"),
     ("  sin idioma determinado", "132 (solo el 2 %)"),
     ("Periodo", "22/07/2011 - 06/07/2026"),
@@ -287,7 +310,7 @@ def figura_brechas(comp: pd.DataFrame, destino: Path) -> None:
     ax.set_xlabel("Diferencia en % de reseñas que mencionan el atributo "
                   "(puntos porcentuales)")
     ax.set_title("De qué habla más cada segmento", fontsize=12.5, loc="left", pad=26)
-    ax.text(0, 1.045, "← lo menciona más el HISPANOHABLANTE        "
+    ax.text(0, 1.045, "← lo menciona más el turista NACIONAL        "
                       "lo menciona más el INTERNACIONAL →",
             transform=ax.transAxes, fontsize=9, color="#57544E")
     ax.spines[["top", "right", "left"]].set_visible(False)
@@ -300,26 +323,26 @@ def main() -> None:
     SALIDA.mkdir(parents=True, exist_ok=True)
     res, d = cargar()
 
-    th = tabla_segmento(d, HISPANO)
+    th = tabla_segmento(d, NACIONAL)
     ti = tabla_segmento(d, INTERNAC)
     u_i, u_d = umbrales([th, ti])
     th, ti = con_cuadrante(th, u_i, u_d), con_cuadrante(ti, u_i, u_d)
 
     cols = ["atributo", "menciones", "importancia", "desempeno", "cuadrante", "muestra_fina"]
-    comp = (th[cols].rename(columns={c: c + "_hisp" for c in cols[1:]})
+    comp = (th[cols].rename(columns={c: c + "_nac" for c in cols[1:]})
             .merge(ti[cols].rename(columns={c: c + "_internac" for c in cols[1:]}),
                    on="atributo"))
     comp["brecha_importancia_pp"] = (comp["importancia_internac"]
-                                     - comp["importancia_hisp"]).round(2)
+                                     - comp["importancia_nac"]).round(2)
     comp["brecha_desempeno"] = (comp["desempeno_internac"]
-                                - comp["desempeno_hisp"]).round(3)
-    comp["CAMBIA_CUADRANTE"] = comp["cuadrante_hisp"] != comp["cuadrante_internac"]
+                                - comp["desempeno_nac"]).round(3)
+    comp["CAMBIA_CUADRANTE"] = comp["cuadrante_nac"] != comp["cuadrante_internac"]
     comp = comp.sort_values("brecha_importancia_pp")
 
     # --- Figuras --------------------------------------------------------------
-    figura_simple(th, u_i, u_d, "IPA del Marco — visitante HISPANOHABLANTE",
-                  "#2a78d6", SALIDA / "ipa_hispanohablante.png")
-    figura_simple(ti, u_i, u_d, "IPA del Marco — visitante INTERNACIONAL",
+    figura_simple(th, u_i, u_d, "IPA del Marco — turista NACIONAL",
+                  "#2a78d6", SALIDA / "ipa_nacional.png")
+    figura_simple(ti, u_i, u_d, "IPA del Marco — turista INTERNACIONAL",
                   "#eb6834", SALIDA / "ipa_internacional.png")
     figura_movimiento(th, ti, u_i, u_d, SALIDA / "ipa_movimiento.png")
     figura_brechas(comp, SALIDA / "brechas_por_segmento.png")
@@ -327,21 +350,20 @@ def main() -> None:
     # --- Excel ----------------------------------------------------------------
     r = res.copy()
     r["visitante"] = r["resena_id"].map(seudonimo)
-    r = r[["visitante", "bodega", "puntuacion", "fecha", "texto", "idioma",
-           "segmento_idioma"]]
+    r = r[["visitante", "bodega", "puntuacion", "fecha", "texto", "idioma", "segmento"]]
     assert "autor" not in r.columns and "enlace_resena" not in r.columns
 
     destino = SALIDA / "material_tfg_daniela.xlsx"
     with pd.ExcelWriter(destino, engine="xlsxwriter") as xl:
         pd.DataFrame(LEEME, columns=["", " "]).to_excel(xl, sheet_name="LEEME", index=False)
         comp.to_excel(xl, sheet_name="Comparacion", index=False, startrow=4)
-        th.to_excel(xl, sheet_name="IPA hispanohablante", index=False, startrow=3)
+        th.to_excel(xl, sheet_name="IPA nacional", index=False, startrow=3)
         ti.to_excel(xl, sheet_name="IPA internacional", index=False, startrow=3)
         pd.concat([th, ti]).to_excel(xl, sheet_name="Atributos", index=False)
         r.to_excel(xl, sheet_name="Resenas", index=False)
 
         neg = xl.book.add_format({"bold": True})
-        for hoja in ["IPA hispanohablante", "IPA internacional", "Comparacion"]:
+        for hoja in ["IPA nacional", "IPA internacional", "Comparacion"]:
             h = xl.sheets[hoja]
             h.write(0, 0, f"Umbral de importancia (comun a los dos segmentos): {u_i:.3f} %", neg)
             h.write(1, 0, f"Umbral de desempeno  (comun a los dos segmentos): {u_d:.3f}", neg)
@@ -355,11 +377,11 @@ def main() -> None:
             hoja.set_column(1, 14, 20)
 
     print(f"Excel:   {destino}")
-    print(f"Figuras: ipa_hispanohablante.png · ipa_internacional.png · ipa_movimiento.png")
+    print(f"Figuras: ipa_nacional.png · ipa_internacional.png · ipa_movimiento.png")
     print(f"\nUmbrales comunes: importancia {u_i:.3f} % · desempeño {u_d:.3f}")
     print(f"\nAtributos que CAMBIAN de cuadrante: {int(comp['CAMBIA_CUADRANTE'].sum())}")
     for _, x in comp[comp["CAMBIA_CUADRANTE"]].iterrows():
-        print(f"  · {x['atributo']:28s} {x['cuadrante_hisp']:25s} -> {x['cuadrante_internac']}")
+        print(f"  · {x['atributo']:28s} {x['cuadrante_nac']:25s} -> {x['cuadrante_internac']}")
     print("\nMayores brechas de importancia (pp, + = habla más el internacional):")
     for _, x in comp.iloc[[0, 1, -2, -1]].iterrows():
         aviso = "  ⚠ muestra fina" if x["muestra_fina_internac"] else ""

@@ -609,7 +609,10 @@
   Convocatoria de **febrero 2027**; la fecha que manda es la **entrega al tutor el 6 de enero**
   (trabajamos con el 4, porque el 6 es Reyes): siete semanas naturales, cinco de trabajo.
   Tema (cambiado el 18/11 a propuesta de ARRR): **IPA SEGMENTADO por procedencia** —
-  hispanohablante frente a internacional. Se descartó el contraste frecuencia-vs-impacto
+  **turista nacional frente a internacional**, asignado por idioma (castellano y lenguas
+  cooficiales = nacional). El sesgo del proxy está **acotado con dato citable**: solo el
+  **0,87 %** de las búsquedas de vuelo internacionales hacia Jerez procede de países
+  hispanohablantes (Dataestur, 93.918 de 10.836.376). Se descartó el contraste frecuencia-vs-impacto
   porque era una aportación metodológica, y a un tribunal de Turismo le encaja mejor una
   pregunta de gestión de destinos. Tutor único: ARRR.
   **Hallazgos ya verificados:** los 8 atributos comparten cuadrante en los dos segmentos
