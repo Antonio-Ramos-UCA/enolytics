@@ -7,9 +7,9 @@ Un subdirectorio por estudiante.
 docs/tfg/
 ├── LEEME.md                    ← este archivo
 ├── temas_posibles.md           # 6 temas de TFG sobre la base del proyecto, con su guión
+├── Indicaciones para tutores de TFG y TFM vinculados a ENOLYTICS.docx
 └── daniela/
     ├── plan_de_trabajo.md      # el plan que se le entrega
-    ├── Indicaciones para tutores de TFG y TFM vinculados a ENOLYTICS.docx
     ├── material/               # lo que se le prepara (Excel, guiones de interpretación)
     └── entregas/               # lo que va entregando, semana a semana
 ```
@@ -36,8 +36,8 @@ Nómbralas `AAAA-MM-DD_descripcion.pdf` para que ordenen solas.
 | **Defensa** | Entre el 1 y el 16 de febrero de 2027 |
 | **Plan** | [`daniela/plan_de_trabajo.md`](daniela/plan_de_trabajo.md) |
 
-**Pendiente del tutor:** preparar el Excel seudonimizado con las dos matrices IPA y su guion de
-interpretación, para la semana del 7 de diciembre (`daniela/material/`).
+**Material entregado** (18/11/2026): plan de trabajo en PDF y Excel seudonimizado con las dos
+matrices IPA, las tablas de comparación y su guion de interpretación (`daniela/material/`).
 
 **Pendiente de Daniela:** confirmar que tiene aprobadas todas las asignaturas básicas y
 obligatorias. Sin eso no puede defender en febrero, por mucho que entregue a tiempo.
@@ -55,8 +55,9 @@ plataforma **no** responda.
 
 Todo TFG o TFM que use datos de ENOLYTICS debe hacer constar la financiación FEDER, declarar a qué
 indicadores del proyecto aporta y depositarse en RODIN. Las instrucciones completas están en
-*Indicaciones para tutores de TFG y TFM vinculados a ENOLYTICS* (Paula, 18/11/2026), dentro de
-`daniela/`. Su aplicación a un trabajo concreto se ve en el apartado 12 del plan de Daniela.
+[*Indicaciones para tutores de TFG y TFM vinculados a ENOLYTICS*](Indicaciones%20para%20tutores%20de%20TFG%20y%20TFM%20vinculados%20a%20ENOLYTICS.docx)
+(Paula, 18/11/2026). **Se aplican a todos los trabajos**, no solo al que esté en curso; su
+traducción a un trabajo concreto se ve en el apartado 12 del plan de Daniela.
 
 La memoria compromete **entre dos y tres TFG y entre uno y dos TFM**, todos defendidos antes de
 **septiembre de 2027**, cuando se presenta la memoria final del proyecto.
