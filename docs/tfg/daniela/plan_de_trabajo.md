@@ -1,6 +1,6 @@
 # Plan de trabajo — TFG · Grado en Turismo · Convocatoria de febrero 2027
 
-**Estudiante:** Dani · **Tutor:** Antonio Rafael Ramos Rodríguez
+**Estudiante:** Daniela · **Tutor:** Antonio Rafael Ramos Rodríguez
 **Fecha límite de entrega al tutor: lunes 4 de enero de 2027**
 *(la normativa dice «hasta el 6 de enero», pero el 6 es festivo: trabajamos con el día 4)*
 

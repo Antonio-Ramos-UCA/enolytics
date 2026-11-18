@@ -567,16 +567,17 @@
   (corpus monolingüe). Nuestro corpus multilingüe sí. Candidato fuerte a paper.
 - [ ] **Revista objetivo:** IJCHM (Emerald, Q1) acepta exactamente este método (reseñas + Kano +
   IPA). Ver el paper de `BIBLIOGRAFIA/` como plantilla de estructura y de nivel exigido.
-- [x] **TFG de Dani — plan de trabajo cerrado el 18/11/2026: `docs/tfg_plan_dani.md`.**
+- [x] **TFG de Daniela — plan cerrado el 18/11/2026: `docs/tfg/daniela/plan_de_trabajo.md`.**
   Convocatoria de **febrero 2027**; la fecha que manda es la **entrega al tutor el 6 de enero**
   (trabajamos con el 4, porque el 6 es Reyes): siete semanas naturales, cinco de trabajo.
   Tema **descriptivo** por decisión de ARRR: **IPA del destino sin segmentar**, con el contraste
   frecuencia-vs-impacto como aportación propia de la estudiante. Tutor único: ARRR.
   **Pendiente de preparar:** el Excel seudonimizado con las dos matrices IPA y su guion de
-  interpretación (§7 del plan). Es lo que hay que tener listo para la semana 4 (7-13 dic).
-  **Pendiente de Dani:** confirmar que tiene todas las básicas y obligatorias aprobadas; si no,
+  interpretación (§7 del plan), en `docs/tfg/daniela/material/`. Listo para el 7 de diciembre.
+  **Pendiente de Daniela:** confirmar que tiene todas las básicas y obligatorias aprobadas; si no,
   no puede defender en febrero y habría que pasar a junio.
-- [ ] Otros TFG/TFM sobre la misma base. **Guión con 6 temas: `docs/tfg_guion.md`.**
+- [ ] Otros TFG/TFM sobre la misma base. **Guión con 6 temas: `docs/tfg/temas_posibles.md`.**
+  Índice de todos los trabajos: `docs/tfg/LEEME.md`.
   TFG principal propuesto: IPA **segmentado** por procedencia del visitante (hispanohablante
   4,58 vs. internacional 4,46) — la pregunta que ENOLYTICS no responde, que es lo que evita
   que el trabajo sea un manual de uso del cuadro de mando. Incluye otros 5 temas posibles

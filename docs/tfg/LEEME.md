@@ -1,0 +1,56 @@
+# TFG y TFM sobre la base de ENOLYTICS
+
+Trabajos de fin de grado y máster que se apoyan en los datos y el análisis del proyecto.
+Un subdirectorio por estudiante.
+
+```
+docs/tfg/
+├── LEEME.md                    ← este archivo
+├── temas_posibles.md           # 6 temas de TFG sobre la base del proyecto, con su guión
+└── daniela/
+    ├── plan_de_trabajo.md      # el plan que se le entrega
+    ├── material/               # lo que se le prepara (Excel, guiones de interpretación)
+    └── entregas/               # lo que va entregando, semana a semana
+```
+
+## Por qué las entregas se guardan
+
+No es burocracia. La rúbrica de la Facultad puntúa **«Planificación e Iniciativa»** con un 20 %
+de la nota del tutor, y dentro de ese ítem valora expresamente *el acuerdo tutor-estudiante sobre
+el cronograma* y *su cumplimiento*. Las entregas fechadas son la evidencia de ese 20 %.
+
+Nómbralas `AAAA-MM-DD_descripcion.pdf` para que ordenen solas.
+
+---
+
+## Trabajos en curso
+
+### Daniela — Grado en Turismo · convocatoria de febrero 2027
+
+| | |
+|---|---|
+| **Tema** | IPA del destino (sin segmentar), con el contraste frecuencia-vs-impacto como aportación propia |
+| **Tutor** | Antonio Rafael Ramos Rodríguez |
+| **Entrega al tutor** | **4 de enero de 2027** *(la norma dice «hasta el 6», pero el 6 es Reyes)* |
+| **Defensa** | Entre el 1 y el 16 de febrero de 2027 |
+| **Plan** | [`daniela/plan_de_trabajo.md`](daniela/plan_de_trabajo.md) |
+
+**Pendiente del tutor:** preparar el Excel seudonimizado con las dos matrices IPA y su guion de
+interpretación, para la semana del 7 de diciembre (`daniela/material/`).
+
+**Pendiente de Daniela:** confirmar que tiene aprobadas todas las asignaturas básicas y
+obligatorias. Sin eso no puede defender en febrero, por mucho que entregue a tiempo.
+
+---
+
+## Antes de abrir otro TFG
+
+Lee primero el apartado 0 de [`temas_posibles.md`](temas_posibles.md). El riesgo de cualquier TFG
+sobre este proyecto es el mismo: ENOLYTICS ya calcula lo que el estudiante iba a calcular, y el
+trabajo se queda en un manual de uso del cuadro de mando. Cada tema necesita una pregunta que la
+plataforma **no** responda.
+
+## Protección de datos
+
+El corpus de reseñas lleva nombre de autor. **Nada sale de aquí sin seudonimizar**, y en el
+trabajo no se reproducen nombres ni siquiera al citar una reseña como ejemplo.
