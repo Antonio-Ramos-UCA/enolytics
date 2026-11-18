@@ -1,8 +1,10 @@
 # Plan de trabajo — TFG · Grado en Turismo · Convocatoria de febrero 2027
 
 **Estudiante:** Daniela · **Tutor:** Antonio Rafael Ramos Rodríguez
-**Fecha límite de entrega al tutor: lunes 4 de enero de 2027**
-*(la normativa dice «hasta el 6 de enero», pero el 6 es festivo: trabajamos con el día 4)*
+
+> ### Fecha límite de entrega al tutor: lunes 4 de enero de 2027
+>
+> La normativa dice «hasta el 6 de enero», pero el 6 es festivo: trabajamos con el día 4.
 
 ---
 
@@ -106,9 +108,9 @@ sin contar portada ni anexos.
 3. **Resúmenes** de ~350 palabras, **en español y en inglés**
 4. **Introducción** — justificación, objetivos y estructura del trabajo
 5. **Desarrollo**, que debe incluir al menos:
-   - 5.1 Revisión de la literatura
-   - 5.2 Metodología
-   - 5.3 Análisis de resultados
+    - 5.1 Revisión de la literatura
+    - 5.2 Metodología
+    - 5.3 Análisis de resultados
 6. **Conclusiones**
 7. **Bibliografía** (APA)
 8. **Anexos**, si procede
