@@ -33,6 +33,16 @@
   ⚠️ **Mientras no se arregle**, cualquier extracto que salga del proyecto —empezando por el de
   Daniela— va seudonimizado sin excepción.
 
+- [ ] **Residuo: hay nombres de personas DENTRO del texto de las reseñas** (detectado el
+  18/11/2026 al verificar el extracto de Daniela). Seudonimizar la columna `autor` no los quita:
+  el visitante menciona a su guía («nuestra guía Lucía») o firma la reseña. **No se pueden borrar
+  automáticamente sin destrozar el corpus**, porque un filtro de nombres se llevaría *Pedro
+  Ximénez* (un vino), *Pedro Romero* y *Luis Pérez* (bodegas) o *González Byass*. De 12
+  coincidencias examinadas, 5 eran marcas o fundadores históricos y 7 personas reales.
+  **Mitigación aplicada:** aviso explícito en el material de Daniela y en su plan, con la regla
+  de sustituir por `[guía]` o `[visitante]` al citar. **Si algún día se quiere resolver de
+  verdad**, haría falta reconocimiento de entidades con una lista blanca del dominio.
+
 ## Datos y fuentes
 - [ ] **SABI** — confirmar acceso de la UCA (biblioteca) para facturación/empleo por bodega (inteligencia económica y de negocios). Alternativa: Registro Mercantil/BORME.
 - [x] 🐛 **BUG DEL CLIENTE DATAESTUR CORREGIDO** — algunos endpoints (`PUERTOS_DL`, `AFILIACION_TURISMO_DL`) **devuelven un fichero Excel, no CSV**. El cliente solo leía CSV y fallaba con "No se pudo decodificar". Ahora detecta el formato por la firma del contenido (`PK` = cabecera zip de xlsx) y el content-type. **Esto desbloquea el empleo turístico (`AFILIACION_TURISMO_DL`), que llevaba semanas atascado y es un indicador de la Tabla 1 a cero.**

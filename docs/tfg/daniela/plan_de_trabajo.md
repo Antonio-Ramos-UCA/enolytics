@@ -172,8 +172,15 @@ Recibirás un **Excel** con:
 | Valoraciones de 5★ | 75,9 % |
 | Reseñas críticas (≤2★) | 646 |
 
-**Protección de datos:** aunque te lleguen seudonimizadas, **no reproduzcas nombres de autor** en
-ningún sitio. Si citas alguna reseña como ejemplo, va sin autoría.
+**Protección de datos.** Las reseñas te llegan seudonimizadas: en vez del nombre del autor hay
+un código estable (`V-XXXXXXXX`). Pero hay un residuo que debes conocer: **el texto de algunas
+reseñas contiene nombres de personas**, porque el visitante menciona a su guía («nuestra guía
+Lucía») o firma la reseña. No se han borrado automáticamente porque un filtro de nombres se
+llevaría por delante el vocabulario del propio dominio: *Pedro Ximénez* es un vino, y *Pedro
+Romero* o *Luis Pérez* son bodegas.
+
+> **Regla, sin excepciones:** si citas una reseña como ejemplo, sustituye cualquier nombre de
+> persona por `[guía]` o `[visitante]`. En el TFG no aparece el nombre de nadie.
 
 ---
 
