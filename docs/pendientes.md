@@ -608,8 +608,14 @@
 - [x] **TFG de Daniela — plan cerrado el 18/11/2026: `docs/tfg/daniela/plan_de_trabajo.md`.**
   Convocatoria de **febrero 2027**; la fecha que manda es la **entrega al tutor el 6 de enero**
   (trabajamos con el 4, porque el 6 es Reyes): siete semanas naturales, cinco de trabajo.
-  Tema **descriptivo** por decisión de ARRR: **IPA del destino sin segmentar**, con el contraste
-  frecuencia-vs-impacto como aportación propia de la estudiante. Tutor único: ARRR.
+  Tema (cambiado el 18/11 a propuesta de ARRR): **IPA SEGMENTADO por procedencia** —
+  hispanohablante frente a internacional. Se descartó el contraste frecuencia-vs-impacto
+  porque era una aportación metodológica, y a un tribunal de Turismo le encaja mejor una
+  pregunta de gestión de destinos. Tutor único: ARRR.
+  **Hallazgos ya verificados:** los 8 atributos comparten cuadrante en los dos segmentos
+  (el destino no necesita dos estrategias), pero el peso cambia mucho: «organización y
+  reserva» pasa del 2,7 % de menciones al **13,0 %**, y es el atributo con **peor desempeño**
+  de los ocho. «Instalaciones» va al revés: 62,3 % frente a 44,1 %.
   **Pendiente de preparar:** el Excel seudonimizado con las dos matrices IPA y su guion de
   interpretación (§7 del plan), en `docs/tfg/daniela/material/`. Listo para el 7 de diciembre.
   **Pendiente de Daniela:** confirmar que tiene todas las básicas y obligatorias aprobadas; si no,

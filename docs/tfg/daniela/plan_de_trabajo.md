@@ -10,14 +10,15 @@
 
 ## 1. Qué vas a hacer
 
-> **Averiguar qué debe mejorar primero el enoturismo del Marco de Jerez, a partir de lo que
-> escriben los propios visitantes.**
+> **¿Valoran lo mismo el visitante que escribe en español y el que escribe en otro idioma? ¿O
+> el Marco de Jerez debería atender a dos agendas distintas?**
 
 Vas a analizar **10.972 reseñas reales** de las 41 bodegas de la Ruta del Vino y Brandy de Jerez
-y a construir un **análisis importancia-desempeño (IPA)**: un mapa de cuatro cuadrantes que cruza
-cuánto le importa al visitante cada aspecto de la visita con lo bien que se está haciendo. Lo que
-cae abajo a la derecha —mucha importancia, poco desempeño— es la prioridad de actuación del
-destino.
+y a construir **dos análisis importancia-desempeño (IPA)**, uno por segmento. El IPA es un mapa
+de cuatro cuadrantes que cruza cuánto le importa al visitante cada aspecto de la visita con lo
+bien que se está haciendo; lo que cae abajo a la derecha —mucha importancia, poco desempeño— es
+la prioridad de actuación. Con dos mapas enfrentados, la pregunta es si el destino tiene un
+problema o tiene dos.
 
 No partes de cero: el trabajo se apoya en **ENOLYTICS**, un proyecto de investigación de la
 Universidad de Cádiz financiado con fondos FEDER. Eso te da acceso a unos datos que ningún TFG
@@ -37,23 +38,40 @@ visita**. Que es justo lo que cuentan las reseñas.
 
 Este es el punto que decide si tu TFG es bueno o es un folleto.
 
-El proyecto ENOLYTICS ya tiene un cuadro de mando que muestra análisis parecidos. **Si tu trabajo
-se limita a describir lo que esa herramienta enseña, el tribunal lo notará.** Tienes que aportar
-algo tuyo, y ese algo ya está elegido:
+El proyecto ENOLYTICS ya tiene un cuadro de mando que analiza el destino **en conjunto**. Lo que
+no hace —y es tu hueco— es **separar al visitante por procedencia**. Si tu trabajo se limitara a
+describir lo que la herramienta enseña, el tribunal lo notaría; con la segmentación, estás
+respondiendo algo que nadie ha respondido todavía.
 
-> **Comparar las dos formas de medir la «importancia» de un atributo, y mostrar que no dan lo
-> mismo.**
+Y los datos ya te dan material. Te adelanto los dos hallazgos para que sepas adónde vas:
 
-- **Por frecuencia:** un atributo es importante si se menciona mucho.
-- **Por impacto:** un atributo es importante si, cuando el visitante habla de él, la valoración
-  global se mueve.
+**Primero: los ocho atributos comparten cuadrante en los dos segmentos.** Eso no es «no hay
+resultado»: **es el resultado**. El destino no necesita dos estrategias de prioridades
+distintas. Lo que cambia no es *qué* priorizar, sino **cuánto pesa cada cosa** para cada
+visitante.
 
-No son intercambiables, y hay un caso precioso en los datos: **«organización y reserva»**. Se
-menciona poco —porque solo se habla de ella cuando falla—, así que por frecuencia aparece como
-«baja prioridad». Pero cuando aparece, arrastra la nota de toda la visita, así que por impacto
-sale como «actuar aquí». **Dos mapas distintos del mismo destino.**
+**Segundo, y es lo bueno: el peso cambia muchísimo, y cambia donde más duele.**
 
-Tu TFG responde: ¿cuál de los dos debe usar un gestor de destino, y qué se juega al elegir?
+| Atributo | Lo mencionan los hispanohablantes | Los internacionales |
+|---|---|---|
+| **Organización y reserva** | 2,7 % de sus reseñas | **13,0 %** |
+| Visita y experiencia | 69,9 % | 79,8 % |
+| **Instalaciones** | **62,3 %** | 44,1 % |
+
+El visitante internacional tropieza con la reserva **casi cinco veces más**. Y «organización y
+reserva» es, además, **el atributo con peor desempeño de los ocho en los dos segmentos**. Lo que
+peor se hace es justo donde más se separa el visitante extranjero.
+
+Eso enlaza con algo que el proyecto ya había medido por otra vía: la auditoría de las 41 webs
+mostró que la mayoría de bodegas **no tiene reserva online ni versión en inglés**. La queja no
+sale de la nada, y tu conclusión se escribe sola.
+
+Al revés pasa con las **instalaciones**: el visitante en español habla mucho más de ellas —son
+las catedrales del vino—, un patrimonio que al internacional parece decirle menos, o que no sabe
+leer si nadie se lo explica. Ahí tienes otra recomendación.
+
+> **Tu tesis, en una frase:** las prioridades coinciden, el énfasis no; y la mayor divergencia
+> cae sobre el atributo peor resuelto del destino.
 
 ---
 
@@ -62,9 +80,9 @@ Tu TFG responde: ¿cuál de los dos debe usar un gestor de destino, y qué se ju
 | Lo recibes hecho | Lo pones tú |
 |---|---|
 | Las 10.972 reseñas, ya limpias y **sin nombres de autor** | La búsqueda y redacción del marco teórico |
-| La clasificación de cada reseña por atributo | La **interpretación** de los resultados |
-| Las tablas de frecuencia, sentimiento e impacto | La comparación frecuencia ↔ impacto |
-| Las dos matrices IPA ya calculadas y dibujadas | Las conclusiones y recomendaciones de gestión |
+| Cada reseña clasificada por atributo y por segmento | La **interpretación** de los resultados |
+| Las tablas de menciones y sentimiento por segmento | La lectura de las brechas entre segmentos |
+| Las dos matrices IPA y la figura de brechas | Las conclusiones y recomendaciones de gestión |
 | Un guion de interpretación para leerlas | La redacción completa y la defensa oral |
 
 **Importante:** en el capítulo de Metodología tienes que **decir con claridad** qué parte del
@@ -158,10 +176,14 @@ ensayes la defensa en voz alta más de una vez.
 ## 7. Los datos
 
 Recibirás un **Excel** con:
-- Las reseñas **seudonimizadas** (sin nombre de autor)
-- Una hoja por atributo con menciones, sentimiento medio e importancia por impacto
-- Las dos matrices IPA, por frecuencia y por impacto
-- Un guion de interpretación
+- Un **guion de interpretación** — empieza por esa hoja
+- La hoja **Comparación**, que es el corazón del trabajo: cuánto menciona cada segmento cada
+  atributo, con qué sentimiento, y la brecha entre ambos
+- Las **dos matrices IPA**, hispanohablante e internacional
+- Las reseñas **seudonimizadas**, con su segmento
+
+Y cuatro figuras listas para pegar: las dos matrices, una que superpone ambas con flechas, y
+**la de brechas**, que es la que cuenta el trabajo de un vistazo.
 
 ### Cifras del corpus, para que las cites bien
 
@@ -169,10 +191,12 @@ Recibirás un **Excel** con:
 |---|---|
 | Reseñas | 10.972 |
 | Bodegas | 41 |
-| Con texto analizable | 7.258 |
+| Con atributo detectado | 6.542 |
+| — hispanohablantes | 4.854 |
+| — internacionales | 1.556 |
+| — sin idioma determinado | 132 (**solo el 2 %**) |
 | Periodo | 22/07/2011 – 06/07/2026 |
 | Valoraciones de 5★ | 75,9 % |
-| Reseñas críticas (≤2★) | 646 |
 
 **Protección de datos.** Las reseñas te llegan seudonimizadas: en vez del nombre del autor hay
 un código estable (`V-XXXXXXXX`). Pero hay un residuo que debes conocer: **el texto de algunas
@@ -231,6 +255,19 @@ y el Consejo Regulador de la D.O. Jerez-Xérès-Sherry.
 
 Un TFG que reconoce sus límites puntúa **más**, no menos. Las tuyas:
 
+- **Idioma no es nacionalidad.** Es la limitación central de tu diseño, así que decláralo en
+  Metodología y no solo aquí: un mexicano escribe en español y es turista internacional, y un
+  alemán que sepa español puede escribir en español. El idioma es un **proxy** de procedencia —el
+  mejor disponible sin encuestar— pero es un proxy. A tu favor: de las reseñas con atributo
+  detectado, solo el **2 %** queda sin clasificar, porque las demasiado cortas para detectar
+  idioma tampoco tienen atributos.
+- **Un atributo con muestra fina.** *Entorno y viñedo* tiene solo **37 menciones** en el segmento
+  internacional. Va marcado con un asterisco en las figuras: no construyas ninguna conclusión
+  sobre él.
+- **La comparación es descriptiva, no inferencial.** Comparas dos matrices y describes las
+  diferencias; no contrastas si son estadísticamente significativas. Es una decisión consciente
+  y proporcionada al alcance de un TFG, pero **dilo**: hablas de diferencias observadas, no de
+  diferencias probadas.
 - **Las reseñas no son una muestra representativa.** Quien escribe reseñas tiende a los extremos,
   y solo cuentan los usuarios de Google.
 - **El efecto techo.** El 75,9 % de las valoraciones son de 5★, así que apenas hay margen por
