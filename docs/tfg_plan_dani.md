@@ -239,7 +239,7 @@ Un TFG que reconoce sus límites puntúa **más**, no menos. Las tuyas:
 
 - **Una tutoría cada semana**, corta, para revisar la entrega de esa semana.
 - Escríbeme en cuanto algo te bloquee más de un día. Con este calendario, perder una semana
-  callado es perder el 20 % de la nota del tutor.
+  en silencio es perder el 20 % de la nota del tutor.
 - Todo lo que me mandes, en PDF o Word, con tu nombre y la fecha en el nombre del archivo.
 - **Declara el uso de herramientas de IA** según la normativa de la UCA, si las empleas.
 

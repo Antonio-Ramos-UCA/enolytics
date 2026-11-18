@@ -571,7 +571,7 @@
   Convocatoria de **febrero 2027**; la fecha que manda es la **entrega al tutor el 6 de enero**
   (trabajamos con el 4, porque el 6 es Reyes): siete semanas naturales, cinco de trabajo.
   Tema **descriptivo** por decisión de ARRR: **IPA del destino sin segmentar**, con el contraste
-  frecuencia-vs-impacto como aportación propia del estudiante. Tutor único: ARRR.
+  frecuencia-vs-impacto como aportación propia de la estudiante. Tutor único: ARRR.
   **Pendiente de preparar:** el Excel seudonimizado con las dos matrices IPA y su guion de
   interpretación (§7 del plan). Es lo que hay que tener listo para la semana 4 (7-13 dic).
   **Pendiente de Dani:** confirmar que tiene todas las básicas y obligatorias aprobadas; si no,
