@@ -11,10 +11,18 @@ Cómo
 Markdown → HTML (biblioteca `markdown`) → PDF (motor de impresión de Chromium, vía Playwright).
 No hace falta LaTeX ni pandoc.
 
+Dos estilos
+-----------
+Por defecto se usa el estilo de la plataforma: tipografía de palo seco, epígrafes en color y
+realces sombreados. Con `--sobrio` se compone en registro académico: tipografía con remates,
+todo en negro, sin fondos ni filetes de color, tablas con reglas horizontales y citas marcadas
+solo por la sangría. Es el que corresponde a lo que se entrega a un estudiante o a un tribunal.
+
 Uso
 ---
     python3 scripts/md_a_pdf.py docs/tfg/daniela/plan_de_trabajo.md
     python3 scripts/md_a_pdf.py entrada.md salida.pdf
+    python3 scripts/md_a_pdf.py entrada.md salida.pdf --sobrio
 """
 from __future__ import annotations
 
@@ -72,29 +80,81 @@ blockquote p {{ margin: .2em 0; }}
 hr {{ border: none; border-top: 1px solid {estilo.REJILLA}; margin: 1.6em 0; }}
 """
 
+CSS_SOBRIO = """
+@page { size: A4; margin: 24mm 22mm 20mm 22mm; }
+* { box-sizing: border-box; }
+body {
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-size: 11pt; line-height: 1.52;
+  color: #000; margin: 0;
+}
+h1 {
+  font-size: 17pt; font-weight: 700; line-height: 1.25;
+  margin: 0 0 .6em; padding: 0;
+}
+h2 {
+  font-size: 12.5pt; font-weight: 700; color: #000;
+  margin: 1.9em 0 .55em; page-break-after: avoid;
+}
+h3 {
+  font-size: 11pt; font-weight: 400; font-style: italic;
+  margin: 1.3em 0 .4em; page-break-after: avoid;
+}
+p, li { margin: .5em 0; }
+ul, ol { padding-left: 1.4em; }
+li { padding-left: .15em; }
+strong { font-weight: 700; }
+em { font-style: italic; }
+a { color: #000; text-decoration: none; }
+code { font-family: Georgia, "Times New Roman", Times, serif; font-size: 1em; }
+table {
+  border-collapse: collapse; width: 100%; margin: 1em 0;
+  font-size: 10pt; page-break-inside: avoid;
+  border-top: 1.1pt solid #000; border-bottom: 1.1pt solid #000;
+}
+th {
+  text-align: left; font-weight: 700; background: none;
+  border-bottom: .6pt solid #000;
+}
+th, td { padding: .42em .6em .42em 0; vertical-align: top; }
+td { border: none; }
+tbody tr:first-child td { padding-top: .6em; }
+blockquote {
+  margin: .9em 0 .9em 1.9em; padding: 0; background: none; border: none;
+  page-break-inside: avoid;
+}
+blockquote p { margin: .3em 0; font-size: 10.3pt; }
+hr { border: none; border-top: .6pt solid #000; margin: 1.8em 0; }
+"""
 
-def convertir(origen: Path, destino: Path) -> None:
+
+def convertir(origen: Path, destino: Path, sobrio: bool = False) -> None:
     from playwright.sync_api import sync_playwright
+
+    hoja = CSS_SOBRIO if sobrio else CSS
 
     cuerpo = markdown.markdown(
         origen.read_text(encoding="utf-8"),
         extensions=["tables", "sane_lists", "attr_list"],
     )
     html = (f'<!doctype html><html lang="es"><meta charset="utf-8">'
-            f"<style>{CSS}</style><body>{cuerpo}</body></html>")
+            f"<style>{hoja}</style><body>{cuerpo}</body></html>")
 
     with sync_playwright() as pw:
         nav = pw.chromium.launch()
         pg = nav.new_page()
         pg.set_content(html, wait_until="load")
         pg.wait_for_timeout(400)
-        pg.pdf(path=str(destino), format="A4", print_background=True,
-               margin={"top": "19mm", "bottom": "17mm", "left": "17mm", "right": "17mm"},
+        m = ({"top": "24mm", "bottom": "20mm", "left": "22mm", "right": "22mm"} if sobrio
+             else {"top": "19mm", "bottom": "17mm", "left": "17mm", "right": "17mm"})
+        pg.pdf(path=str(destino), format="A4", print_background=True, margin=m,
                display_header_footer=True,
                header_template="<div></div>",
                footer_template=(
-                   '<div style="width:100%;font-size:7.5pt;color:#8B877E;'
-                   'font-family:system-ui,sans-serif;padding:0 17mm;">'
+                   f'<div style="width:100%;font-size:8pt;'
+                   f'color:{"#000" if sobrio else "#8B877E"};'
+                   f'font-family:{"Georgia, serif" if sobrio else "system-ui, sans-serif"};'
+                   f'padding:0 {"22mm" if sobrio else "17mm"};">'
                    '<span style="float:right">'
                    '<span class="pageNumber"></span> / <span class="totalPages"></span>'
                    "</span></div>"))
@@ -104,9 +164,11 @@ def convertir(origen: Path, destino: Path) -> None:
 def main() -> None:
     if len(sys.argv) < 2:
         sys.exit(__doc__)
-    origen = Path(sys.argv[1])
-    destino = Path(sys.argv[2]) if len(sys.argv) > 2 else origen.with_suffix(".pdf")
-    convertir(origen, destino)
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    sobrio = "--sobrio" in sys.argv
+    origen = Path(args[0])
+    destino = Path(args[1]) if len(args) > 1 else origen.with_suffix(".pdf")
+    convertir(origen, destino, sobrio=sobrio)
     kb = destino.stat().st_size / 1024
     print(f"{destino}  ({kb:.0f} KB)")
 
