@@ -5,6 +5,34 @@
 > profesional, logos FEDER al área principal, y frecuencia MENSUAL decidida para la
 > automatización de reseñas).
 
+## 🚨 RGPD — DATOS PERSONALES EN UN REPOSITORIO PÚBLICO (detectado el 18/11/2026)
+
+- [ ] **`datos/procesado/resenas.csv` está versionado en un repositorio público y contiene
+  10.971 nombres de autor (10.159 personas distintas), el texto de cada reseña y el enlace
+  directo a ella.** Confirmado: la API de GitHub da `"visibility": "public"` para
+  `Antonio-Ramos-UCA/enolytics`.
+
+  **Atenuante:** son reseñas que ya son públicas en Google Maps.
+  **Agravante:** está también en el **historial de git**, así que borrar el fichero hoy no lo
+  retira de las versiones anteriores. Y lo publica un proyecto universitario con financiación
+  pública, que es el contexto en que peor sienta.
+
+  `sentimiento_atributos.csv` **sí está limpio**: solo `resena_id`, sin nombres.
+
+  **Por qué no se arregló en el momento:** no es una corrección de un minuto.
+  1. El cuadro de mando **lee ese fichero y enseña el nombre del autor** en las reseñas de
+     ejemplo (`app.py`, expander «Ver reseñas con texto»). Quitar la columna obliga a tocar la app.
+  2. Hacer privado el repositorio **rompe el despliegue**: Streamlit Community Cloud gratuito
+     exige repositorio público.
+  3. Limpiar el historial exige `git filter-repo` y un `force-push`.
+
+  **Plan propuesto (un par de horas):** quitar `autor` y `enlace_resena` del CSV versionado ·
+  sustituir el nombre por un seudónimo estable derivado del `resena_id` en la app · decidir
+  aparte si se reescribe el historial.
+
+  ⚠️ **Mientras no se arregle**, cualquier extracto que salga del proyecto —empezando por el de
+  Daniela— va seudonimizado sin excepción.
+
 ## Datos y fuentes
 - [ ] **SABI** — confirmar acceso de la UCA (biblioteca) para facturación/empleo por bodega (inteligencia económica y de negocios). Alternativa: Registro Mercantil/BORME.
 - [x] 🐛 **BUG DEL CLIENTE DATAESTUR CORREGIDO** — algunos endpoints (`PUERTOS_DL`, `AFILIACION_TURISMO_DL`) **devuelven un fichero Excel, no CSV**. El cliente solo leía CSV y fallaba con "No se pudo decodificar". Ahora detecta el formato por la firma del contenido (`PK` = cabecera zip de xlsx) y el content-type. **Esto desbloquea el empleo turístico (`AFILIACION_TURISMO_DL`), que llevaba semanas atascado y es un indicador de la Tabla 1 a cero.**
