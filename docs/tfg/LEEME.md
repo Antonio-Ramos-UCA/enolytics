@@ -9,6 +9,7 @@ docs/tfg/
 ├── temas_posibles.md           # 6 temas de TFG sobre la base del proyecto, con su guión
 └── daniela/
     ├── plan_de_trabajo.md      # el plan que se le entrega
+    ├── Indicaciones para tutores de TFG y TFM vinculados a ENOLYTICS.docx
     ├── material/               # lo que se le prepara (Excel, guiones de interpretación)
     └── entregas/               # lo que va entregando, semana a semana
 ```
@@ -49,6 +50,16 @@ Lee primero el apartado 0 de [`temas_posibles.md`](temas_posibles.md). El riesgo
 sobre este proyecto es el mismo: ENOLYTICS ya calcula lo que el estudiante iba a calcular, y el
 trabajo se queda en un manual de uso del cuadro de mando. Cada tema necesita una pregunta que la
 plataforma **no** responda.
+
+## Obligaciones del proyecto
+
+Todo TFG o TFM que use datos de ENOLYTICS debe hacer constar la financiación FEDER, declarar a qué
+indicadores del proyecto aporta y depositarse en RODIN. Las instrucciones completas están en
+*Indicaciones para tutores de TFG y TFM vinculados a ENOLYTICS* (Paula, 18/11/2026), dentro de
+`daniela/`. Su aplicación a un trabajo concreto se ve en el apartado 12 del plan de Daniela.
+
+La memoria compromete **entre dos y tres TFG y entre uno y dos TFM**, todos defendidos antes de
+**septiembre de 2027**, cuando se presenta la memoria final del proyecto.
 
 ## Protección de datos
 

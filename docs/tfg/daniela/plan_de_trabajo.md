@@ -119,7 +119,8 @@ peso: subida a la plataforma (hasta el 22 de enero), designación de tribunales 
 Establecida por la normativa de la Facultad para el TFG clásico de investigación. **Extensión
 mínima: 30 páginas**, sin contar portada ni anexos.
 
-1. **Portada** — título, autor, tutor, grado y fecha
+1. **Portada** — título, autor, tutor, grado y fecha, más la **cláusula de financiación
+   del proyecto** (apartado 12.1.a)
 2. **Índice paginado**, más índice de tablas y de figuras
 3. **Resúmenes** de ~350 palabras, **en español y en inglés**
 4. **Introducción** — justificación, objetivos y estructura del trabajo
@@ -313,9 +314,85 @@ suficientes.
 - El **uso de herramientas de inteligencia artificial** se declara conforme a la normativa de la
   UCA.
 
-### Agradecimiento obligatorio
+---
 
-El trabajo emplea datos del proyecto **FEDER-UCA-2024-A2-27**. En los agradecimientos debe constar:
+## 12. Requisitos del proyecto ENOLYTICS
 
-> Proyecto FEDER-UCA-2024-A2-27 cofinanciado por el Programa Operativo FEDER Andalucía 2021-2027
-> y por la Consejería de Universidad, Investigación e Innovación de la Junta de Andalucía.
+El trabajo utiliza datos del proyecto **FEDER-UCA-2024-A2-27**, lo que conlleva las obligaciones de
+publicidad que impone la convocatoria. La memoria del proyecto compromete la realización de entre
+dos y tres TFG y entre uno y dos TFM, y este trabajo computa como uno de ellos en la justificación
+final ante el FEDER, prevista para septiembre de 2027, siempre que cumpla lo que sigue. No es un
+requisito académico añadido por el tutor: es la condición para que el trabajo pueda justificarse
+ante el organismo financiador.
+
+### Inteligencia e indicadores a los que aporta
+
+El proyecto organiza sus resultados en siete inteligencias. Este trabajo se adscribe a la
+**inteligencia de clientes**, en concreto a los indicadores *perfil y comportamiento de los
+visitantes* y *satisfacción y percepción*; de forma secundaria aporta a la **inteligencia de
+mercado**, por la comparación de la demanda según procedencia. Ambas deben citarse de forma
+expresa en el párrafo de encuadre (12.1.b).
+
+### 12.1 Menciones que debe contener el documento
+
+**a) Portada: cláusula de financiación.** Con este texto literal:
+
+> Proyecto FEDER-UCA-2024-A2-27 cofinanciado por el Programa Operativo FEDER Andalucía 2021-2027 y
+> por la Consejería de Universidad, Investigación e Innovación de la Junta de Andalucía.
+
+Si la plantilla de la Facultad admite el **emblema de la Unión Europea**, se incorpora también a la
+portada; si no cabe, pasa a la página de agradecimientos.
+
+**b) Introducción o metodología: párrafo de encuadre.** Un párrafo que sitúe el trabajo en el
+proyecto y declare los indicadores a los que aporta. Redacción propuesta, ya ajustada a este
+trabajo:
+
+> Este trabajo se integra en el proyecto de investigación ENOLYTICS (FEDER-UCA-2024-A2-27), que
+> desarrolla una plataforma de inteligencia competitiva para el enoturismo del Marco de Jerez. El
+> trabajo contribuye a la inteligencia de clientes del proyecto, en concreto a los indicadores
+> relativos al perfil y comportamiento de los visitantes y a su satisfacción y percepción.
+
+**c) Citación de los datos.** El corpus de reseñas se cita como **«datos facilitados por el proyecto
+ENOLYTICS»**, además de la fuente original cuando exista (ACEVIN, Dataestur, INE, Consejo
+Regulador). Afecta a todas las tablas y figuras construidas sobre el material del apartado 7, que
+deben llevar esa indicación en su línea de fuente.
+
+**d) Agradecimientos: frase oficial.** En los términos fijados por el proyecto:
+
+> Este trabajo se ha realizado en el marco del proyecto FEDER-UCA-2024-A2-27 «ENOLYTICS»,
+> cofinanciado por el Programa Operativo FEDER Andalucía 2021-2027 y por la Consejería de
+> Universidad, Investigación e Innovación de la Junta de Andalucía.
+
+Y, acompañando al resumen en inglés, su versión inglesa:
+
+> The authors thank the financial support from Programa Operativo FEDER Andalucía 2021-2027 and
+> Consejería de Universidad, Investigación e Innovación, Junta de Andalucía (Proyecto
+> FEDER-UCA-2024-A2-27).
+
+Las tres menciones —portada, encuadre y agradecimientos— conviene insertarlas desde el primer
+borrador y no al cierre: la cláusula de portada y el párrafo de encuadre condicionan la
+maquetación, y la semana del 21 de diciembre al 3 de enero está reservada a formato y revisión.
+
+### 12.2 Documentación posterior a la defensa
+
+El proyecto necesita estos cinco elementos para su justificación. Los cuatro primeros proceden de
+la Secretaría o del propio trabajo; el resumen de hallazgos es tarea tuya.
+
+| Documento | Momento |
+|---|---|
+| Impreso de asignación del trabajo, o su referencia | al asignarse |
+| PDF de la versión final depositada | tras la defensa |
+| Acta o certificado de la defensa, con la calificación | tras la defensa |
+| **Resumen de una página con los principales hallazgos** | tras la defensa |
+| Depósito en **RODIN**, repositorio institucional de la UCA | tras la defensa |
+
+El depósito en RODIN es, además, un compromiso de la memoria del proyecto.
+
+### Encaje en el plazo del proyecto
+
+El proyecto exige que el trabajo esté **defendido antes de septiembre de 2027**, fecha de
+presentación de su memoria final. La convocatoria de febrero de 2027 cumple ese plazo con cinco
+meses de holgura.
+
+> Lo anterior es la aplicación a este trabajo del documento *Indicaciones para tutores de TFG y TFM
+> vinculados a ENOLYTICS*, que recoge las instrucciones completas del proyecto.
