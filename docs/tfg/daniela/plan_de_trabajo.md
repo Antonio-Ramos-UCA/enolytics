@@ -104,8 +104,10 @@ es lo que da acceso a los datos, pero omitirlo sí sería una falta de integrida
 
 ## 4. Calendario
 
-Entre el 18 de noviembre y la entrega median siete semanas, dos de ellas ocupadas por la Navidad.
-El plan contempla cinco semanas de trabajo efectivo más las fiestas para el cierre.
+Entre la recepción de este plan, el jueves 19 de noviembre, y la entrega median algo menos de
+siete semanas, dos de ellas ocupadas por la Navidad. El plan contempla cinco semanas de trabajo
+efectivo más las fiestas para el cierre. La primera es corta, de jueves a domingo, y por eso su
+entrega es la más ligera.
 
 Desde la semana 2 corre en paralelo una tarea que no produce páginas pero sostiene la aportación
 propia del trabajo: la lectura de las reseñas con que se responde a las preguntas del apartado 2.
@@ -114,7 +116,7 @@ reseñas leídas y dos o tres ejemplos citables.
 
 | Semana | Fechas | Tarea | Entrega al tutor |
 |---|---|---|---|
-| 1 | 18–22 nov | Lectura del plan, comprobación del requisito académico del apartado 8 y lectura de los dos artículos base: Bi et al. (2019) y Zhang et al. (2021). Primera exploración del Excel con su guion | Objetivos en redacción propia, confirmación del requisito académico y nota breve sobre los dos artículos |
+| 1 | 19–22 nov | Lectura del plan, comprobación del requisito académico del apartado 8 y lectura de los dos artículos base: Bi et al. (2019) y Zhang et al. (2021). Primera exploración del Excel con su guion | Objetivos en redacción propia, confirmación del requisito académico y nota breve sobre los dos artículos |
 | 2 | 23–29 nov | Revisión de la literatura, epígrafes 2.1 a 2.4: enoturismo, el Marco de Jerez como destino, satisfacción y calidad percibida, y el IPA con sus críticas. Estudio de Martilla y James (1977), Azzopardi y Nash (2013) y Liu et al. (2017). Lectura de las 129 reseñas nacionales que mencionan la organización | Epígrafes 2.1 a 2.4 y notas de lectura |
 | 3 | 30 nov – 4 dic | Epígrafes 2.5 a 2.7: el IPA derivado de reseñas, la procedencia del visitante y la laguna detectada. Capítulo 3 de metodología completo. Lectura de las 202 reseñas internacionales que mencionan la organización | Capítulos 2 y 3, y notas de lectura |
 | 4 | 9–11 dic | Capítulo 4 de resultados, sobre las tablas y figuras del material. El martes 8 es festivo y el lunes 7 previsiblemente puente, de ahí que la semana solo cuente tres días. Lectura de la muestra de instalaciones: 50 reseñas por segmento | Capítulo 4 y notas de lectura |
