@@ -21,8 +21,9 @@ desempeño, señala la prioridad de actuación. Con dos matrices enfrentadas, la
 destino afronta un problema o dos.
 
 El trabajo se apoya en ENOLYTICS, proyecto de investigación de la Universidad de Cádiz
-financiado con fondos FEDER, lo que da acceso a un corpus que un TFG no podría reunir por su
-cuenta.
+financiado con fondos FEDER, cuyos investigadores principales son María Paula Lechuga Sancho y
+Antonio Rafael Ramos Rodríguez, tutor de este trabajo. Ello da acceso a un corpus que un TFG no
+podría reunir por su cuenta. La estudiante ha sido, además, alumna colaboradora del tutor.
 
 ### Justificación
 
@@ -105,30 +106,33 @@ es lo que da acceso a los datos, pero omitirlo sí sería una falta de integrida
 Entre la recepción de este plan, el jueves 19 de noviembre, y la entrega del 8 de enero median
 siete semanas, de las que la Navidad ocupa casi tres. El plan contempla cinco semanas de trabajo
 efectivo más las fiestas para el cierre. La primera es corta, de jueves a domingo, y por eso su
-entrega es la más ligera.
+carga es la más ligera.
+
+El calendario es orientativo: marca un ritmo que permite llegar al 8 de enero con margen, pero no
+hay entregas parciales. La estudiante trabaja de forma autónoma y consulta al tutor cuando lo
+necesite.
 
 Desde la semana 2 corre en paralelo una tarea que no produce páginas pero sostiene la aportación
 propia del trabajo: la lectura de las reseñas con que se responde a las preguntas del apartado 2.
-Cada semana se entregan, junto con el texto, unas notas de lectura breves: qué se repite en las
-reseñas leídas y dos o tres ejemplos citables.
+Conviene tomar, a medida que se lee, unas notas breves: qué se repite en las reseñas leídas y dos
+o tres ejemplos citables. Son el material con que se escribe la discusión en la semana 5.
 
-| Semana | Fechas | Tarea | Entrega al tutor |
-|---|---|---|---|
-| 1 | 19–22 nov | Lectura del plan, comprobación del requisito académico del apartado 8 y lectura de los dos artículos base: Bi et al. (2019) y Zhang et al. (2021). Primera exploración del Excel con su guion | Objetivos en redacción propia, confirmación del requisito académico y nota breve sobre los dos artículos |
-| 2 | 23–29 nov | Revisión de la literatura, epígrafes 2.1 a 2.4: enoturismo, el Marco de Jerez como destino, satisfacción y calidad percibida, y el IPA con sus críticas. Estudio de Martilla y James (1977), Azzopardi y Nash (2013) y Liu et al. (2017). Lectura de las 129 reseñas nacionales que mencionan la organización | Epígrafes 2.1 a 2.4 y notas de lectura |
-| 3 | 30 nov – 4 dic | Epígrafes 2.5 a 2.7: el IPA derivado de reseñas, la procedencia del visitante y la laguna detectada. Capítulo 3 de metodología completo. Lectura de las 202 reseñas internacionales que mencionan la organización | Capítulos 2 y 3, y notas de lectura |
-| 4 | 9–11 dic | Capítulo 4 de resultados, sobre las tablas y figuras del material. El martes 8 es festivo y el lunes 7 previsiblemente puente, de ahí que la semana solo cuente tres días. Lectura de la muestra de instalaciones: 50 reseñas por segmento | Capítulo 4 y notas de lectura |
-| 5 | 14–20 dic | Discusión y conclusiones, a partir de las notas de lectura acumuladas. Cierre de la introducción | Capítulos 5 y 6, y borrador completo |
-| Navidad | 21 dic – 7 ene | Revisión, formato, resúmenes en español e inglés, índices y bibliografía APA. Sin análisis nuevo | — |
-| Entrega | **vie 8 ene** | Versión definitiva | TFG completo |
+| Semana | Fechas | Tarea |
+|---|---|---|
+| 1 | 19–22 nov | Lectura del plan, comprobación del requisito académico del apartado 8 y lectura de los dos artículos base: Bi et al. (2019) y Zhang et al. (2021). Redacción propia de los objetivos. Primera exploración del Excel con su guion y del prototipo de la plataforma (apartado 7) |
+| 2 | 23–29 nov | Revisión de la literatura, epígrafes 2.1 a 2.4: enoturismo, el Marco de Jerez como destino, satisfacción y calidad percibida, y el IPA con sus críticas. Estudio de Martilla y James (1977), Azzopardi y Nash (2013) y Liu et al. (2017). Lectura de las 129 reseñas nacionales que mencionan la organización |
+| 3 | 30 nov – 4 dic | Epígrafes 2.5 a 2.7: el IPA derivado de reseñas, la procedencia del visitante y la laguna detectada. Capítulo 3 de metodología completo. Lectura de las 202 reseñas internacionales que mencionan la organización |
+| 4 | 9–11 dic | Capítulo 4 de resultados, sobre las tablas y figuras del material. El martes 8 es festivo y el lunes 7 previsiblemente puente, de ahí que la semana solo cuente tres días. Lectura de la muestra de instalaciones: 50 reseñas por segmento |
+| 5 | 14–20 dic | Discusión y conclusiones, a partir de las notas de lectura. Cierre de la introducción. Borrador completo |
+| Navidad | 21 dic – 7 ene | Revisión, formato, resúmenes en español e inglés, índices y bibliografía APA. Sin análisis nuevo |
+| Entrega | **vie 8 ene** | Versión definitiva del TFG al tutor |
 
 A partir de la entrega el calendario ya no depende de la estudiante, salvo en el tramo de mayor
 peso: subida a la plataforma hasta el 22 de enero, designación de tribunales el 27 de enero y
 defensa entre el 1 y el 16 de febrero.
 
-Las entregas semanales se remiten aunque estén incompletas. Un borrador parcial entregado en plazo
-resulta más útil que uno acabado fuera de él, y el cumplimiento del cronograma se evalúa, según se
-expone en el apartado 6.
+Seguir el ritmo del calendario es responsabilidad de la estudiante, y la planificación forma
+parte de lo que se evalúa, según se expone en el apartado 6.
 
 ## 5. Estructura del documento
 
@@ -427,6 +431,20 @@ que mencionan las instalaciones, la que se lee en la semana 4.
 Se acompañan cuatro figuras en formato de imagen: las dos matrices, una superposición de ambas con
 el desplazamiento de cada atributo, y la de brechas entre segmentos.
 
+### La plataforma ENOLYTICS
+
+El prototipo de la aplicación está accesible en <https://enolytics-feder-uca.streamlit.app>.
+Conviene recorrerlo en la primera semana: muestra el destino tal como lo analiza el proyecto, en
+conjunto y sin segmentar, y permite entender de dónde procede el material y qué parte del análisis
+añade este trabajo.
+
+Dos advertencias para su uso. La primera, que las cifras del trabajo son las del Excel y no las de
+la aplicación: la plataforma es un prototipo en desarrollo, calcula sobre el destino completo y
+puede usar otros criterios, de modo que sus valores no tienen por qué coincidir con los del
+material. La segunda, que la aplicación muestra el nombre de los autores de las reseñas; ningún
+nombre tomado de ella puede figurar en el trabajo, conforme a lo indicado en el apartado de
+protección de datos.
+
 ### Cifras del corpus
 
 | Concepto | Cifra |
@@ -490,44 +508,44 @@ listado que sigue, las de estudio van señaladas como tales y el resto son de co
 ### Para el epígrafe 2.1, el enoturismo como producto turístico
 
 Getz, D., & Brown, G. (2006). Critical success factors for wine tourism regions: A demand
-analysis. *Tourism Management*, *27*(1), 146–158. https://doi.org/10.1016/j.tourman.2004.08.002
+analysis. *Tourism Management*, *27*(1), 146–158. <https://doi.org/10.1016/j.tourman.2004.08.002>
 
 Gómez, M., Pratt, M. A., & Molina, A. (2019). Wine tourism research: A systematic review of 20
 vintages from 1995 to 2014. *Current Issues in Tourism*, *22*(18), 2211–2249.
-https://doi.org/10.1080/13683500.2018.1441267 — Revisión sistemática: sirve de mapa para
+<https://doi.org/10.1080/13683500.2018.1441267> — Revisión sistemática: sirve de mapa para
 orientar la búsqueda propia.
 
 López-Guzmán, T., Rodríguez-García, J., Sánchez-Cañizares, S., & Luján-García, M. J. (2011). The
 development of wine tourism in Spain. *International Journal of Wine Business Research*, *23*(4),
-374–386. https://doi.org/10.1108/17511061111186523
+374–386. <https://doi.org/10.1108/17511061111186523>
 
 ### Para el epígrafe 2.2, el Marco de Jerez como destino
 
 López-Guzmán, T., Vieira-Rodríguez, A., & Rodríguez-García, J. (2014). Profile and motivations of
 European tourists on the Sherry wine route of Spain. *Tourism Management Perspectives*, *11*,
-63–68. https://doi.org/10.1016/j.tmp.2014.04.003 — Estudia precisamente al visitante extranjero
+63–68. <https://doi.org/10.1016/j.tmp.2014.04.003> — Estudia precisamente al visitante extranjero
 de la Ruta del Jerez, por lo que sirve también para el epígrafe 2.6.
 
 ### Para el epígrafe 2.3, satisfacción y experiencia en la visita a bodega
 
 Bruwer, J., & Alant, K. (2009). The hedonic nature of wine tourism consumption: An experiential
 view. *International Journal of Wine Business Research*, *21*(3), 235–257.
-https://doi.org/10.1108/17511060910985962
+<https://doi.org/10.1108/17511060910985962>
 
 Quadri-Felitti, D., & Fiore, A. M. (2012). Experience economy constructs as a framework for
 understanding wine tourism. *Journal of Vacation Marketing*, *18*(1), 3–15.
-https://doi.org/10.1177/1356766711432222
+<https://doi.org/10.1177/1356766711432222>
 
 ### Para el epígrafe 2.4, el análisis importancia-desempeño y sus críticas
 
 Martilla, J. A., & James, J. C. (1977). Importance-performance analysis. *Journal of Marketing*,
-*41*(1), 77–79. https://doi.org/10.1177/002224297704100112 — **Estudio.** El artículo original del método.
+*41*(1), 77–79. <https://doi.org/10.1177/002224297704100112> — **Estudio.** El artículo original del método.
 
 Oh, H. (2001). Revisiting importance–performance analysis. *Tourism Management*, *22*(6), 617–627.
-https://doi.org/10.1016/S0261-5177(01)00036-X
+<https://doi.org/10.1016/S0261-5177(01)00036-X>
 
 Azzopardi, E., & Nash, R. (2013). A critical evaluation of importance–performance analysis.
-*Tourism Management*, *35*, 222–233. https://doi.org/10.1016/j.tourman.2012.07.007 — **Estudio.** Recoge las
+*Tourism Management*, *35*, 222–233. <https://doi.org/10.1016/j.tourman.2012.07.007> — **Estudio.** Recoge las
 críticas a la posición de los ejes con que se justifican los umbrales comunes (epígrafe 3.6) y la
 comprobación de sensibilidad.
 
@@ -535,31 +553,31 @@ comprobación de sensibilidad.
 
 Bi, J.-W., Liu, Y., Fan, Z.-P., & Zhang, J. (2019). Wisdom of crowds: Conducting
 importance-performance analysis (IPA) through online reviews. *Tourism Management*, *70*, 460–478.
-https://doi.org/10.1016/j.tourman.2018.09.010 — **Estudio.** Referencia central: justifica la construcción de un
+<https://doi.org/10.1016/j.tourman.2018.09.010> — **Estudio.** Referencia central: justifica la construcción de un
 IPA a partir de reseñas en lugar de cuestionarios.
 
 Zhang, C., Xu, Z., Gou, X., & Chen, S. (2021). An online reviews-driven method for the
 prioritization of improvements in hotel services. *Tourism Management*, *87*, 104382.
-https://doi.org/10.1016/j.tourman.2021.104382 — **Estudio.** Origen del tratamiento del sentimiento por
+<https://doi.org/10.1016/j.tourman.2021.104382> — **Estudio.** Origen del tratamiento del sentimiento por
 atributo como medida de desempeño.
 
 ### Para el epígrafe 2.6, procedencia del visitante y valoración de la experiencia
 
 Liu, Y., Teichert, T., Rossi, M., Li, H., & Hu, F. (2017). Big data for big insights:
 Investigating language-specific drivers of hotel satisfaction with 412,784 user-generated
-reviews. *Tourism Management*, *59*, 554–563. https://doi.org/10.1016/j.tourman.2016.08.012 — **Estudio.** Usa
+reviews. *Tourism Management*, *59*, 554–563. <https://doi.org/10.1016/j.tourman.2016.08.012> — **Estudio.** Usa
 el idioma de la reseña para comparar visitantes, como este trabajo: sirve también para justificar
 el proxy en el epígrafe 3.5.
 
 Galati, F., & Galati, R. (2019). Cross-country analysis of perception and emphasis of hotel
-attributes. *Tourism Management*, *74*, 24–42. https://doi.org/10.1016/j.tourman.2019.02.011 —
+attributes. *Tourism Management*, *74*, 24–42. <https://doi.org/10.1016/j.tourman.2019.02.011> —
 Distingue percepción y énfasis por país de origen, la misma distinción que sostiene el apartado 2
 de este plan. Atención: algunas bases de datos invierten nombre y apellido de los autores y lo
 registran como «Francesco, G., & Roberta, G.»; la forma correcta es la que figura aquí.
 
 Mariani, M., & Predvoditeleva, M. (2019). How do online reviewers' cultural traits and perceived
 experience influence hotel online ratings? *International Journal of Contemporary Hospitality
-Management*, *31*(12), 4543–4573. https://doi.org/10.1108/IJCHM-11-2018-0927
+Management*, *31*(12), 4543–4573. <https://doi.org/10.1108/IJCHM-11-2018-0927>
 
 ### Fuentes institucionales
 
@@ -618,11 +636,12 @@ no reúne reseñas suficientes.
 
 ## 11. Régimen de tutoría
 
-- Una tutoría semanal, breve, para revisar la entrega correspondiente.
-- Cualquier bloqueo que supere un día de trabajo debe comunicarse. Con este calendario, una semana
-  perdida compromete el bloque de Planificación e iniciativa, que vale el 20 % de la calificación
-  del tutor.
-- Las entregas se remiten en PDF o Word, con nombre y fecha en el nombre del archivo.
+- No hay entregas parciales ni tutorías fijas. La estudiante trabaja de forma autónoma y consulta al
+  tutor siempre que lo necesite.
+- Conviene consultar pronto: cualquier bloqueo que supere un día de trabajo debe comunicarse, porque
+  con este calendario una semana perdida es difícil de recuperar.
+- La versión definitiva se entrega el 8 de enero en PDF o Word, con nombre y fecha en el nombre del
+  archivo.
 - El uso de herramientas de inteligencia artificial se declara conforme a la normativa de la UCA.
 
 ## 12. Requisitos del proyecto ENOLYTICS

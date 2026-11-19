@@ -13,16 +13,21 @@ docs/tfg/
     ├── Plan de trabajo TFG - Daniela.pdf   # generado del .md (md_a_pdf.py --sobrio); se envía este
     ├── Material TFG - Daniela.xlsx         # generado (generar_material_tfg.py); se envía este
     ├── material/               # figuras del material
-    └── entregas/               # lo que va entregando, semana a semana
+    └── entregas/               # lo que envíe: consultas con borrador y la versión definitiva
 ```
 
-## Por qué las entregas se guardan
+## Qué se guarda en `entregas/`
 
-No es burocracia. La rúbrica de la Facultad puntúa **«Planificación e Iniciativa»** con un 20 %
-de la nota del tutor, y dentro de ese ítem valora expresamente *el acuerdo tutor-estudiante sobre
-el cronograma* y *su cumplimiento*. Las entregas fechadas son la evidencia de ese 20 %.
+Lo que el estudiante envíe: borradores que acompañen a una consulta y la versión definitiva. La
+rúbrica de la Facultad puntúa **«Planificación e Iniciativa»** con un 20 % de la nota del tutor
+y valora *el acuerdo tutor-estudiante sobre el cronograma* y *su cumplimiento*; lo que quede
+fechado aquí sirve de evidencia.
 
-Nómbralas `AAAA-MM-DD_descripcion.pdf` para que ordenen solas.
+Nómbralos `AAAA-MM-DD_descripcion.pdf` para que ordenen solos.
+
+En el TFG de Daniela **no hay entregas parciales** (decisión del tutor, 19/11/2026): trabaja de
+forma autónoma con el calendario como guía y consulta cuando lo necesita. Solo hay una entrega,
+la versión definitiva del 8 de enero.
 
 ---
 
