@@ -36,13 +36,12 @@ Nómbralas `AAAA-MM-DD_descripcion.pdf` para que ordenen solas.
 | **Defensa** | Entre el 1 y el 16 de febrero de 2027 |
 | **Plan** | [`daniela/plan_de_trabajo.md`](daniela/plan_de_trabajo.md) |
 
-**Material entregado** (18/11/2026): plan de trabajo en PDF y Excel seudonimizado con las dos
-matrices IPA, las tablas de comparación y su guion de interpretación (`daniela/material/`).
-
-**Revisado el 19/11/2026** (plan y Excel): corregida la lectura de «organización y reserva»,
-preguntas abiertas en lugar de conclusiones dadas, comprobación de sensibilidad de los umbrales,
-calendario rehecho y bibliografía verificada. **Pendiente de enviárselo:** lo que tiene desde el
-18/11 lleva la versión anterior.
+**Material preparado, todavía sin enviar:** plan de trabajo en PDF y Excel seudonimizado con las
+dos matrices IPA, las tablas de comparación, la hoja de distancias a los umbrales, las reseñas
+filtrables por atributo y el guion de interpretación (`daniela/material/`). Preparado el 18/11 y
+revisado a fondo el 19/11/2026, antes de que saliera nada: corregida la lectura de «organización
+y reserva», preguntas abiertas en lugar de conclusiones dadas, comprobación de sensibilidad de
+los umbrales, calendario rehecho y bibliografía verificada.
 
 **Pendiente de Daniela:** confirmar que tiene aprobadas todas las asignaturas básicas y
 obligatorias. Sin eso no puede defender en febrero, por mucho que entregue a tiempo.
