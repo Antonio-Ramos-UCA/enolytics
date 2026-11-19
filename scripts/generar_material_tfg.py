@@ -157,8 +157,24 @@ def _esquinas(ax):
 EJES = ("Importancia (% de reseñas del segmento que lo mencionan)",
         "Desempeño (sentimiento hacia el atributo, 1-5)")
 
+# Gastronomía y Precio caen casi en el mismo punto en el segmento internacional: sus etiquetas
+# se pisaban. Desplazamiento (x, y en puntos, alineación) para esos dos; el resto, automático.
+DESPLAZA = {"Gastronomía y restauración": (-10, 8, "right"),
+            "Precio y valor": (10, -15, "left")}
 
-def figura_simple(t, u_i, u_d, titulo, color, destino):
+FUENTE = "Fuente: elaboración propia con datos facilitados por el proyecto ENOLYTICS."
+
+
+def _fuente(fig):
+    fig.text(0.01, 0.01, FUENTE, fontsize=8, color="#57544E", ha="left", va="bottom")
+
+
+def _etiqueta(ax, texto, x, y, por_defecto, extra=None):
+    dx, dy, ha = {**DESPLAZA, **(extra or {})}.get(texto.rstrip(" *"), por_defecto)
+    ax.annotate(texto, (x, y), textcoords="offset points", xytext=(dx, dy), ha=ha, fontsize=9)
+
+
+def figura_simple(t, u_i, u_d, titulo, color, destino, desplaza=None):
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -170,11 +186,11 @@ def figura_simple(t, u_i, u_d, titulo, color, destino):
     for _, r in t.iterrows():
         der = r["importancia"] > medio
         etq = r["atributo"] + (" *" if r["muestra_fina"] else "")
-        ax.annotate(etq, (r["importancia"], r["desempeno"]),
-                    textcoords="offset points", xytext=(-10, 8) if der else (10, 8),
-                    ha="right" if der else "left", fontsize=9)
+        _etiqueta(ax, etq, r["importancia"], r["desempeno"],
+                  (-10, 8, "right") if der else (10, 8, "left"), desplaza)
     _esquinas(ax)
-    fig.tight_layout(); fig.savefig(destino); plt.close(fig)
+    fig.tight_layout(rect=(0, 0.03, 1, 1)); _fuente(fig)
+    fig.savefig(destino); plt.close(fig)
 
 
 def figura_movimiento(th, ti, u_i, u_d, destino):
@@ -203,13 +219,18 @@ def figura_movimiento(th, ti, u_i, u_d, destino):
     medio = j[["importancia_h", "importancia_i"]].values.mean()
     for _, r in j.iterrows():
         der = r["importancia_i"] > medio
-        ax.annotate(r["atributo"], (r["importancia_i"], r["desempeno_i"]),
-                    textcoords="offset points", xytext=(-11, -16) if der else (11, -16),
-                    ha="right" if der else "left", fontsize=9)
+        etq = r["atributo"] + (" *" if r["muestra_fina_i"] else "")
+        _etiqueta(ax, etq, r["importancia_i"], r["desempeno_i"],
+                  (-11, -16, "right") if der else (11, -16, "left"))
     _esquinas(ax)
+    # La leyenda iba encima del eje y tapaba el título: se sube el título y la leyenda queda
+    # entre ambos.
+    ax.set_title("Qué cambia del turista nacional al internacional", fontsize=12,
+                 loc="left", pad=30)
     ax.legend(frameon=False, loc="lower left", fontsize=9,
-              bbox_to_anchor=(0, 1.02), ncol=2)
-    fig.tight_layout(); fig.savefig(destino); plt.close(fig)
+              bbox_to_anchor=(0, 1.0), ncol=2)
+    fig.tight_layout(rect=(0, 0.03, 1, 1)); _fuente(fig)
+    fig.savefig(destino); plt.close(fig)
 
 
 LEEME = [
@@ -283,15 +304,15 @@ LEEME = [
      "Quien escribe resenas tiende a los extremos, y solo cuentan los usuarios de Google."),
     ("Efecto techo",
      "El 75,9 % de las valoraciones son de 5 estrellas, asi que casi no hay margen por encima de "
-     "la media. Senalarlo suma: los articulos que vas a citar trabajan con corpus mas repartidos "
-     "y no se enfrentan a este problema."),
+     "la media. Comprueba que distribucion de valoraciones declaran Bi et al. y Zhang et al.: si "
+     "sus corpus estan mas repartidos, senalarlo es una aportacion (epigrafe 5.1)."),
     ("", ""),
     ("Cifras para citar", ""),
     ("Resenas totales", "10.972"),
     ("Bodegas", "41"),
     ("Resenas con atributo detectado", "6.542"),
     ("  de ellas, nacionales", "4.893"),
-    ("  de ellas, internacionales", "1.556"),
+    ("  de ellas, internacionales", "1.517"),
     ("  sin idioma determinado", "132 (solo el 2 %)"),
     ("Periodo", "22/07/2011 - 06/07/2026"),
     ("Valoraciones de 5 estrellas", "75,9 %"),
@@ -326,7 +347,8 @@ def figura_brechas(comp: pd.DataFrame, destino: Path) -> None:
     ax.spines[["top", "right", "left"]].set_visible(False)
     ax.tick_params(left=False)
     ax.margins(x=.16)
-    fig.tight_layout(); fig.savefig(destino); plt.close(fig)
+    fig.tight_layout(rect=(0, 0.03, 1, 1)); _fuente(fig)
+    fig.savefig(destino); plt.close(fig)
 
 
 def main() -> None:
@@ -365,9 +387,11 @@ def main() -> None:
     dist["cambia_con_mediana"] = dist["cuadrante"] != dist["cuadrante_con_mediana"]
 
     # --- Figuras --------------------------------------------------------------
-    figura_simple(th, u_i, u_d, "IPA del Marco — turista NACIONAL",
-                  "#2a78d6", SALIDA / "ipa_nacional.png")
-    figura_simple(ti, u_i, u_d, "IPA del Marco — turista INTERNACIONAL",
+    figura_simple(th, u_i, u_d, "Matriz IPA del Marco de Jerez: turista nacional",
+                  "#2a78d6", SALIDA / "ipa_nacional.png",
+                  desplaza={"Instalaciones": (-10, -15, "right"),
+                            "Vino y cata": (10, -15, "left")})
+    figura_simple(ti, u_i, u_d, "Matriz IPA del Marco de Jerez: turista internacional",
                   "#eb6834", SALIDA / "ipa_internacional.png")
     figura_movimiento(th, ti, u_i, u_d, SALIDA / "ipa_movimiento.png")
     figura_brechas(comp, SALIDA / "brechas_por_segmento.png")

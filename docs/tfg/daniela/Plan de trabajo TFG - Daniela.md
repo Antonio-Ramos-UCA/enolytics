@@ -94,7 +94,7 @@ atributo y por segmento.
 | Las 10.972 reseñas, depuradas y sin nombres de autor | Búsqueda y redacción del marco teórico |
 | Cada reseña clasificada por atributo y por segmento | Explicación de las diferencias entre segmentos mediante la lectura de las reseñas |
 | Tablas de menciones y sentimiento por segmento | Lectura de las brechas entre segmentos |
-| Las dos matrices IPA y la figura de brechas | Conclusiones y recomendaciones de gestión |
+| Cuatro figuras de referencia: las matrices, su superposición y las brechas | Gráficos propios, construidos a partir de las tablas; conclusiones y recomendaciones de gestión |
 | Guion de interpretación del material | Redacción completa y defensa oral |
 
 El capítulo de metodología debe declarar explícitamente qué parte del instrumental procede del
@@ -122,7 +122,7 @@ o tres ejemplos citables. Son el material con que se escribe la discusión en la
 | 1 | 19–22 nov | Lectura del plan, comprobación del requisito académico del apartado 8 y lectura de los dos artículos base: Bi et al. (2019) y Zhang et al. (2021). Redacción propia de los objetivos. Primera exploración del Excel con su guion y del prototipo de la plataforma (apartado 7) |
 | 2 | 23–29 nov | Revisión de la literatura, epígrafes 2.1 a 2.4: enoturismo, el Marco de Jerez como destino, satisfacción y calidad percibida, y el IPA con sus críticas. Estudio de Martilla y James (1977), Azzopardi y Nash (2013) y Liu et al. (2017). Lectura de las 129 reseñas nacionales que mencionan la organización |
 | 3 | 30 nov – 4 dic | Epígrafes 2.5 a 2.7: el IPA derivado de reseñas, la procedencia del visitante y la laguna detectada. Capítulo 3 de metodología completo. Lectura de las 202 reseñas internacionales que mencionan la organización |
-| 4 | 9–11 dic | Capítulo 4 de resultados, sobre las tablas y figuras del material. El martes 8 es festivo y el lunes 7 previsiblemente puente, de ahí que la semana solo cuente tres días. Lectura de la muestra de instalaciones: 50 reseñas por segmento |
+| 4 | 9–11 dic | Capítulo 4 de resultados, sobre las tablas del material y con gráficos de elaboración propia. El martes 8 es festivo y el lunes 7 previsiblemente puente, de ahí que la semana solo cuente tres días. Lectura de la muestra de instalaciones: 50 reseñas por segmento |
 | 5 | 14–20 dic | Discusión y conclusiones, a partir de las notas de lectura. Cierre de la introducción. Borrador completo |
 | Navidad | 21 dic – 7 ene | Revisión, formato, resúmenes en español e inglés, índices y bibliografía APA. Sin análisis nuevo |
 | Entrega | **vie 8 ene** | Versión definitiva del TFG al tutor |
@@ -428,8 +428,13 @@ mencionan la organización, o solo las negativas: es la herramienta para respond
 del apartado 2. Una columna adicional marca la muestra aleatoria de 50 reseñas por segmento
 que mencionan las instalaciones, la que se lee en la semana 4.
 
-Se acompañan cuatro figuras en formato de imagen: las dos matrices, una superposición de ambas con
-el desplazamiento de cada atributo, y la de brechas entre segmentos.
+El Excel contiene solo tablas. **Los gráficos del trabajo los construye la estudiante** a partir
+de ellas, con la herramienta que prefiera. Como referencia de lo que deben mostrar se acompañan
+cuatro figuras en formato de imagen: las dos matrices, una superposición de ambas con el
+desplazamiento de cada atributo, y la de brechas entre segmentos. No se incorporan tal cual al
+trabajo: sirven para comprobar que los gráficos propios recogen lo mismo. Construirlos es parte del
+trabajo, porque la presentación se evalúa en el bloque de organización y en la defensa, y quien ha
+hecho la matriz sabe explicarla ante el tribunal.
 
 ### La plataforma ENOLYTICS
 
