@@ -43,10 +43,10 @@ la versión definitiva del 8 de enero.
 | **Defensa** | Entre el 1 y el 16 de febrero de 2027 |
 | **Plan** | [`daniela/Plan de trabajo TFG - Daniela.md`](daniela/Plan%20de%20trabajo%20TFG%20-%20Daniela.md) |
 
-**Material preparado, todavía sin enviar:** plan de trabajo en PDF y Excel seudonimizado con las
+**Material enviado el 19/11/2026** (email del tutor con el plan en PDF, el Excel y las cuatro figuras de referencia): plan de trabajo en PDF y Excel seudonimizado con las
 dos matrices IPA, las tablas de comparación, la hoja de distancias a los umbrales, las reseñas
 filtrables por atributo y el guion de interpretación (`daniela/material/`). Preparado el 18/11 y
-revisado a fondo el 19/11/2026, antes de que saliera nada: corregida la lectura de «organización
+revisado a fondo el 19/11/2026 antes de enviarlo: corregida la lectura de «organización
 y reserva», preguntas abiertas en lugar de conclusiones dadas, comprobación de sensibilidad de
 los umbrales, calendario rehecho y bibliografía verificada.
 

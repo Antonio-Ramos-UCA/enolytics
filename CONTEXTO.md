@@ -206,9 +206,9 @@ streamlit, pandas, sklearn, plotly, matplotlib, requests, bs4.
 4. **Cuestionarios** a bodegas y a enoturistas, solo para lo que no dan las fuentes públicas.
 5. **Decisiones abiertas de producto:** los emojis decorativos de los encabezados; y si la
    marca nueva (`datos/marca/`) entra en la app, los PDF y las presentaciones.
-6. **TFG de Daniela** (entrega al tutor el **08/01/2027**, fijada por Antonio el 19/11): enviarle el plan y el Excel (todavía **no
-   se le ha enviado nada**) y seguir las entregas semanales. El calendario arranca el 18/11:
-   si el envío se retrasa, revisar la semana 1. Ver `docs/tfg/LEEME.md`.
+6. **TFG de Daniela** (entrega al tutor el **08/01/2027**, fijada por Antonio el 19/11): **enviado el 19/11** (plan, Excel y figuras;
+   el email declara que el material se preparó con ayuda de IA bajo supervisión del tutor). Sin
+   entregas parciales: ella trabaja y consulta. Pendiente de ella: confirmar el requisito académico. Ver `docs/tfg/LEEME.md`.
 
 ## ═══ SESIÓN 2026-11-19 — EL PLAN DE DANIELA, REVISADO PUNTO POR PUNTO ═══
 > Antonio: *«vamos a trabajar sobre el TFG de Daniela, sobre su plan de trabajo»*. Releído el plan
@@ -299,8 +299,8 @@ necesita `md_a_pdf.py`, **no está instalado** en el Python del sistema; se usó
 El Python del sistema tampoco tiene certificados SSL (`urllib` falla contra HTTPS; se resolvió con
 `certifi`).
 
-**Queda abierto:** enviar a Daniela el PDF y el Excel (Antonio aclara que **todavía no se le ha
-enviado nada**: las correcciones llegan antes de que viera la versión con la lectura errónea) · decidir el push (repo público + nombre de la estudiante) · el lunes 7 de diciembre.
+**Enviado a Daniela el 19/11** tras la revisión de Antonio: plan en PDF, Excel y las cuatro figuras
+de referencia, con la declaración de uso de IA supervisada por el tutor. **Queda abierto:** decidir el push (repo público + nombre de la estudiante) · el lunes 7 de diciembre.
 
 ## ═══ SESIÓN 2026-11-15/18 — TFG DE DANIELA: TEMA, PLAN Y MATERIAL; RGPD ═══
 > Origen: «definir TFM/TFG asociados», en el backlog desde julio. Commits `16bc982` a `02299f0`.
