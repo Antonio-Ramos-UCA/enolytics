@@ -226,6 +226,9 @@ LEEME = [
                 "filtros: por ejemplo, segmento = Internacional y Organizacion y reserva no vacia "
                 "da las 202 resenas que tienes que leer para el epigrafe 5.2; por debajo de 3, "
                 "las negativas."),
+    ("Distancia a umbrales", "Cuanto le falta a cada atributo para cambiar de cuadrante, y que "
+                             "pasa si los umbrales se fijan con la mediana en vez de la media. "
+                             "Es la comprobacion de sensibilidad de los epigrafes 3.6 y 4.5."),
     ("COMO SE DEFINE EL SEGMENTO",
      "Por el IDIOMA detectado de la resena. Castellano, catalan, gallego o euskera = turista NACIONAL; cualquier otro = INTERNACIONAL. Es un proxy, y tiene dos fugas: una se corrige y la otra se mide. Se corrige: el catalan es lengua de Espana, asi que quien escribe en catalan es nacional (39 resenas que antes caian en internacional). Se mide: un latinoamericano escribe en espanol y se contaria como nacional, pero segun Dataestur solo el 0,87 % de las busquedas de vuelo internacionales hacia Jerez procede de paises hispanohablantes (93.918 de 10.836.376). CITA ESA CIFRA en la metodologia: es lo que justifica el diseno."),
     ("Comparacion", "LA HOJA CLAVE. Que porcentaje de las resenas de cada segmento menciona "
@@ -345,6 +348,21 @@ def main() -> None:
     comp["CAMBIA_CUADRANTE"] = comp["cuadrante_nac"] != comp["cuadrante_internac"]
     comp = comp.sort_values("brecha_importancia_pp")
 
+    # --- Solidez: distancia a los umbrales y rejilla alternativa (mediana) --------
+    # Plan, epígrafes 3.6 y 4.5. "Ningún atributo cambia de cuadrante" aguanta con medias
+    # comunes o propias, pero Vino y cata internacional está a 0,039 del umbral de desempeño
+    # y con la mediana cambia. (Bootstrap de 1.000 réplicas, fuera del plan por exceso para un
+    # TFG: sin Entorno y viñedo, algún cambio en <= 7 % de las réplicas.)
+    todo = pd.concat([th, ti])
+    m_i, m_d = todo["importancia"].median(), todo["desempeno"].median()
+    dist = todo[["segmento", "atributo", "menciones", "importancia", "desempeno",
+                 "cuadrante", "muestra_fina"]].copy()
+    dist["dist_umbral_importancia_pp"] = (dist["importancia"] - u_i).round(2)
+    dist["dist_umbral_desempeno"] = (dist["desempeno"] - u_d).round(3)
+    dist["cuadrante_con_mediana"] = [CUADRANTES[(i >= m_i, x >= m_d)]
+                                     for i, x in zip(dist["importancia"], dist["desempeno"])]
+    dist["cambia_con_mediana"] = dist["cuadrante"] != dist["cuadrante_con_mediana"]
+
     # --- Figuras --------------------------------------------------------------
     figura_simple(th, u_i, u_d, "IPA del Marco — turista NACIONAL",
                   "#2a78d6", SALIDA / "ipa_nacional.png")
@@ -374,6 +392,7 @@ def main() -> None:
         th.to_excel(xl, sheet_name="IPA nacional", index=False, startrow=3)
         ti.to_excel(xl, sheet_name="IPA internacional", index=False, startrow=3)
         pd.concat([th, ti]).to_excel(xl, sheet_name="Atributos", index=False)
+        dist.to_excel(xl, sheet_name="Distancia a umbrales", index=False, startrow=4)
         r.to_excel(xl, sheet_name="Resenas", index=False)
         hr = xl.sheets["Resenas"]
         hr.autofilter(0, 0, len(r), len(r.columns) - 1)
@@ -389,6 +408,17 @@ def main() -> None:
                       "internacional, en puntos porcentuales.", neg)
         h.write(3, 0, f"{int(comp['CAMBIA_CUADRANTE'].sum())} atributos cambian de cuadrante "
                       f"entre segmentos.", neg)
+        h = xl.sheets["Distancia a umbrales"]
+        h.write(0, 0, f"Umbrales de la media (los del trabajo): importancia {u_i:.3f} % · "
+                      f"desempeno {u_d:.3f}", neg)
+        h.write(1, 0, f"Umbrales de la mediana (comprobacion de sensibilidad): importancia "
+                      f"{m_i:.3f} % · desempeno {m_d:.3f}", neg)
+        h.write(2, 0, "dist_umbral = valor menos umbral de la media. Cerca de 0 = atributo en la "
+                      "frontera entre cuadrantes.", neg)
+        cambian = dist[dist["cambia_con_mediana"]]
+        h.write(3, 0, "Con la mediana cambian: " + (", ".join(
+            f"{a} ({s.lower()})" for s, a in zip(cambian["segmento"], cambian["atributo"]))
+            or "ninguno"), neg)
         for hoja in xl.sheets.values():
             hoja.set_column(0, 0, 32)
             hoja.set_column(1, 14, 20)

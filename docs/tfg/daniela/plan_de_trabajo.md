@@ -45,7 +45,9 @@ El análisis preliminar de los datos arroja dos resultados.
 **Primero.** Los ocho atributos comparten cuadrante en los dos segmentos. No se trata de una
 ausencia de resultado, sino de un resultado en sí mismo: el destino no requiere dos estrategias
 de prioridades distintas. Lo que varía no es qué priorizar, sino el peso relativo de cada
-atributo en cada segmento.
+atributo en cada segmento. El resultado se mantiene si cada segmento se parte por sus propias
+medias, aunque un atributo queda en la frontera: el desempeño de vino y cata en el segmento
+internacional, 4,056, supera el umbral por solo 0,039 puntos.
 
 **Segundo.** Ese peso varía de forma acusada, y lo hace sobre el atributo peor resuelto.
 
@@ -240,6 +242,11 @@ cuadrantes distintos sin que su importancia ni su desempeño hubieran cambiado, 
 movido la rejilla. Con umbrales comunes, cualquier diferencia entre matrices es una diferencia
 real entre segmentos.
 
+Debe añadirse una comprobación de sensibilidad, porque la posición de los ejes es la crítica
+principal al IPA (epígrafe 2.4): las matrices se rehacen tomando como umbral la mediana en lugar
+de la media, 25,00 % en importancia y 4,104 en desempeño, y se informa de qué cambia. El cálculo
+está hecho en la hoja «Distancia a umbrales» del material.
+
 3.7. Instrumental procedente del proyecto. Declaración expresa de qué parte del tratamiento de
 los datos procede de ENOLYTICS y qué parte es trabajo propio, según el apartado 3 de este plan.
 
@@ -263,6 +270,15 @@ anterior para que la comparación resulte inmediata.
 4.5. Comparación de las dos matrices. Superposición con el desplazamiento de cada atributo y tabla
 de brechas. Aquí se expone el primer resultado: ningún atributo cambia de cuadrante. Debe
 presentarse como lo que es, un hallazgo, y no como una ausencia de hallazgo.
+
+A continuación, la solidez de ese resultado, con una tabla de la distancia de cada atributo a los
+dos umbrales en cada segmento. La mayoría queda lejos de las fronteras, pero dos casos deben
+comentarse: el desempeño de vino y cata en el segmento internacional, a 0,039 puntos del umbral, y
+la importancia de personal y trato en ese mismo segmento, a 2,24 puntos porcentuales. Con la
+mediana como umbral, vino y cata del visitante internacional pasa al cuadrante «Concéntrese
+aquí», mientras que el del nacional permanece en «Mantener el buen trabajo». Se trata como un
+caso frontera, no como un hallazgo: indica que el producto central del destino está, para el
+visitante extranjero, en el límite de requerir actuación.
 
 4.6. Las dos brechas de mayor magnitud. Organización y reserva, con 10,61 puntos porcentuales más
 de menciones en el segmento internacional, e instalaciones, con 17,39 puntos más en el nacional.
@@ -381,7 +397,8 @@ ensayar la defensa en voz alta durante el mes de enero.
 Se entrega un libro de Excel que contiene un guion de interpretación, que es la primera hoja y
 explica el resto; la hoja de comparación, núcleo del análisis, con las menciones y el sentimiento
 de cada atributo en cada segmento y la brecha entre ambos; las dos matrices IPA, de turista
-nacional y de turista internacional; y las reseñas seudonimizadas con su segmento y una columna
+nacional y de turista internacional; la distancia de cada atributo a los umbrales, con la
+comprobación de sensibilidad de la mediana; y las reseñas seudonimizadas con su segmento y una columna
 por atributo con el sentimiento de la reseña hacia él, vacía cuando no lo menciona. Esta última
 hoja admite filtros, de modo que pueden leerse, por ejemplo, todas las reseñas internacionales que
 mencionan la organización, o solo las negativas: es la herramienta para responder a las preguntas
@@ -478,6 +495,11 @@ reseñas demasiado breves para detectar el idioma tampoco contienen atributos.
 **Un atributo con muestra insuficiente.** Entorno y viñedo registra únicamente 37 menciones en el
 segmento internacional. Aparece señalado con asterisco en las figuras y no debe sostener ninguna
 conclusión.
+
+**Sensibilidad a la posición de los umbrales.** El resultado de que ningún atributo cambia de
+cuadrante se mantiene con umbrales comunes y con umbrales propios de cada segmento, pero no con
+la mediana: en ese caso vino y cata cambia de cuadrante en el segmento internacional, cuyo
+desempeño supera el umbral de la media por solo 0,039 puntos. Debe declararse con esa cifra.
 
 **La comparación es descriptiva, no inferencial.** Se comparan dos matrices y se describen las
 diferencias observadas, sin contrastar su significación estadística. Es una decisión consciente y
