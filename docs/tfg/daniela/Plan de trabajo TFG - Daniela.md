@@ -6,9 +6,7 @@ Convocatoria de febrero de 2027
 Estudiante: Daniela Calvario  
 Tutor: Antonio Rafael Ramos Rodríguez
 
-Entrega de la versión definitiva al tutor: **lunes 4 de enero de 2027**. La normativa fija el
-plazo hasta el día 6, pero el 6 es festivo, de modo que el calendario de este plan trabaja con
-el día 4.
+Entrega de la versión definitiva al tutor: **viernes 8 de enero de 2027**.
 
 ## 1. Objeto del trabajo
 
@@ -104,8 +102,8 @@ es lo que da acceso a los datos, pero omitirlo sí sería una falta de integrida
 
 ## 4. Calendario
 
-Entre la recepción de este plan, el jueves 19 de noviembre, y la entrega median algo menos de
-siete semanas, dos de ellas ocupadas por la Navidad. El plan contempla cinco semanas de trabajo
+Entre la recepción de este plan, el jueves 19 de noviembre, y la entrega del 8 de enero median
+siete semanas, de las que la Navidad ocupa casi tres. El plan contempla cinco semanas de trabajo
 efectivo más las fiestas para el cierre. La primera es corta, de jueves a domingo, y por eso su
 entrega es la más ligera.
 
@@ -121,8 +119,8 @@ reseñas leídas y dos o tres ejemplos citables.
 | 3 | 30 nov – 4 dic | Epígrafes 2.5 a 2.7: el IPA derivado de reseñas, la procedencia del visitante y la laguna detectada. Capítulo 3 de metodología completo. Lectura de las 202 reseñas internacionales que mencionan la organización | Capítulos 2 y 3, y notas de lectura |
 | 4 | 9–11 dic | Capítulo 4 de resultados, sobre las tablas y figuras del material. El martes 8 es festivo y el lunes 7 previsiblemente puente, de ahí que la semana solo cuente tres días. Lectura de la muestra de instalaciones: 50 reseñas por segmento | Capítulo 4 y notas de lectura |
 | 5 | 14–20 dic | Discusión y conclusiones, a partir de las notas de lectura acumuladas. Cierre de la introducción | Capítulos 5 y 6, y borrador completo |
-| Navidad | 21 dic – 3 ene | Revisión, formato, resúmenes en español e inglés, índices y bibliografía APA. Sin análisis nuevo | — |
-| Entrega | **lun 4 ene** | Versión definitiva | TFG completo |
+| Navidad | 21 dic – 7 ene | Revisión, formato, resúmenes en español e inglés, índices y bibliografía APA. Sin análisis nuevo | — |
+| Entrega | **vie 8 ene** | Versión definitiva | TFG completo |
 
 A partir de la entrega el calendario ya no depende de la estudiante, salvo en el tramo de mayor
 peso: subida a la plataforma hasta el 22 de enero, designación de tribunales el 27 de enero y
@@ -682,7 +680,7 @@ Y, acompañando al resumen en inglés, su versión inglesa:
 
 Las tres menciones, portada, encuadre y agradecimientos, conviene insertarlas desde el primer
 borrador y no al cierre, pues la cláusula de portada y el párrafo de encuadre condicionan la
-maquetación y la semana del 21 de diciembre al 3 de enero está reservada a formato y revisión.
+maquetación y el periodo del 21 de diciembre al 7 de enero está reservado a formato y revisión.
 
 ### 12.2 Documentación posterior a la defensa
 

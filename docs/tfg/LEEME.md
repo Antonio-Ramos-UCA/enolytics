@@ -34,7 +34,7 @@ Nómbralas `AAAA-MM-DD_descripcion.pdf` para que ordenen solas.
 |---|---|
 | **Tema** | IPA **segmentado por procedencia**: ¿valoran lo mismo el turista nacional y el internacional? |
 | **Tutor** | Antonio Rafael Ramos Rodríguez |
-| **Entrega al tutor** | **4 de enero de 2027** *(la norma dice «hasta el 6», pero el 6 es Reyes)* |
+| **Entrega al tutor** | **Viernes 8 de enero de 2027** *(fijada por el tutor el 19/11)* |
 | **Defensa** | Entre el 1 y el 16 de febrero de 2027 |
 | **Plan** | [`daniela/Plan de trabajo TFG - Daniela.md`](daniela/Plan%20de%20trabajo%20TFG%20-%20Daniela.md) |
 

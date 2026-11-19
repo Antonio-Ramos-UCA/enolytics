@@ -206,7 +206,7 @@ streamlit, pandas, sklearn, plotly, matplotlib, requests, bs4.
 4. **Cuestionarios** a bodegas y a enoturistas, solo para lo que no dan las fuentes públicas.
 5. **Decisiones abiertas de producto:** los emojis decorativos de los encabezados; y si la
    marca nueva (`datos/marca/`) entra en la app, los PDF y las presentaciones.
-6. **TFG de Daniela** (entrega al tutor el 04/01/2027): enviarle el plan y el Excel (todavía **no
+6. **TFG de Daniela** (entrega al tutor el **08/01/2027**, fijada por Antonio el 19/11): enviarle el plan y el Excel (todavía **no
    se le ha enviado nada**) y seguir las entregas semanales. El calendario arranca el 18/11:
    si el envío se retrasa, revisar la semana 1. Ver `docs/tfg/LEEME.md`.
 
@@ -286,7 +286,9 @@ enviárselo»*).** Siete correcciones más:
   requisito académico y nota sobre Bi y Zhang.
 - **Tutoría:** «una semana perdida equivale al 20 %» → compromete el bloque de Planificación.
 - **4.5:** quitada otra interpretación dada (vino y cata «en el límite de requerir actuación»).
-- **Aplazado:** el calendario arranca el 18/11 y aún no se le ha enviado; se ajusta al fijar fecha.
+- **Calendario:** arranca el jueves 19/11, día del envío. **Entrega al tutor: viernes 8 de enero**
+  (Antonio, 19/11; el plan decía el 4 porque la normativa marcaba «hasta el 6», y Antonio confirma
+  que esa fecha no obliga). La Navidad queda del 21/12 al 07/01 para formato y revisión.
 
 **Otros cambios del día:** nombre completo en el plan, **Daniela Calvario**; «tesis» → «idea
 central» (Antonio: *«no es una tesis, es un TFG»*).
