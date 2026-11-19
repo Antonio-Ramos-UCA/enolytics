@@ -3,7 +3,7 @@
 Trabajo Fin de Grado · Grado en Turismo · Universidad de Cádiz  
 Convocatoria de febrero de 2027
 
-Estudiante: Daniela  
+Estudiante: Daniela Calvario  
 Tutor: Antonio Rafael Ramos Rodríguez
 
 Entrega de la versión definitiva al tutor: **lunes 4 de enero de 2027**. La normativa fija el
@@ -55,20 +55,31 @@ atributo en cada segmento.
 | Visita y experiencia | 70,0 % | 79,7 % |
 | Instalaciones | 62,0 % | 44,6 % |
 
-El turista internacional menciona los problemas de organización y reserva cinco veces más que el
-nacional. Organización y reserva es, además, el atributo con peor desempeño de los ocho en ambos
-segmentos, de modo que la mayor divergencia entre segmentos recae sobre lo que peor se hace.
+El turista internacional menciona la organización y la reserva cinco veces más que el nacional,
+pero lo hace mayoritariamente en términos favorables: dos de cada tres de sus menciones son
+positivas. El nacional apenas la menciona, y cuando lo hace es con un tono más crítico, hasta el
+punto de que su desempeño medio, 3,24, es el más bajo de toda la comparación.
 
-El resultado converge con otra medición del proyecto obtenida por vía independiente: la auditoría
-de las 41 webs mostró que la mayoría de las bodegas carece de reserva en línea y de versión en
-inglés.
+| Organización y reserva | Turista nacional | Turista internacional |
+|---|---|---|
+| Reseñas que la mencionan | 129 | 202 |
+| — de ellas, negativas | 50 (39 %) | 52 (26 %) |
+| — de ellas, positivas | 60 | 129 |
+| Desempeño medio (1 a 5) | 3,24 | 3,70 |
+
+Organización y reserva es el atributo con peor desempeño de los ocho en ambos segmentos, de modo
+que la mayor divergencia entre segmentos recae sobre lo que peor se hace. Pero la misma diferencia
+de énfasis encubre dos experiencias distintas del mismo atributo, y explicar por qué forma parte
+del trabajo.
 
 El caso de las instalaciones opera en sentido inverso, pues el turista nacional las menciona mucho
 más. Son las catedrales del vino, un patrimonio que al visitante extranjero parece resultarle
 menos legible sin mediación interpretativa.
 
-La tesis del trabajo es, por tanto, que las prioridades coinciden entre segmentos y el énfasis no,
-y que la mayor divergencia recae sobre el atributo peor resuelto del destino.
+La idea central del trabajo es, por tanto, que las prioridades coinciden entre segmentos y el énfasis no,
+y que la mayor divergencia recae sobre el atributo peor resuelto del destino, con un signo distinto
+en cada segmento: el internacional habla más de él y lo valora mejor; el nacional habla menos y lo
+valora peor.
 
 ## 3. Reparto del trabajo
 
@@ -250,6 +261,10 @@ presentarse como lo que es, un hallazgo, y no como una ausencia de hallazgo.
 
 4.6. Las dos brechas de mayor magnitud. Organización y reserva, con 10,61 puntos porcentuales más
 de menciones en el segmento internacional, e instalaciones, con 17,39 puntos más en el nacional.
+En organización y reserva la brecha de menciones no basta: debe acompañarse del reparto entre
+menciones positivas y negativas de cada segmento, porque el internacional la menciona más y la
+valora mejor (3,70 frente a 3,24), y presentar solo la frecuencia induciría a leerla como una
+queja.
 Entorno y viñedo se señala con asterisco y se excluye de la interpretación, por sus 37 menciones
 en el segmento internacional.
 
@@ -262,10 +277,20 @@ que exige el apartado 12.1.c.
 Zhang et al. (2021), con atención al efecto techo: sus corpus están más repartidos y el de este
 trabajo no, lo que afecta a la capacidad de discriminar atributos por encima de la media.
 
-5.2. Convergencia con una medición independiente. La auditoría de las 41 webs del proyecto mostró
-carencia generalizada de reserva en línea y de versión en inglés, lo que coincide con la mayor
-mención de problemas de organización y reserva en el segmento internacional. Dos fuentes distintas
-que apuntan a lo mismo refuerzan el resultado.
+5.2. Una pregunta abierta: por qué el internacional valora mejor la organización. La auditoría de
+las 41 webs del proyecto mostró que la mayoría de las bodegas carece de reserva en línea y de
+versión en inglés. Cabría esperar, por tanto, que fuera el visitante extranjero quien más se
+quejara de la organización, y los datos muestran lo contrario. Este epígrafe debe proponer y
+contrastar explicaciones con las propias reseñas. Una hipótesis de partida, que la estudiante
+debe comprobar y no dar por buena: el visitante internacional llega con frecuencia con la visita
+contratada por un intermediario (crucero, agencia o guía) y comenta la logística cuando funciona,
+mientras que el nacional reserva por su cuenta y la menciona cuando falla. La lectura de las
+reseñas de organización de cada segmento, que son pocas y se pueden leer completas, permite
+comprobarla. Debe contemplarse también una explicación de origen metodológico: los términos con
+que se detecta el atributo no tienen la misma carga en cada idioma, pues el inglés *booking* es
+descriptivo, mientras que el castellano *espera* o *cola* ya arrastra la queja. Parte de la
+diferencia podría proceder del diccionario y no del visitante. Es el epígrafe donde el trabajo
+puede aportar una interpretación propia.
 
 5.3. Implicaciones para la gestión del destino. Qué se deriva de que las prioridades coincidan y
 el énfasis no: una sola agenda de actuación, con distinto peso según el público al que se dirija
