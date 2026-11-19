@@ -114,7 +114,7 @@ reseñas leídas y dos o tres ejemplos citables.
 
 | Semana | Fechas | Tarea | Entrega al tutor |
 |---|---|---|---|
-| 1 | 18–22 nov | Lectura del plan, comprobación del requisito académico del apartado 8 y lectura de los dos artículos base: Bi et al. (2019) y Zhang et al. (2021). Primera exploración del Excel con su guion | Índice propuesto y objetivos redactados |
+| 1 | 18–22 nov | Lectura del plan, comprobación del requisito académico del apartado 8 y lectura de los dos artículos base: Bi et al. (2019) y Zhang et al. (2021). Primera exploración del Excel con su guion | Objetivos en redacción propia, confirmación del requisito académico y nota breve sobre los dos artículos |
 | 2 | 23–29 nov | Revisión de la literatura, epígrafes 2.1 a 2.4: enoturismo, el Marco de Jerez como destino, satisfacción y calidad percibida, y el IPA con sus críticas. Estudio de Martilla y James (1977), Azzopardi y Nash (2013) y Liu et al. (2017). Lectura de las 129 reseñas nacionales que mencionan la organización | Epígrafes 2.1 a 2.4 y notas de lectura |
 | 3 | 30 nov – 4 dic | Epígrafes 2.5 a 2.7: el IPA derivado de reseñas, la procedencia del visitante y la laguna detectada. Capítulo 3 de metodología completo. Lectura de las 202 reseñas internacionales que mencionan la organización | Capítulos 2 y 3, y notas de lectura |
 | 4 | 9–11 dic | Capítulo 4 de resultados, sobre las tablas y figuras del material. El martes 8 es festivo y el lunes 7 previsiblemente puente, de ahí que la semana solo cuente tres días. Lectura de la muestra de instalaciones: 50 reseñas por segmento | Capítulo 4 y notas de lectura |
@@ -172,12 +172,14 @@ entre liderazgo en volumen y rezago en valor, descartada la explicación del tam
 sitúa la pregunta en el interior de la visita. Es el material del apartado 1 de este plan.
 
 1.2. Objetivos. Un objetivo general: determinar si las prioridades de mejora del enoturismo del
-Marco de Jerez difieren según la procedencia del visitante. Y cuatro específicos: identificar los
-atributos de la experiencia que los visitantes mencionan en sus reseñas; medir la importancia y el
-desempeño de cada atributo en cada segmento; construir y comparar las dos matrices
-importancia-desempeño; y derivar recomendaciones de gestión para el destino, diferenciadas por
-segmento si los resultados lo justifican. Este epígrafe es el que las conclusiones deberán
-responder una por una, de modo que conviene dejarlo cerrado pronto.
+Marco de Jerez difieren según la procedencia del visitante. Y cuatro específicos: medir la
+importancia y el desempeño de los ocho atributos de la experiencia en cada segmento; construir y
+comparar las dos matrices importancia-desempeño, y comprobar la solidez de la comparación frente a
+la posición de los umbrales; explicar las diferencias de énfasis entre segmentos mediante el
+análisis cualitativo de las reseñas; y derivar recomendaciones de gestión para el destino,
+diferenciadas por segmento si los resultados lo justifican. Este epígrafe es el que las conclusiones deberán
+responder una por una, de modo que conviene dejarlo cerrado pronto. La formulación anterior es
+orientativa: los objetivos se redactan con palabras propias en la semana 1.
 
 1.3. Estructura del trabajo. Un párrafo por capítulo, en el orden en que aparecen.
 
@@ -207,9 +209,13 @@ pasa a medir el desempeño— y qué se gana y qué se pierde con esa sustituci�
 2.6. Procedencia del visitante y valoración de la experiencia. Lo que la literatura ha observado
 sobre diferencias en la valoración según el origen del visitante.
 
-2.7. Síntesis y laguna detectada. Un epígrafe corto que cierre el capítulo: los trabajos que
-derivan un IPA de reseñas tratan el destino como un público único y no segmentan. De ahí la
-pregunta de este trabajo. Sin este epígrafe la revisión queda como una sucesión de resúmenes; con
+2.7. Síntesis y laguna detectada. Un epígrafe corto que cierre el capítulo. La laguna debe
+formularse con precisión, porque la comparación por procedencia a partir de reseñas sí existe en
+la literatura: Liu et al. (2017) y Galati y Galati (2019) comparan visitantes por idioma o por
+país, aunque en hotelería y sin construir un IPA. Lo que este trabajo aporta es la combinación:
+un IPA derivado de reseñas, segmentado por procedencia y aplicado al enoturismo. Que esa
+combinación no se haya estudiado es algo que la búsqueda propia debe confirmar, no dar por
+supuesto. De ahí la pregunta de este trabajo. Sin este epígrafe la revisión queda como una sucesión de resúmenes; con
 él, queda justificada.
 
 ### Capítulo 3. Metodología · 6 a 8 páginas · semana 3
@@ -288,8 +294,7 @@ comentarse: el desempeño de vino y cata en el segmento internacional, a 0,039 p
 la importancia de personal y trato en ese mismo segmento, a 2,24 puntos porcentuales. Con la
 mediana como umbral, vino y cata del visitante internacional pasa al cuadrante «Concéntrese
 aquí», mientras que el del nacional permanece en «Mantener el buen trabajo». Se trata como un
-caso frontera, no como un hallazgo: indica que el producto central del destino está, para el
-visitante extranjero, en el límite de requerir actuación.
+caso frontera, no como un hallazgo, y su lectura corresponde al capítulo de discusión.
 
 4.6. Las dos brechas de mayor magnitud. Organización y reserva, con 10,61 puntos porcentuales más
 de menciones en el segmento internacional, e instalaciones, con 17,39 puntos más en el nacional.
@@ -306,13 +311,16 @@ que exige el apartado 12.1.c.
 ### Capítulo 5. Discusión · 3 a 4 páginas · semana 5
 
 5.1. Contraste con la literatura. Los resultados frente a lo que describen Bi et al. (2019) y
-Zhang et al. (2021), con atención al efecto techo: sus corpus están más repartidos y el de este
-trabajo no, lo que afecta a la capacidad de discriminar atributos por encima de la media.
+Zhang et al. (2021), con atención al efecto techo: el 75,9 % de valoraciones de cinco estrellas de
+este corpus limita la capacidad de discriminar atributos por encima de la media. Debe comprobarse
+en los dos artículos la distribución de valoraciones que declaran, para saber si afrontaron el
+mismo problema o trabajaron con corpus más repartidos.
 
-5.2. Una pregunta abierta: por qué el internacional valora mejor la organización. La auditoría de
-las 41 webs del proyecto mostró que la mayoría de las bodegas carece de reserva en línea y de
-versión en inglés. Cabría esperar, por tanto, que fuera el visitante extranjero quien más se
-quejara de la organización, y los datos muestran lo contrario. Este epígrafe debe proponer y
+5.2. Una pregunta abierta: por qué el internacional valora mejor la organización. La auditoría
+web del proyecto, sobre 38 bodegas con web accesible, mostró que un tercio carece de reserva en
+línea (13 de 38) y casi la mitad de versión en inglés (17 de 38). Cabría esperar, por tanto, que
+fuera el visitante extranjero quien más se quejara de la organización, y los datos muestran lo
+contrario. Este epígrafe debe proponer y
 contrastar explicaciones con las propias reseñas. Una hipótesis de partida, que la estudiante
 debe comprobar y no dar por buena: el visitante internacional llega con frecuencia con la visita
 contratada por un intermediario (crucero, agencia o guía) y comenta la logística cuando funciona,
@@ -596,9 +604,9 @@ de diferencias probadas.
 valoraciones extremas y el corpus recoge únicamente a usuarios de Google.
 
 **Efecto techo.** El 75,9 % de las valoraciones son de cinco estrellas, de modo que apenas existe
-margen por encima de la media para discriminar los atributos que generan satisfacción. Señalarlo
-constituye una aportación, pues los artículos de referencia trabajan con corpus más repartidos y no
-afrontan este problema.
+margen por encima de la media para discriminar los atributos que generan satisfacción. Si los
+artículos de referencia trabajan con corpus más repartidos, lo que debe comprobarse (epígrafe
+5.1), señalarlo constituye además una aportación.
 
 **Una sola plataforma.** No se incorpora TripAdvisor, con mayor presencia de visitante
 internacional.
@@ -612,7 +620,8 @@ no reúne reseñas suficientes.
 
 - Una tutoría semanal, breve, para revisar la entrega correspondiente.
 - Cualquier bloqueo que supere un día de trabajo debe comunicarse. Con este calendario, una semana
-  perdida equivale al 20 % de la calificación del tutor.
+  perdida compromete el bloque de Planificación e iniciativa, que vale el 20 % de la calificación
+  del tutor.
 - Las entregas se remiten en PDF o Word, con nombre y fecha en el nombre del archivo.
 - El uso de herramientas de inteligencia artificial se declara conforme a la normativa de la UCA.
 

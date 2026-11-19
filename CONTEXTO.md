@@ -270,6 +270,24 @@ verificación **sirvió**: dos DOI candidatos de López-Guzmán apuntaban a otro
 G.»). Martilla y James (1977) queda verificado. Las glosas de contenido se escribieron por título y
 conocimiento previo, no leyendo los artículos.
 
+**6. ✅ RELECTURA COMPLETA ANTES DE ENVIARLO (Antonio: *«vamos a repasar el plan antes de
+enviárselo»*).** Siete correcciones más:
+- ⚠️ **La auditoría web decía lo contrario de lo que afirmaba el plan.** «La mayoría de las bodegas
+  carece de reserva en línea y de versión en inglés» es falso: en `auditoria_web.csv` el **66 %
+  tiene reserva online** (25 de 38) y el **55 % inglés** (21 de 38); solo 7 carecen de ambas. El
+  error venía del 18/11 y se había copiado al guion del Excel. Corregido con las cifras reales.
+- **2.7, la laguna:** Liu et al. (2017) y Galati y Galati (2019) sí comparan por idioma o país; la
+  laguna se precisa (IPA de reseñas + segmentación por procedencia + enoturismo) y debe confirmarla
+  la búsqueda propia.
+- **5.1:** «sus corpus están más repartidos» no estaba comprobado → pasa a tarea de la estudiante.
+- **Objetivos (1.2):** no recogían la aportación propia (explicar las diferencias leyendo reseñas),
+  y el primero lo resolvía el proyecto. Reformulados; orientativos, que los redacte ella.
+- **Semana 1:** pedía «índice y objetivos», que el plan ya le da → objetivos en redacción propia,
+  requisito académico y nota sobre Bi y Zhang.
+- **Tutoría:** «una semana perdida equivale al 20 %» → compromete el bloque de Planificación.
+- **4.5:** quitada otra interpretación dada (vino y cata «en el límite de requerir actuación»).
+- **Aplazado:** el calendario arranca el 18/11 y aún no se le ha enviado; se ajusta al fijar fecha.
+
 **Otros cambios del día:** nombre completo en el plan, **Daniela Calvario**; «tesis» → «idea
 central» (Antonio: *«no es una tesis, es un TFG»*).
 

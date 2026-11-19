@@ -267,7 +267,7 @@ LEEME = [
     ("Organizacion y reserva: 2,6 % frente a 13,3 %",
      "El visitante internacional la menciona cinco veces mas, pero sobre todo para bien: dos de cada tres de sus menciones son positivas. El nacional la menciona poco y con mas critica: su desempeno, 3,24, es el mas bajo de toda la comparacion (el internacional, 3,70). Mas menciones no significa mas quejas: presenta siempre la frecuencia junto al reparto entre positivas y negativas."),
     ("Una pregunta abierta para la discusion",
-     "La auditoria web del proyecto dice que la mayoria de bodegas no tiene reserva online ni version en ingles. Cabria esperar que el extranjero se quejara mas, y pasa lo contrario. Por que? Lee las resenas de organizacion de cada segmento (son pocas) y contrasta hipotesis: intermediarios que gestionan la visita del internacional, o diferencias del diccionario entre idiomas ('booking' es neutro; 'espera' o 'cola' ya son queja)."),
+     "Segun la auditoria web del proyecto, a un tercio de las bodegas le falta reserva online (13 de 38) y a casi la mitad version en ingles (17 de 38). Cabria esperar que el extranjero se quejara mas, y pasa lo contrario. Por que? Lee las resenas de organizacion de cada segmento (son pocas) y contrasta hipotesis: intermediarios que gestionan la visita del internacional, o diferencias del diccionario entre idiomas ('booking' es neutro; 'espera' o 'cola' ya son queja)."),
     ("Instalaciones: 62,0 % frente a 44,6 %",
      "Al reves: el visitante nacional habla de las instalaciones 17 puntos mas que el internacional. Por que? Leelo en las resenas de cada segmento antes de proponer una explicacion."),
     ("Las preguntas que tienes que responder",
