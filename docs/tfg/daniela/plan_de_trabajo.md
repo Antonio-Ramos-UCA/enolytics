@@ -34,7 +34,7 @@ y no en valor. La diferencia no está en el tamaño de la oferta, pues el Marco 
 servicios, por encima de la mediana de las 37 rutas españolas. Ello desplaza la pregunta al
 interior de la visita, que es precisamente lo que describen las reseñas.
 
-## 2. Aportación propia del trabajo
+## 2. Punto de partida y aportación propia
 
 ENOLYTICS analiza el destino en conjunto y no desagrega por procedencia del visitante. Esa es la
 aportación de este TFG: un trabajo que se limitara a describir lo que la plataforma ya muestra no
@@ -69,24 +69,29 @@ punto de que su desempeño medio, 3,24, es el más bajo de toda la comparación.
 
 Organización y reserva es el atributo con peor desempeño de los ocho en ambos segmentos, de modo
 que la mayor divergencia entre segmentos recae sobre lo que peor se hace. Pero la misma diferencia
-de énfasis encubre dos experiencias distintas del mismo atributo, y explicar por qué forma parte
-del trabajo.
+de énfasis encubre dos experiencias distintas del mismo atributo.
 
-El caso de las instalaciones opera en sentido inverso, pues el turista nacional las menciona mucho
-más. Son las catedrales del vino, un patrimonio que al visitante extranjero parece resultarle
-menos legible sin mediación interpretativa.
+El caso de las instalaciones opera en sentido inverso: el turista nacional las menciona 17 puntos
+porcentuales más que el internacional.
 
-La idea central del trabajo es, por tanto, que las prioridades coinciden entre segmentos y el énfasis no,
-y que la mayor divergencia recae sobre el atributo peor resuelto del destino, con un signo distinto
-en cada segmento: el internacional habla más de él y lo valora mejor; el nacional habla menos y lo
-valora peor.
+Los datos describen estas diferencias, pero no las explican. La aportación propia del trabajo
+consiste en responder tres preguntas que la plataforma no responde:
+
+1. Por qué el visitante internacional menciona más la organización y la reserva, y la valora
+   mejor (epígrafe 5.2).
+2. Por qué el visitante nacional habla mucho más de las instalaciones.
+3. Qué implica para la gestión del destino una agenda de prioridades común con un peso distinto en
+   cada segmento.
+
+Las respuestas se buscan en el texto de las reseñas, que el material permite leer filtradas por
+atributo y por segmento.
 
 ## 3. Reparto del trabajo
 
 | Material disponible | Aportación de la estudiante |
 |---|---|
 | Las 10.972 reseñas, depuradas y sin nombres de autor | Búsqueda y redacción del marco teórico |
-| Cada reseña clasificada por atributo y por segmento | Interpretación de los resultados |
+| Cada reseña clasificada por atributo y por segmento | Explicación de las diferencias entre segmentos mediante la lectura de las reseñas |
 | Tablas de menciones y sentimiento por segmento | Lectura de las brechas entre segmentos |
 | Las dos matrices IPA y la figura de brechas | Conclusiones y recomendaciones de gestión |
 | Guion de interpretación del material | Redacción completa y defensa oral |
@@ -294,8 +299,9 @@ puede aportar una interpretación propia.
 
 5.3. Implicaciones para la gestión del destino. Qué se deriva de que las prioridades coincidan y
 el énfasis no: una sola agenda de actuación, con distinto peso según el público al que se dirija
-cada medida. Recomendaciones sobre organización y reserva, y sobre la mediación interpretativa del
-patrimonio para el visitante extranjero.
+cada medida. Las recomendaciones deben derivarse de las explicaciones propuestas en el epígrafe 5.2
+y para la diferencia en instalaciones, de modo que cada recomendación pueda remitirse a un
+resultado y a las reseñas que lo sustentan.
 
 ### Capítulo 6. Conclusiones · 2 a 3 páginas · semana 5
 
@@ -375,7 +381,11 @@ ensayar la defensa en voz alta durante el mes de enero.
 Se entrega un libro de Excel que contiene un guion de interpretación, que es la primera hoja y
 explica el resto; la hoja de comparación, núcleo del análisis, con las menciones y el sentimiento
 de cada atributo en cada segmento y la brecha entre ambos; las dos matrices IPA, de turista
-nacional y de turista internacional; y las reseñas seudonimizadas con su segmento.
+nacional y de turista internacional; y las reseñas seudonimizadas con su segmento y una columna
+por atributo con el sentimiento de la reseña hacia él, vacía cuando no lo menciona. Esta última
+hoja admite filtros, de modo que pueden leerse, por ejemplo, todas las reseñas internacionales que
+mencionan la organización, o solo las negativas: es la herramienta para responder a las preguntas
+del apartado 2.
 
 Se acompañan cuatro figuras en formato de imagen: las dos matrices, una superposición de ambas con
 el desplazamiento de cada atributo, y la de brechas entre segmentos.

@@ -221,7 +221,11 @@ LEEME = [
     ("", ""),
     ("Que hay en este libro", ""),
     ("Resenas", "Las 10.972 resenas SEUDONIMIZADAS, con su segmento. En vez del nombre del "
-                "autor hay un codigo estable (V-XXXXXXXX)."),
+                "autor hay un codigo estable (V-XXXXXXXX). Hay una columna por atributo con el "
+                "sentimiento de esa resena hacia el (1 a 5; vacia si no lo menciona). Usa los "
+                "filtros: por ejemplo, segmento = Internacional y Organizacion y reserva no vacia "
+                "da las 202 resenas que tienes que leer para el epigrafe 5.2; por debajo de 3, "
+                "las negativas."),
     ("COMO SE DEFINE EL SEGMENTO",
      "Por el IDIOMA detectado de la resena. Castellano, catalan, gallego o euskera = turista NACIONAL; cualquier otro = INTERNACIONAL. Es un proxy, y tiene dos fugas: una se corrige y la otra se mide. Se corrige: el catalan es lengua de Espana, asi que quien escribe en catalan es nacional (39 resenas que antes caian en internacional). Se mide: un latinoamericano escribe en espanol y se contaria como nacional, pero segun Dataestur solo el 0,87 % de las busquedas de vuelo internacionales hacia Jerez procede de paises hispanohablantes (93.918 de 10.836.376). CITA ESA CIFRA en la metodologia: es lo que justifica el diseno."),
     ("Comparacion", "LA HOJA CLAVE. Que porcentaje de las resenas de cada segmento menciona "
@@ -261,9 +265,9 @@ LEEME = [
     ("Una pregunta abierta para la discusion",
      "La auditoria web del proyecto dice que la mayoria de bodegas no tiene reserva online ni version en ingles. Cabria esperar que el extranjero se quejara mas, y pasa lo contrario. Por que? Lee las resenas de organizacion de cada segmento (son pocas) y contrasta hipotesis: intermediarios que gestionan la visita del internacional, o diferencias del diccionario entre idiomas ('booking' es neutro; 'espera' o 'cola' ya son queja)."),
     ("Instalaciones: 62,0 % frente a 44,6 %",
-     "Al reves. El visitante en espanol habla mucho mas de las instalaciones, que en el Marco son las catedrales del vino. Es patrimonio que al internacional le dice menos, o que no sabe leer sin que se lo expliquen."),
-    ("Tu conclusion, en una frase",
-     "Las prioridades coinciden; el enfasis no. Y la mayor divergencia cae sobre el atributo peor resuelto del destino, con signo distinto en cada segmento: el internacional habla mas de el y lo valora mejor; el nacional habla menos y lo valora peor."),
+     "Al reves: el visitante nacional habla de las instalaciones 17 puntos mas que el internacional. Por que? Leelo en las resenas de cada segmento antes de proponer una explicacion."),
+    ("Las preguntas que tienes que responder",
+     "1) Por que el internacional menciona mas la organizacion y la valora mejor. 2) Por que el nacional habla mucho mas de las instalaciones. 3) Que implica para la gestion una agenda de prioridades comun con distinto peso en cada segmento. Las respuestas estan en el texto de las resenas, no en las tablas."),
     ("", ""),
     ("LIMITACIONES QUE DEBES DECLARAR", ""),
     ("El idioma es un proxy de la procedencia",
@@ -352,7 +356,15 @@ def main() -> None:
     # --- Excel ----------------------------------------------------------------
     r = res.copy()
     r["visitante"] = r["resena_id"].map(seudonimo)
-    r = r[["visitante", "bodega", "puntuacion", "fecha", "texto", "idioma", "segmento"]]
+    # Una columna por atributo con el sentimiento de la reseña hacia él (vacía si no lo menciona),
+    # para que la estudiante pueda filtrar y LEER las reseñas de un atributo y un segmento: las
+    # preguntas abiertas del plan (5.2, instalaciones) se responden con el texto, no con las tablas.
+    piv = d.pivot_table(index="resena_id", columns="atributo",
+                        values="sentimiento", aggfunc="mean").round(2)
+    atributos = list(th.sort_values("importancia", ascending=False)["atributo"])
+    r = r.merge(piv[atributos], left_on="resena_id", right_index=True, how="left")
+    r = r[["visitante", "bodega", "puntuacion", "fecha", "idioma", "segmento"]
+          + atributos + ["texto"]]
     assert "autor" not in r.columns and "enlace_resena" not in r.columns
 
     destino = SALIDA / "material_tfg_daniela.xlsx"
@@ -363,6 +375,9 @@ def main() -> None:
         ti.to_excel(xl, sheet_name="IPA internacional", index=False, startrow=3)
         pd.concat([th, ti]).to_excel(xl, sheet_name="Atributos", index=False)
         r.to_excel(xl, sheet_name="Resenas", index=False)
+        hr = xl.sheets["Resenas"]
+        hr.autofilter(0, 0, len(r), len(r.columns) - 1)
+        hr.freeze_panes(1, 0)
 
         neg = xl.book.add_format({"bold": True})
         for hoja in ["IPA nacional", "IPA internacional", "Comparacion"]:
