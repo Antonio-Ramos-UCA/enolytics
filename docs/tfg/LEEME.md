@@ -39,6 +39,11 @@ Nómbralas `AAAA-MM-DD_descripcion.pdf` para que ordenen solas.
 **Material entregado** (18/11/2026): plan de trabajo en PDF y Excel seudonimizado con las dos
 matrices IPA, las tablas de comparación y su guion de interpretación (`daniela/material/`).
 
+**Revisado el 19/11/2026** (plan y Excel): corregida la lectura de «organización y reserva»,
+preguntas abiertas en lugar de conclusiones dadas, comprobación de sensibilidad de los umbrales,
+calendario rehecho y bibliografía verificada. **Pendiente de enviárselo:** lo que tiene desde el
+18/11 lleva la versión anterior.
+
 **Pendiente de Daniela:** confirmar que tiene aprobadas todas las asignaturas básicas y
 obligatorias. Sin eso no puede defender en febrero, por mucho que entregue a tiempo.
 

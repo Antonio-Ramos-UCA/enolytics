@@ -4,9 +4,9 @@
 > poder continuar desde cualquier ordenador (este proyecto está en Dropbox y se
 > sincroniza). Si retomas con Claude en otro equipo, pásale este archivo primero.
 >
-> **Última actualización:** 2026-10-29 (pase de **registro profesional** en toda la plataforma,
-> **logos FEDER al área principal** porque en la barra lateral eran ilegibles, **frecuencia mensual**
-> decidida para la automatización de reseñas y **marca gráfica propia**. Leer la sesión del 28-29/10)
+> **Última actualización:** 2026-11-19 (**TFG de Daniela Calvario**: plan de trabajo, material y cinco
+> correcciones de fondo; y **problema de RGPD** detectado: datos personales en el repositorio
+> público. Leer las sesiones del 18/11 y del 19/11)
 
 ---
 
@@ -190,6 +190,10 @@ streamlit, pandas, sklearn, plotly, matplotlib, requests, bs4.
 > IPCA/DIPA/DIPCA, integrar en el dashboard) **están hechos desde julio**. La lista viva y
 > detallada es `docs/pendientes.md`; esto es solo el titular.
 
+0. 🚨 **RGPD: datos personales en el repositorio público** (detectado el 18/11). `resenas.csv`
+   lleva ~11.000 nombres de autor, texto y enlace, también en el historial de git. Plan de un par
+   de horas en `docs/pendientes.md`. Mientras tanto, **no hacer push de nada con datos de
+   personas**, tampoco de `docs/tfg/` (el plan lleva el nombre completo de la estudiante).
 1. ⭐ **Automatización mensual de reseñas.** El corpus lleva parado desde el 06/07. Dos piezas:
    el **backend de Outscraper** (bloqueado: la API exige saldo) y el **modo incremental** de
    `nlp/sentimiento.py`, que hoy repasa el corpus entero en cada ejecución. El segundo **no
@@ -202,6 +206,127 @@ streamlit, pandas, sklearn, plotly, matplotlib, requests, bs4.
 4. **Cuestionarios** a bodegas y a enoturistas, solo para lo que no dan las fuentes públicas.
 5. **Decisiones abiertas de producto:** los emojis decorativos de los encabezados; y si la
    marca nueva (`datos/marca/`) entra en la app, los PDF y las presentaciones.
+6. **TFG de Daniela** (entrega al tutor el 04/01/2027): enviarle el plan y el Excel corregidos el
+   19/11 y seguir las entregas semanales. Ver `docs/tfg/LEEME.md`.
+
+## ═══ SESIÓN 2026-11-19 — EL PLAN DE DANIELA, REVISADO PUNTO POR PUNTO ═══
+> Antonio: *«vamos a trabajar sobre el TFG de Daniela, sobre su plan de trabajo»*. Releído el plan
+> salieron cinco puntos y se trabajaron uno por uno, con un commit cada uno (`2175882` a `37fcdc7`).
+> Todo en local: **no se ha hecho push** (ver el riesgo de RGPD).
+
+**1. ✅ «ORGANIZACIÓN Y RESERVA»: EL PLAN LEÍA LOS DATOS AL REVÉS.** Decía que el internacional
+«menciona los problemas» de organización cinco veces más. Pero la importancia mide **menciones, no
+quejas**, y el sentimiento dice lo contrario:
+
+| Organización y reserva | Nacional | Internacional |
+|---|---|---|
+| Reseñas que la mencionan | 129 (2,6 %) | 202 (13,3 %) |
+| — negativas | 50 (39 %) | 52 (26 %) |
+| — positivas | 60 | 129 |
+| Desempeño | **3,24** (el peor de la tabla) | 3,70 |
+
+El internacional habla más de ella **y la valora mejor**; quien la sufre es el nacional. **El
+proyecto ya lo sabía desde julio** (sesión del 14/07, más abajo) y el plan del 18/11 no lo
+recogió. Cae con ello el argumento de la «convergencia con la auditoría web» (sin reserva online
+ni inglés → el extranjero se queja): el 5.2 pasa a **pregunta abierta para la estudiante**, con
+dos hipótesis que debe contrastar leyendo las reseñas: intermediarios que gestionan la visita del
+internacional (crucero, agencia) y sesgo del diccionario (*booking* es neutro; *espera*/*cola* ya
+son queja). El guion del Excel repetía el error y traía **cifras de antes de reclasificar el
+catalán** (2,7/13,0 y 62,3/44,1): corregido.
+
+**2. ✅ EL PLAN LE DABA HECHAS LAS CONCLUSIONES.** Adelantaba la explicación de instalaciones
+(«las catedrales del vino»), la idea central redactada y las recomendaciones de 5.3: justo lo que
+el apartado 3 asigna a la estudiante. Ahora el apartado 2 («Punto de partida y aportación
+propia») deja los resultados como dato y cierra con **tres preguntas que la plataforma no
+responde**: por qué el internacional menciona más la organización y la valora mejor; por qué el
+nacional habla mucho más de instalaciones; qué implica una agenda común con distinto peso. Al
+escribirlo apareció un hueco: el plan decía que el material permitía leer reseñas por atributo, y
+**la hoja `Resenas` no tenía atributos**. Se añade una columna por atributo con el sentimiento,
+con autofiltro (verificado: filtrando salen 129/202 y 50/52).
+
+**3. ✅ «NINGÚN ATRIBUTO CAMBIA DE CUADRANTE» AGUANTA, CON UN CASO FRONTERA.** Comprobado de tres
+formas. Con medias comunes o propias de cada segmento, nada cambia. Con la **mediana** como umbral,
+**Vino y cata del internacional pasa a «Concéntrese aquí»** (desempeño 4,056, a 0,039 del umbral).
+Bootstrap de 1.000 réplicas: sin Entorno y viñedo (ya excluido, 37 menciones), algún cambio en ≤ 7 %.
+Entra en el plan como comprobación de sensibilidad (3.6), tabla de distancias (4.5) y limitación
+(10); en el Excel, hoja «Distancia a umbrales». El bootstrap se queda fuera del plan (excesivo para
+un TFG de Turismo) y documentado en el script como respaldo del tutor.
+
+**4. ✅ CALENDARIO: EL FESTIVO ESTABA EN LA SEMANA EQUIVOCADA.** Decía «festivos del 6 al 8» en la
+semana 3, pero en 2026 el 6 es domingo y no se traslada: el único festivo es el **martes 8**, en la
+semana 4, que era además la sobrecargada (metodología + resultados, 14-18 páginas). Metodología
+pasa a la semana 3; la 4 (9-11 dic) queda para resultados. Y se añade lo que faltaba: **lectura
+de reseñas en paralelo desde la semana 2**, con notas de lectura en cada entrega, y un epígrafe
+3.8 de lectura cualitativa. Muestra de instalaciones: columna `muestra_instalaciones`, 50 al azar
+por segmento con semilla fija (dos ejecuciones dan la misma muestra). **Sin confirmar:** si la UCA
+declara no lectivo el lunes 7.
+
+**5. ✅ BIBLIOGRAFÍA: 15 REFERENCIAS POR EPÍGRAFE, TODAS CONTRA SU DOI (Crossref).** Faltaban
+referencias para 2.1, 2.3 y 2.6, y dos de las cuatro que había no encajaban (Han: robots en
+restaurantes; Zhou: competidores hoteleros); fuera también Brandt (1987), que el diseño no usa. La
+verificación **sirvió**: dos DOI candidatos de López-Guzmán apuntaban a otros artículos, y Galati
+& Galati (2019) figura en Crossref con nombre y apellido invertidos («Francesco, G., & Roberta,
+G.»). Martilla y James (1977) queda verificado. Las glosas de contenido se escribieron por título y
+conocimiento previo, no leyendo los artículos.
+
+**Otros cambios del día:** nombre completo en el plan, **Daniela Calvario**; «tesis» → «idea
+central» (Antonio: *«no es una tesis, es un TFG»*).
+
+**Detalles técnicos:** al retomar, la carpeta de Dropbox estaba **solo en línea** (todos los
+archivos a 0 bytes, `.git` incluido) y hubo que marcarla «disponible sin conexión». Playwright, que
+necesita `md_a_pdf.py`, **no está instalado** en el Python del sistema; se usó un entorno temporal.
+El Python del sistema tampoco tiene certificados SSL (`urllib` falla contra HTTPS; se resolvió con
+`certifi`).
+
+**Queda abierto:** enviar a Daniela el PDF y el Excel nuevos (los del 18/11 llevan la lectura
+antigua) · decidir el push (repo público + nombre de la estudiante) · el lunes 7 de diciembre.
+
+## ═══ SESIÓN 2026-11-15/18 — TFG DE DANIELA: TEMA, PLAN Y MATERIAL; RGPD ═══
+> Origen: «definir TFM/TFG asociados», en el backlog desde julio. Commits `16bc982` a `02299f0`.
+
+**1. Guion de TFG sobre ENOLYTICS (`docs/tfg/temas_posibles.md`, 15/11).** El riesgo de cualquier
+TFG sobre el proyecto: la plataforma ya calcula lo que el estudiante iba a calcular y el trabajo se
+queda en un manual de uso del cuadro de mando. Cada tema necesita una pregunta que ENOLYTICS
+**no** responda. Seis temas, con notas para tutores.
+
+**2. Plan de Daniela (Grado en Turismo, convocatoria de febrero de 2027).** La normativa de la
+Facultad cambió los supuestos: la entrega al tutor es el **6 de enero** (el plan trabaja con el 4,
+porque el 6 es festivo), no febrero; quedan cinco semanas reales. La rúbrica: tutor 60 % en cinco
+ítems de 20 % (planificación, organización, redacción, contenidos, conclusiones) y tribunal 40 %
+**íntegro sobre la defensa oral** → la profundidad del análisis vale como mucho un 12 %. Requisito
+que puede tumbarlo todo: **tener aprobadas las básicas y obligatorias** para defender.
+
+**3. Tema: IPA segmentado por procedencia.** Primero se eligió el contraste frecuencia-vs-impacto;
+Antonio lo cambió a la comparación por idioma (*«me parece más una aportación metodológica»*): a
+un tribunal de Turismo le encaja mejor una pregunta de gestión de destinos. Luego, a propuesta de
+Antonio, **nacional vs internacional** en vez de hispanohablante vs resto: castellano, catalán,
+gallego o euskera = nacional. Corrige 39 reseñas en catalán mal clasificadas y acota el sesgo con
+un dato citable: solo el **0,87 %** de las búsquedas de vuelo internacionales hacia Jerez proceden
+de países hispanohablantes (93.918 de 10.836.376, Dataestur). Umbrales **comunes** a los dos
+segmentos; desempeño = sentimiento hacia el atributo, no estrellas.
+
+**4. Material (`scripts/generar_material_tfg.py` → `docs/tfg/daniela/material/`).** Excel
+seudonimizado (autor → `V-XXXXXXXX` estable), las dos matrices, la comparación y el guion de
+interpretación, más cuatro figuras. Generado por script para que la seudonimización esté
+garantizada en el código. **Residuo:** nombres de persona dentro del texto de las reseñas (guías,
+firmas); no se borran automáticamente porque un filtro se llevaría *Pedro Ximénez* o *Luis Pérez*.
+Regla: sustituir por `[guía]` o `[visitante]` al citar.
+
+**5. Forma.** Registro académico (Antonio: *«no me gusta mucho el estilo»*: el mismo fallo de tono
+corregido el 28/10 en la plataforma) y PDF sobrio: `md_a_pdf.py --sobrio` (Markdown → HTML →
+Chromium vía Playwright). Estructura desarrollada capítulo a capítulo con epígrafes y extensión.
+
+**6. Indicaciones de Paula para TFG/TFM del proyecto (18/11).** Para contar en la justificación
+FEDER de septiembre de 2027: cláusula de financiación en portada, párrafo de encuadre con la
+inteligencia a la que aporta (clientes; mercado como secundaria), citación de los datos,
+agradecimientos en los dos idiomas y depósito en RODIN. El documento está en `docs/tfg/` porque
+aplica a todos los trabajos; el apartado 12 del plan lo concreta para Daniela.
+
+**7. 🚨 RGPD.** Al preparar el extracto se vio que `datos/procesado/resenas.csv` está en un
+**repositorio público** (verificado contra la API de GitHub) con 10.971 nombres de autor, texto y
+enlace, y en el historial. No se arregló en el momento porque la app enseña el nombre del autor,
+hacer privado el repo rompe Streamlit Cloud gratuito y limpiar el historial exige `filter-repo` +
+force-push. Plan en `docs/pendientes.md`.
 
 ## ═══ SESIÓN 2026-10-28/29 — REGISTRO PROFESIONAL, LOGOS LEGIBLES Y MARCA PROPIA ═══
 > Antonio, mirando la app: *«aparecen expresiones que no tienen un marcado estilo profesional y me
