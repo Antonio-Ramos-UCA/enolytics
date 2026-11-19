@@ -115,7 +115,7 @@ reseñas leídas y dos o tres ejemplos citables.
 | Semana | Fechas | Tarea | Entrega al tutor |
 |---|---|---|---|
 | 1 | 18–22 nov | Lectura del plan, comprobación del requisito académico del apartado 8 y lectura de los dos artículos base: Bi et al. (2019) y Zhang et al. (2021). Primera exploración del Excel con su guion | Índice propuesto y objetivos redactados |
-| 2 | 23–29 nov | Revisión de la literatura, epígrafes 2.1 a 2.4: enoturismo, el Marco de Jerez como destino, satisfacción y calidad percibida, y el IPA con sus críticas. Lectura de las 129 reseñas nacionales que mencionan la organización | Epígrafes 2.1 a 2.4 y notas de lectura |
+| 2 | 23–29 nov | Revisión de la literatura, epígrafes 2.1 a 2.4: enoturismo, el Marco de Jerez como destino, satisfacción y calidad percibida, y el IPA con sus críticas. Estudio de Martilla y James (1977), Azzopardi y Nash (2013) y Liu et al. (2017). Lectura de las 129 reseñas nacionales que mencionan la organización | Epígrafes 2.1 a 2.4 y notas de lectura |
 | 3 | 30 nov – 4 dic | Epígrafes 2.5 a 2.7: el IPA derivado de reseñas, la procedencia del visitante y la laguna detectada. Capítulo 3 de metodología completo. Lectura de las 202 reseñas internacionales que mencionan la organización | Capítulos 2 y 3, y notas de lectura |
 | 4 | 9–11 dic | Capítulo 4 de resultados, sobre las tablas y figuras del material. El martes 8 es festivo y el lunes 7 previsiblemente puente, de ahí que la semana solo cuente tres días. Lectura de la muestra de instalaciones: 50 reseñas por segmento | Capítulo 4 y notas de lectura |
 | 5 | 14–20 dic | Discusión y conclusiones, a partir de las notas de lectura acumuladas. Cierre de la introducción | Capítulos 5 y 6, y borrador completo |
@@ -460,8 +460,24 @@ Facultad. Conviene confirmar en la plataforma que corresponden a la versión vig
 Todas las referencias siguientes se han comprobado contra el registro de su DOI: autores, año,
 título, revista, volumen y páginas. Son un punto de partida, no la bibliografía del trabajo: la
 búsqueda propia en Scopus, Web of Science o Dialnet es parte de lo que se evalúa en
-«Planificación e iniciativa», y ninguna referencia debe citarse sin haber leído el original. Se
-recomienda comenzar por Bi et al. (2019) y Zhang et al. (2021).
+«Planificación e iniciativa», y ninguna referencia debe citarse sin haber leído el original.
+
+Las referencias tienen dos niveles de lectura. Cinco son de **estudio**: sostienen el método del
+trabajo, deben leerse completas y dominarse, porque son las que el tribunal puede preguntar en la
+defensa. Las diez restantes son de **consulta**: se leen para redactar el epígrafe
+correspondiente de la revisión de la literatura, con la atención puesta en lo que aportan a ese
+epígrafe.
+
+| Orden | Lectura de estudio | Por qué |
+|---|---|---|
+| 1 | Bi et al. (2019) | Justifica construir un IPA a partir de reseñas en lugar de cuestionarios |
+| 2 | Zhang et al. (2021) | Justifica medir el desempeño con el sentimiento hacia cada atributo |
+| 3 | Martilla y James (1977) | Origen del método: la lógica de los cuatro cuadrantes |
+| 4 | Azzopardi y Nash (2013) | Críticas al IPA con las que se justifican los umbrales comunes y la comprobación de sensibilidad |
+| 5 | Liu et al. (2017) | Justifica el idioma de la reseña como aproximación a la procedencia |
+
+Las dos primeras corresponden a la semana 1 del calendario; las otras tres, a la semana 2. En el
+listado que sigue, las de estudio van señaladas como tales y el resto son de consulta.
 
 ### Para el epígrafe 2.1, el enoturismo como producto turístico
 
@@ -497,13 +513,13 @@ https://doi.org/10.1177/1356766711432222
 ### Para el epígrafe 2.4, el análisis importancia-desempeño y sus críticas
 
 Martilla, J. A., & James, J. C. (1977). Importance-performance analysis. *Journal of Marketing*,
-*41*(1), 77–79. https://doi.org/10.1177/002224297704100112 — El artículo original del método.
+*41*(1), 77–79. https://doi.org/10.1177/002224297704100112 — **Estudio.** El artículo original del método.
 
 Oh, H. (2001). Revisiting importance–performance analysis. *Tourism Management*, *22*(6), 617–627.
 https://doi.org/10.1016/S0261-5177(01)00036-X
 
 Azzopardi, E., & Nash, R. (2013). A critical evaluation of importance–performance analysis.
-*Tourism Management*, *35*, 222–233. https://doi.org/10.1016/j.tourman.2012.07.007 — Recoge las
+*Tourism Management*, *35*, 222–233. https://doi.org/10.1016/j.tourman.2012.07.007 — **Estudio.** Recoge las
 críticas a la posición de los ejes con que se justifican los umbrales comunes (epígrafe 3.6) y la
 comprobación de sensibilidad.
 
@@ -511,19 +527,19 @@ comprobación de sensibilidad.
 
 Bi, J.-W., Liu, Y., Fan, Z.-P., & Zhang, J. (2019). Wisdom of crowds: Conducting
 importance-performance analysis (IPA) through online reviews. *Tourism Management*, *70*, 460–478.
-https://doi.org/10.1016/j.tourman.2018.09.010 — Referencia central: justifica la construcción de un
+https://doi.org/10.1016/j.tourman.2018.09.010 — **Estudio.** Referencia central: justifica la construcción de un
 IPA a partir de reseñas en lugar de cuestionarios.
 
 Zhang, C., Xu, Z., Gou, X., & Chen, S. (2021). An online reviews-driven method for the
 prioritization of improvements in hotel services. *Tourism Management*, *87*, 104382.
-https://doi.org/10.1016/j.tourman.2021.104382 — Origen del tratamiento del sentimiento por
+https://doi.org/10.1016/j.tourman.2021.104382 — **Estudio.** Origen del tratamiento del sentimiento por
 atributo como medida de desempeño.
 
 ### Para el epígrafe 2.6, procedencia del visitante y valoración de la experiencia
 
 Liu, Y., Teichert, T., Rossi, M., Li, H., & Hu, F. (2017). Big data for big insights:
 Investigating language-specific drivers of hotel satisfaction with 412,784 user-generated
-reviews. *Tourism Management*, *59*, 554–563. https://doi.org/10.1016/j.tourman.2016.08.012 — Usa
+reviews. *Tourism Management*, *59*, 554–563. https://doi.org/10.1016/j.tourman.2016.08.012 — **Estudio.** Usa
 el idioma de la reseña para comparar visitantes, como este trabajo: sirve también para justificar
 el proxy en el epígrafe 3.5.
 
