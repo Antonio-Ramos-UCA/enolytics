@@ -107,13 +107,18 @@ es lo que da acceso a los datos, pero omitirlo sí sería una falta de integrida
 Entre el 18 de noviembre y la entrega median siete semanas, dos de ellas ocupadas por la Navidad.
 El plan contempla cinco semanas de trabajo efectivo más las fiestas para el cierre.
 
+Desde la semana 2 corre en paralelo una tarea que no produce páginas pero sostiene la aportación
+propia del trabajo: la lectura de las reseñas con que se responde a las preguntas del apartado 2.
+Cada semana se entregan, junto con el texto, unas notas de lectura breves: qué se repite en las
+reseñas leídas y dos o tres ejemplos citables.
+
 | Semana | Fechas | Tarea | Entrega al tutor |
 |---|---|---|---|
-| 1 | 18–22 nov | Lectura del plan, comprobación del requisito académico del apartado 8 y lectura de los dos artículos base: Bi et al. (2019) y Zhang et al. (2021) | Índice propuesto y objetivos redactados |
-| 2 | 23–29 nov | Revisión de la literatura, epígrafes 2.1 a 2.3: enoturismo, el Marco de Jerez como destino, satisfacción y calidad percibida | Epígrafes 2.1 a 2.3 |
-| 3 | 30 nov – 6 dic | Revisión de la literatura, epígrafes 2.4 a 2.7: el IPA, sus críticas, el IPA derivado de reseñas y la laguna detectada. Festivos del 6 al 8 | Capítulo 2 completo |
-| 4 | 7–13 dic | Metodología y resultados. Entrega del material y lectura de las matrices con su guion | Capítulos de metodología y resultados |
-| 5 | 14–20 dic | Discusión y conclusiones. Cierre de la introducción | Capítulos 5 y 6, y borrador completo |
+| 1 | 18–22 nov | Lectura del plan, comprobación del requisito académico del apartado 8 y lectura de los dos artículos base: Bi et al. (2019) y Zhang et al. (2021). Primera exploración del Excel con su guion | Índice propuesto y objetivos redactados |
+| 2 | 23–29 nov | Revisión de la literatura, epígrafes 2.1 a 2.4: enoturismo, el Marco de Jerez como destino, satisfacción y calidad percibida, y el IPA con sus críticas. Lectura de las 129 reseñas nacionales que mencionan la organización | Epígrafes 2.1 a 2.4 y notas de lectura |
+| 3 | 30 nov – 4 dic | Epígrafes 2.5 a 2.7: el IPA derivado de reseñas, la procedencia del visitante y la laguna detectada. Capítulo 3 de metodología completo. Lectura de las 202 reseñas internacionales que mencionan la organización | Capítulos 2 y 3, y notas de lectura |
+| 4 | 9–11 dic | Capítulo 4 de resultados, sobre las tablas y figuras del material. El martes 8 es festivo y el lunes 7 previsiblemente puente, de ahí que la semana solo cuente tres días. Lectura de la muestra de instalaciones: 50 reseñas por segmento | Capítulo 4 y notas de lectura |
+| 5 | 14–20 dic | Discusión y conclusiones, a partir de las notas de lectura acumuladas. Cierre de la introducción | Capítulos 5 y 6, y borrador completo |
 | Navidad | 21 dic – 3 ene | Revisión, formato, resúmenes en español e inglés, índices y bibliografía APA. Sin análisis nuevo | — |
 | Entrega | **lun 4 ene** | Versión definitiva | TFG completo |
 
@@ -207,7 +212,7 @@ derivan un IPA de reseñas tratan el destino como un público único y no segmen
 pregunta de este trabajo. Sin este epígrafe la revisión queda como una sucesión de resúmenes; con
 él, queda justificada.
 
-### Capítulo 3. Metodología · 6 a 8 páginas · semana 4
+### Capítulo 3. Metodología · 6 a 8 páginas · semana 3
 
 3.1. Diseño de la investigación. Carácter descriptivo y comparativo, no inferencial. Unidad de
 análisis, la reseña; nivel de análisis, el destino en conjunto.
@@ -250,7 +255,13 @@ está hecho en la hoja «Distancia a umbrales» del material.
 3.7. Instrumental procedente del proyecto. Declaración expresa de qué parte del tratamiento de
 los datos procede de ENOLYTICS y qué parte es trabajo propio, según el apartado 3 de este plan.
 
-3.8. Consideraciones éticas y protección de datos. Seudonimización del corpus, residuo de nombres
+3.8. Lectura cualitativa de las reseñas. Procedimiento con que se responden las preguntas del
+apartado 2: lectura completa de las reseñas que mencionan la organización en cada segmento, 129
+nacionales y 202 internacionales, y de una muestra aleatoria de 50 reseñas por segmento entre las
+que mencionan las instalaciones, marcada en el material para que la selección sea reproducible.
+Se declara qué se buscaba en ellas y cómo se agruparon los motivos que se repiten.
+
+3.9. Consideraciones éticas y protección de datos. Seudonimización del corpus, residuo de nombres
 de persona en el texto de algunas reseñas y regla de sustitución al citar.
 
 ### Capítulo 4. Análisis de resultados · 8 a 10 páginas · semana 4
@@ -402,7 +413,8 @@ comprobación de sensibilidad de la mediana; y las reseñas seudonimizadas con s
 por atributo con el sentimiento de la reseña hacia él, vacía cuando no lo menciona. Esta última
 hoja admite filtros, de modo que pueden leerse, por ejemplo, todas las reseñas internacionales que
 mencionan la organización, o solo las negativas: es la herramienta para responder a las preguntas
-del apartado 2.
+del apartado 2. Una columna adicional marca la muestra aleatoria de 50 reseñas por segmento
+que mencionan las instalaciones, la que se lee en la semana 4.
 
 Se acompañan cuatro figuras en formato de imagen: las dos matrices, una superposición de ambas con
 el desplazamiento de cada atributo, y la de brechas entre segmentos.

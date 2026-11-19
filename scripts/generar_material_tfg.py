@@ -225,7 +225,8 @@ LEEME = [
                 "sentimiento de esa resena hacia el (1 a 5; vacia si no lo menciona). Usa los "
                 "filtros: por ejemplo, segmento = Internacional y Organizacion y reserva no vacia "
                 "da las 202 resenas que tienes que leer para el epigrafe 5.2; por debajo de 3, "
-                "las negativas."),
+                "las negativas. La columna muestra_instalaciones marca las 50 resenas por "
+                "segmento que se leen de Instalaciones (elegidas al azar, siempre las mismas)."),
     ("Distancia a umbrales", "Cuanto le falta a cada atributo para cambiar de cuadrante, y que "
                              "pasa si los umbrales se fijan con la mediana en vez de la media. "
                              "Es la comprobacion de sensibilidad de los epigrafes 3.6 y 4.5."),
@@ -381,8 +382,13 @@ def main() -> None:
                         values="sentimiento", aggfunc="mean").round(2)
     atributos = list(th.sort_values("importancia", ascending=False)["atributo"])
     r = r.merge(piv[atributos], left_on="resena_id", right_index=True, how="left")
+    # Muestra de lectura de Instalaciones (plan, 3.8 y semana 4): 3.710 menciones no se leen
+    # enteras, así que 50 al azar por segmento. Semilla fija: la selección es reproducible.
+    con_inst = r[r["Instalaciones"].notna() & r["segmento"].isin(SEGMENTOS)]
+    elegidas = con_inst.groupby("segmento").sample(n=50, random_state=2026).index
+    r["muestra_instalaciones"] = r.index.isin(elegidas)
     r = r[["visitante", "bodega", "puntuacion", "fecha", "idioma", "segmento"]
-          + atributos + ["texto"]]
+          + atributos + ["muestra_instalaciones", "texto"]]
     assert "autor" not in r.columns and "enlace_resena" not in r.columns
 
     destino = SALIDA / "material_tfg_daniela.xlsx"
