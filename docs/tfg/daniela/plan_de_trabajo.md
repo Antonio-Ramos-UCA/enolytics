@@ -457,8 +457,57 @@ Facultad. Conviene confirmar en la plataforma que corresponden a la versión vig
 
 ## 9. Bibliografía de partida
 
-Las cuatro referencias siguientes están verificadas sobre el artículo original. Se recomienda
-comenzar por las dos primeras.
+Todas las referencias siguientes se han comprobado contra el registro de su DOI: autores, año,
+título, revista, volumen y páginas. Son un punto de partida, no la bibliografía del trabajo: la
+búsqueda propia en Scopus, Web of Science o Dialnet es parte de lo que se evalúa en
+«Planificación e iniciativa», y ninguna referencia debe citarse sin haber leído el original. Se
+recomienda comenzar por Bi et al. (2019) y Zhang et al. (2021).
+
+### Para el epígrafe 2.1, el enoturismo como producto turístico
+
+Getz, D., & Brown, G. (2006). Critical success factors for wine tourism regions: A demand
+analysis. *Tourism Management*, *27*(1), 146–158. https://doi.org/10.1016/j.tourman.2004.08.002
+
+Gómez, M., Pratt, M. A., & Molina, A. (2019). Wine tourism research: A systematic review of 20
+vintages from 1995 to 2014. *Current Issues in Tourism*, *22*(18), 2211–2249.
+https://doi.org/10.1080/13683500.2018.1441267 — Revisión sistemática: sirve de mapa para
+orientar la búsqueda propia.
+
+López-Guzmán, T., Rodríguez-García, J., Sánchez-Cañizares, S., & Luján-García, M. J. (2011). The
+development of wine tourism in Spain. *International Journal of Wine Business Research*, *23*(4),
+374–386. https://doi.org/10.1108/17511061111186523
+
+### Para el epígrafe 2.2, el Marco de Jerez como destino
+
+López-Guzmán, T., Vieira-Rodríguez, A., & Rodríguez-García, J. (2014). Profile and motivations of
+European tourists on the Sherry wine route of Spain. *Tourism Management Perspectives*, *11*,
+63–68. https://doi.org/10.1016/j.tmp.2014.04.003 — Estudia precisamente al visitante extranjero
+de la Ruta del Jerez, por lo que sirve también para el epígrafe 2.6.
+
+### Para el epígrafe 2.3, satisfacción y experiencia en la visita a bodega
+
+Bruwer, J., & Alant, K. (2009). The hedonic nature of wine tourism consumption: An experiential
+view. *International Journal of Wine Business Research*, *21*(3), 235–257.
+https://doi.org/10.1108/17511060910985962
+
+Quadri-Felitti, D., & Fiore, A. M. (2012). Experience economy constructs as a framework for
+understanding wine tourism. *Journal of Vacation Marketing*, *18*(1), 3–15.
+https://doi.org/10.1177/1356766711432222
+
+### Para el epígrafe 2.4, el análisis importancia-desempeño y sus críticas
+
+Martilla, J. A., & James, J. C. (1977). Importance-performance analysis. *Journal of Marketing*,
+*41*(1), 77–79. https://doi.org/10.1177/002224297704100112 — El artículo original del método.
+
+Oh, H. (2001). Revisiting importance–performance analysis. *Tourism Management*, *22*(6), 617–627.
+https://doi.org/10.1016/S0261-5177(01)00036-X
+
+Azzopardi, E., & Nash, R. (2013). A critical evaluation of importance–performance analysis.
+*Tourism Management*, *35*, 222–233. https://doi.org/10.1016/j.tourman.2012.07.007 — Recoge las
+críticas a la posición de los ejes con que se justifican los umbrales comunes (epígrafe 3.6) y la
+comprobación de sensibilidad.
+
+### Para el epígrafe 2.5, el IPA derivado de reseñas en línea
 
 Bi, J.-W., Liu, Y., Fan, Z.-P., & Zhang, J. (2019). Wisdom of crowds: Conducting
 importance-performance analysis (IPA) through online reviews. *Tourism Management*, *70*, 460–478.
@@ -466,23 +515,32 @@ https://doi.org/10.1016/j.tourman.2018.09.010 — Referencia central: justifica 
 IPA a partir de reseñas en lugar de cuestionarios.
 
 Zhang, C., Xu, Z., Gou, X., & Chen, S. (2021). An online reviews-driven method for the
-prioritization of improvements in hotel services. *Tourism Management*, *87*, 104382. — Origen del
-tratamiento del sentimiento por atributo como medida de desempeño.
+prioritization of improvements in hotel services. *Tourism Management*, *87*, 104382.
+https://doi.org/10.1016/j.tourman.2021.104382 — Origen del tratamiento del sentimiento por
+atributo como medida de desempeño.
 
-Han, W., Zhang, C., Zhang, Y. C., & Raab, C. (2026). How do robots reshape restaurant service
-attributes? – Evidence from online reviews. *International Journal of Contemporary Hospitality
-Management*. https://doi.org/10.1108/IJCHM-01-2026-0071
+### Para el epígrafe 2.6, procedencia del visitante y valoración de la experiencia
 
-Zhou, R., Song, B., Li, G., & Law, R. (2026). A data-driven approach to competitor identification
-and categorization in the hotel industry. *International Journal of Hospitality Management*, *133*,
-104503.
+Liu, Y., Teichert, T., Rossi, M., Li, H., & Hu, F. (2017). Big data for big insights:
+Investigating language-specific drivers of hotel satisfaction with 412,784 user-generated
+reviews. *Tourism Management*, *59*, 554–563. https://doi.org/10.1016/j.tourman.2016.08.012 — Usa
+el idioma de la reseña para comparar visitantes, como este trabajo: sirve también para justificar
+el proxy en el epígrafe 3.5.
 
-Deberán incorporarse, previa localización y verificación en Scopus, Web of Science o Dialnet,
-Martilla y James (1977), origen del análisis importancia-desempeño, y Brandt (1987), del análisis
-de penalización-recompensa. Ninguna referencia debe citarse sin haber consultado el original.
+Galati, F., & Galati, R. (2019). Cross-country analysis of perception and emphasis of hotel
+attributes. *Tourism Management*, *74*, 24–42. https://doi.org/10.1016/j.tourman.2019.02.011 —
+Distingue percepción y énfasis por país de origen, la misma distinción que sostiene el apartado 2
+de este plan. Atención: algunas bases de datos invierten nombre y apellido de los autores y lo
+registran como «Francesco, G., & Roberta, G.»; la forma correcta es la que figura aquí.
 
-Como fuentes institucionales se emplean ACEVIN, a través del Observatorio de las Rutas del Vino de
-España, Dataestur y SEGITTUR, y el Consejo Regulador de la D.O. Jerez-Xérès-Sherry.
+Mariani, M., & Predvoditeleva, M. (2019). How do online reviewers' cultural traits and perceived
+experience influence hotel online ratings? *International Journal of Contemporary Hospitality
+Management*, *31*(12), 4543–4573. https://doi.org/10.1108/IJCHM-11-2018-0927
+
+### Fuentes institucionales
+
+ACEVIN, a través del Observatorio de las Rutas del Vino de España; Dataestur y SEGITTUR; y el
+Consejo Regulador de la D.O. Jerez-Xérès-Sherry.
 
 ## 10. Limitaciones que deben declararse
 
