@@ -290,6 +290,27 @@ enviárselo»*).** Siete correcciones más:
   (Antonio, 19/11; el plan decía el 4 porque la normativa marcaba «hasta el 6», y Antonio confirma
   que esa fecha no obliga). La Navidad queda del 21/12 al 07/01 para formato y revisión.
 
+**7. ✅ RETOQUES DE ANTONIO Y ENVÍO.**
+- **Entrega al tutor: viernes 8 de enero de 2027** (el «hasta el 6» de la normativa no obliga).
+- Apartado 1: IP del proyecto (Paula y Antonio) y que Daniela ha sido **alumna colaboradora** suya.
+- **Enlace al prototipo** (https://enolytics-feder-uca.streamlit.app, abre sin login) con dos
+  avisos: las cifras del TFG son las del Excel; la app muestra nombres de autores, no citables.
+  Todas las URL del PDF son enlaces activos.
+- **Sin entregas parciales** (decisión de Antonio): calendario orientativo, ella trabaja y consulta.
+- **Los gráficos los construye ella**; las cuatro figuras van como referencia. Figuras corregidas
+  (solapamientos, leyenda, línea de fuente). Guion del Excel: 1.556 → **1.517** internacionales.
+- Bibliografía: **5 lecturas de estudio** (Bi, Zhang, Martilla y James, Azzopardi y Nash, Liu) y 10
+  de consulta.
+- Archivos: el plan se llama igual en `.md` y `.pdf` (`Plan de trabajo TFG - Daniela.*`) y hay **un
+  solo Excel** (`Material TFG - Daniela.xlsx`, lo escribe el script). Se edita el `.md`; el PDF se
+  regenera con `md_a_pdf.py --sobrio` (Playwright no está en el Python del sistema: entorno aparte).
+- **Enviado el 19/11** desde el Gmail de Antonio (borrador preparado por Claude, revisado y enviado
+  por él): plan, Excel y figuras, con la declaración de que se preparó con ayuda de IA bajo su
+  supervisión. Cualquier cambio posterior es una versión nueva que habría que reenviarle.
+
+**Estado al cierre del 19/11:** 16 commits locales **sin push** (repo público + nombre de la
+estudiante). Siguiente sesión: lo urgente es el **RGPD** (§7, punto 0).
+
 **Otros cambios del día:** nombre completo en el plan, **Daniela Calvario**; «tesis» → «idea
 central» (Antonio: *«no es una tesis, es un TFG»*).
 
