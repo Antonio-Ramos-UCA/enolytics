@@ -20,7 +20,7 @@ solo por la sangría. Es el que corresponde a lo que se entrega a un estudiante 
 
 Uso
 ---
-    python3 scripts/md_a_pdf.py docs/tfg/daniela/plan_de_trabajo.md
+    python3 scripts/md_a_pdf.py "docs/tfg/daniela/Plan de trabajo TFG - Daniela.md" --sobrio
     python3 scripts/md_a_pdf.py entrada.md salida.pdf
     python3 scripts/md_a_pdf.py entrada.md salida.pdf --sobrio
 """

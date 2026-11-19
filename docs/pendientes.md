@@ -605,7 +605,7 @@
   (corpus monolingüe). Nuestro corpus multilingüe sí. Candidato fuerte a paper.
 - [ ] **Revista objetivo:** IJCHM (Emerald, Q1) acepta exactamente este método (reseñas + Kano +
   IPA). Ver el paper de `BIBLIOGRAFIA/` como plantilla de estructura y de nivel exigido.
-- [x] **TFG de Daniela — plan cerrado el 18/11/2026: `docs/tfg/daniela/plan_de_trabajo.md`.**
+- [x] **TFG de Daniela — plan cerrado el 18/11/2026: `docs/tfg/daniela/Plan de trabajo TFG - Daniela.md`.**
   Convocatoria de **febrero 2027**; la fecha que manda es la **entrega al tutor el 6 de enero**
   (trabajamos con el 4, porque el 6 es Reyes): siete semanas naturales, cinco de trabajo.
   Tema (cambiado el 18/11 a propuesta de ARRR): **IPA SEGMENTADO por procedencia** —

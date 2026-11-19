@@ -9,8 +9,10 @@ docs/tfg/
 ├── temas_posibles.md           # 6 temas de TFG sobre la base del proyecto, con su guión
 ├── Indicaciones para tutores de TFG y TFM vinculados a ENOLYTICS.docx
 └── daniela/
-    ├── plan_de_trabajo.md      # el plan que se le entrega
-    ├── material/               # lo que se le prepara (Excel, guiones de interpretación)
+    ├── Plan de trabajo TFG - Daniela.md    # el plan: se edita este
+    ├── Plan de trabajo TFG - Daniela.pdf   # generado del .md (md_a_pdf.py --sobrio); se envía este
+    ├── Material TFG - Daniela.xlsx         # generado (generar_material_tfg.py); se envía este
+    ├── material/               # figuras del material
     └── entregas/               # lo que va entregando, semana a semana
 ```
 
@@ -34,7 +36,7 @@ Nómbralas `AAAA-MM-DD_descripcion.pdf` para que ordenen solas.
 | **Tutor** | Antonio Rafael Ramos Rodríguez |
 | **Entrega al tutor** | **4 de enero de 2027** *(la norma dice «hasta el 6», pero el 6 es Reyes)* |
 | **Defensa** | Entre el 1 y el 16 de febrero de 2027 |
-| **Plan** | [`daniela/plan_de_trabajo.md`](daniela/plan_de_trabajo.md) |
+| **Plan** | [`daniela/Plan de trabajo TFG - Daniela.md`](daniela/Plan%20de%20trabajo%20TFG%20-%20Daniela.md) |
 
 **Material preparado, todavía sin enviar:** plan de trabajo en PDF y Excel seudonimizado con las
 dos matrices IPA, las tablas de comparación, la hoja de distancias a los umbrales, las reseñas

@@ -391,7 +391,8 @@ def main() -> None:
           + atributos + ["muestra_instalaciones", "texto"]]
     assert "autor" not in r.columns and "enlace_resena" not in r.columns
 
-    destino = SALIDA / "material_tfg_daniela.xlsx"
+    # Un solo Excel, con el nombre con que se adjunta, junto al plan (no dentro de material/).
+    destino = SALIDA.parent / "Material TFG - Daniela.xlsx"
     with pd.ExcelWriter(destino, engine="xlsxwriter") as xl:
         pd.DataFrame(LEEME, columns=["", " "]).to_excel(xl, sheet_name="LEEME", index=False)
         comp.to_excel(xl, sheet_name="Comparacion", index=False, startrow=4)
