@@ -1191,6 +1191,44 @@ def pie_institucional() -> None:
         pass
 
 
+@st.cache_data(show_spinner=False)
+def cargar_historial_corpus() -> pd.DataFrame:
+    """Registro de las altas del corpus de reseñas: una fila por actualización."""
+    from enolytics.etl import resenas as _etl
+    return _etl.cargar_historial()
+
+
+def frescura_corpus() -> None:
+    """Dice hasta qué día llegan las reseñas y cuántas entraron en la última pasada.
+
+    Va en la portada porque la antigüedad del dato condiciona la lectura de todo lo demás, y
+    porque una plataforma que se actualiza sola debe decir cuándo lo hizo por última vez. Si
+    el corpus se queda atrás, aquí se ve antes que en ningún otro sitio.
+    """
+    hist = cargar_historial_corpus()
+    if hist.empty:
+        return
+    ult = hist.iloc[-1]
+    try:
+        reciente = pd.to_datetime(ult["resena_mas_reciente"]).date()
+        atraso = (pd.Timestamp.today().date() - reciente).days
+    except Exception:
+        return
+
+    total = f"{int(ult['corpus_despues']):,}".replace(",", ".")
+    texto = (f"Reseñas hasta el **{reciente.strftime('%d/%m/%Y')}** · "
+             f"{total} en total · última incorporación el "
+             f"{pd.to_datetime(ult['fecha']).strftime('%d/%m/%Y')}")
+    if int(ult["nuevas"]) and len(hist) > 1:
+        texto += f", con **{int(ult['nuevas'])}** reseñas nuevas"
+    texto += ". El detalle mes a mes, en **📖 Guía**."
+
+    if atraso > 75:
+        st.warning(f"{texto}\n\nEl corpus lleva **{atraso} días** sin actualizarse.")
+    else:
+        st.caption(texto)
+
+
 # --------------------------------------------------------------------------- #
 # VISTA 4 — GUÍA Y METODOLOGÍA (Pieza 2 de Paula): qué es cada apartado y de dónde sale
 # --------------------------------------------------------------------------- #
@@ -1319,6 +1357,32 @@ if rol == VISTA_GUIA:
     st.caption("Algunos indicadores previstos (empleo por bodega, consumos ambientales, "
                "precios de experiencias) se completarán con cuestionarios y fuentes adicionales, "
                "porque no existen en abierto.")
+
+    # Un dato que no es un indicador, sino sobre los indicadores: cuándo se actualizaron.
+    # Sin esto, nada en la plataforma distingue un corpus de ayer de uno de hace un año.
+    _hist = cargar_historial_corpus()
+    if not _hist.empty:
+        with st.container(border=True):
+            st.markdown("🔄 **Actualización del corpus de reseñas**")
+            st.caption("El corpus no es una foto fija: se incorporan las reseñas nuevas "
+                       "periódicamente. Cada pasada queda anotada aquí, incluidas las que no "
+                       "traen ninguna reseña, para que un fallo del proceso no se confunda "
+                       "con un mes sin novedades.")
+            _t = _hist.copy()
+            _t["fecha"] = pd.to_datetime(_t["fecha"]).dt.strftime("%d/%m/%Y")
+            _t["resena_mas_reciente"] = (pd.to_datetime(_t["resena_mas_reciente"])
+                                         .dt.strftime("%d/%m/%Y"))
+            _t = _t[["fecha", "origen", "nuevas", "corpus_despues", "resena_mas_reciente",
+                     "bodegas_con_novedad"]]
+            for _c in ("nuevas", "corpus_despues"):
+                _t[_c] = _t[_c].map(lambda v: f"{int(v):,}".replace(",", "."))
+            _t.columns = ["Pasada", "Origen", "Reseñas nuevas", "Corpus total",
+                          "Reseña más reciente", "Bodegas con novedad"]
+            st.dataframe(_t.iloc[::-1], hide_index=True, use_container_width=True)
+            if len(_hist) > 2:
+                st.caption("Reseñas incorporadas en cada pasada")
+                _serie = _hist.set_index(pd.to_datetime(_hist["fecha"]))["nuevas"].iloc[1:]
+                st.bar_chart(_serie, height=180)
 
     st.subheader("2 · Las vistas de la plataforma")
     for _t, _d in [(VISTA_RESUMEN, "Indicadores clave del destino, estado de las siete "
@@ -1566,6 +1630,7 @@ if rol == VISTA_SIMULADOR:
 if rol == VISTA_RESUMEN:
     st.caption("Indicadores clave del destino. El análisis detallado está en "
                "**🧭 Las 7 inteligencias**.")
+    frescura_corpus()
 
     # --- Cifras clave ---
     k1, k2, k3, k4 = st.columns(4)

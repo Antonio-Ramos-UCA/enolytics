@@ -77,14 +77,17 @@ def simular(ruta_xlsx: Path) -> dict:
     return {"nuevas": len(entran)}
 
 
-def actualizar(ruta_xlsx: Path, con_bert: bool = True) -> None:
+def actualizar(ruta_xlsx: Path, con_bert: bool = True, origen: str = "panel") -> None:
     t0 = time.time()
 
     _titulo(1, "Fusionar la descarga con el corpus")
     resumen = etl.fusionar_export(ruta_xlsx)
+    etl.registrar_actualizacion(resumen, origen=origen)
     if resumen["nuevas"] == 0:
         print("\nNo hay reseñas nuevas. La cadena se detiene aquí: "
               "nada de lo que viene después cambiaría.")
+        print("La pasada queda anotada igualmente en el historial, con un cero: así se")
+        print("distingue un mes sin novedades de un robot que no llegó a ejecutarse.")
         return
 
     _titulo(2, "Idioma y segmento de las reseñas nuevas")

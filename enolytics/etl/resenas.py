@@ -10,11 +10,16 @@ de nuestro catálogo aunque Google use otro nombre.
 """
 from __future__ import annotations
 
+from datetime import date
 from pathlib import Path
 
 import pandas as pd
 
 from enolytics import config
+
+# Registro de altas del corpus: una fila por pasada de actualización. Es lo que permite
+# responder «cuántas reseñas entraron el mes pasado» sin tener que leer el historial de git.
+HISTORIAL = "historial_actualizaciones.csv"
 
 # Columnas del export de Outscraper que nos interesan y su nombre normalizado
 _MAPA_COLUMNAS = {
@@ -188,6 +193,40 @@ def fusionar_export(ruta_xlsx: str | Path, verbose: bool = True) -> dict:
         if resumen["bodegas_afectadas"]:
             print(f"Bodegas con reseñas nuevas: {len(resumen['bodegas_afectadas'])}")
     return resumen
+
+
+def registrar_actualizacion(resumen: dict, origen: str = "api",
+                            cuando: str | None = None) -> pd.DataFrame:
+    """Anota una pasada de actualización en el historial y lo devuelve.
+
+    Se registra **también cuando no entra ninguna reseña**: un cero informa de que la pasada
+    se ejecutó y de que ese mes no hubo novedad, que es distinto de que el robot estuviera
+    caído. Sin esa fila, un fallo silencioso parecería un mes tranquilo.
+    """
+    ruta = config.DATOS_PROCESADO / HISTORIAL
+    fila = {
+        "fecha": cuando or date.today().isoformat(),
+        "origen": origen,
+        "nuevas": resumen.get("nuevas", 0),
+        "corpus_antes": resumen.get("corpus_antes"),
+        "corpus_despues": resumen.get("corpus_despues"),
+        "resena_mas_reciente": resumen.get("fecha_mas_reciente"),
+        "bodegas_con_novedad": len(resumen.get("bodegas_afectadas", [])),
+        "respuestas_nuevas": resumen.get("respuestas_nuevas", 0),
+    }
+    previo = pd.read_csv(ruta) if ruta.exists() else pd.DataFrame()
+    hist = pd.concat([previo, pd.DataFrame([fila])], ignore_index=True)
+    ruta.parent.mkdir(parents=True, exist_ok=True)
+    hist.to_csv(ruta, index=False)
+    return hist
+
+
+def cargar_historial() -> pd.DataFrame:
+    """Lee el registro de actualizaciones del corpus (vacío si aún no hay ninguna)."""
+    ruta = config.DATOS_PROCESADO / HISTORIAL
+    if not ruta.exists():
+        return pd.DataFrame()
+    return pd.read_csv(ruta)
 
 
 def cargar_resenas() -> pd.DataFrame:
