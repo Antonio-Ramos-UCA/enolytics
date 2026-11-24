@@ -31,9 +31,13 @@ Los cinco CSV están versionados en git, de modo que cualquier paso se deshace c
 
 Uso
 ---
-    python3 scripts/actualizar_corpus.py ~/Downloads/outscraper_nov2026.xlsx
-    python3 scripts/actualizar_corpus.py descarga.xlsx --simular    # no escribe nada
+    python3 scripts/actualizar_corpus.py --api                      # descarga y actualiza
+    python3 scripts/actualizar_corpus.py --api --simular            # mira sin tocar nada
+    python3 scripts/actualizar_corpus.py ~/Downloads/descarga.xlsx  # desde el panel web
+    python3 scripts/actualizar_corpus.py descarga.xlsx --simular
     python3 scripts/actualizar_corpus.py descarga.xlsx --sin-bert   # deja el sentimiento
+
+Con `--api` hace falta OUTSCRAPER_API_KEY en el entorno. Es lo que ejecuta el cron mensual.
 """
 from __future__ import annotations
 
@@ -50,13 +54,32 @@ from enolytics import config  # noqa: E402
 from enolytics.etl import resenas as etl  # noqa: E402
 
 
+# Margen que se resta a la fecha de la última reseña al pedir la tanda siguiente. Pedir
+# exactamente desde ese día dejaría fuera cualquier reseña publicada el mismo día a una hora
+# anterior, y una reseña editada puede además cambiar de fecha. Lo que se repita lo descarta
+# la deduplicación, así que el margen no cuesta nada y cubre el borde.
+MARGEN_DIAS = 3
+
+
+def origen_api(verbose: bool = True):
+    """Descarga de Outscraper lo posterior a la última reseña del corpus."""
+    from enolytics.ingesta import resenas as ingesta
+    corpus = pd.read_csv(config.DATOS_PROCESADO / "resenas.csv")
+    ultima = pd.to_datetime(corpus["fecha"], errors="coerce", utc=True).max()
+    desde = (ultima - pd.Timedelta(days=MARGEN_DIAS)).date()
+    if verbose:
+        print(f"Última reseña del corpus: {ultima.date()}. "
+              f"Se pide desde el {desde} ({MARGEN_DIAS} días de margen).")
+    return ingesta.descargar_nuevas(desde, verbose=verbose)
+
+
 def _titulo(n: int, texto: str) -> None:
     print(f"\n{'─' * 70}\n{n}. {texto}\n{'─' * 70}")
 
 
-def simular(ruta_xlsx: Path) -> dict:
+def simular(origen) -> dict:
     """Dice qué entraría, sin tocar ningún archivo."""
-    nuevas = etl.normalizar_export_outscraper(ruta_xlsx)
+    nuevas = etl.normalizar_export_outscraper(origen)
     viejas = pd.read_csv(config.DATOS_PROCESADO / "resenas.csv")
     conocidas = set(viejas["resena_id"].astype(str))
     entran = nuevas[~nuevas["resena_id"].astype(str).isin(conocidas)]
@@ -77,11 +100,11 @@ def simular(ruta_xlsx: Path) -> dict:
     return {"nuevas": len(entran)}
 
 
-def actualizar(ruta_xlsx: Path, con_bert: bool = True, origen: str = "panel") -> None:
+def actualizar(descarga, con_bert: bool = True, origen: str = "panel") -> None:
     t0 = time.time()
 
     _titulo(1, "Fusionar la descarga con el corpus")
-    resumen = etl.fusionar_export(ruta_xlsx)
+    resumen = etl.fusionar_export(descarga)
     etl.registrar_actualizacion(resumen, origen=origen)
     if resumen["nuevas"] == 0:
         print("\nNo hay reseñas nuevas. La cadena se detiene aquí: "
@@ -123,16 +146,27 @@ def actualizar(ruta_xlsx: Path, con_bert: bool = True, origen: str = "panel") ->
 
 def main() -> None:
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
-    if not args:
-        sys.exit(__doc__)
-    ruta = Path(args[0]).expanduser()
-    if not ruta.exists():
-        sys.exit(f"No existe el archivo: {ruta}")
+    por_api = "--api" in sys.argv
+
+    if por_api:
+        try:
+            descarga, etiqueta = origen_api(), "api"
+        except RuntimeError as e:
+            # Falta la clave o la biblioteca: es un fallo de configuración, no un error del
+            # programa. En el registro de GitHub Actions se lee mejor una línea que una traza.
+            sys.exit(f"\n✗ {e}")
+    else:
+        if not args:
+            sys.exit(__doc__)
+        descarga = Path(args[0]).expanduser()
+        etiqueta = "panel"
+        if not descarga.exists():
+            sys.exit(f"No existe el archivo: {descarga}")
 
     if "--simular" in sys.argv:
-        simular(ruta)
+        simular(descarga)
     else:
-        actualizar(ruta, con_bert="--sin-bert" not in sys.argv)
+        actualizar(descarga, con_bert="--sin-bert" not in sys.argv, origen=etiqueta)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,92 @@
+# Actualización mensual del corpus de reseñas.
+#
+# Qué hace: el día 1 de cada mes pide a Outscraper las reseñas publicadas desde la última
+# que tenemos, las incorpora, rehace sentimiento, PRCA y posición competitiva, y hace commit
+# de los CSV. Streamlit Cloud ve el commit y redespliega la plataforma por su cuenta.
+#
+# Por qué aquí y no en Streamlit Cloud: el análisis de sentimiento usa un modelo BERT que
+# necesita torch, y Cloud tiene ~1 GB de RAM. Los runners de GitHub tienen 7 GB.
+#
+# La clave de Outscraper vive en Settings → Secrets and variables → Actions, con el nombre
+# OUTSCRAPER_API_KEY. Nunca en el repositorio, que es público.
+
+name: Actualizar corpus de reseñas
+
+on:
+  schedule:
+    # 06:00 UTC del día 1 de cada mes. De madrugada porque nadie está mirando la plataforma
+    # y porque el redespliegue de Streamlit tarda unos minutos.
+    - cron: "0 6 1 * *"
+  workflow_dispatch:
+    # Permite lanzarla a mano desde la pestaña Actions. Es como se hace la primera pasada,
+    # antes de dejar que el calendario se encargue.
+    inputs:
+      simular:
+        description: "Solo mirar qué entraría, sin escribir nada"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write        # necesario para hacer commit de los CSV actualizados
+
+concurrency:
+  # Si una pasada se alarga y entra la siguiente, la segunda espera en vez de pisar los
+  # mismos ficheros.
+  group: actualizar-corpus
+  cancel-in-progress: false
+
+jobs:
+  actualizar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Traer el repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-automatizacion.txt
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-automatizacion.txt
+
+      - name: Actualizar el corpus
+        env:
+          OUTSCRAPER_API_KEY: ${{ secrets.OUTSCRAPER_API_KEY }}
+        run: |
+          if [ "${{ inputs.simular }}" = "true" ]; then
+            python scripts/actualizar_corpus.py --api --simular
+          else
+            python scripts/actualizar_corpus.py --api
+          fi
+
+      - name: Publicar los datos nuevos
+        if: inputs.simular != true
+        run: |
+          if [ -z "$(git status --porcelain datos/procesado/)" ]; then
+            echo "Sin cambios en los datos: no hay nada que publicar."
+            exit 0
+          fi
+          # El número exacto lo da el historial, no `wc -l`: el texto de una reseña puede
+          # contener saltos de línea y entonces las líneas del CSV no son las reseñas.
+          NUEVAS=$(python -c "import pandas as pd; print(int(pd.read_csv('datos/procesado/historial_actualizaciones.csv').iloc[-1]['nuevas']))")
+          git config user.name  "ENOLYTICS UCA"
+          git config user.email "inteligencia.turistica@gm.uca.es"
+          git add datos/procesado/
+          git commit -m "Actualizacion automatica del corpus: $NUEVAS reseñas nuevas" \
+                     -m "Pasada del $(date -u +%d/%m/%Y). El detalle queda en historial_actualizaciones.csv y se ve en la Guia de la plataforma."
+          git push
+
+      - name: Guardar el registro de la pasada
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: historial-actualizaciones
+          path: datos/procesado/historial_actualizaciones.csv
+          if-no-files-found: ignore

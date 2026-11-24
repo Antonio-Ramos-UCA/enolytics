@@ -55,13 +55,17 @@ def _bodega_desde_consulta(consulta: str) -> str:
     return consulta.rsplit(", ", 2)[0].strip()
 
 
-def normalizar_export_outscraper(ruta_xlsx: str | Path) -> pd.DataFrame:
-    """Lee un export de Outscraper y devuelve las reseñas normalizadas.
+def normalizar_export_outscraper(origen: str | Path | pd.DataFrame) -> pd.DataFrame:
+    """Normaliza reseñas de Outscraper, vengan de un export o de la API.
 
-    Vincula cada reseña con la bodega del catálogo: si la consulta fue un place_id,
-    se usa el mapa place_id->bodega; si fue "Nombre, Localidad, España", se parsea.
+    Acepta la ruta de un XLSX descargado del panel o un DataFrame ya en memoria, que es lo
+    que devuelve la descarga por API. Los nombres de campo son los mismos en los dos casos,
+    de modo que a partir de aquí el origen deja de notarse.
+
+    Vincula cada reseña con la bodega del catálogo: si la consulta fue un place_id, se usa
+    el mapa place_id->bodega; si fue "Nombre, Localidad, España", se parsea.
     """
-    df = pd.read_excel(ruta_xlsx)
+    df = origen.copy() if isinstance(origen, pd.DataFrame) else pd.read_excel(origen)
     cols = {k: v for k, v in _MAPA_COLUMNAS.items() if k in df.columns}
     out = df[list(cols)].rename(columns=cols)
 
@@ -114,7 +118,7 @@ def procesar_y_guardar(ruta_xlsx: str | Path) -> tuple[pd.DataFrame, pd.DataFram
     return resenas, censo
 
 
-def fusionar_export(ruta_xlsx: str | Path, verbose: bool = True) -> dict:
+def fusionar_export(origen: "str | Path | pd.DataFrame", verbose: bool = True) -> dict:
     """Añade al corpus las reseñas de un export que no estuvieran ya, y reescribe el CSV.
 
     Es la vía de actualización: el panel de Outscraper no sabe «dame lo posterior al 6 de
@@ -141,7 +145,7 @@ def fusionar_export(ruta_xlsx: str | Path, verbose: bool = True) -> dict:
 
     viejas = pd.read_csv(ruta)
     viejas["fecha"] = pd.to_datetime(viejas["fecha"], errors="coerce", utc=True)
-    nuevas = normalizar_export_outscraper(ruta_xlsx)
+    nuevas = normalizar_export_outscraper(origen)
 
     conocidas = set(viejas["resena_id"].astype(str))
     entran = nuevas[~nuevas["resena_id"].astype(str).isin(conocidas)].copy()

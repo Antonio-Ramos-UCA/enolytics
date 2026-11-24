@@ -1,0 +1,29 @@
+# ENOLYTICS — dependencias de la ACTUALIZACIÓN MENSUAL del corpus (GitHub Actions).
+#
+# Por qué un tercer fichero de dependencias:
+#   requirements.txt            → el dashboard en Streamlit Cloud. Ligero a propósito:
+#                                 Cloud tiene ~1 GB de RAM y torch no cabe.
+#   requirements-dev.txt        → la máquina de trabajo, con todo (Playwright, scrapers…).
+#   requirements-automatizacion → exactamente lo que necesita la cadena de actualización,
+#                                 ni más ni menos. El runner de GitHub se monta de cero en
+#                                 cada ejecución, así que instalar Playwright o Streamlit
+#                                 sería pagar minutos por algo que nadie va a usar.
+
+# --- Descarga ---
+outscraper>=5.0          # cliente oficial de la API de reseñas de Google
+
+# --- Datos ---
+pandas>=2.0
+openpyxl>=3.1            # lectura de los export XLSX del panel web
+langdetect>=1.0.9        # idioma de la reseña: separa visitante nacional de internacional
+
+# --- Sentimiento por atributo ---
+transformers>=4.35
+torch>=2.0
+
+# --- Modelos analíticos que se recalculan tras cada alta ---
+numpy>=1.24
+scipy>=1.11
+scikit-learn>=1.3
+statsmodels>=0.14        # regresión PRCA
+kmodes>=0.12             # K-prototypes del motor de competidores
