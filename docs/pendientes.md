@@ -415,6 +415,17 @@
 - [x] **Reorganizar en pestañas** por inteligencia (Gestor: Visión general · Clientes y experiencia · Económica y mercado. Bodega: Ficha · Reseñas y análisis). Añadir más pestañas al sumar inteligencias.
 - [x] **Etiquetado del origen de cada indicador** (🟢 oficial · 🔵 observado · 🟡 estimado) con leyenda en el dashboard. 13 etiquetas en las 7 inteligencias. `config.ORIGENES_DATO` + helper `fuente()`.
 - [x] **Enlace permanente** — PUBLICADO en **https://enolytics-feder-uca.streamlit.app** (Streamlit Community Cloud, repo público `Antonio-Ramos-UCA/enolytics`). Redespliega solo al hacer `git push`. Falta (opcional): restringir vista por correo desde Settings → Sharing.
+- [x] ✅ **AUTOMATIZACIÓN INCREMENTAL DE RESEÑAS — HECHA Y EN MARCHA (24/11/2026).** El cron
+  mensual (día 1, 06:00 UTC) descarga, analiza y publica sin intervención. Primera pasada
+  ejecutada: corpus de 10.972 → **12.227 reseñas**, con datos del mismo día. Coste real de la
+  puesta al día: 10,16 US$ por 3.885 reseñas, de las que solo 1.289 sirvieron (se descargó tres
+  veces entre pruebas). En régimen normal, ~270 reseñas al mes dentro del tramo gratuito.
+  Detalle completo en la sesión del 24/11 de `CONTEXTO.md`. Queda vigilar la pasada del 1 de
+  diciembre, la primera sin nadie delante.
+
+  Lo que sigue el texto es el planteamiento original, que se conserva porque explica por qué se
+  hizo así.
+
 - [ ] ⭐ **AUTOMATIZACIÓN INCREMENTAL DE RESEÑAS** — la parte "periódica" de la memoria.
   **Frecuencia decidida el 28/10/2026 (Antonio): MENSUAL.** Entre las 41 bodegas entran ~4,5
   reseñas al día (1.640 al año), así que una pasada diaria gastaría 41 consultas de API para

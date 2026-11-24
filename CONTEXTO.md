@@ -296,11 +296,27 @@ esa carpeta de la sincronización.
 Sigue sin fecha de caducidad y con permiso `repo`: **pendiente sustituirlo por uno con
 caducidad**.
 
+### Resultado comprobado en producción
+
+La plataforma publicada muestra ya **«Reseñas hasta el 24/11/2026 · 12.227 en total»**, el aviso
+de atraso ha desaparecido y la valoración del destino sube de 4,56 a 4,57. Verificado por
+captura, no por texto: **sobre Streamlit Cloud, Playwright devuelve el texto vacío**, de modo
+que un vigilante que busque una cadena da falsos negativos. Ya ocurrió en octubre y volvió a
+ocurrir hoy: la captura es la única prueba válida.
+
+Un efecto que conviene mirar en la próxima sesión: con las 1.255 reseñas nuevas, la inteligencia
+de **Clientes pasa de 4 a 5 acciones urgentes**. El motor ha encontrado un problema más y no se
+ha mirado cuál.
+
 ### Pendiente
 
+- Ver qué recomendación nueva ha aparecido en Clientes tras la actualización.
 - TripAdvisor: aparcado a propósito hasta que el circuito de Google lleve meses rodando.
 - Vigilar la primera pasada automática del **1 de diciembre de 2026**, que será la primera sin
   nadie mirando.
+- Sustituir el token de GitHub por uno con caducidad.
+- Comunicado al equipo (Paula y Fernando) redactado para WhatsApp, pendiente de que lo envíe
+  Antonio. Incluye el detalle del gasto por si se imputa a la partida de los 4.000 €.
 
 ---
 
