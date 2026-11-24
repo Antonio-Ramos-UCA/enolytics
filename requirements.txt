@@ -25,3 +25,6 @@ fpdf2==2.8.7
 # Reconstrucción forzada 28/10/2026: el pase de registro cambió textos de
 # analitica/recomendaciones.py, pero el entorno servía el módulo anterior
 # ("críticas mudas", "responder es gratis") junto a un app.py ya nuevo.
+# Reconstrucción forzada 24/11/2026: la primera actualización automática del corpus
+# (10.972 → 12.227 reseñas) se publicó en el repositorio, pero Cloud siguió sirviendo los
+# CSV anteriores. Tocar este fichero es lo que obliga a rehacer el entorno entero.
