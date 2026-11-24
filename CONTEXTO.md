@@ -210,6 +210,100 @@ streamlit, pandas, sklearn, plotly, matplotlib, requests, bs4.
    el email declara que el material se preparó con ayuda de IA bajo supervisión del tutor). Sin
    entregas parciales: ella trabaja y consulta. Pendiente de ella: confirmar el requisito académico. Ver `docs/tfg/LEEME.md`.
 
+## ═══ SESIÓN 2026-11-24 — LA PLATAFORMA SE ACTUALIZA SOLA ═══
+
+Objetivo de Antonio, en sus palabras: *«que enolytics descargue automáticamente cada cierto
+tiempo, por ejemplo cada mes, todas las reseñas nuevas y las incluya en el análisis, de forma
+que sea una plataforma viva»*. Queda montado de punta a punta y ejecutado por primera vez.
+
+### El corpus, al día
+
+| | Antes | Después |
+|---|---|---|
+| Reseñas | 10.972 | **12.227** |
+| Reseña más reciente | 06/07/2026 | **24/11/2026** |
+| Turista nacional (hispanohablante) | 5.090 | 5.650 |
+| Turista internacional | 1.750 | 2.445 |
+| Respuestas de bodega nuevas | — | 12 |
+
+1.255 reseñas nuevas en 34 de las 40 bodegas. **El ritmo real es de 9 reseñas al día**, no las
+4,5 que yo había estimado sobre el promedio histórico: el Marco recibe hoy bastante más que la
+media de sus quince años de corpus. Corregir ese dato importa, porque de él sale el coste.
+
+### Coste real de la primera puesta al día
+
+Factura de Outscraper del 24/11: **3.885 reseñas, 10,16 US$**, cubiertos por el saldo de la
+cuenta (personal de Antonio). Importe debido: 0,00.
+
+Pero de esas 3.885 solo 1.289 sirvieron: **se descargó tres veces**. Una simulación, la pasada
+buena y una tercera lanzada por duplicado. El coste útil fue de ~3,40 $; el resto, aprendizaje.
+
+**Dos lecciones que conviene no repetir.** La simulación NO es gratis: no escribe en el
+repositorio, pero la descarga es real y consume cuota. Y pulsar «Run workflow» dos veces lanza
+dos descargas completas.
+
+**Proyección:** al ritmo de 270 reseñas al mes son ~0,81 $, y las primeras 500 de cada periodo
+de 30 días no se cobran. El funcionamiento normal sale prácticamente gratis.
+
+### Lo que se escribió
+
+La cadena ya existía y cada paso se ejecutaba solo, pero **no se podía actualizar sin destruir
+el corpus**: `etl.procesar_y_guardar` SOBRESCRIBÍA `resenas.csv` con lo que trajera el export.
+Ese agujero no estaba ni en el backlog y era el motivo real del bloqueo.
+
+- `etl.fusionar_export` — deduplica por `resena_id`; ante un duplicado gana la fila que ya
+  estaba, porque lleva anotados idioma y segmento. Refresca la respuesta del propietario
+  rellenando huecos, nunca borrando.
+- `idioma.procesar_y_guardar(solo_nuevas=True)` — **langdetect no es determinista** con textos
+  cortos: una pasada completa reclasificaría reseñas ya correctas y movería las cifras
+  publicadas sin que hubiera entrado un solo dato.
+- `sentimiento.calcular_y_guardar(incremental=True)` — verificado contra la pasada completa:
+  **mismo resultado bit a bit**, 15 s frente a 3 min.
+- `ingesta.descargar_nuevas` — API de Outscraper con `cutoff` y `sort=newest`, por place_id.
+- `scripts/actualizar_corpus.py` — recorre la cadena; `--simular` enseña qué entraría.
+- `.github/workflows/actualizar-corpus.yml` — cron el día 1 de cada mes a las 06:00 UTC.
+- Registro de altas (`historial_actualizaciones.csv`), visible en la portada y en la Guía.
+
+### Decisión que NO hay que tocar: nada de `language`
+
+La API admite un parámetro `language`. **No se pasa, a propósito.** Si se indica, Google puede
+devolver las reseñas traducidas, y el idioma del texto es justamente lo que separa al visitante
+nacional del internacional: una traducción silenciosa convertiría el corpus entero en español y
+haría desaparecer el segmento internacional sin que saltara ningún error. Comprobado que el
+export original no trae columna de texto original y que el corpus es multilingüe.
+
+### Dos cosas que destapó la primera ejecución real
+
+**Streamlit Cloud recogió el commit del robot pero siguió sirviendo los CSV viejos** — 10.972
+reseñas y el aviso de 141 días, con 12.227 ya en el repositorio. Es el comportamiento de
+octubre. Sin remedio, la actualización mensual quedaría publicada a medias: los datos en GitHub
+y la plataforma congelada, justo lo contrario de lo que se pretende. Ahora **cada pasada
+reescribe una línea de `requirements.txt`**, siempre la misma, y eso fuerza la reconstrucción.
+
+**La ejecución duplicada murió al publicar.** No se arregla fusionando: las dos recalculan los
+mismos CSV desde bases distintas y el rebase chocaría en cada fichero. Ahora comprueba si la
+otra ya publicó el corpus y se retira sin dar un fallo falso.
+
+### Incidencias del entorno, no del proyecto
+
+**El índice de git se corrompió** (`BUG: unpack-trees.c:699`). Se manifestó como ficheros que
+reaparecían en commits de los que se habían quitado y un `.gitignore` marcado como borrado
+estando intacto. Se arregló borrando `.git/index` y regenerándolo. **Sospecha sin confirmar:
+el repositorio vive dentro de Dropbox, que sincroniza también `.git`.** Si se repite, excluir
+esa carpeta de la sincronización.
+
+**El token de GitHub necesitó el permiso `workflow`** para poder subir `.github/workflows/`.
+Sigue sin fecha de caducidad y con permiso `repo`: **pendiente sustituirlo por uno con
+caducidad**.
+
+### Pendiente
+
+- TripAdvisor: aparcado a propósito hasta que el circuito de Google lleve meses rodando.
+- Vigilar la primera pasada automática del **1 de diciembre de 2026**, que será la primera sin
+  nadie mirando.
+
+---
+
 ## ═══ SESIÓN 2026-11-19 — EL PLAN DE DANIELA, REVISADO PUNTO POR PUNTO ═══
 > Antonio: *«vamos a trabajar sobre el TFG de Daniela, sobre su plan de trabajo»*. Releído el plan
 > salieron cinco puntos y se trabajaron uno por uno, con un commit cada uno (`2175882` a `37fcdc7`).
