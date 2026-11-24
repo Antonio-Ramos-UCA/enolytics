@@ -104,16 +104,37 @@ def anotar_idiomas(resenas: pd.DataFrame, verbose: bool = True) -> pd.DataFrame:
     return df
 
 
-def procesar_y_guardar(verbose: bool = True) -> pd.DataFrame:
-    """Detecta el idioma de las reseñas ya procesadas y reescribe `resenas.csv`."""
+def procesar_y_guardar(verbose: bool = True, solo_nuevas: bool = False) -> pd.DataFrame:
+    """Detecta el idioma de las reseñas ya procesadas y reescribe `resenas.csv`.
+
+    Con `solo_nuevas=True` anota únicamente las filas que aún no tienen segmento, y deja
+    intactas las demás. Es lo que corresponde tras fusionar un export: langdetect no es
+    determinista con textos cortos, de modo que una pasada completa reclasificaría reseñas
+    que ya estaban bien y movería las cifras publicadas sin que hubiera entrado ningún dato.
+    """
     ruta = config.DATOS_PROCESADO / "resenas.csv"
     if not ruta.exists():
         raise FileNotFoundError(f"No existe {ruta}. Procesa antes las reseñas.")
     df = pd.read_csv(ruta)
-    df = anotar_idiomas(df, verbose=verbose)
+
+    if solo_nuevas and "segmento_idioma" in df.columns:
+        pendientes = df["segmento_idioma"].isna()
+        if not pendientes.any():
+            if verbose:
+                print("Todas las reseñas tienen ya idioma y segmento. No hay nada que anotar.")
+            return df
+        if verbose:
+            print(f"Anotando {int(pendientes.sum())} reseñas nuevas "
+                  f"(las otras {int((~pendientes).sum())} conservan su clasificación).")
+        anotadas = anotar_idiomas(df[pendientes], verbose=verbose)
+        df.loc[pendientes, "idioma"] = anotadas["idioma"].values
+        df.loc[pendientes, "segmento_idioma"] = anotadas["segmento_idioma"].values
+    else:
+        df = anotar_idiomas(df, verbose=verbose)
+
     df.to_csv(ruta, index=False)
     if verbose:
-        print(f"\n✓ Guardado en {ruta.name} (columnas nuevas: idioma, segmento_idioma)")
+        print(f"\n✓ Guardado en {ruta.name} (columnas: idioma, segmento_idioma)")
     return df
 
 

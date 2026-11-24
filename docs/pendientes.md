@@ -428,15 +428,44 @@
   `analitica/competidores.py`. El dashboard SOLO lee los CSV que deja esa cadena, así que
   actualizar no es descargar: es volver a recorrerla entera.
 
-  **Lo que falta (dos piezas):**
-  1. **Backend de Outscraper** en `ingesta/resenas.py`. Es lo único sin escribir: hoy
-     `_descargar_google` lanza `NotImplementedError` a propósito, para marcar la frontera. La
-     interfaz ya contempla lo incremental (`descargar_resenas(..., desde=fecha,
-     incremental=True)`) y la deduplicación por `id_externo`. Outscraper admite corte por
-     fecha, así que cada pasada traería solo lo posterior a la última reseña guardada.
-  2. **Modo incremental en `nlp/sentimiento.py`.** Hoy `calcular_y_guardar()` pasa el corpus
-     ENTERO por el BERT (~3 min, 7.277 reseñas con texto). Para una pasada automática hay que
-     puntuar solo los `resena_id` que no estén ya en `sentimiento_atributos.csv` y añadirlos.
+  **ESTADO AL 24/11/2026 — la cadena ya admite actualización incremental.** Escrito y
+  probado. Falta solo la descarga, que depende de una decisión de gasto (más abajo).
+
+  - [x] **Fusión incremental** (`etl/resenas.fusionar_export`). Era un agujero que no estaba
+    ni en esta lista: `procesar_y_guardar()` **sobrescribía** `resenas.csv` con lo que trajera
+    el export. Descargar solo lo nuevo y pasarlo por ahí habría destruido las 10.972 reseñas.
+    Ahora se deduplica por `resena_id` —el identificador de Google, estable entre descargas— y
+    **ante un duplicado gana la fila que ya estaba**, porque lleva anotado idioma y segmento.
+    Se refrescan `respuesta_propietario` (solo rellenando huecos, nunca borrando) y la nota y
+    el total de reseñas de la bodega, que son del establecimiento y no de la reseña.
+  - [x] **Idioma solo de lo nuevo** (`nlp/idioma.procesar_y_guardar(solo_nuevas=True)`).
+    Necesario porque **langdetect no es determinista** con textos cortos: una pasada completa
+    reclasificaría reseñas ya clasificadas y movería las cifras publicadas sin que hubiera
+    entrado un solo dato.
+  - [x] **BERT incremental** (`nlp/sentimiento.calcular_y_guardar(incremental=True)`).
+    Verificado contra la pasada completa: **mismo resultado bit a bit** (diferencia máxima
+    0,00 en `sentimiento`) en **15 s frente a ~3 min**. Las reseñas con texto pero sin ningún
+    atributo detectado no dejan fila y se vuelven a mirar cada vez: son 735 y cuestan 3 s,
+    porque sin frase con atributo no se llega a invocar el modelo.
+  - [x] **Guion que recorre la cadena** (`scripts/actualizar_corpus.py`), con `--simular` para
+    ver qué entraría sin escribir nada. Los cinco CSV están versionados, de modo que
+    `git checkout datos/procesado/` deshace cualquier pasada.
+
+  - [ ] **Lo que sigue faltando: la descarga.** `ingesta/resenas.py::_descargar_google` sigue
+    lanzando `NotImplementedError`. Y hay un dato que cambia el plan: **la API de Outscraper
+    no entra en el tramo gratuito** (consultado el 24/11/2026 en su página de precios).
+    - Tramo gratuito: **500 reseñas cada 30 días**, solo panel web, con exportación CSV/XLSX.
+    - De 501 a 100.000: **3 $ por cada 1.000 reseñas**, y es el primer tramo con acceso a API.
+    - La cuenta: **recuperar los 140 días de atraso son ~630 reseñas, ~1,90 $**. El ritmo
+      mensual futuro, ~135 reseñas, serían **~0,40 $ al mes**. Contra la partida de 4.000 €
+      es irrelevante, pero exige dar de alta un medio de pago, que es decisión de Antonio.
+    - **No consta en su documentación** un parámetro de corte por fecha; sí ordenación por
+      más recientes. Mientras no se confirme, hay que asumir que cada descarga trae también
+      reseñas repetidas: por eso la fusión deduplica en vez de fiarse de la fecha.
+    - **Vía sin coste, hoy mismo:** el corpus actual salió del **panel web**
+      (`datos/crudo/resenas/corpus_google_completo.xlsx`), no de la API. Con las 500 gratuitas
+      del tramo libre se cubre una pasada parcial y se prueba el circuito entero sin pagar
+      nada. El guion ya está listo para recibir ese XLSX.
 
   **Dónde se ejecuta: NO en Streamlit Cloud.** `torch`/`transformers` están deliberadamente
   fuera de `requirements.txt` porque Cloud tiene ~1 GB de RAM y el BERT lo ahoga. La salida

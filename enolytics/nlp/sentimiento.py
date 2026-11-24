@@ -129,13 +129,48 @@ def analizar(resenas: pd.DataFrame, lote: int = 32, verboso: bool = True) -> pd.
     return g.merge(meta, on="resena_id", how="left")
 
 
-def calcular_y_guardar(lote: int = 32) -> pd.DataFrame:
-    """Ejecuta el análisis sobre el corpus completo y guarda el CSV."""
+def calcular_y_guardar(lote: int = 32, incremental: bool = False) -> pd.DataFrame:
+    """Ejecuta el análisis y guarda el CSV.
+
+    Por defecto recorre el corpus entero, que es lo que hay que hacer cuando cambia el
+    léxico de atributos o el modelo: el resultado debe ser homogéneo.
+
+    Con `incremental=True` puntúa solo las reseñas que no figuren ya en el CSV y añade sus
+    filas a las existentes. Es la vía de la actualización periódica, donde pasar once mil
+    reseñas por el BERT para añadir ciento treinta no tiene sentido. Las reseñas con texto
+    pero sin ningún atributo detectado no dejan fila, de modo que se vuelven a mirar en cada
+    pasada; no cuesta nada, porque sin frase con atributo no se llega a invocar el modelo.
+    """
     from enolytics.etl import resenas as etl
     res = etl.cargar_resenas()
     con = res[res["texto"].fillna("").str.strip() != ""]
-    print(f"Reseñas con texto: {len(con)}")
+
+    previo = pd.DataFrame()
+    if incremental and SALIDA.exists():
+        previo = pd.read_csv(SALIDA)
+        ya = set(previo["resena_id"].astype(str))
+        pendientes = con[~con["resena_id"].astype(str).isin(ya)]
+        print(f"Reseñas con texto: {len(con)} · ya puntuadas: {len(con) - len(pendientes)} · "
+              f"pendientes: {len(pendientes)}")
+        if pendientes.empty:
+            print("No hay reseñas nuevas que puntuar.")
+            return previo
+        con = pendientes
+    else:
+        print(f"Reseñas con texto: {len(con)}")
+
     tabla = analizar(con, lote=lote)
+
+    if not previo.empty:
+        if tabla.empty:
+            # Pendientes que no dejan fila: tienen texto, pero ninguna frase menciona un
+            # atributo. No hay nada que añadir y reescribir el CSV solo serviría para
+            # ensuciar el diff.
+            print("Las reseñas pendientes no mencionan ningún atributo. Nada que añadir.")
+            return previo
+        tabla = pd.concat([previo, tabla], ignore_index=True)
+        tabla = tabla.drop_duplicates(["resena_id", "atributo"], keep="last")
+
     SALIDA.parent.mkdir(parents=True, exist_ok=True)
     tabla.to_csv(SALIDA, index=False)
     print(f"Guardado: {SALIDA}  ({len(tabla)} filas reseña-atributo)")

@@ -95,13 +95,99 @@ def censo_desde_resenas(resenas: pd.DataFrame) -> pd.DataFrame:
 
 
 def procesar_y_guardar(ruta_xlsx: str | Path) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Normaliza un export, guarda reseñas y censo en datos/procesado/ y los devuelve."""
+    """Normaliza un export y REEMPLAZA el corpus con él.
+
+    Es la carga inicial, la que se hizo una vez con el export completo de las 41 bodegas.
+    Para una descarga posterior, que trae solo lo nuevo, usa `fusionar_export`: esta
+    función sobrescribe `resenas.csv` y perdería todo lo anterior.
+    """
     config.asegurar_directorios()
     resenas = normalizar_export_outscraper(ruta_xlsx)
     censo = censo_desde_resenas(resenas)
     resenas.to_csv(config.DATOS_PROCESADO / "resenas.csv", index=False)
     censo.to_csv(config.DATOS_PROCESADO / "censo_google.csv", index=False)
     return resenas, censo
+
+
+def fusionar_export(ruta_xlsx: str | Path, verbose: bool = True) -> dict:
+    """Añade al corpus las reseñas de un export que no estuvieran ya, y reescribe el CSV.
+
+    Es la vía de actualización: el panel de Outscraper no sabe «dame lo posterior al 6 de
+    julio», así que una descarga nueva trae también reseñas que ya tenemos. La
+    deduplicación va por `resena_id`, que es el identificador de Google, estable entre
+    descargas.
+
+    Ante un duplicado gana la fila que YA estaba, no la recién descargada. El motivo es que
+    las filas antiguas llevan anotado el idioma y el segmento, y volver a detectarlos
+    costaría una pasada de langdetect que además no es determinista: una reseña corta puede
+    cambiar de idioma entre dos ejecuciones. Lo único que se refresca de las filas viejas es
+    `respuesta_propietario`, porque la bodega puede haber contestado después, y la nota y el
+    total de reseñas de la bodega, que son del establecimiento y no de la reseña.
+
+    Devuelve un resumen con lo que ha entrado, para poder decidir si merece la pena seguir
+    con el resto de la cadena.
+    """
+    config.asegurar_directorios()
+    ruta = config.DATOS_PROCESADO / "resenas.csv"
+    if not ruta.exists():
+        raise FileNotFoundError(
+            f"No existe {ruta}. Para la carga inicial usa procesar_y_guardar()."
+        )
+
+    viejas = pd.read_csv(ruta)
+    viejas["fecha"] = pd.to_datetime(viejas["fecha"], errors="coerce", utc=True)
+    nuevas = normalizar_export_outscraper(ruta_xlsx)
+
+    conocidas = set(viejas["resena_id"].astype(str))
+    entran = nuevas[~nuevas["resena_id"].astype(str).isin(conocidas)].copy()
+
+    # Campos del establecimiento o de la conversación que sí conviene refrescar.
+    refrescables = [c for c in ("respuesta_propietario", "rating_bodega",
+                                "total_resenas_bodega") if c in nuevas.columns]
+    refrescadas = 0
+    if refrescables:
+        idx = nuevas.drop_duplicates("resena_id").set_index(nuevas["resena_id"]
+                                                            .drop_duplicates().astype(str))
+        clave = viejas["resena_id"].astype(str)
+        for col in refrescables:
+            trae = clave.map(idx[col])
+            if col == "respuesta_propietario":
+                # solo rellenar: una respuesta que teníamos no se borra porque el export
+                # nuevo venga sin ella
+                hueco = viejas[col].isna() & trae.notna()
+                refrescadas += int(hueco.sum())
+                viejas.loc[hueco, col] = trae[hueco]
+            else:
+                viejas.loc[trae.notna(), col] = trae[trae.notna()]
+
+    corpus = pd.concat([viejas, entran], ignore_index=True)
+    corpus = corpus.sort_values("fecha", na_position="first").reset_index(drop=True)
+
+    censo = censo_desde_resenas(corpus)
+    corpus.to_csv(ruta, index=False)
+    censo.to_csv(config.DATOS_PROCESADO / "censo_google.csv", index=False)
+
+    resumen = {
+        "en_el_export": len(nuevas),
+        "ya_estaban": len(nuevas) - len(entran),
+        "nuevas": len(entran),
+        "respuestas_nuevas": refrescadas,
+        "corpus_antes": len(viejas),
+        "corpus_despues": len(corpus),
+        "fecha_mas_reciente": (corpus["fecha"].max().date().isoformat()
+                               if corpus["fecha"].notna().any() else None),
+        "bodegas_afectadas": sorted(entran["bodega"].dropna().unique().tolist()),
+    }
+    if verbose:
+        print(f"Export: {resumen['en_el_export']} reseñas · "
+              f"{resumen['ya_estaban']} ya estaban · {resumen['nuevas']} nuevas")
+        if refrescadas:
+            print(f"  + {refrescadas} respuestas del propietario que antes no teníamos")
+        print(f"Corpus: {resumen['corpus_antes']} → {resumen['corpus_despues']} "
+              f"(hasta {resumen['fecha_mas_reciente']})")
+        if resumen["bodegas_afectadas"]:
+            print(f"Bodegas con reseñas nuevas: {len(resumen['bodegas_afectadas'])}")
+    return resumen
 
 
 def cargar_resenas() -> pd.DataFrame:
