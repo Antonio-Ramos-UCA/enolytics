@@ -78,10 +78,45 @@ jobs:
           NUEVAS=$(python -c "import pandas as pd; print(int(pd.read_csv('datos/procesado/historial_actualizaciones.csv').iloc[-1]['nuevas']))")
           git config user.name  "ENOLYTICS UCA"
           git config user.email "inteligencia.turistica@gm.uca.es"
-          git add datos/procesado/
+
+          # Streamlit Cloud recoge el commit pero no siempre rehace el entorno, y entonces
+          # sigue sirviendo los CSV anteriores: los datos estarian en GitHub y la plataforma
+          # congelada. Tocar requirements.txt es lo que fuerza la reconstruccion completa.
+          # Comprobado el 24/11/2026: la primera actualizacion automatica no llego a verse
+          # hasta que se toco este fichero. Se reescribe siempre la MISMA linea, para que el
+          # fichero no crezca un renglon cada mes.
+          python - "$NUEVAS" <<'PY'
+          import sys, datetime, pathlib
+          marca = ("# redespliegue automatico: corpus actualizado el "
+                   f"{datetime.datetime.now(datetime.timezone.utc):%d/%m/%Y} "
+                   f"(+{sys.argv[1]} reseñas). Tocar este fichero fuerza a Streamlit Cloud "
+                   "a rehacer el entorno.")
+          p = pathlib.Path("requirements.txt")
+          lineas = [l for l in p.read_text(encoding="utf-8").splitlines()
+                    if not l.startswith("# redespliegue automatico:")]
+          p.write_text("\n".join(lineas + [marca]) + "\n", encoding="utf-8")
+          PY
+
+          git add datos/procesado/ requirements.txt
           git commit -m "Actualizacion automatica del corpus: $NUEVAS reseñas nuevas" \
                      -m "Pasada del $(date -u +%d/%m/%Y). El detalle queda en historial_actualizaciones.csv y se ve en la Guia de la plataforma."
-          git push
+
+          # Si otra pasada publico mientras esta trabajaba, el push sera rechazado. No se
+          # intenta fusionar: las dos habrian recalculado los mismos CSV desde bases
+          # distintas y el rebase chocaria en cada fichero. Lo correcto es reconocer que la
+          # otra ya hizo el trabajo y retirarse sin dar un fallo falso. Paso en la ejecucion
+          # 3 del 24/11/2026, lanzada por duplicado.
+          if git push; then
+            exit 0
+          fi
+          echo "Push rechazado. Comprobando si otra pasada se adelanto…"
+          git fetch origin main
+          if [ -n "$(git log HEAD~1..origin/main --oneline -- datos/procesado/resenas.csv)" ]; then
+            echo "Otra pasada ya publico el corpus. Esta se descarta: no hay nada que añadir."
+            exit 0
+          fi
+          echo "El remoto cambio por otro motivo. Hace falta revisarlo a mano."
+          exit 1
 
       - name: Guardar el registro de la pasada
         if: always()
