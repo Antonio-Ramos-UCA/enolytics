@@ -210,6 +210,88 @@ streamlit, pandas, sklearn, plotly, matplotlib, requests, bs4.
    el email declara que el material se preparó con ayuda de IA bajo supervisión del tutor). Sin
    entregas parciales: ella trabaja y consulta. Pendiente de ella: confirmar el requisito académico. Ver `docs/tfg/LEEME.md`.
 
+## ═══ SESIÓN 2026-11-25 — UN FALLO DE CLASIFICACIÓN Y EL REDISEÑO ═══
+
+### Primero: la recomendación nueva de Clientes era FALSA
+
+Se retomó por lo que quedó anotado —qué recomendación había aparecido al pasar Clientes de 4 a
+5 urgentes— y resultó ser un error introducido por mí el día anterior.
+
+`nlp.idioma.segmento()` decidía con `if not idioma`. Eso distingue mal los nulos: `not None` es
+cierto, pero **`not float('nan')` es falso**, de modo que un nulo en forma de NaN caía en el
+`else` y la reseña se contaba como internacional. Qué representación llega **depende de la
+versión de pandas**: 2.3 conserva `None` y 3.x deja `NaN`. En la máquina de trabajo hay 2.3 y
+salía bien; el runner instaló **pandas 3.1** porque el requisito decía «>=2.0», y allí salió mal.
+
+**Consecuencia:** 445 reseñas **sin texto** quedaron como «Internacional». El segmento pasó de
+1.750 a 2.445, el porcentaje sin atributo detectado subió del 11 % al 26 % y eso disparó la
+regla 7-bis, que pedía ampliar el léxico a más idiomas sobre un problema inexistente. **No dio
+ningún error: dio un número distinto**, que es la clase de fallo que más tarda en verse.
+
+**Arreglo en tres capas**, porque con una no bastaba:
+- `segmento()` comprueba el **tipo**, no la veracidad del valor. Mismo resultado en 2.x y 3.x.
+- `comprobar_coherencia()` **aborta el guardado** si una reseña sin idioma tiene segmento
+  concreto. Es la red que faltaba: esto se publicó y se descubrió al día siguiente por azar.
+- **pandas fijado por debajo de 3** en `requirements-automatizacion.txt`. Una cadena que se
+  ejecuta sola no debe estrenar versión mayor sin que nadie la haya probado.
+
+Datos reparados recalculando el segmento **desde el idioma ya guardado**, sin volver a pasar
+langdetect, que no es determinista. Internacional vuelve a 2.000. Regenerado `competidores.csv`
+(177 → 153 filas; el k-prototypes lleva `random_state=0`, así que el cambio es del dato).
+
+De paso: el tamaño del corpus estaba **escrito a mano en cuatro sitios** y los cuatro quedaron
+mintiendo el mismo día que entró la primera actualización. Ahora sale del dato.
+
+### Después: el rediseño
+
+Antonio pidió un diseño nuevo. Proceso: dos maquetas antes de tocar la plataforma.
+
+1. **Maqueta sobria** (artefacto `LJywEbt9YVNvqFDkD22tw8`) con cuatro paletas y dos niveles de
+   intensidad. **Rechazada:** *«los colores son muy tristes»*.
+2. Antonio pasó una captura de referencia (panel corporativo tipo *The Trade Desk*). **Maqueta
+   de panel** (artefacto `NqQhAFMMipwMVaSVNnt9Ux`) traduciendo ese lenguaje a nuestros datos.
+   **Elegida.**
+
+**Llevado a la plataforma:**
+- `estilo.css_panel()` **se añade** a `css()`, no la sustituye. La base la usan las cinco vistas
+  y reemplazarla de golpe habría dejado pantallas rotas por el camino.
+- Tokens nuevos: PIZARRA, CARRIL, LIENZO, TARJETA, AZUL, VERDE_OK, ROJO_MAL. **Los colores de
+  los DATOS no se tocan**: SERIES, ESTADO y SECUENCIAL están validados y no dependen del aspecto.
+- **Portada** rehecha: seis tarjetas en vez de cuatro `st.metric` sueltos.
+- **Las 7 inteligencias**: tarjeta por pestaña y banda de color por sección, hecho **desde el
+  DOM** con selectores estables (`data-baseweb`, `data-testid`). Son 1.339 líneas con siete
+  pestañas anidadas: reindentarlas daba el mismo resultado con mucho más riesgo.
+- **Bodega individual**: lo heredó sin tocar nada, porque también usa pestañas.
+
+### Un fallo viejo que apareció al mirar la pantalla
+
+La ficha de bodega escribía la palabra **«nan»** donde faltaba el dato: «☎️ nan», «Servicios
+enoturísticos: · nan» y un enlace a «nan». Un campo vacío llega del CSV como NaN, que es un
+float, y `str(NaN)` da «nan», cadena que además es verdadera y pasaba todos los `if`. Resuelto
+con `texto_campo()`. Llevaba ahí desde que existe la ficha.
+
+### Cifras nuevas de esta sesión
+
+| | |
+|---|---|
+| Turista internacional (corregido) | 2.000, no 2.445 |
+| Bodegas que contestan alguna reseña | 23 de 41 — **56,1 %** |
+| Bodegas que no contestan ninguna | 18 (la cifra vieja, «11 de 41», era de julio) |
+| Reseñas de 5★ | 9.341 — 76,4 % |
+| Sentimiento medio del destino | 4,18 sobre 5 |
+
+### Pendiente
+
+- Rediseño: faltan **Simulador** y **Guía**. No usan pestañas, así que necesitarán trabajo real
+  y no solo CSS.
+- Completar los datos de ficha de **Bodegas Emilio Hidalgo** (piloto): ya no miente, pero está
+  casi vacía.
+- Vigilar la pasada automática del **1 de diciembre**, la primera sin nadie delante.
+- Sustituir el token de GitHub por uno con caducidad.
+- TripAdvisor, aparcado.
+
+---
+
 ## ═══ SESIÓN 2026-11-24 — LA PLATAFORMA SE ACTUALIZA SOLA ═══
 
 Objetivo de Antonio, en sus palabras: *«que enolytics descargue automáticamente cada cierto
