@@ -258,6 +258,7 @@ TINTA_MEDIA = "#5C6670"
 TINTA_TENUE = "#8D959D"
 AZUL = "#4A7EBB"             # acento de la interfaz en esta capa
 VERDE_OK = "#2F8F36"
+PAD_TARJETA = "1.1rem"   # padding de la tarjeta; lo usan el CSS y las bandas
 ROJO_MAL = "#C33A2E"
 
 
@@ -345,6 +346,41 @@ def css_panel() -> str:
   .eno-anillo .pc {{ font-size: 2.3rem; font-weight: 300; color: {AZUL}; line-height: 1;
     font-variant-numeric: tabular-nums; }}
   .eno-anillo .et {{ font-size: .78rem; color: {TINTA_MEDIA}; }}
+
+  /* ---------- Pestañas de inteligencia ---------- */
+  /* El contenido de cada pestaña vive dentro de UNA tarjeta blanca, en lugar de flotar
+     sobre el lienzo gris. Se hace desde el DOM y no reescribiendo las 1.339 líneas de la
+     vista: el riesgo de tocar esa estructura no compensa el mismo resultado visual. */
+  [data-baseweb="tab-panel"] > [data-testid="stVerticalBlock"] {{
+    background: {TARJETA}; border: 1px solid {BORDE_PANEL}; border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.11); padding: {PAD_TARJETA};
+  }}
+  [data-baseweb="tab-list"] {{ gap: .25rem; border-bottom: 1px solid {BORDE_PANEL}; }}
+  [data-baseweb="tab"] {{ padding: .45rem .85rem !important; }}
+  [data-baseweb="tab"][aria-selected="true"] {{
+    background: {TARJETA}; border-radius: 3px 3px 0 0;
+    border: 1px solid {BORDE_PANEL}; border-bottom-color: {TARJETA};
+    margin-bottom: -1px; font-weight: 600;
+  }}
+
+  /* Cada subtítulo de sección pasa a ser una banda, como la cabecera de las tarjetas. */
+  [data-baseweb="tab-panel"] [data-testid="stHeadingWithActionElements"]:has(h3) {{
+    background: {PIZARRA_CLARA}; border-radius: 3px;
+    padding: .42rem .7rem; margin: .5rem 0 .7rem;
+  }}
+  [data-baseweb="tab-panel"] [data-testid="stHeadingWithActionElements"]:has(h3) h3 {{
+    color: #fff !important; font-size: .86rem !important; font-weight: 600 !important;
+    margin: 0 !important; padding: 0 !important;
+  }}
+  [data-baseweb="tab-panel"] [data-testid="stHeadingWithActionElements"]:has(h3) em {{
+    font-weight: 400; opacity: .85;
+  }}
+
+  /* Los contenedores con borde que ya existen dentro pasan a un gris muy leve, para que
+     se distingan de la tarjeta que los envuelve sin añadir otra sombra encima. */
+  [data-baseweb="tab-panel"] [data-testid="stVerticalBlockBorderWrapper"] {{
+    background: #F7F9FB; box-shadow: none;
+  }}
 </style>
 """
 
