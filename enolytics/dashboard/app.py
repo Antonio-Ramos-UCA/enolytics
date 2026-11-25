@@ -1149,6 +1149,22 @@ def _historial_corpus() -> pd.DataFrame:
     return _etl.cargar_historial()
 
 
+def texto_campo(valor) -> str:
+    """Devuelve el texto de un campo del catálogo, o cadena vacía si no hay dato.
+
+    Un campo vacío llega del CSV como NaN, que es un float; `str(NaN)` da la cadena
+    "nan", que además es verdadera, de modo que pasaba los `if` y se pintaba en la ficha.
+    Se veía «☎️ nan», «Servicios enoturísticos: · nan» y hasta un enlace a «nan» en redes
+    sociales, en la vista que precisamente ve el bodeguero.
+    """
+    if valor is None:
+        return ""
+    if isinstance(valor, float) and pd.isna(valor):
+        return ""
+    s = str(valor).strip()
+    return "" if s.lower() in ("nan", "none", "<na>") else s
+
+
 def frescura_linea() -> str:
     """Frescura del corpus condensada en una línea, para la barra superior.
 
@@ -2976,7 +2992,10 @@ else:
         col_a, col_b = st.columns([2, 1])
         with col_a:
             st.subheader(b["nombre"])
-            st.caption(f"📍 {b.get('localidad', '')} · {b.get('direccion', '')}")
+            _loc = " · ".join(x for x in (texto_campo(b.get("localidad")),
+                                          texto_campo(b.get("direccion"))) if x)
+            if _loc:
+                st.caption(f"📍 {_loc}")
             if not sostenibilidad.empty:
                 fila_sos = sostenibilidad[sostenibilidad["bodega"] == nombre]
                 if not fila_sos.empty:
@@ -2985,22 +3004,23 @@ else:
                         st.success("🌱 Certificada Sustainable Wineries for Climate Protection (FEV)")
                     if "menciona_ecologico" in fila_sos.columns and bool(fs.get("menciona_ecologico")):
                         st.info("🍃 Comunica producción/viñedo ecológico en su web")
-            if isinstance(b.get("descripcion"), str) and b["descripcion"]:
-                st.write(b["descripcion"])
-            servicios = [s for s in str(b.get("servicios", "")).split(" | ") if s]
+            if texto_campo(b.get("descripcion")):
+                st.write(texto_campo(b.get("descripcion")))
+            servicios = [s for s in texto_campo(b.get("servicios")).split(" | ") if s]
             if servicios:
                 st.markdown("**Servicios enoturísticos:**")
                 for s in servicios:
                     st.markdown(f"- {s}")
         with col_b:
             st.markdown("**Contacto**")
-            if b.get("telefono"):
-                st.markdown(f"☎️ {b['telefono']}")
-            if isinstance(b.get("email"), str) and b["email"]:
-                st.markdown(f"✉️ {b['email']}")
-            if isinstance(b.get("web"), str) and b["web"]:
-                st.markdown(f"🌐 [{b['web']}]({b['web']})")
-            rrss = [r for r in str(b.get("rrss", "")).split(" | ") if r]
+            if texto_campo(b.get("telefono")):
+                st.markdown(f"☎️ {texto_campo(b.get('telefono'))}")
+            if texto_campo(b.get("email")):
+                st.markdown(f"✉️ {texto_campo(b.get('email'))}")
+            _web = texto_campo(b.get("web"))
+            if _web:
+                st.markdown(f"🌐 [{_web}]({_web})")
+            rrss = [r for r in texto_campo(b.get("rrss")).split(" | ") if r]
             if rrss:
                 st.markdown("**Redes sociales:**")
                 for r in rrss:
