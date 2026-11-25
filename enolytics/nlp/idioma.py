@@ -71,8 +71,17 @@ def detectar_idioma(texto: str, detect=None) -> str | None:
 
 
 def segmento(idioma: str | None) -> str:
-    """Agrupa el idioma en el segmento que usamos en el dashboard."""
-    if not idioma:
+    """Agrupa el idioma en el segmento que usamos en el dashboard.
+
+    La comprobación es por TIPO, no por veracidad del valor, y eso no es quisquillosidad:
+    `not None` es cierto, pero `not float('nan')` es falso, de modo que con la versión
+    anterior —`if not idioma`— un nulo representado como NaN caía en el `else` y la reseña
+    se contaba como internacional. Qué representación llega depende de la versión de pandas:
+    con 2.3 el `.map` conserva None y con 3.x devuelve NaN. El 24/11/2026 eso metió 445
+    reseñas sin texto en el segmento internacional al ejecutarse la cadena en GitHub
+    Actions, que instaló pandas 3. Comprobando el tipo, el resultado es el mismo en ambas.
+    """
+    if not isinstance(idioma, str) or not idioma.strip():
         return SEGMENTO_DESCONOCIDO
     return SEGMENTO_HISPANO if idioma == "es" else SEGMENTO_INTERNACIONAL
 
@@ -104,6 +113,27 @@ def anotar_idiomas(resenas: pd.DataFrame, verbose: bool = True) -> pd.DataFrame:
     return df
 
 
+def comprobar_coherencia(df: pd.DataFrame) -> None:
+    """Falla si una reseña sin idioma quedó asignada a un segmento concreto.
+
+    Es la red que faltaba el 24/11/2026: una reseña sin texto no puede ser de turista
+    nacional ni internacional, y si lo es, la clasificación está rota. Sin esta comprobación
+    el error se publicó, movió las cifras del segmento internacional de 1.750 a 2.445 y
+    disparó una recomendación falsa; se descubrió al día siguiente y por casualidad.
+    """
+    if "segmento_idioma" not in df.columns or "idioma" not in df.columns:
+        return
+    sin_idioma = ~df["idioma"].apply(lambda v: isinstance(v, str) and bool(v.strip()))
+    con_segmento = df["segmento_idioma"].isin([SEGMENTO_HISPANO, SEGMENTO_INTERNACIONAL])
+    malas = int((sin_idioma & con_segmento).sum())
+    if malas:
+        raise ValueError(
+            f"{malas} reseñas sin idioma detectado tienen asignado un segmento concreto. "
+            f"La clasificación por procedencia está corrupta y no se guarda. "
+            f"Revisa nlp/idioma.segmento() y la versión de pandas del entorno."
+        )
+
+
 def procesar_y_guardar(verbose: bool = True, solo_nuevas: bool = False) -> pd.DataFrame:
     """Detecta el idioma de las reseñas ya procesadas y reescribe `resenas.csv`.
 
@@ -132,6 +162,7 @@ def procesar_y_guardar(verbose: bool = True, solo_nuevas: bool = False) -> pd.Da
     else:
         df = anotar_idiomas(df, verbose=verbose)
 
+    comprobar_coherencia(df)
     df.to_csv(ruta, index=False)
     if verbose:
         print(f"\n✓ Guardado en {ruta.name} (columnas: idioma, segmento_idioma)")

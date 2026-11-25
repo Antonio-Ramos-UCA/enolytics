@@ -13,7 +13,13 @@
 outscraper>=5.0          # cliente oficial de la API de reseñas de Google
 
 # --- Datos ---
-pandas>=2.0
+# pandas FIJADO POR DEBAJO DE 3 (24/11/2026). Decía ">=2.0" y el runner, que se monta de cero
+# cada mes, instaló pandas 3.1. Cambia cómo se representan los nulos al aplicar `.map`: donde
+# 2.3 deja None, 3.x deja NaN. Eso coló 445 reseñas sin texto en el segmento internacional y
+# nadie se entera, porque no da error: da un número distinto. El código ya no depende de esa
+# diferencia, pero una cadena que se ejecuta sola no debe estrenar versión mayor sin que nadie
+# lo haya probado.
+pandas>=2.0,<3.0
 openpyxl>=3.1            # lectura de los export XLSX del panel web
 langdetect>=1.0.9        # idioma de la reseña: separa visitante nacional de internacional
 

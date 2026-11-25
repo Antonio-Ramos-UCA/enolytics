@@ -1023,6 +1023,16 @@ def resumen_dipa(ev: pd.DataFrame, anios: int = 3) -> pd.DataFrame:
 
 df = cargar_bodegas()
 resenas = cargar_resenas()
+
+
+def n_resenas() -> str:
+    """Tamaño del corpus, formateado. Nunca se escribe a mano: crece cada mes solo.
+
+    Hasta el 25/11/2026 había cuatro sitios con «10.972» a mano. La primera actualización
+    automática dejó el corpus en 12.227 y los cuatro quedaron mintiendo el mismo día.
+    """
+    return f"{len(resenas):,}".replace(",", ".")
+
 censo = cargar_censo()
 anotadas = cargar_resenas_anotadas()
 # IPA del destino: SIEMPRE la importancia por impacto (PRCA). No hay respaldo por frecuencia:
@@ -1101,7 +1111,7 @@ with st.sidebar:
 # hay en pantalla solo movía tres cosas: el censo de bodegas, el mapa/directorio de
 # Negocios y el desplegable de la ficha. Todo lo demás no se puede filtrar por
 # localidad: visitantes e ingresos son de ACEVIN para el Marco entero, la valoración
-# sale de las 10.972 reseñas y las recomendaciones son del destino. Un filtro global
+# sale de las reseñas y las recomendaciones son del destino. Un filtro global
 # que solo mueve una tarjeta de cuatro no es un filtro, es una trampa de lectura: con
 # «Jerez» puesto, la portada decía «Bodegas 22 · Visitantes 425.652» y cualquiera lee
 # las dos cifras como de Jerez.
@@ -1259,7 +1269,7 @@ FUENTES_GUIA = [
     ("Dataestur / SEGITTUR", "Gasto turístico, percepción, cruceros y conectividad aérea.", "oficial"),
     ("FEV", "Certificación climática Sustainable Wineries for Climate Protection.", "oficial"),
     ("Ruta del Vino y Brandy de Jerez", "Catálogo de bodegas y oferta enoturística.", "oficial"),
-    ("Reseñas de Google", "10.972 reseñas reales del Marco (satisfacción, atributos, idioma).", "observado"),
+    ("Reseñas de Google", f"{n_resenas()} reseñas reales del Marco (satisfacción, atributos, idioma).", "observado"),
     ("Google Trends", "Interés de búsqueda comparado con otras rutas.", "observado"),
     ("Auditoría web propia + OpenStreetMap", "Madurez digital, accesibilidad y transporte.", "observado"),
 ]
@@ -2168,7 +2178,7 @@ if rol == VISTA_INTELIGENCIAS:
     with tab_cli:
         cabecera_inteligencia("clientes")
         st.caption("Satisfacción, perfil y atributos valorados por el visitante. Fuentes: "
-                   "reseñas de Google (10.972) y Observatorio de la Demanda de ACEVIN.")
+                   f"reseñas de Google ({n_resenas()}) y Observatorio de la Demanda de ACEVIN.")
 
         # --- Volumen de visitas al Marco (indicador de la Tabla 1) ---
         if not acevin.empty:
@@ -2306,7 +2316,7 @@ if rol == VISTA_INTELIGENCIAS:
         if not tabla_ipa.empty:
             st.subheader("Prioridades de mejora del destino _(Importancia-Desempeño · IPA)_")
             if ipa_es_prca:
-                fuente("estimado", "Calculado sobre 10.972 reseñas de Google. **Importancia** = "
+                fuente("estimado", f"Calculado sobre {n_resenas()} reseñas de Google. **Importancia** = "
                                    "*impacto en la satisfacción* (regresión PRCA: cuánto mueve la "
                                    "nota global el sentimiento hacia cada atributo), **no** el nº de "
                                    "menciones. **Desempeño** = sentimiento hacia el atributo (BERT "
