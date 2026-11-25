@@ -1060,6 +1060,7 @@ acevin_ingresos = cargar_acevin_ingresos()
 acevin_demanda = cargar_acevin_demanda()
 
 st.markdown(estilo.css(), unsafe_allow_html=True)
+st.markdown(estilo.css_panel(), unsafe_allow_html=True)
 
 
 def separar_localidades(valor) -> list[str]:
@@ -1141,6 +1142,34 @@ def selector_localidad(clave: str, etiqueta: str = "Filtrar por localidad") -> p
 # Cabecera única «filo de vino» (Opción A de Paula): marca discreta + título de la
 # vista actual. Una sola cabecera por página, en vez de dos bloques oscuros apilados.
 # --------------------------------------------------------------------------- #
+@st.cache_data(show_spinner=False)
+def _historial_corpus() -> pd.DataFrame:
+    """Registro de altas del corpus. Se lee aquí arriba porque la barra superior lo usa."""
+    from enolytics.etl import resenas as _etl
+    return _etl.cargar_historial()
+
+
+def frescura_linea() -> str:
+    """Frescura del corpus condensada en una línea, para la barra superior.
+
+    En la barra cabe poco, así que va lo imprescindible: hasta qué día llegan los datos y
+    cuántos hay. El detalle mes a mes vive en la Guía.
+    """
+    h = _historial_corpus()
+    if h.empty:
+        return ""
+    ult = h.iloc[-1]
+    try:
+        reciente = pd.to_datetime(ult["resena_mas_reciente"]).date()
+    except Exception:
+        return ""
+    atraso = (pd.Timestamp.today().date() - reciente).days
+    total = f"{int(ult['corpus_despues']):,}".replace(",", ".")
+    aviso = f" · ⚠ {atraso} días sin actualizar" if atraso > 75 else ""
+    return (f'<span class="punto"></span>Datos al {reciente.strftime("%d/%m/%Y")} · '
+            f'{total} reseñas{aviso}')
+
+
 _CABECERAS = {
     VISTA_RESUMEN: ("Resumen ejecutivo", "Indicadores clave del destino y prioridades de actuación"),
     VISTA_INTELIGENCIAS: ("Las 7 inteligencias", "El análisis competitivo completo del Marco"),
@@ -1151,7 +1180,9 @@ _CABECERAS = {
                  "Interpretación de los indicadores y origen de los datos"),
 }
 _ct, _cs = _CABECERAS.get(rol, ("ENOLYTICS", estilo.TAGLINE))
-st.markdown(estilo.hero(_ct, _cs), unsafe_allow_html=True)
+st.markdown(estilo.barra_superior(frescura_linea()), unsafe_allow_html=True)
+st.markdown(f"### {_ct}")
+st.caption(_cs)
 
 # --------------------------------------------------------------------------- #
 # Cálculos comunes al destino (resumen e inteligencias comparten motor)
@@ -1201,11 +1232,9 @@ def pie_institucional() -> None:
         pass
 
 
-@st.cache_data(show_spinner=False)
 def cargar_historial_corpus() -> pd.DataFrame:
     """Registro de las altas del corpus de reseñas: una fila por actualización."""
-    from enolytics.etl import resenas as _etl
-    return _etl.cargar_historial()
+    return _historial_corpus()
 
 
 def frescura_corpus() -> None:
@@ -1638,38 +1667,109 @@ if rol == VISTA_SIMULADOR:
 # VISTA 1 — RESUMEN EJECUTIVO: ¿cómo vamos y qué hago primero? (5 segundos)
 # --------------------------------------------------------------------------- #
 if rol == VISTA_RESUMEN:
-    st.caption("Indicadores clave del destino. El análisis detallado está en "
-               "**🧭 Las 7 inteligencias**.")
-    frescura_corpus()
+    # ----------------------------------------------------------------------- #
+    # Portada en lenguaje de panel (25/11/2026, elegido sobre maqueta).
+    #
+    # Antes eran cuatro `st.metric` en fila: cuatro cifras sueltas sin contexto, que no
+    # decían si estaban bien o mal ni hacia dónde iban. Ahora cada tarjeta lleva la cifra
+    # Y su serie, y las que comparan contra una media llevan el color del estado junto al
+    # número —nunca el color solo—.
+    # ----------------------------------------------------------------------- #
+    _res_anio = resenas.assign(
+        anio=pd.to_datetime(resenas["fecha"], errors="coerce", utc=True).dt.year)
+    _por_anio = _res_anio.groupby("anio").agg(n=("resena_id", "count"),
+                                              nota=("puntuacion", "mean")).dropna()
+    _por_anio = _por_anio[_por_anio.index >= 2016]
+    _serie_nota = [round(v, 3) for v in _por_anio["nota"]]
+    _nota_act = resenas["puntuacion"].mean()
+    _delta = (_serie_nota[-1] - _serie_nota[-2]) if len(_serie_nota) > 1 else 0.0
 
-    # --- Cifras clave ---
-    k1, k2, k3, k4 = st.columns(4)
-    if not acevin.empty:
-        _u = int(acevin["anio"].max())
-        _v = acevin[(acevin["anio"] == _u) & (acevin["ruta"] == "Marco de Jerez")]["visitantes"]
-        _rank = (acevin[acevin["anio"] == _u].sort_values("visitantes", ascending=False)
-                 .reset_index(drop=True))
-        _pos = int(_rank.index[_rank["ruta"] == "Marco de Jerez"][0]) + 1 \
-            if "Marco de Jerez" in set(_rank["ruta"]) else None
-        if not _v.empty:
-            k1.metric(f"Visitantes {_u}", f"{int(_v.iloc[0]):,}".replace(",", "."),
-                      f"{_pos}º de España" if _pos else None, delta_color="off",
-                      help="Visitas a bodegas y museos del Marco (ACEVIN).")
-    # El censo del Marco, siempre entero, como sus tres compañeras de fila: todas hablan
-    # del destino. Antes esta sola tarjeta se filtraba por localidad y las otras tres no.
-    k2.metric("Bodegas", len(df),
-              help="Bodegas de la Ruta del Vino y Brandy de Jerez recogidas en el catálogo.")
-    if not resenas.empty:
-        _nota = f"{resenas['puntuacion'].mean():.2f}".replace(".", ",")
-        k3.metric("Valoración del destino", f"{_nota} / 5",
-                  f"{len(resenas):,} reseñas".replace(",", "."), delta_color="off")
-    if not acevin_ingresos.empty and not acevin.empty:
-        _ing = acevin_ingresos[acevin_ingresos["ruta"] == "Marco de Jerez"]
-        if not _ing.empty:
-            _me = f"{_ing['ingresos_eur'].iloc[0] / 1e6:.1f}".replace(".", ",")
-            k4.metric("Ingresos del enoturismo", f"{_me} M€",
-                      help="Visitas a bodegas y museos (ACEVIN). No incluye alojamiento "
-                           "ni restauración.")
+    c1, c2, c3 = st.columns(3)
+
+    with c1:
+        _txt_delta = f"{_delta:+.2f}".replace(".", ",")
+        _txt_nota = f"{_nota_act:.2f}".replace(".", ",")
+        _col_delta = estilo.VERDE_OK if _delta >= 0 else estilo.ROJO_MAL
+        st.markdown(estilo.tarjeta(
+            "Valoración del destino — interanual",
+            f'<div class="eno-cifra">'
+            f'<div class="mitad"><span class="grande '
+            f'{"verde" if _delta >= 0 else "rojo"}">{_txt_delta}</span>'
+            f'<span class="eno-bajo">({int(_por_anio.index[-1])} vs '
+            f'{int(_por_anio.index[-2])})</span></div>'
+            f'<div class="mitad">{estilo.chispa(_serie_nota, _col_delta)}'
+            f'<span class="eno-bajo"><b>{_txt_nota} / 5</b>'
+            f'nota media actual</span></div></div>',
+            f"Google · serie {int(_por_anio.index[0])}-{int(_por_anio.index[-1])}"),
+            unsafe_allow_html=True)
+
+    # Sentimiento por atributo: el peor del destino y la lista completa
+    _sent = cargar_sentimiento()
+    _por_atrib = (_sent.groupby("atributo")["sentimiento"].mean().sort_values(ascending=False)
+                  if not _sent.empty else pd.Series(dtype=float))
+    _media_atrib = _sent["sentimiento"].mean() if not _sent.empty else 0.0
+
+    with c2:
+        if not _por_atrib.empty:
+            _peor = _por_atrib.index[-1]
+            _peor_v = _por_atrib.iloc[-1]
+            _s = _sent[_sent["atributo"] == _peor].assign(
+                anio=pd.to_datetime(_sent[_sent["atributo"] == _peor]["fecha"],
+                                    errors="coerce", utc=True).dt.year)
+            _ev = _s.groupby("anio").agg(v=("sentimiento", "mean"), n=("resena_id", "count"))
+            _ev = _ev[(_ev.index >= 2016) & (_ev["n"] >= 8)]
+            st.markdown(estilo.tarjeta(
+                f"{_peor} — nivel",
+                f'<div class="eno-cifra">'
+                f'<div class="mitad"><span class="grande rojo">'
+                f'{_peor_v:.2f}'.replace(".", ",") +
+                f'</span><span class="eno-bajo">(sobre 5)</span></div>'
+                f'<div class="mitad">{estilo.chispa([round(v, 3) for v in _ev["v"]], estilo.AZUL)}'
+                f'<span class="eno-bajo"><b>{int(_ev.index[0])}-{int(_ev.index[-1])}</b>'
+                f'evolución anual</span></div></div>',
+                "El peor de los ocho atributos · la línea es el año a año, que es ruidoso"),
+                unsafe_allow_html=True)
+
+    with c3:
+        if not _por_atrib.empty:
+            st.markdown(estilo.tarjeta(
+                "Atributos por encima y por debajo de la media",
+                estilo.barras_atributo([(a, v) for a, v in _por_atrib.items()], _media_atrib),
+                f"Media del destino: {_media_atrib:.2f} sobre 5".replace(".", ",")),
+                unsafe_allow_html=True)
+
+    d1, d2, d3 = st.columns([2, 1, 1])
+
+    with d1:
+        with st.container(border=True):
+            st.markdown("**Volumen y valoración, año a año**")
+            _t1, _t2 = st.tabs(["Reseñas", "Nota media"])
+            with _t1:
+                barras(_por_anio["n"].rename("Reseñas"), alto=250)
+            with _t2:
+                barras(_por_anio["nota"].round(2).rename("Nota media"), alto=250)
+            st.caption(f"{int(_por_anio.index[-1])} llega hasta la última reseña "
+                       f"descargada: no es un año completo.")
+
+    with d2:
+        _cinco = (resenas["puntuacion"] == 5).mean() * 100
+        _n5 = int((resenas["puntuacion"] == 5).sum())
+        st.markdown(estilo.tarjeta(
+            "Reseñas de 5 estrellas",
+            estilo.anillo(_cinco, "del total"),
+            f"{_n5:,} de {len(resenas):,} reseñas".replace(",", ".")),
+            unsafe_allow_html=True)
+
+    with d3:
+        _resp = resenas.groupby("bodega")["respuesta_propietario"].apply(
+            lambda s: s.notna().any())
+        _pct = _resp.mean() * 100 if len(_resp) else 0.0
+        st.markdown(estilo.tarjeta(
+            "Bodegas que responden",
+            estilo.anillo(_pct, f"de las {len(_resp)} bodegas"),
+            f"{int(_resp.sum())} contestan alguna reseña; {int((~_resp).sum())} no "
+            f"contestan ninguna"),
+            unsafe_allow_html=True)
 
     st.divider()
 

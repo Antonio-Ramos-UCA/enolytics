@@ -233,3 +233,185 @@ def figura(fig, alto: int = 320, leyenda: bool = True,
                      linecolor="rgba(0,0,0,0)",
                      tickfont=dict(color=INK_TENUE, size=11), **rotulo)
     return fig
+
+
+# =========================================================================== #
+# CAPA «PANEL» (25/11/2026)
+#
+# Segunda piel de la interfaz, elegida por Antonio sobre maqueta: barra superior
+# oscura, carril de navegación, lienzo gris y tarjetas blancas con cabecera de color.
+#
+# Se AÑADE, no sustituye. `css()` sigue siendo la base —la usan las cinco vistas— y
+# esto se inyecta después para redefinir solo el cromo. Así la portada puede llevar el
+# lenguaje nuevo mientras el resto conserva el suyo, sin un día de pantalla rota por
+# medio. Los colores de los DATOS (SERIES, ESTADO, SECUENCIAL) no se tocan: están
+# validados y no dependen del aspecto.
+# =========================================================================== #
+PIZARRA = "#46525F"          # barra superior
+PIZARRA_CLARA = "#6B7B8C"    # cabecera de tarjeta
+CARRIL = "#3C4651"           # carril de navegación
+LIENZO = "#EDF0F3"           # fondo de la página
+TARJETA = "#FFFFFF"
+BORDE_PANEL = "#DDE2E7"
+TINTA = "#2C333A"
+TINTA_MEDIA = "#5C6670"
+TINTA_TENUE = "#8D959D"
+AZUL = "#4A7EBB"             # acento de la interfaz en esta capa
+VERDE_OK = "#2F8F36"
+ROJO_MAL = "#C33A2E"
+
+
+def css_panel() -> str:
+    """Redefine el cromo: barra, carril, lienzo y tarjetas. Se inyecta tras `css()`."""
+    return f"""
+<style>
+  /* ---------- Lienzo ---------- */
+  [data-testid="stAppViewContainer"] {{ background: {LIENZO}; }}
+  [data-testid="stHeader"] {{ background: transparent; }}
+  .main .block-container {{ padding-top: 1rem; max-width: 1400px; }}
+
+  /* ---------- Carril de navegación (barra lateral) ---------- */
+  [data-testid="stSidebar"] {{ background: {CARRIL}; }}
+  [data-testid="stSidebar"] * {{ color: #D5DCE3 !important; }}
+  [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2,
+  [data-testid="stSidebar"] h3, [data-testid="stSidebar"] label p {{
+    color: #FFFFFF !important; font-weight: 600 !important;
+  }}
+  [data-testid="stSidebar"] [role="radiogroup"] label {{
+    padding: .34rem .5rem; border-radius: 4px; border-left: 3px solid transparent;
+  }}
+  [data-testid="stSidebar"] [role="radiogroup"] label:hover {{ background: #FFFFFF14; }}
+  [data-testid="stSidebar"] [role="radiogroup"] label:has(input:checked) {{
+    background: #FFFFFF1A; border-left-color: {AZUL};
+  }}
+  [data-testid="stSidebar"] [data-baseweb="radio"] div[aria-checked="true"] {{
+    background-color: {AZUL} !important; border-color: {AZUL} !important;
+  }}
+
+  /* ---------- Barra superior de marca ---------- */
+  .eno-barra {{
+    background: {PIZARRA}; color: #fff; border-radius: 4px;
+    padding: .78rem 1.1rem; margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+  }}
+  .eno-barra .tit {{ font-size: 1.07rem; font-weight: 600; }}
+  .eno-barra .tit span {{ font-weight: 300; opacity: .82; }}
+  .eno-barra .dcha {{ margin-left: auto; font-size: .8rem; opacity: .92;
+    display: flex; align-items: center; gap: .5rem; }}
+  .eno-barra .punto {{ width: 8px; height: 8px; border-radius: 50%; background: #6FCF78; }}
+
+  /* ---------- Tarjeta con cabecera ---------- */
+  .eno-tarjeta {{
+    background: {TARJETA}; border: 1px solid {BORDE_PANEL}; border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.11); margin-bottom: .9rem; overflow: hidden;
+  }}
+  .eno-tarjeta > .cab {{
+    background: {PIZARRA_CLARA}; color: #fff; font-size: .79rem; font-weight: 600;
+    padding: .5rem .75rem; display: flex; align-items: center; gap: .6rem;
+  }}
+  .eno-tarjeta > .cab .pts {{ margin-left: auto; letter-spacing: 2px; opacity: .7; }}
+  .eno-tarjeta > .cpo {{ padding: .85rem .9rem .4rem; }}
+  .eno-tarjeta > .sello {{
+    padding: .45rem .75rem .55rem; font-size: .69rem; color: {TINTA_TENUE};
+    border-top: 1px solid {BORDE_PANEL};
+  }}
+
+  /* Mismo aspecto para los contenedores con borde de Streamlit, que son los que
+     envuelven lo interactivo (pestañas, gráficos de Plotly). */
+  [data-testid="stVerticalBlockBorderWrapper"] {{
+    background: {TARJETA}; border: 1px solid {BORDE_PANEL} !important;
+    border-radius: 3px; box-shadow: 0 1px 3px rgba(0,0,0,.11);
+  }}
+
+  /* ---------- Piezas de dentro de la tarjeta ---------- */
+  .eno-cifra {{ display: flex; align-items: center; gap: 1.1rem; }}
+  .eno-cifra .mitad {{ flex: 1; min-width: 0; text-align: center; }}
+  .eno-cifra .grande {{ font-size: 3.05rem; font-weight: 300; line-height: 1; }}
+  .eno-cifra .verde {{ color: {VERDE_OK}; }}
+  .eno-cifra .rojo {{ color: {ROJO_MAL}; }}
+  .eno-bajo {{ display: block; font-size: .78rem; color: {TINTA_MEDIA}; margin-top: .4rem; }}
+  .eno-bajo b {{ display: block; color: {TINTA}; font-size: .85rem; }}
+
+  .eno-ab .f {{ display: flex; align-items: center; gap: .55rem; padding: .22rem 0; }}
+  .eno-ab .n {{ font-size: .79rem; flex: 1; min-width: 0; overflow: hidden;
+    text-overflow: ellipsis; white-space: nowrap; }}
+  .eno-ab .pista {{ width: 74px; height: 7px; border-radius: 4px; background: {BORDE_PANEL};
+    flex: none; overflow: hidden; }}
+  .eno-ab .relleno {{ height: 100%; border-radius: 4px; display: block; }}
+  .eno-ab .v {{ font-size: .79rem; font-weight: 600; width: 2.6rem; text-align: right;
+    flex: none; font-variant-numeric: tabular-nums; }}
+
+  .eno-anillo {{ display: flex; flex-direction: column; align-items: center; gap: .1rem; }}
+  .eno-anillo .pc {{ font-size: 2.3rem; font-weight: 300; color: {AZUL}; line-height: 1;
+    font-variant-numeric: tabular-nums; }}
+  .eno-anillo .et {{ font-size: .78rem; color: {TINTA_MEDIA}; }}
+</style>
+"""
+
+
+def barra_superior(derecha: str = "") -> str:
+    """Barra oscura de marca. `derecha` es HTML ya compuesto (la línea de frescura)."""
+    return (f'<div class="eno-barra"><span class="tit">ENOLYTICS '
+            f'<span>— {TAGLINE}</span></span>'
+            f'<span class="dcha">{derecha}</span></div>')
+
+
+def tarjeta(titulo: str, cuerpo: str, sello: str = "") -> str:
+    """Tarjeta blanca con cabecera de color. `cuerpo` y `sello` son HTML."""
+    pie = f'<div class="sello">{sello}</div>' if sello else ""
+    return (f'<div class="eno-tarjeta"><div class="cab">{titulo}'
+            f'<span class="pts">···</span></div>'
+            f'<div class="cpo">{cuerpo}</div>{pie}</div>')
+
+
+def chispa(serie: list[float], color: str, ancho: int = 150, alto: int = 46) -> str:
+    """Minigráfico de línea, sin ejes. Para acompañar a una cifra grande."""
+    if not serie or len(serie) < 2:
+        return ""
+    lo, hi = min(serie), max(serie)
+    rango = (hi - lo) or 1
+    px = lambda i: 2 + i * (ancho - 4) / (len(serie) - 1)
+    py = lambda v: 5 + (alto - 10) * (1 - (v - lo) / rango)
+    d = " ".join(f"{'L' if i else 'M'}{px(i):.1f},{py(v):.1f}" for i, v in enumerate(serie))
+    return (f'<svg viewBox="0 0 {ancho} {alto}" style="width:100%;max-width:{ancho}px;'
+            f'height:auto;display:block;margin:0 auto" aria-hidden="true">'
+            f'<path d="{d}" fill="none" stroke="{color}" stroke-width="2" '
+            f'stroke-linejoin="round"/>'
+            f'<circle cx="{px(len(serie)-1):.1f}" cy="{py(serie[-1]):.1f}" r="3.2" '
+            f'fill="{color}"/></svg>')
+
+
+def anillo(pct: float, etiqueta: str) -> str:
+    """Anillo de progreso con el porcentaje en el centro."""
+    r, circ = 52, 2 * 3.141592653589793 * 52
+    texto = f"{pct:.1f}".rstrip("0").rstrip(".").replace(".", ",")
+    return (f'<div class="eno-anillo">'
+            f'<svg viewBox="0 0 130 130" style="width:100%;max-width:138px;height:auto" '
+            f'role="img" aria-label="{etiqueta}: {texto} por ciento">'
+            f'<circle cx="65" cy="65" r="{r}" fill="none" stroke="{BORDE_PANEL}" '
+            f'stroke-width="13"/>'
+            f'<circle cx="65" cy="65" r="{r}" fill="none" stroke="{AZUL}" stroke-width="13" '
+            f'stroke-linecap="round" stroke-dasharray="{circ*pct/100:.1f} {circ:.1f}" '
+            f'transform="rotate(-90 65 65)"/></svg>'
+            f'<span class="pc">{texto} %</span><span class="et">{etiqueta}</span></div>')
+
+
+def barras_atributo(filas: list[tuple[str, float]], media: float,
+                    minimo: float = 3.3, maximo: float = 4.5) -> str:
+    """Lista de atributos con barra de progreso, verde o roja según la media.
+
+    El color va acompañado SIEMPRE del número, que es lo que de verdad se lee: quien no
+    distingue verde de rojo tiene el valor y la posición en la lista.
+    """
+    out = ['<div class="eno-ab">']
+    for nombre, valor in filas:
+        col = VERDE_OK if valor >= media else ROJO_MAL
+        ancho = max(2.0, min(100.0, (valor - minimo) / (maximo - minimo) * 100))
+        out.append(
+            f'<div class="f"><span class="n">{nombre}</span>'
+            f'<span class="pista"><span class="relleno" style="width:{ancho:.1f}%;'
+            f'background:{col}"></span></span>'
+            f'<span class="v" style="color:{col}">{valor:.2f}</span></div>'.replace(
+                f'{valor:.2f}', f'{valor:.2f}'.replace(".", ",")))
+    out.append("</div>")
+    return "".join(out)
