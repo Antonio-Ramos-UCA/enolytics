@@ -1,0 +1,47 @@
+# Mantiene la plataforma despierta y vigila que siga funcionando.
+#
+# Streamlit Community Cloud suspende las aplicaciones sin visitas. Quien entra se encuentra
+# una pantalla de «Zzzz» y un minuto de espera, que es mala carta de presentación para un
+# enlace que se pasa a bodegas y a la administración.
+#
+# Cada tres días se abre la plataforma en un navegador de verdad —Streamlit cuenta sesiones,
+# no peticiones HTTP— y se comprueba que pinta el cuadro de mando. Si no levanta, la tarea
+# falla y GitHub avisa por correo: es la única vigilancia automática que tiene el proyecto.
+
+name: Mantener la plataforma despierta
+
+on:
+  schedule:
+    # 07:00 UTC cada tres días. Sin nadie mirando y bastante antes del margen de suspensión.
+    - cron: "0 7 */3 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read        # solo lee el repositorio; no escribe nada
+
+concurrency:
+  group: mantener-despierta
+  cancel-in-progress: true
+
+jobs:
+  visitar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+
+    steps:
+      - name: Traer el repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalar Playwright
+        run: |
+          python -m pip install --upgrade pip
+          pip install "playwright==1.49.1"
+          python -m playwright install --with-deps chromium
+
+      - name: Visitar la plataforma
+        run: python scripts/visitar_plataforma.py
