@@ -669,3 +669,15 @@
   4,58 vs. internacional 4,46) — la pregunta que ENOLYTICS no responde, que es lo que evita
   que el trabajo sea un manual de uso del cuadro de mando. Incluye otros 5 temas posibles
   sobre la misma base (accesibilidad, cruceros, DTI, reputación, conectividad aérea).
+
+- [ ] **Bibliografía de enoturismo en Jerez y adaptación de los contenidos** (pedido por ARRR el
+  26/11/2026, sin fecha). Dos mitades. **(1) Revisión:** Scopus, WoS y Dialnet sobre *enoturismo*,
+  *Marco de Jerez*, *sherry tourism*, *rutas del vino*; la carpeta `BIBLIOGRAFIA/` ya existe y está
+  fuera de git. **(2) Adaptación:** cotejar los atributos que mide la plataforma y los seis ejes del
+  IPA con los que la literatura considera determinantes de la experiencia enoturística, y ajustar
+  atributos, textos y recomendaciones donde haya hueco.
+  **Por qué:** hoy todo eso sale de los datos y de las normas UNE, no de lo publicado sobre el
+  sector; anclarlo en la literatura hace defendible la elección de atributos ante Paula, Fernando y
+  los tribunales de TFG, y alimenta los trabajos de `docs/tfg/temas_posibles.md`.
+  **Ojo:** entra como insumo del producto, **no como paper** — el norte sigue siendo la plataforma.
+  Mantener el registro sobrio en el texto visible de la app.

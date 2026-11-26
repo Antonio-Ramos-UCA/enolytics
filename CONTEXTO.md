@@ -4,9 +4,10 @@
 > poder continuar desde cualquier ordenador (este proyecto está en Dropbox y se
 > sincroniza). Si retomas con Claude en otro equipo, pásale este archivo primero.
 >
-> **Última actualización:** 2026-11-19 (**TFG de Daniela Calvario**: plan de trabajo, material y cinco
-> correcciones de fondo; y **problema de RGPD** detectado: datos personales en el repositorio
-> público. Leer las sesiones del 18/11 y del 19/11)
+> **Última actualización:** 2026-11-26 (**rediseño cerrado** en las cinco vistas y la plataforma
+> **ya no se duerme**; el 24/11 el corpus empezó a actualizarse solo y el 25/11 se corrigió un
+> fallo de clasificación que llegó a publicarse. Sigue abierto el **problema de RGPD**: datos
+> personales en el repositorio público. Leer las sesiones del 24, 25 y 26 de noviembre)
 
 ---
 
@@ -194,10 +195,11 @@ streamlit, pandas, sklearn, plotly, matplotlib, requests, bs4.
    lleva ~11.000 nombres de autor, texto y enlace, también en el historial de git. Plan de un par
    de horas en `docs/pendientes.md`. Mientras tanto, **no hacer push de nada con datos de
    personas**, tampoco de `docs/tfg/` (el plan lleva el nombre completo de la estudiante).
-1. ⭐ **Automatización mensual de reseñas.** El corpus lleva parado desde el 06/07. Dos piezas:
-   el **backend de Outscraper** (bloqueado: la API exige saldo) y el **modo incremental** de
-   `nlp/sentimiento.py`, que hoy repasa el corpus entero en cada ejecución. El segundo **no
-   depende de nadie** y es el que hace viable lo demás.
+1. ✅ **Automatización mensual de reseñas — HECHA el 24/11/2026.** Cada día 1 a las 06:00 UTC
+   GitHub Actions descarga de Outscraper, fusiona, reanota y recalcula los modelos. Lo que queda
+   es **vigilar la primera pasada sin nadie delante: el lunes 1 de diciembre**, y cambiar el
+   token de GitHub por uno con caducidad. El número de reseñas que entra cada mes queda en
+   `historial_actualizaciones.csv` y se ve en la barra superior de la plataforma.
 2. **Precios de las visitas.** Decisión A/B pendiente. Si se cablea, mejora cuatro sitios a la
    vez: ficha de bodega, métrica real de «Precio y valor», eje de precio de competidores y
    palanca del simulador.
@@ -209,6 +211,96 @@ streamlit, pandas, sklearn, plotly, matplotlib, requests, bs4.
 6. **TFG de Daniela** (entrega al tutor el **08/01/2027**, fijada por Antonio el 19/11): **enviado el 19/11** (plan, Excel y figuras;
    el email declara que el material se preparó con ayuda de IA bajo supervisión del tutor). Sin
    entregas parciales: ella trabaja y consulta. Pendiente de ella: confirmar el requisito académico. Ver `docs/tfg/LEEME.md`.
+7. **Bibliografía de enoturismo en Jerez** (pedido el 26/11, sin fecha): revisar la literatura
+   del sector y **adaptar los contenidos de la plataforma** —atributos, ejes del IPA, textos,
+   recomendaciones— a lo publicado. Hoy salen de los datos y de las UNE, no de la literatura.
+   Entra como insumo del producto, no como paper. Detalle en la sesión del 26/11.
+
+## ═══ SESIÓN 2026-11-26 — SE CIERRA EL REDISEÑO Y LA PLATAFORMA DEJA DE DORMIRSE ═══
+
+Sesión corta y de cierre: las dos cosas que quedaban apuntadas el día anterior.
+Commits `672679c` y `6fded31`.
+
+### 1. Simulador y Guía: las cinco vistas ya hablan el mismo idioma
+
+Eran las dos vistas que no usan pestañas, así que no heredaron nada del CSS del 25/11 y
+hubo que tocarlas de verdad.
+
+Se añadió **`estilo.banda(titulo, subtitulo="")`** y su clase `.eno-banda`, y con ella se
+convirtieron **nueve secciones**: los cinco encabezados de la Guía (eran `st.subheader`) y las
+cuatro palancas del Simulador (eran `st.markdown("#### …")`).
+
+**Por qué un componente y no un selector de CSS más ancho:** vestir todos los `h3` de la vista
+habría convertido también el **título de la pantalla** en una banda. Con un componente se decide
+sección por sección y no hay sorpresas en pantallas que nadie estaba mirando.
+
+El Simulador solo necesitaba las bandas, porque sus palancas ya son pestañas y por tanto ya
+tenían tarjeta. La Guía necesitaba las dos cosas. Comprobado en navegador, sin errores.
+
+**El rediseño queda cerrado.** Portada, 7 inteligencias, bodega individual, Simulador y Guía.
+
+### 2. La plataforma deja de dormirse, y de paso tiene vigilante
+
+Streamlit Community Cloud suspende las aplicaciones que pasan días sin visitas: quien entra ve
+una pantalla de «Zzzz» y espera cerca de un minuto. Para un enlace que se pasa a bodegas y a la
+administración, eso parece una plataforma rota.
+
+- `scripts/visitar_plataforma.py` — abre la plataforma en un Chromium de verdad y comprueba que
+  pinta. Si estaba dormida, pulsa el botón de despertar.
+- `.github/workflows/mantener-despierta.yml` — cada **tres días** a las 07:00 UTC. Solo
+  `contents: read`: no escribe nada en el repositorio.
+
+**Dos cosas que conviene no volver a aprender:**
+
+**Un `curl` no sirve.** Streamlit cuenta la actividad por **sesiones abiertas**, no por
+peticiones HTTP. Hay que cargar la página en un navegador, y de ahí Playwright.
+
+**La aplicación vive dentro de un iframe.** La primera comprobación buscaba el texto
+«ENOLYTICS» en la página y **falló con la plataforma perfectamente en pie**. El motivo: en
+Streamlit Cloud el cuadro de mando se sirve dentro de un iframe (`…/~/+/`), de modo que el
+texto del documento principal sale **vacío** y los `data-testid` no existen en el nivel de
+arriba. **Es la segunda vez que se tropieza con esto** (la primera, con un vigilante que se
+descartó por poco fiable), así que ahora está escrito en el propio script.
+
+La señal elegida es **`.eno-barra`**, nuestra barra superior. No es capricho: un código 200 no
+probaría nada —la pantalla de «Zzzz» también responde 200— y buscar un selector nuestro dentro
+del marco demuestra que ha pintado **nuestra portada con nuestra hoja de estilo**. Probado
+contra producción: `✓ En pie y pintando (15 s).`
+
+Como efecto secundario, esto es **la única vigilancia automática del proyecto**: si la
+plataforma deja de levantar, la tarea falla y GitHub avisa por correo.
+
+**Apunte honesto:** esto mantiene despierta una aplicación en el plan gratuito, que es justo lo
+que ese plan pretende evitar. El consumo es mínimo —doce visitas al mes— y es práctica común,
+pero si el proyecto crece, lo limpio es el plan de pago o alojarla nosotros.
+
+### 3. Anotado para más adelante: bibliografía de enoturismo en Jerez
+
+Antonio dejó pedido un trabajo nuevo, **sin fecha**: buscar bibliografía académica sobre
+enoturismo en el Marco de Jerez y **adaptar los contenidos de la plataforma a esa literatura**.
+
+Por qué importa: hoy los atributos que mide ENOLYTICS, los seis ejes del IPA, las
+recomendaciones y el vocabulario de las vistas salen **de los datos y de las normas UNE**, no de
+lo publicado sobre el sector. Anclarlos en la literatura hace defendible la elección de
+atributos ante Paula, Fernando y los tribunales de TFG. Entra como **insumo del producto**, no
+como paper: el norte sigue siendo la plataforma.
+
+Cuando se retome, son dos mitades: (1) la revisión —Scopus, WoS, Dialnet; *enoturismo*, *Marco
+de Jerez*, *sherry tourism*, *rutas del vino*; `BIBLIOGRAFIA/` ya existe y está fuera de git— y
+(2) la adaptación: cotejar nuestros atributos con los que la literatura considera determinantes
+de la experiencia enoturística, y ajustar atributos, textos y recomendaciones donde haya hueco.
+
+### Pendiente al cerrar
+
+- Completar los datos de ficha de **Bodegas Emilio Hidalgo** (piloto): ya no miente, pero está
+  casi vacía.
+- **Vigilar la pasada automática del lunes 1 de diciembre**, la primera sin nadie delante.
+- Sustituir el token de GitHub por uno **con caducidad** (hoy `repo, workflow` y sin caducar).
+- RGPD: sigue abierto (punto 0 de «Próximos pasos»).
+- Bibliografía de enoturismo (punto 3 de esta sesión).
+- TripAdvisor, aparcado.
+
+---
 
 ## ═══ SESIÓN 2026-11-25 — UN FALLO DE CLASIFICACIÓN Y EL REDISEÑO ═══
 
