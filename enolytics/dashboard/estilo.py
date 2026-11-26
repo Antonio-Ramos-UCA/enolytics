@@ -376,6 +376,15 @@ def css_panel() -> str:
     font-weight: 400; opacity: .85;
   }}
 
+  /* Banda de sección explícita (`banda()`), para las vistas que no son de pestañas y
+     donde el subtitulo no lo pinta Streamlit sino nosotros. */
+  .eno-banda {{
+    background: {PIZARRA_CLARA}; color: #fff; border-radius: 3px;
+    padding: .42rem .7rem; margin: 1.1rem 0 .7rem;
+    font-size: .86rem; font-weight: 600; display: flex; align-items: baseline; gap: .6rem;
+  }}
+  .eno-banda .sub {{ font-weight: 400; opacity: .85; font-size: .8rem; }}
+
   /* Los contenedores con borde que ya existen dentro pasan a un gris muy leve, para que
      se distingan de la tarjeta que los envuelve sin añadir otra sombra encima. */
   [data-baseweb="tab-panel"] [data-testid="stVerticalBlockBorderWrapper"] {{
@@ -451,3 +460,15 @@ def barras_atributo(filas: list[tuple[str, float]], media: float,
                 f'{valor:.2f}', f'{valor:.2f}'.replace(".", ",")))
     out.append("</div>")
     return "".join(out)
+
+
+def banda(titulo: str, subtitulo: str = "") -> str:
+    """Banda de sección, del mismo color que la cabecera de las tarjetas.
+
+    En las vistas con pestañas el subtítulo lo pinta Streamlit y se viste desde el CSS.
+    En las que no las tienen —Guía y Simulador— el encabezado lo ponemos nosotros, y
+    vestir todos los `h3` de la página habría convertido también el título de la vista
+    en una banda. De ahí un componente propio en vez de un selector más ancho.
+    """
+    extra = f'<span class="sub">{subtitulo}</span>' if subtitulo else ""
+    return f'<div class="eno-banda">{titulo}{extra}</div>'

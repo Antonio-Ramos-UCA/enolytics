@@ -1396,7 +1396,8 @@ if rol == VISTA_GUIA:
     # final («de dónde salen los datos»). Fundidas en una: los tres colores como encabezado
     # y las fuentes colgando de cada uno, que responde las dos preguntas a la vez
     # (observación 3 de Paula).
-    st.subheader("1 · Origen de los datos y grado de fiabilidad")
+    st.markdown(estilo.banda("1 · Origen de los datos y grado de fiabilidad"),
+                unsafe_allow_html=True)
     st.caption("Cada dato lleva una marca de color que indica **su grado de fiabilidad** y la "
                "fuente de la que procede. Nunca se mezcla una estadística oficial con una "
                "estimación sin avisar.")
@@ -1439,7 +1440,7 @@ if rol == VISTA_GUIA:
                 _serie = _hist.set_index(pd.to_datetime(_hist["fecha"]))["nuevas"].iloc[1:]
                 st.bar_chart(_serie, height=180)
 
-    st.subheader("2 · Las vistas de la plataforma")
+    st.markdown(estilo.banda("2 · Las vistas de la plataforma"), unsafe_allow_html=True)
     for _t, _d in [(VISTA_RESUMEN, "Indicadores clave del destino, estado de las siete "
                     "inteligencias y las tres actuaciones más urgentes."),
                    (VISTA_INTELIGENCIAS, "El análisis completo, una pestaña por inteligencia, "
@@ -1452,7 +1453,8 @@ if rol == VISTA_GUIA:
                    (VISTA_GUIA, "Este documento: contenido de cada apartado y origen de cada dato.")]:
         st.markdown(f"**{_t}** — {_d}")
 
-    st.subheader("3 · Las 7 inteligencias: qué responde cada una")
+    st.markdown(estilo.banda("3 · Las 7 inteligencias: qué responde cada una"),
+                unsafe_allow_html=True)
     st.caption("El análisis se organiza en siete inteligencias competitivas (memoria del proyecto, "
                "alineado con la norma UNE 178502 y las categorías de SEGITTUR).")
     for _clave, _info in config.OBJETIVOS_INTELIGENCIAS.items():
@@ -1460,7 +1462,7 @@ if rol == VISTA_GUIA:
             st.markdown(f"**{_info['titulo']}** &nbsp; `{_info['segittur']}`")
             st.caption(_info["objetivo"])
 
-    st.subheader("4 · Los modelos analíticos")
+    st.markdown(estilo.banda("4 · Los modelos analíticos"), unsafe_allow_html=True)
     for _term, _sig, _expl in GLOSARIO_MODELOS:
         st.markdown(f"**{_term}** · _{_sig}_ — {_expl}")
     st.info("**Criterio metodológico:** los textos de la plataforma **no se generan con "
@@ -1468,7 +1470,8 @@ if rol == VISTA_GUIA:
             "de modo que un mismo dato produce siempre el mismo texto. Es lo que hace el "
             "resultado reproducible y auditable.")
 
-    st.subheader("5 · Los umbrales aplicados y su justificación")
+    st.markdown(estilo.banda("5 · Los umbrales aplicados y su justificación"),
+                unsafe_allow_html=True)
     st.caption("Una recomendación aparece cuando un dato cruza un umbral. Estos son todos los "
                "umbrales aplicados en la plataforma y su procedencia. **No son la misma clase de "
                "decisión**, así que van separados.")
@@ -1515,7 +1518,8 @@ if rol == VISTA_SIMULADOR:
 
     # ---- Palanca 1: monetización (ingreso por visitante) ----
     with tab_mon:
-        st.markdown("#### Incremento del ingreso por visitante")
+        st.markdown(estilo.banda("Incremento del ingreso por visitante"),
+                    unsafe_allow_html=True)
         st.caption(AVISO_PALANCA["mon"])
         if acevin_ingresos.empty or acevin.empty:
             st.info("No hay datos de ingresos/visitantes (ACEVIN) para simular.")
@@ -1554,7 +1558,8 @@ if rol == VISTA_SIMULADOR:
 
     # ---- Palanca 2: captación de cruceristas ----
     with tab_cru:
-        st.markdown("#### Captación de cruceristas de la Bahía de Cádiz")
+        st.markdown(estilo.banda("Captación de cruceristas de la Bahía de Cádiz"),
+                    unsafe_allow_html=True)
         st.caption(AVISO_PALANCA["cru"])
         if cruceros.empty:
             st.info("No hay datos de cruceros (Dataestur) para simular.")
@@ -1594,7 +1599,8 @@ if rol == VISTA_SIMULADOR:
 
     # ---- Palanca 3: respuesta a críticos (KPI de gestión, NO predicción de estrellas) ----
     with tab_cri:
-        st.markdown("#### Respuesta a las reseñas críticas sin contestar")
+        st.markdown(estilo.banda("Respuesta a las reseñas críticas sin contestar"),
+                    unsafe_allow_html=True)
         st.caption(AVISO_PALANCA["cri"])
         if resenas.empty or "respuesta_propietario" not in resenas.columns:
             st.info("No hay reseñas con dato de respuesta del propietario.")
@@ -1624,7 +1630,8 @@ if rol == VISTA_SIMULADOR:
 
     # ---- Palanca 4: calidad percibida (mover un atributo en el mapa IPA) ----
     with tab_cal:
-        st.markdown("#### Mejora de la calidad percibida de un atributo")
+        st.markdown(estilo.banda("Mejora de la calidad percibida de un atributo"),
+                    unsafe_allow_html=True)
         st.caption(AVISO_PALANCA["cal"])
         base = ipa_desde_prca("Marco de Jerez")
         if base.empty:
